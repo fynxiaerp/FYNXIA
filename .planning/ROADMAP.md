@@ -30,7 +30,10 @@
   3. No direct PostgreSQL connections exist in the codebase — only the Supabase JS client is used, routed through PostgREST + Supavisor (C-6 closed)
   4. `SUPABASE_SERVICE_ROLE_KEY` is absent from any `NEXT_PUBLIC_` env var and absent from `.next/static/` build output (C-2 closed)
   5. All timestamp columns across all tables are `TIMESTAMPTZ`, all sensitive health-data columns use AES-256 encryption, and Vercel `vercel.json` declares `regions: ["gru1"]`
-**Plans**: TBD
+**Plans**: 3 plans
+- [ ] 00-PLAN-01.md — Next.js 15 scaffold, three Supabase clients, secure middleware (getUser), AES-256 crypto, gru1 region
+- [ ] 00-PLAN-02.md — SQL migrations: tenants/users/audit_logs schema, get_my_tenant_id() + RLS policies, Custom Access Token Hook
+- [ ] 00-PLAN-03.md — [BLOCKING] schema push, type gen, RLS verification script, live JWT/region/hook checklist
 
 ### Phase 1: Auth & Tenant Onboarding
 **Goal**: Clinic administrators can register their clinic, invite team members, and every user can log in and operate within their own isolated tenant — RBAC is enforced end-to-end.
@@ -98,7 +101,7 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 0. Foundation | 0/? | Not started | - |
+| 0. Foundation | 0/3 | Planned | - |
 | 1. Auth & Tenant Onboarding | 0/? | Not started | - |
 | 2. Clinical MVP | 0/? | Not started | - |
 | 3. Financial MVP | 0/? | Not started | - |
