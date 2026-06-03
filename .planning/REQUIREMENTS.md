@@ -100,13 +100,55 @@
 
 | REQ-ID | Phase | Status |
 |--------|-------|--------|
-| INFRA-01..07 | Phase 0 | ○ Pending |
-| AUTH-01..07 | Phase 1 | ○ Pending |
-| SEC-01..08 | Phase 0-1 | ○ Pending |
-| CLINIC-01..09 | Phase 2 | ○ Pending |
-| FIN-01..09 | Phase 3 | ○ Pending |
-| COMMS-01..04 | Phase 4 | ○ Pending |
-| AI-01..03 | Phase 5 | ○ Pending |
+| INFRA-01 | Phase 0 — Foundation | Pending |
+| INFRA-02 | Phase 0 — Foundation | Pending |
+| INFRA-03 | Phase 0 — Foundation | Pending |
+| INFRA-04 | Phase 0 — Foundation | Pending |
+| INFRA-05 | Phase 0 — Foundation | Pending |
+| INFRA-06 | Phase 0 — Foundation | Pending |
+| INFRA-07 | Phase 0 — Foundation | Pending |
+| SEC-07 | Phase 0 — Foundation | Pending |
+| SEC-08 | Phase 0 — Foundation | Pending |
+| AUTH-01 | Phase 1 — Auth & Tenant Onboarding | Pending |
+| AUTH-02 | Phase 1 — Auth & Tenant Onboarding | Pending |
+| AUTH-03 | Phase 1 — Auth & Tenant Onboarding | Pending |
+| AUTH-04 | Phase 1 — Auth & Tenant Onboarding | Pending |
+| AUTH-05 | Phase 1 — Auth & Tenant Onboarding | Pending |
+| AUTH-06 | Phase 1 — Auth & Tenant Onboarding | Pending |
+| AUTH-07 | Phase 1 — Auth & Tenant Onboarding | Pending |
+| SEC-01 | Phase 1 — Auth & Tenant Onboarding | Pending |
+| SEC-02 | Phase 1 — Auth & Tenant Onboarding | Pending |
+| SEC-05 | Phase 1 — Auth & Tenant Onboarding | Pending |
+| CLINIC-01 | Phase 2 — Clinical MVP | Pending |
+| CLINIC-02 | Phase 2 — Clinical MVP | Pending |
+| CLINIC-03 | Phase 2 — Clinical MVP | Pending |
+| CLINIC-04 | Phase 2 — Clinical MVP | Pending |
+| CLINIC-05 | Phase 2 — Clinical MVP | Pending |
+| CLINIC-06 | Phase 2 — Clinical MVP | Pending |
+| CLINIC-07 | Phase 2 — Clinical MVP | Pending |
+| CLINIC-08 | Phase 2 — Clinical MVP | Pending |
+| CLINIC-09 | Phase 2 — Clinical MVP | Pending |
+| SEC-03 | Phase 2 — Clinical MVP | Pending |
+| SEC-04 | Phase 2 — Clinical MVP | Pending |
+| FIN-01 | Phase 3 — Financial MVP | Pending |
+| FIN-02 | Phase 3 — Financial MVP | Pending |
+| FIN-03 | Phase 3 — Financial MVP | Pending |
+| FIN-04 | Phase 3 — Financial MVP | Pending |
+| FIN-05 | Phase 3 — Financial MVP | Pending |
+| FIN-06 | Phase 3 — Financial MVP | Pending |
+| FIN-07 | Phase 3 — Financial MVP | Pending |
+| FIN-08 | Phase 3 — Financial MVP | Pending |
+| FIN-09 | Phase 3 — Financial MVP | Pending |
+| SEC-06 | Phase 3 — Financial MVP | Pending |
+| COMMS-01 | Phase 4 — Communications & Async | Pending |
+| COMMS-02 | Phase 4 — Communications & Async | Pending |
+| COMMS-03 | Phase 4 — Communications & Async | Pending |
+| COMMS-04 | Phase 4 — Communications & Async | Pending |
+| AI-01 | Phase 5 — AI Agents | Pending |
+| AI-02 | Phase 5 — AI Agents | Pending |
+| AI-03 | Phase 5 — AI Agents | Pending |
+
+**Total mapped: 47/47**
 
 ---
 
