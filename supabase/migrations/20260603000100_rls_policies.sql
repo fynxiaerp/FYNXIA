@@ -70,4 +70,5 @@ CREATE POLICY "tenants_admin_update" ON public.tenants
   )
   WITH CHECK (
     id = get_my_tenant_id()
+    AND get_my_role() = 'admin'   -- re-assert role on the proposed new row too
   );
