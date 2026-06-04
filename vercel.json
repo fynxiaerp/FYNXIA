@@ -1,0 +1,7 @@
+{
+  "regions": ["gru1"],
+  "functions": {
+    "src/app/api/**": { "maxDuration": 30 },
+    "src/app/api/documents/**": { "maxDuration": 60 }
+  }
+}
