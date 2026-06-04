@@ -145,23 +145,29 @@ ORDER BY relname;
 
 
 -- ---------------------------------------------------------------------------
--- CHECK 6: REVOKE EXECUTE confirmation — functions not callable by PUBLIC
+-- CHECK 6 (corrected): REVOKE EXECUTE confirmation — functions not callable by anon/authenticated
 -- ---------------------------------------------------------------------------
--- get_my_tenant_id() and get_my_role() must NOT be executable by the 'public' role.
--- If execute is granted to public, any authenticated user could call them directly
--- to obtain tenant IDs of other users (information disclosure).
--- Expected: 0 rows returned (no PUBLIC execute grants on these two functions).
+-- get_my_tenant_id() and get_my_role() must NOT be executable by the 'anon' or
+-- 'authenticated' roles directly. PUBLIC is a pseudo-role and does NOT appear as a
+-- row in pg_roles, so the previous JOIN on pg_roles WHERE rolname='public' always
+-- returned 0 rows — the check was a no-op regardless of REVOKE status.
+-- This corrected check uses has_function_privilege() directly against named roles.
+-- Expected: both anon_can_execute AND authed_can_execute = false for both functions.
+-- If true, the REVOKE did not take effect and any user can call these functions directly.
 -- ---------------------------------------------------------------------------
 SELECT
-  r.rolname         AS grantee,
-  p.proname         AS function_name,
-  has_function_privilege(r.oid, p.oid, 'EXECUTE') AS can_execute
+  p.proname          AS function_name,
+  has_function_privilege('anon', p.oid, 'EXECUTE')          AS anon_can_execute,
+  has_function_privilege('authenticated', p.oid, 'EXECUTE') AS authed_can_execute
 FROM pg_proc p
-CROSS JOIN pg_roles r
-WHERE
-  p.proname IN ('get_my_tenant_id', 'get_my_role')
-  AND r.rolname = 'public'
+WHERE p.proname IN ('get_my_tenant_id', 'get_my_role')
+  AND p.pronamespace = 'public'::regnamespace
 ORDER BY p.proname;
 
--- EXPECTED: can_execute = false for both functions.
--- If can_execute = true, the REVOKE EXECUTE FROM PUBLIC in the migration did not apply.
+-- EXPECTED:
+--   function_name     | anon_can_execute | authed_can_execute
+--   ------------------+------------------+-------------------
+--   get_my_role       | false            | false
+--   get_my_tenant_id  | false            | false
+--
+-- If any value is true, the REVOKE EXECUTE FROM PUBLIC in the migration did not apply.
