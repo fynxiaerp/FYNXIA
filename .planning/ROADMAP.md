@@ -9,7 +9,7 @@
 
 ## Phases
 
-- [ ] **Phase 0: Foundation** — DB schema, RLS, Custom Access Token Hook, middleware, Supabase client factories. Resolves all 6 critical pitfalls before any feature code.
+- [ ] **Phase 0: Foundation** — DB schema, RLS (via get_my_tenant_id()+get_my_role() SECURITY DEFINER), middleware, Supabase client factories. Resolves all 6 critical pitfalls before any feature code. FREE plan compatible.
 - [ ] **Phase 1: Auth & Tenant Onboarding** — Complete auth flow (login/logout/register), RBAC enforcement, tenant provisioning, user invite. Gates all downstream modules.
 - [ ] **Phase 2: Clinical MVP** — Patient management, multi-dentist appointment calendar, prontuario, odontogram, digital anamnesis with e-signature, online booking link.
 - [ ] **Phase 3: Financial MVP** — Cash flow, Pix/boleto via Asaas, accounts receivable, installments, automated collection sequence, PDF receipts.
@@ -26,14 +26,14 @@
 **Requirements**: INFRA-01, INFRA-02, INFRA-03, INFRA-04, INFRA-05, INFRA-06, INFRA-07, SEC-07, SEC-08
 **Success Criteria** (what must be TRUE):
   1. `get_my_tenant_id()` SECURITY DEFINER function exists and is referenced by every RLS policy — no RLS policy queries the users table directly (prevents infinite recursion C-1)
-  2. A JWT obtained after login contains `tenant_id` and `user_role` claims injected by the Custom Access Token Hook — verifiable via `jwt.io` inspection
+  2. `get_my_tenant_id()` e `get_my_role()` SECURITY DEFINER confirmados com `prosecdef=true` no banco live — tenant/role isolation funcional sem Custom Access Token Hook (FREE plan)
   3. No direct PostgreSQL connections exist in the codebase — only the Supabase JS client is used, routed through PostgREST + Supavisor (C-6 closed)
   4. `SUPABASE_SERVICE_ROLE_KEY` is absent from any `NEXT_PUBLIC_` env var and absent from `.next/static/` build output (C-2 closed)
   5. All timestamp columns across all tables are `TIMESTAMPTZ`, all sensitive health-data columns use AES-256 encryption, and Vercel `vercel.json` declares `regions: ["gru1"]`
 **Plans**: 3 plans
 - [ ] 00-PLAN-01.md — Next.js 15 scaffold, three Supabase clients, secure middleware (getUser), AES-256 crypto, gru1 region
-- [ ] 00-PLAN-02.md — SQL migrations: tenants/users/audit_logs schema, get_my_tenant_id() + RLS policies, Custom Access Token Hook
-- [ ] 00-PLAN-03.md — [BLOCKING] schema push, type gen, RLS verification script, live JWT/region/hook checklist
+- [ ] 00-PLAN-02.md — SQL migrations: tenants/users/audit_logs schema, get_my_tenant_id() + get_my_role() SECURITY DEFINER + RLS policies (FREE plan — sem hook)
+- [ ] 00-PLAN-03.md — [BLOCKING] schema push, type gen, RLS verification script, checklist região/prosecdef/C-2
 
 ### Phase 1: Auth & Tenant Onboarding
 **Goal**: Clinic administrators can register their clinic, invite team members, and every user can log in and operate within their own isolated tenant — RBAC is enforced end-to-end.

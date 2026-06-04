@@ -1,3 +1,17 @@
+---
+gsd_state_version: 1.0
+milestone: v1.0
+milestone_name: milestone
+status: planning
+last_updated: "2026-06-04T21:20:59.186Z"
+progress:
+  total_phases: 6
+  completed_phases: 1
+  total_plans: 3
+  completed_plans: 3
+  percent: 100
+---
+
 # FYNXIA ERP — Project State
 
 **Last updated:** 2026-06-03
@@ -17,9 +31,11 @@
 
 ## Current Position
 
-**Phase:** 0 — Foundation
-**Plan:** None yet (planning not started)
-**Status:** Not started
+Phase: 00 (foundation) — EXECUTING
+Plan: 1 of 3
+**Phase:** 1
+**Plan:** Not started
+**Status:** Ready to plan
 
 ```
 Progress: [░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░] 0%
@@ -73,23 +89,30 @@ Phase 5 [Not started] ░░░░░
 | @react-pdf/renderer (no Puppeteer) | Puppeteer binary ~100MB; Vercel function limit 50MB | 2026-06-02 |
 | Phase 3 runs parallel to Phase 2 | Shares Phase 1 patient data model; accelerates financial validation | 2026-06-03 |
 | Phase 6 (Dashboard/Polish) deferred to v2 | No v1 requirements map to dashboard KPIs or franchise aggregation | 2026-06-03 |
+| Supabase FREE plan para MVP; sem Custom Access Token Hook | Hook é Pro-only; get_my_tenant_id()+get_my_role() SECURITY DEFINER substitui com segurança equivalente | 2026-06-03 |
 
 ### Critical Pre-Phase-0 Actions
 
 - [ ] Verify Supabase project is in sa-east-1 (São Paulo) — if not, recreate before any development
-- [ ] Activate Supabase Pro plan (required for pg_cron, pgmq, Custom Auth Hooks)
 - [ ] Start Meta Business verification NOW (7-14 day lead time; blocks Phase 4)
+- [x] ~~Activate Supabase Pro plan~~ — MVP permanece no FREE plan; Custom Access Token Hook não é usado
 
 ### Architecture Constraints Locked
 
 - Shared schema + RLS (not per-tenant schemas — incompatible with Supabase Realtime)
-- JWT claims (`tenant_id`, `user_role`) injected via Custom Access Token Hook only
+- `tenant_id` e `user_role` lidos via `get_my_tenant_id()` + `get_my_role()` SECURITY DEFINER — sem Custom Access Token Hook (Pro-only; FREE plan MVP). Upgrade path ao migrar para Pro.
 - `tenant_id` stored in `public.users` (NOT `user_metadata` — user-mutable, C-5 risk)
 - All caching calls must include `tenantId` in cache key array (C-3 risk)
 - No service role key with `NEXT_PUBLIC_` prefix (C-2 risk)
 - All connections via Supabase JS client only — no direct pg/Prisma from Vercel (C-6 risk)
 - LGPD/CFO conflict strategy: anonymize patient identity on erasure request; retain clinical records 20 years (Lei 13.787/2018)
 - Digital anamnesis must use ICP-Brasil-level e-signature (D4Sign recommended)
+
+### Upgrades Pendentes (pós-validação comercial)
+
+| Upgrade | Trigger sugerido | Benefício | Impacto no código |
+|---------|-----------------|-----------|-------------------|
+| Migrar Supabase FREE → Pro | Quando o produto tiver pagantes ou precisar de Auth Hooks, pg_cron, pgmq | Custom Access Token Hook: reduz 1 DB lookup por query RLS; pg_cron/pgmq: jobs agendados nativos (Phase 4) | Adicionar migration `custom_access_token_hook`, registrar no dashboard Auth > Hooks — zero mudança nas policies existentes |
 
 ### Deferred to v2
 
@@ -109,7 +132,7 @@ Phase 5 [Not started] ░░░░░
 | 2 | D4Sign account provisioned? | Phase 2 (CLINIC-08) | Open |
 | 3 | Meta Business verification started? | Phase 4 | Open — start NOW |
 | 4 | Supabase project confirmed in sa-east-1? | Phase 0 | Open — verify immediately |
-| 5 | Supabase Pro plan activated? | Phase 0 | Open — verify immediately |
+| 5 | Supabase Pro plan activated? | Phase 0 | **Closed** — MVP no FREE plan; sem hook; RLS via SECURITY DEFINER |
 | 6 | AI provider DPA strategy for LGPD? | Phase 5 | Open |
 | 7 | NFSe scope: Nacional only or top-5 cities? | Phase 3 | Open |
 
@@ -117,8 +140,8 @@ Phase 5 [Not started] ░░░░░
 
 ## Session Continuity
 
-**To resume work:** Run `/gsd-plan-phase 0` to generate the execution plan for Phase 0 (Foundation).
+**To resume work:** Run `/gsd-execute-phase 0` para executar os 3 planos da Fase 0 (Foundation).
 
 **Critical path:** Phase 0 → 1 → 2 → 4 → 5 (Phase 3 parallel with Phase 2)
 
-**Next action:** Plan Phase 0 — all 6 pitfalls must be architecturally resolved in this phase before any feature code is written.
+**Next action:** Execute Phase 0 — 3 planos prontos (Wave 1: scaffold, Wave 2: migrations SQL, Wave 3: db push + verificação). Plan 03 requer confirmação manual da região sa-east-1 antes do push.
