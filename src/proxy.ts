@@ -11,11 +11,18 @@ export async function proxy(request: NextRequest) {
     pathname.startsWith('/signup') ||
     pathname.startsWith('/forgot-password')
 
-  // API routes are public — health check and future webhook endpoints
-  const isApiRoute = pathname.startsWith('/api')
+  // Only specific API routes are public — health check and webhook endpoints
+  // (webhooks authenticate via HMAC signature, not session cookies)
+  const isPublicApiRoute =
+    pathname === '/api/health' ||
+    pathname.startsWith('/api/webhooks/')
 
   // Unauthenticated user accessing a protected route → redirect to login
-  if (!user && !isAuthRoute && !isApiRoute) {
+  if (!user && !isAuthRoute && !isPublicApiRoute) {
+    // For non-browser API requests return 401 instead of a redirect
+    if (pathname.startsWith('/api/')) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
     const redirectUrl = new URL('/login', request.url)
     redirectUrl.searchParams.set('redirectedFrom', pathname)
     return NextResponse.redirect(redirectUrl)
