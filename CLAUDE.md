@@ -261,7 +261,19 @@ FYNXIA é um ERP SaaS multi-tenant para clínicas odontológicas que unifica ges
 <!-- GSD:conventions-start source:CONVENTIONS.md -->
 ## Conventions
 
-Conventions not yet established. Will populate as patterns emerge during development.
+### UI Component Primitives
+
+Two component primitive libraries are in use. This is a deliberate choice — canonical usage is:
+
+| Library | Canonical use |
+|---------|--------------|
+| `@base-ui/react` | Behavioural primitives where shadcn/ui does not yet provide a component (e.g. `Button` base, future `Select`, `Dialog` if shadcn version is not available) |
+| `@radix-ui/*` (via shadcn/ui) | All other interactive primitives pulled in automatically by `shadcn add <component>` |
+
+**Rule:** prefer `shadcn add <component>` first. Only reach for `@base-ui/react` directly when shadcn has no equivalent. Document any new `@base-ui/react` usage in this table.
+
+Currently using `@base-ui/react`:
+- `src/components/ui/button.tsx` — `Button` primitive from `@base-ui/react/button`
 <!-- GSD:conventions-end -->
 
 <!-- GSD:architecture-start source:ARCHITECTURE.md -->
