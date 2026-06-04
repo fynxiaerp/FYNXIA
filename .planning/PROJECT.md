@@ -12,7 +12,12 @@ Um dentista deve conseguir ver a agenda do dia, registrar atendimento e fechar o
 
 ### Validated
 
-(None yet — ship to validate)
+#### Infraestrutura (Validated in Phase 0: Foundation)
+- [x] Deploy automatizado na Vercel com CI/CD — `vercel.json` pina gru1 (São Paulo); gru1 region + Fluid Compute configurados
+- [x] Schema de banco no Supabase com migrations versionadas — 2 migrations aplicadas em sa-east-1; `src/types/database.types.ts` gerado ao vivo
+- [x] Variáveis sensíveis gerenciadas via Vercel environment variables — `.env.local.example` documenta contrato; `server-only` guards em todos os clientes privilegiados
+- [x] Dados isolados por tenant_id (multi-tenant) com RLS no Supabase — `get_my_tenant_id()` + `get_my_role()` SECURITY DEFINER; RLS em 3 tabelas; C-1 resolvido
+- [x] Todas as ações sensíveis registradas em audit_log imutável — `audit_logs` com DELETE/UPDATE = false via RLS
 
 ### Active
 
@@ -104,4 +109,4 @@ Este documento evolui a cada transição de fase e marco de milestone.
 4. Atualizar Context com estado atual
 
 ---
-*Last updated: 2026-06-02 after initialization*
+*Last updated: 2026-06-04 — Phase 0 (Foundation) complete*
