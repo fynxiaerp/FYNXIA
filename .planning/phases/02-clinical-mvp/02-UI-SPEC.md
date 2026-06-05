@@ -56,11 +56,11 @@ Declared values (all multiples of 4):
 | Role | Size | Weight | Line Height | Tailwind Classes | Usage |
 |------|------|--------|-------------|-----------------|-------|
 | Body | 14px | 400 (regular) | 1.5 | `text-sm font-normal leading-relaxed` | Form labels, table cells, event descriptions, prontuario text fields |
-| Label | 14px | 500 (medium) | 1.4 | `text-sm font-medium leading-snug` | Input labels, column headers, tooth status legend |
+| Label | 14px | 600 (semibold) | 1.4 | `text-sm font-semibold leading-snug` | Input labels, column headers, tooth status legend |
 | Heading | 20px | 600 (semibold) | 1.2 | `text-xl font-semibold leading-tight` | Page titles, modal titles, section headings |
 | Display | 28px | 600 (semibold) | 1.2 | `text-2xl font-semibold leading-tight` | Public booking page hero title only (`/agendar/[clinic-slug]`) |
 
-**Weights in use:** 400 (regular) and 600 (semibold). 500 is used only for labels (shadcn default for form labels). Maximum 3 active weights across any single view.
+**Weights in use:** 400 (regular) and 600 (semibold). Exactly 2 weights across all views. The shadcn Label component default (`font-medium`) must be overridden with `className="font-semibold"` on all usages.
 
 **PDF typography (separate contract — @react-pdf/renderer):**
 - Font family: Roboto (registered via `Font.register()`)
@@ -193,12 +193,14 @@ Components to add via `npx shadcn@latest add <name>` before implementation. The 
 
 ### Agenda Page Layout
 
+**Primary focal point:** The FullCalendar timeGridWeek grid is the primary visual anchor of the Agenda screen. All surrounding UI elements (header row, dentist dropdown, navigation buttons) are secondary and must not compete visually with the calendar grid.
+
 ```
 ┌─────────────────────────────────────────────────────┐
 │ Header row: [Dentist Select ▼]  [Semana atual]  [+] │  h-14, px-4
 │ ─────────────────────────────────────────────────── │
 │                                                     │
-│  FullCalendar timeGridWeek                          │
+│  FullCalendar timeGridWeek  ← PRIMARY FOCAL POINT   │
 │  slotMinTime: 07:00 / slotMaxTime: 20:00            │
 │  locale: pt-br                                      │
 │  allDaySlot: false                                  │
@@ -382,6 +384,7 @@ Masking is handled server-side via `users_masked` view (Phase 1). Components alw
 | Form error messages | All RHF errors rendered via `<FormMessage>` (shadcn Form component) — `role="alert"` applied automatically |
 | Destructive confirmation dialogs | Focus must land on "Cancel" (safe action) button first. Destructive button is not the default focus. |
 | Touch targets (public pages) | Minimum 44×44px on `/agendar` and `/anamnese` — use `min-h-[44px]` + `min-w-[44px]` on all clickable elements |
+| Agenda header [+] button (icon-only) | Must have `aria-label="Novo Agendamento"` on the button element. Alternatively, render as labeled button "+ Novo Agendamento" to avoid the icon-only pattern entirely. |
 
 ---
 
