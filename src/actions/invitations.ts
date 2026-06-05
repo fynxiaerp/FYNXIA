@@ -217,28 +217,20 @@ export async function acceptInvitation(
 
   const admin = createAdminClient()
 
-  // Look up invitation by token
-  const { data: invitation, error: lookupError } = await admin
+  // Atomic conditional update: claim the invitation in a single query to prevent
+  // race conditions (CR-01). If two concurrent requests both pass the status check
+  // before either writes, only the first UPDATE returning a row proceeds.
+  const { data: invitation, error: claimError } = await admin
     .from('invitations')
-    .select('id, tenant_id, email, role, status, expires_at')
+    .update({ status: 'accepted', accepted_at: new Date().toISOString() })
     .eq('token', token)
+    .eq('status', 'pending')
+    .gte('expires_at', new Date().toISOString())
+    .select('id, tenant_id, email, role')
     .single()
 
-  if (lookupError ?? !invitation) {
-    return { success: false, error: 'Convite inválido ou expirado' }
-  }
-
-  // Reject non-pending invitations
-  if (invitation.status !== 'pending') {
-    return { success: false, error: 'Este convite já foi utilizado ou foi revogado' }
-  }
-
-  // Reject expired invitations (T-01-16) — also update status for display accuracy
-  if (new Date(invitation.expires_at) < new Date()) {
-    await admin
-      .from('invitations')
-      .update({ status: 'expired' })
-      .eq('id', invitation.id)
+  if (claimError ?? !invitation) {
+    // Token not found, already consumed, revoked, or expired
     return { success: false, error: 'Convite inválido ou expirado' }
   }
 
@@ -271,12 +263,6 @@ export async function acceptInvitation(
     await admin.auth.admin.deleteUser(authUser.user.id)
     return { success: false, error: userRowError.message }
   }
-
-  // Mark invitation as accepted (single-use)
-  await admin
-    .from('invitations')
-    .update({ status: 'accepted', accepted_at: new Date().toISOString() })
-    .eq('id', invitation.id)
 
   // SEC-02: audit log
   await logBusinessEvent({
