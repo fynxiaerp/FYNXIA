@@ -278,10 +278,14 @@ export async function acceptInvitation(
 
   // Sign in the new user to establish a session
   const supabase = await createClient()
-  await supabase.auth.signInWithPassword({
+  const { error: signInError } = await supabase.auth.signInWithPassword({
     email: invitation.email,
     password,
   })
+  if (signInError) {
+    // WR-02: invitation is already consumed; surface the error so the user can log in manually
+    return { success: false, error: 'Conta criada. Acesse a página de login para entrar.' }
+  }
 
   // Redirect to role-appropriate home
   const home = invitation.role === 'patient' ? '/paciente' : '/clinica'
