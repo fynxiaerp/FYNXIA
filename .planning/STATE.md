@@ -3,20 +3,20 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 02-03-PLAN.md
-last_updated: "2026-06-05T21:59:03.386Z"
+stopped_at: Completed 02-04-PLAN.md
+last_updated: "2026-06-05T22:30:00.000Z"
 progress:
   total_phases: 6
   completed_phases: 2
   total_plans: 10
-  completed_plans: 9
-  percent: 90
+  completed_plans: 10
+  percent: 100
 ---
 
 # FYNXIA ERP — Project State
 
 **Last updated:** 2026-06-05
-**Updated by:** gsd-execute-phase (02-03 completion)
+**Updated by:** gsd-execute-phase (02-04 completion)
 
 ---
 
@@ -32,18 +32,18 @@ progress:
 
 ## Current Position
 
-Phase: 02 (clinical-mvp) — EXECUTING
-Plan: 4 of 4
+Phase: 02 (clinical-mvp) — COMPLETE
+Plan: 4 of 4 (COMPLETE)
 **Phase:** 2
-**Plan:** 02-04 — next up (Wave 3)
-**Status:** EXECUTING — 02-03 COMPLETE; ready to start 02-04
+**Plan:** 02-04 — COMPLETE (Wave 3)
+**Status:** Phase 2 fully complete — all 4 plans delivered
 
 ```
-Progress: [███████████████████████████░░░] 90% (9/10 plans complete)
+Progress: [██████████████████████████████] 100% (10/10 plans complete)
 
 Phase 0 [Complete] █████
 Phase 1 [Complete] █████
-Phase 2 [Executing — 02-03 complete, 02-04 next] ███░░
+Phase 2 [Complete] █████
 Phase 3 [Not started] ░░░░░
 Phase 4 [Not started] ░░░░░
 Phase 5 [Not started] ░░░░░
@@ -94,6 +94,8 @@ Phase 5 [Not started] ░░░░░
 | CPF plaintext; AES-256 em medical_history/allergies/medications via Server Action | CPF necessário para busca na recepção; dados de saúde nunca em plaintext no banco — ciphertext no audit log | 2026-06-05 |
 | dental_records policy INSERT-only (sem UPDATE/DELETE) | Preserva integridade do histórico do odontograma; override requer service role explícito | 2026-06-05 |
 | Anamnese public-token flow via service role na Server Action | Sem RLS write policy para unauthenticated inserts; validação de token single-use na camada de aplicação | 2026-06-05 |
+| PENDING sentinel para signature_hash (NOT NULL constraint) | Schema exige NOT NULL; 'PENDING' satisfaz o constraint sem alterar schema; UPDATE gate inclui signature_hash='PENDING' impedindo re-write pós-assinatura (D-20) | 2026-06-05 |
+| patient_id=null no agendamento público | Evita placeholder de CPF (violação unique + PII); recepcionista vincula paciente depois; dados de contato ficam em notes | 2026-06-05 |
 
 ### Critical Pre-Phase-0 Actions
 
@@ -144,8 +146,8 @@ Phase 5 [Not started] ░░░░░
 
 ## Session Continuity
 
-**Stopped at:** Completed 02-02-PLAN.md
+**Stopped at:** Completed 02-04-PLAN.md
 
 **Critical path:** Phase 0 → 1 → 2 → 4 → 5 (Phase 3 parallel with Phase 2)
 
-**Next action:** Start plan 02-03 (Wave 2) — Medical records (prontuário), dental chart (odontograma), and anamnesis. Patient CRUD + agenda are live.
+**Next action:** Phase 2 complete. Start Phase 3 (Financial MVP) or Phase 0 (Foundation infra). Phase 2 clinical MVP fully delivered: DB schema + RLS + migrations (02-01), patient CRUD + agenda (02-02), prontuário + odontograma + PDF (02-03), anamnese digital + agendamento público (02-04).

@@ -65,7 +65,7 @@
 - [x] 02-01-PLAN.md — Migrations clinicas (patients/appointments/medical_records/dental_records/anamneses) + btree_gist + EXCLUDE GIST + audit triggers + RLS + [BLOCKING] db push
 - [x] 02-02-PLAN.md — CRUD de pacientes (encrypt AES-256, anonimizacao LGPD) + agenda FullCalendar por dentista com tratamento de double-booking
 - [x] 02-03-PLAN.md — Prontuario clinico + odontograma SVG FDI (9 status) + PDF do prontuario (@react-pdf/renderer)
-- [ ] 02-04-PLAN.md — Anamnese digital (canvas + SHA-256 + token single-use) + link de agendamento publico
+- [x] 02-04-PLAN.md — Anamnese digital (canvas + SHA-256 + token single-use) + link de agendamento publico
 **UI hint**: yes
 
 ### Phase 3: Financial MVP

@@ -42,8 +42,8 @@
 - [ ] **CLINIC-05**: Dentista pode registrar prontuário clínico com diagnóstico, plano de tratamento e prescrições
 - [ ] **CLINIC-06**: Dentista pode registrar ocorrências no odontograma interativo por dente (hígido, cariado, extraído, em tratamento)
 - [ ] **CLINIC-07**: Sistema exibe histórico de atendimentos completo por paciente em ordem cronológica
-- [ ] **CLINIC-08**: Paciente assina anamnese digitalmente com captura de timestamp e IP (requisito CFO)
-- [ ] **CLINIC-09**: Usuário pode gerar link de agendamento online para o paciente
+- [x] **CLINIC-08**: Paciente assina anamnese digitalmente com captura de timestamp e IP (requisito CFO)
+- [x] **CLINIC-09**: Usuário pode gerar link de agendamento online para o paciente
 
 ### FIN — Módulo Financeiro
 
@@ -126,8 +126,8 @@
 | CLINIC-05 | Phase 2 — Clinical MVP | Pending |
 | CLINIC-06 | Phase 2 — Clinical MVP | Pending |
 | CLINIC-07 | Phase 2 — Clinical MVP | Pending |
-| CLINIC-08 | Phase 2 — Clinical MVP | Pending |
-| CLINIC-09 | Phase 2 — Clinical MVP | Pending |
+| CLINIC-08 | Phase 2 — Clinical MVP | Complete |
+| CLINIC-09 | Phase 2 — Clinical MVP | Complete |
 | SEC-03 | Phase 2 — Clinical MVP | Pending |
 | SEC-04 | Phase 2 — Clinical MVP | Complete |
 | FIN-01 | Phase 3 — Financial MVP | Pending |
