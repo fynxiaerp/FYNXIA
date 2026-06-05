@@ -5,7 +5,9 @@ export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
   const token_hash = searchParams.get('token_hash')
   const type = searchParams.get('type') as 'invite' | 'recovery' | 'signup' | null
-  const next = searchParams.get('redirect_to') ?? '/clinica'
+  const rawNext = searchParams.get('redirect_to') ?? '/clinica'
+  // Validate that next is a relative path (CR-02: prevent open redirect via protocol-relative URLs)
+  const next = rawNext.startsWith('/') && !rawNext.startsWith('//') ? rawNext : '/clinica'
 
   if (token_hash && type) {
     const supabase = await createClient()
