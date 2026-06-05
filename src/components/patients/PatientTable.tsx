@@ -160,7 +160,9 @@ export function PatientTable({ patients, userRole }: PatientTableProps) {
               variant="ghost"
               size="sm"
               onClick={() =>
-                router.push(`/clinica/pacientes/${row.original.id}/editar`)
+                // WR-07: no `/editar` route exists — editing lives in the detail
+                // page's "Dados" tab. Route to the detail page to avoid a 404.
+                router.push(`/clinica/pacientes/${row.original.id}`)
               }
               aria-label={`Editar paciente ${row.original.full_name}`}
             >
