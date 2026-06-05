@@ -3,19 +3,19 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-06-05T13:53:53.857Z"
+last_updated: "2026-06-05T14:30:00.000Z"
 progress:
   total_phases: 6
   completed_phases: 2
   total_plans: 10
-  completed_plans: 6
-  percent: 60
+  completed_plans: 7
+  percent: 70
 ---
 
 # FYNXIA ERP — Project State
 
-**Last updated:** 2026-06-03
-**Updated by:** gsd-roadmapper
+**Last updated:** 2026-06-05
+**Updated by:** gsd-execute-phase (02-01 completion)
 
 ---
 
@@ -32,10 +32,10 @@ progress:
 ## Current Position
 
 Phase: 02 (clinical-mvp) — EXECUTING
-Plan: 1 of 4
+Plan: 2 of 4
 **Phase:** 2
-**Plan:** 02-01 — in progress (Tasks 0–2 complete; awaiting human db push at Task 3 checkpoint)
-**Status:** BLOCKED — awaiting `npx supabase db push` confirmation from human
+**Plan:** 02-02 — next up (Wave 2)
+**Status:** EXECUTING — 02-01 COMPLETE; ready to start 02-02
 
 ```
 Progress: [░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░] 0%
@@ -69,7 +69,7 @@ Phase 5 [Not started] ░░░░░
 |--------|--------|---------|
 | Requirements coverage | 47/47 | 47/47 mapped |
 | Phases defined | 6 | 6 |
-| Plans complete | TBD | 0 |
+| Plans complete | TBD | 1 (02-01) |
 | Phase 0 pitfalls resolved | 6/6 | 0/6 |
 
 ---
@@ -90,6 +90,9 @@ Phase 5 [Not started] ░░░░░
 | Phase 3 runs parallel to Phase 2 | Shares Phase 1 patient data model; accelerates financial validation | 2026-06-03 |
 | Phase 6 (Dashboard/Polish) deferred to v2 | No v1 requirements map to dashboard KPIs or franchise aggregation | 2026-06-03 |
 | Supabase FREE plan para MVP; sem Custom Access Token Hook | Hook é Pro-only; get_my_tenant_id()+get_my_role() SECURITY DEFINER substitui com segurança equivalente | 2026-06-03 |
+| CPF plaintext; AES-256 em medical_history/allergies/medications via Server Action | CPF necessário para busca na recepção; dados de saúde nunca em plaintext no banco — ciphertext no audit log | 2026-06-05 |
+| dental_records policy INSERT-only (sem UPDATE/DELETE) | Preserva integridade do histórico do odontograma; override requer service role explícito | 2026-06-05 |
+| Anamnese public-token flow via service role na Server Action | Sem RLS write policy para unauthenticated inserts; validação de token single-use na camada de aplicação | 2026-06-05 |
 
 ### Critical Pre-Phase-0 Actions
 
@@ -140,8 +143,8 @@ Phase 5 [Not started] ░░░░░
 
 ## Session Continuity
 
-**To resume work:** After `npx supabase db push` succeeds and types are regenerated, resume plan 02-01 Task 3 continuation.
+**Stopped at:** Completed 02-01-PLAN.md (2026-06-05)
 
 **Critical path:** Phase 0 → 1 → 2 → 4 → 5 (Phase 3 parallel with Phase 2)
 
-**Next action:** Human must run `npx supabase db push` to apply 3 Phase 2 clinical migrations (20260605000100, 20260605000200, 20260605000300), run post-push SQL verification, then `npx supabase gen types typescript --linked > src/types/database.types.ts`. Resume signal: type "pushed".
+**Next action:** Start plan 02-02 (Wave 2) — Patient CRUD Server Actions and UI. All 5 clinical tables are live on sa-east-1, types are regenerated, RLS is active.
