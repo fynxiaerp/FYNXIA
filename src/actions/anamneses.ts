@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/server'
 import { logBusinessEvent } from '@/lib/audit'
 import {
   sha256OfPngDataUrl,
+  cfoResponsesSchema,
   type CfoResponses,
 } from '@/lib/validators/anamnesis'
 
@@ -121,6 +122,14 @@ export async function submitAnamnesisPublic(
     return { success: false, error: 'Dados incompletos' }
   }
 
+  // CR-02: validate `responses` against the CFO schema before persisting via
+  // the service-role client (RLS bypassed). Rejects unknown keys / oversized
+  // payloads so arbitrary JSON cannot be injected into a clinical record.
+  const parsedResponses = cfoResponsesSchema.safeParse(responses)
+  if (!parsedResponses.success) {
+    return { success: false, error: 'Respostas inválidas' }
+  }
+
   const admin = createAdminClient()
   const { ip, userAgent } = await getRequestMeta()
 
@@ -134,7 +143,7 @@ export async function submitAnamnesisPublic(
     .from('anamneses')
     .update({
       signature_hash: signatureHash,
-      responses: responses as unknown as Record<string, unknown>,
+      responses: parsedResponses.data,
       ip_address: ip,
       user_agent: userAgent,
       signed_at: now,

@@ -26,22 +26,28 @@ export const CFO_QUESTIONS: CfoQuestion[] = [
 
 // ─── Anamnesis Zod Schema (v3) ───────────────────────────────────────────────
 
-// Responses are a record of boolean answers keyed by CFO_QUESTIONS keys
-const cfoResponsesSchema = z.object({
-  alergia_medicamento: z.boolean(),
-  alergia_anestesia: z.boolean(),
-  hipertensao: z.boolean(),
-  diabetes: z.boolean(),
-  problema_cardiaco: z.boolean(),
-  gravidez: z.boolean(),
-  uso_medicamento_continuo: z.boolean(),
-  problema_coagulacao: z.boolean(),
-  problema_renal: z.boolean(),
-  problema_respiratorio: z.boolean(),
-  cirurgia_recente: z.boolean(),
-  hepatite_ou_aids: z.boolean(),
-  observacoes: z.string().optional(),
-})
+// Responses are a record of boolean answers keyed by CFO_QUESTIONS keys.
+// Exported so the service-role public/presencial flows can validate the
+// untrusted `responses` payload before persisting it (CR-02). `.strict()`
+// rejects unknown keys; `observacoes` is length-bounded to close the public
+// JSONB injection surface (IN-01).
+export const cfoResponsesSchema = z
+  .object({
+    alergia_medicamento: z.boolean(),
+    alergia_anestesia: z.boolean(),
+    hipertensao: z.boolean(),
+    diabetes: z.boolean(),
+    problema_cardiaco: z.boolean(),
+    gravidez: z.boolean(),
+    uso_medicamento_continuo: z.boolean(),
+    problema_coagulacao: z.boolean(),
+    problema_renal: z.boolean(),
+    problema_respiratorio: z.boolean(),
+    cirurgia_recente: z.boolean(),
+    hepatite_ou_aids: z.boolean(),
+    observacoes: z.string().max(2000).optional(),
+  })
+  .strict()
 
 export const anamnesisSchema = z.object({
   responses: cfoResponsesSchema,
