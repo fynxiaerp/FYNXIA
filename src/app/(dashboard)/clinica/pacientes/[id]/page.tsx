@@ -139,23 +139,31 @@ export default async function PatientDetailPage({ params }: Props) {
 
         <TabsContent value="prontuario" className="mt-6">
           <div className="flex min-h-[200px] flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
-            <p className="text-base font-semibold text-muted-foreground">
-              Disponível após Plano 03
-            </p>
+            <p className="text-base font-semibold">Prontuário Clínico</p>
             <p className="mt-2 text-sm text-muted-foreground">
-              O módulo de prontuário clínico será entregue no Plano 02-03.
+              Acesse o prontuário completo para registrar atendimentos, histórico e gerar o PDF.
             </p>
+            <Link
+              href={`/clinica/pacientes/${patient.id}/prontuario`}
+              className="mt-4 inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow hover:bg-primary/90"
+            >
+              Abrir Prontuário
+            </Link>
           </div>
         </TabsContent>
 
         <TabsContent value="odontograma" className="mt-6">
           <div className="flex min-h-[200px] flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
-            <p className="text-base font-semibold text-muted-foreground">
-              Disponível após Plano 03
-            </p>
+            <p className="text-base font-semibold">Odontograma</p>
             <p className="mt-2 text-sm text-muted-foreground">
-              O odontograma interativo será entregue no Plano 02-03.
+              Visualize e registre o estado dentário do paciente no odontograma SVG interativo.
             </p>
+            <Link
+              href={`/clinica/pacientes/${patient.id}/odontograma`}
+              className="mt-4 inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow hover:bg-primary/90"
+            >
+              Abrir Odontograma
+            </Link>
           </div>
         </TabsContent>
 
