@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: planning
-last_updated: "2026-06-05T05:46:09.262Z"
+status: executing
+last_updated: "2026-06-05T13:53:53.857Z"
 progress:
   total_phases: 6
   completed_phases: 2
-  total_plans: 6
+  total_plans: 10
   completed_plans: 6
-  percent: 100
+  percent: 60
 ---
 
 # FYNXIA ERP — Project State
@@ -31,11 +31,11 @@ progress:
 
 ## Current Position
 
-Phase: 01 (auth-tenant-onboarding) — EXECUTING
-Plan: 1 of 3
+Phase: 02 (clinical-mvp) — EXECUTING
+Plan: 1 of 4
 **Phase:** 2
-**Plan:** Not started
-**Status:** Ready to plan
+**Plan:** 02-01 — in progress (Tasks 0–2 complete; awaiting human db push at Task 3 checkpoint)
+**Status:** BLOCKED — awaiting `npx supabase db push` confirmation from human
 
 ```
 Progress: [░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░] 0%
@@ -140,8 +140,8 @@ Phase 5 [Not started] ░░░░░
 
 ## Session Continuity
 
-**To resume work:** Run `/gsd-execute-phase 0` para executar os 3 planos da Fase 0 (Foundation).
+**To resume work:** After `npx supabase db push` succeeds and types are regenerated, resume plan 02-01 Task 3 continuation.
 
 **Critical path:** Phase 0 → 1 → 2 → 4 → 5 (Phase 3 parallel with Phase 2)
 
-**Next action:** Execute Phase 0 — 3 planos prontos (Wave 1: scaffold, Wave 2: migrations SQL, Wave 3: db push + verificação). Plan 03 requer confirmação manual da região sa-east-1 antes do push.
+**Next action:** Human must run `npx supabase db push` to apply 3 Phase 2 clinical migrations (20260605000100, 20260605000200, 20260605000300), run post-push SQL verification, then `npx supabase gen types typescript --linked > src/types/database.types.ts`. Resume signal: type "pushed".
