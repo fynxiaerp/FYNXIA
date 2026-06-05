@@ -143,4 +143,10 @@ describe('proxy.ts source content assertions', () => {
   it('marks /auth/confirm as public route (Pitfall 5)', () => {
     expect(proxySource).toContain('/auth/confirm')
   })
+
+  // Added in Plan 02-04 (Task 3): /anamnese must bypass auth for public token flow.
+  // This assertion will be RED until proxy.ts is updated in Task 3.
+  it('marks /anamnese as public route (CLINIC-08 — public token anamnesis flow)', () => {
+    expect(proxySource).toContain('/anamnese')
+  })
 })
