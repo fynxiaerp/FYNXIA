@@ -88,6 +88,10 @@ CREATE TRIGGER audit_clinics
 CREATE TRIGGER audit_users
   AFTER INSERT OR UPDATE OR DELETE ON public.users
   FOR EACH ROW EXECUTE FUNCTION public.audit_table_changes();
+-- CR-03: audit invitations at DB level so dashboard edits and direct SQL are captured (LGPD/SEC-02)
+CREATE TRIGGER audit_invitations
+  AFTER INSERT OR UPDATE OR DELETE ON public.invitations
+  FOR EACH ROW EXECUTE FUNCTION public.audit_table_changes();
 
 -- ============ future audit_logs partitions (Pitfall 7) ============
 CREATE TABLE public.audit_logs_2026_07 PARTITION OF public.audit_logs
