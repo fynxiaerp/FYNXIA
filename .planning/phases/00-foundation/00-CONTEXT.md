@@ -53,6 +53,8 @@ All 6 critical pitfalls from PITFALLS.md are resolved here before any feature co
 - **D-09:** Phase 0 CI uses **Vercel Preview Deployments** only — every push/PR triggers a preview build. No GitHub Actions setup in this phase. Build includes: `next build` (catches TypeScript errors since `strict: true`) + ESLint. 
 - **D-10:** GitHub Actions with RLS integration tests deferred to Phase 1 when auth flow exists to generate real JWTs for testing.
 
+**D-11:** Supabase FREE plan durante o MVP. **Custom Access Token Hook (Auth Hooks) é exclusivo do plano Pro** — não será implementado na Fase 0. Alternativa adotada: duas funções SECURITY DEFINER (`get_my_tenant_id()` + `get_my_role()`) leem `tenant_id` e `role` diretamente de `public.users` via `auth.uid()`. Todas as políticas RLS usam essas funções — sem dependência de JWT claims. Upgrade path: ao migrar para Pro, o hook pode ser adicionado como otimização de performance (reduz lookups por query), sem mudança na lógica de isolamento.
+
 ### Claude's Discretion
 - Exact shadcn/ui theme configuration (colors, radius) — can use neutral defaults
 - ESLint rule set beyond `next/core-web-vitals` — standard recommended config
