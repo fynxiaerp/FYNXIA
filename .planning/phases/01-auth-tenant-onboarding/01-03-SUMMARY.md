@@ -57,6 +57,9 @@ key_files:
   modified:
     - .env.local.example (added RESEND_FROM_EMAIL)
     - package.json (added @react-email/components, react-email)
+    - src/components/auth/SignupForm.tsx (show actual server error — fix 79230d1)
+    - src/actions/invitations.ts (expose actual Resend error — fix 31f3f27)
+    - src/proxy.ts (add /api/invitations to public routes — fix d1b9468)
 decisions:
   - "createUser() path (not inviteUserByEmail) chosen for invite flow — no Supabase native email; app manages token in invitations table; Resend sends FYNXIA-branded email only (D-16, additional_decisions)"
   - "Invite token stored in invitations.token (UUID gen_random_uuid); acceptInvitation validates status=pending AND expires_at >= now() (T-01-16)"
@@ -65,11 +68,11 @@ decisions:
   - "Re-invite flow: UPDATE status='revoked' WHERE status='pending' THEN INSERT new pending row — partial unique index (tenant_id,email) WHERE status='pending' prevents duplicates"
   - "InviteAcceptForm is a Client Component co-located in app/invite/[token]/ — acceptable for a public one-time-use page"
 metrics:
-  duration_minutes: 45
-  tasks_completed: 3
+  duration_minutes: 75
+  tasks_completed: 4
   tasks_total: 4
   files_created: 11
-  files_modified: 2
+  files_modified: 4
   completed_date: "2026-06-05"
 ---
 
@@ -174,9 +177,19 @@ metrics:
 - `/invite/[token]` (dynamic — Server Component)
 - `/api/invitations` (dynamic — route handler, nodejs runtime)
 
-## Task 4: Checkpoint
+### Task 4: Human verification — CLEARED
 
-STOPPED at Task 4 (`type="checkpoint:human-verify"`). See checkpoint message below for verification steps.
+All 7 verification steps passed by the user:
+
+1. Signup — clinic + admin created, redirect to /clinica
+2. Email invite — Resend delivered FYNXIA-branded invite to real inbox
+3. Accept invite — dentist logged in with correct Perfil: Dentist and RBAC
+4. Re-invite — previous invite revoked, new one sent (single-pending enforced)
+5. Direct creation — receptionist created without email, account functional at /login
+6. Public API — `POST /api/invitations` returned 201 with correct requestId
+7. Audit logs — INVITE_SENT, INVITE_ACCEPTED, USER_CREATED_DIRECT, PATIENT_SELF_REGISTER_REQUEST all present with correct tenant_id
+
+Three bug fixes were applied during verification (documented in Deviations below).
 
 ## Deviations from Plan
 
@@ -199,6 +212,29 @@ STOPPED at Task 4 (`type="checkpoint:human-verify"`). See checkpoint message bel
 - **Issue:** The invitations table has `invited_by UUID NOT NULL REFERENCES public.users(id)`. A patient self-register request has no authenticated actor. The plan said "invited_by = clinic owner or NULL-safe system actor" — but the column is NOT NULL.
 - **Fix:** The route resolves the clinic admin user (`role='admin'` for the tenant) and uses that ID as `invited_by`. This is semantically correct: the clinic admin implicitly owns all pending patient requests until a receptionist confirms in Phase 2.
 - **Files modified:** `src/app/api/invitations/route.ts`
+
+### Fixes Applied During Human Verification (Task 4)
+
+**4. [Rule 1 - Bug] SignupForm showed generic error instead of server error**
+- **Found during:** Task 4 verification — step 1 (signup)
+- **Issue:** `src/components/auth/SignupForm.tsx` returned a hardcoded generic error message instead of propagating the actual server error from the `signup` Server Action. When signup failed (e.g., email already exists), users saw a useless generic message.
+- **Fix:** Updated `SignupForm.tsx` to display the actual `result.error` string returned by the action.
+- **Files modified:** `src/components/auth/SignupForm.tsx`
+- **Commit:** `79230d1` — fix(01-02): show actual server error in signup form instead of generic message
+
+**5. [Rule 1 - Bug] Invite failure masked actual Resend error**
+- **Found during:** Task 4 verification — step 2 (email invite)
+- **Issue:** `createInvitation` in `invitations.ts` swallowed the Resend API error and returned a generic "Erro ao enviar e-mail de convite" message with no actionable detail. When `RESEND_API_KEY` is missing or invalid, debugging was impossible.
+- **Fix:** Updated error return to include `emailError.message` (Resend's error detail) appended to the user-facing string.
+- **Files modified:** `src/actions/invitations.ts`
+- **Commit:** `31f3f27` — fix(01-03): expose actual Resend error in invite failure message
+
+**6. [Rule 3 - Blocking Issue] /api/invitations not listed as public route in proxy.ts**
+- **Found during:** Task 4 verification — step 6 (public API curl test)
+- **Issue:** `src/proxy.ts` matched `/api/*` as a general public pattern but the middleware was still returning 401 on `POST /api/invitations` because the route was not explicitly exempted. The patient self-register endpoint (D-10) requires no auth.
+- **Fix:** Added `/api/invitations` as an explicit public route entry in `proxy.ts` matcher config.
+- **Files modified:** `src/proxy.ts`
+- **Commit:** `d1b9468` — fix(01-02): add /api/invitations to public API routes for patient self-registration (D-10)
 
 ## Known Stubs
 
@@ -237,11 +273,16 @@ No new threat surface beyond what the plan's `<threat_model>` covers. All six ST
 - src/components/invitations/InviteForm.tsx — FOUND
 - src/app/(dashboard)/clinica/equipe/page.tsx — FOUND
 - src/__tests__/auth/invitations.test.ts — FOUND
+- src/components/auth/SignupForm.tsx — FOUND (modified: fix 79230d1)
+- src/proxy.ts — FOUND (modified: fix d1b9468)
 
 ### Commits verified:
 - a8475a5 — feat(01-03): Resend wrapper + FYNXIA-branded email templates + invitation validators
 - f9ea8b1 — feat(01-03): Invitation Server Actions + patient self-register API + accept page
 - 453f2e9 — feat(01-03): Admin team page with InviteForm (email + direct modes)
+- 79230d1 — fix(01-02): show actual server error in signup form instead of generic message
+- 31f3f27 — fix(01-03): expose actual Resend error in invite failure message
+- d1b9468 — fix(01-02): add /api/invitations to public API routes for patient self-registration (D-10)
 
 ### Verification commands passed:
 - `npx vitest run src/__tests__/auth/invitations.test.ts` — 18/18 tests GREEN
@@ -249,3 +290,4 @@ No new threat surface beyond what the plan's `<threat_model>` covers. All six ST
 - `npx tsc --noEmit` — exit 0
 - `npm run build` — succeeded (13 routes compiled)
 - `grep -c "logBusinessEvent" src/actions/invitations.ts` — 5 (1 import + 4 call sites >= 4 required)
+- Human verification: all 7 steps approved
