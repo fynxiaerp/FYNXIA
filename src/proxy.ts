@@ -39,10 +39,11 @@ export async function proxy(request: NextRequest) {
   // Auth confirm is a public token-exchange route — must NOT require a session (Pitfall 5)
   const isAuthCallbackRoute = pathname.startsWith('/auth/confirm')
 
-  // Only specific API routes are public — health check and webhook endpoints
+  // Only specific API routes are public — health check, webhooks, patient self-register (D-10)
   const isPublicApiRoute =
     pathname === '/api/health' ||
-    pathname.startsWith('/api/webhooks/')
+    pathname.startsWith('/api/webhooks/') ||
+    pathname === '/api/invitations'  // public patient self-registration endpoint
 
   // Unauthenticated user accessing a protected route → redirect to login
   if (!user && !isAuthRoute && !isPublicApiRoute && !isPublicRoute && !isAuthCallbackRoute) {
