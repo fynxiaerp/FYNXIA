@@ -3,6 +3,71 @@ import { z } from 'zod'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { logBusinessEvent } from '@/lib/audit'
 
+// ─── getBookedSlots ───────────────────────────────────────────────────────────
+// CLINIC-09: Returns the list of occupied start_time ISO strings for a given
+// dentist on a given date, so the public booking form can disable those slots.
+//
+// Uses service-role client (createAdminClient) — no auth session in public flow.
+// Tenant resolved by clinic slug (same pattern as createPublicAppointment).
+// Excludes appointments with status='cancelado' (matching the GIST constraint).
+// Returns [] on any validation/lookup error — never leaks details to public callers.
+
+const bookedSlotsInputSchema = z.object({
+  clinicSlug: z.string().min(1),
+  dentistId: z.string().uuid(),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+})
+
+export async function getBookedSlots(
+  clinicSlug: string,
+  dentistId: string,
+  date: string
+): Promise<string[]> {
+  const parsed = bookedSlotsInputSchema.safeParse({ clinicSlug, dentistId, date })
+  if (!parsed.success) return []
+
+  const admin = createAdminClient()
+
+  // Resolve clinic by slug
+  const { data: clinic } = await admin
+    .from('clinics')
+    .select('id')
+    .eq('slug', parsed.data.clinicSlug)
+    .is('deleted_at', null)
+    .single()
+
+  if (!clinic) return []
+
+  // CR-01: verify the dentist belongs to this clinic
+  const { data: dentist } = await admin
+    .from('users')
+    .select('id')
+    .eq('id', parsed.data.dentistId)
+    .eq('tenant_id', clinic.id)
+    .eq('role', 'dentist')
+    .is('deleted_at', null)
+    .single()
+
+  if (!dentist) return []
+
+  // Query appointments for this dentist on this date (Brazil -03:00, no DST)
+  // Range: [date 00:00:00-03:00, date+1 00:00:00-03:00)
+  const rangeStart = `${parsed.data.date}T00:00:00-03:00`
+  const nextDate = new Date(new Date(`${parsed.data.date}T00:00:00-03:00`).getTime() + 24 * 60 * 60 * 1000)
+  const rangeEnd = nextDate.toISOString()
+
+  const { data: appointments } = await admin
+    .from('appointments')
+    .select('start_time')
+    .eq('tenant_id', clinic.id)
+    .eq('dentist_id', parsed.data.dentistId)
+    .gte('start_time', rangeStart)
+    .lt('start_time', rangeEnd)
+    .neq('status', 'cancelado')
+
+  return (appointments ?? []).map((a) => a.start_time)
+}
+
 // ─── Public Booking Types ─────────────────────────────────────────────────────
 
 export interface PublicBookingInput {

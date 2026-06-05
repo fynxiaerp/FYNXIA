@@ -1,6 +1,6 @@
 'use client'
 import { useState, useTransition } from 'react'
-import { createPublicAppointment, type PublicBookingInput } from '@/actions/public-booking'
+import { createPublicAppointment, getBookedSlots, type PublicBookingInput } from '@/actions/public-booking'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { AlertCircle, CheckCircle2, RefreshCw, Clock } from 'lucide-react'
 
@@ -11,12 +11,16 @@ import { AlertCircle, CheckCircle2, RefreshCw, Clock } from 'lucide-react'
 // UI-SPEC Public Booking Page Layout:
 // Step 1 → Dentista selection
 // Step 2 → Data selection (date picker)
-// Step 3 → Slot selection (available slots grid)
+// Step 3 → Slot selection (available slots grid) — booked slots disabled
 // Step 4 → Contact info (name/phone/email) + CTA "Confirmar Agendamento"
 //
 // Error state: 23P01 → "Horário indisponível" Alert + [Recarregar horários] button
 // Empty state: "Sem horários disponíveis" when no slots
 // Touch targets: min-h 44px for all interactive elements (WCAG 2.5.5)
+//
+// CLINIC-09 fix: datetimes sent with -03:00 offset (Brazil/São Paulo, no DST
+// since 2019) so they satisfy publicBookingSchema z.string().datetime({offset:true}).
+// Booked slots are fetched via getBookedSlots on date select and marked disabled.
 
 interface Dentist {
   id: string
@@ -24,9 +28,9 @@ interface Dentist {
 }
 
 interface TimeSlot {
-  start_time: string
-  end_time: string
-  label: string // e.g. "09:00 – 09:30"
+  start_time: string  // ISO datetime with -03:00 offset
+  end_time: string    // ISO datetime with -03:00 offset
+  label: string       // e.g. "09:00 – 09:30"
 }
 
 interface PublicBookingFormProps {
@@ -34,10 +38,15 @@ interface PublicBookingFormProps {
   dentists: Dentist[]
 }
 
-// Generate 30-minute slots from 08:00 to 18:00 for a given date
+// Generate 30-minute slots from 08:00 to 18:00 for a given date.
+// CLINIC-09 fix: produces start_time/end_time with -03:00 offset so they pass
+// publicBookingSchema z.string().datetime({offset:true}).
 function generateSlots(dateStr: string): TimeSlot[] {
   const slots: TimeSlot[] = []
   const [year, month, day] = dateStr.split('-').map(Number)
+  const yy = String(year!).padStart(4, '0')
+  const mm = String(month!).padStart(2, '0')
+  const dd = String(day!).padStart(2, '0')
   let hour = 8
   let minute = 0
   while (hour < 18) {
@@ -51,8 +60,9 @@ function generateSlots(dateStr: string): TimeSlot[] {
     }
     const endHStr = String(endH).padStart(2, '0')
     const endMStr = String(endM).padStart(2, '0')
-    const start = `${year!}-${String(month!).padStart(2,'0')}-${String(day!).padStart(2,'0')}T${startH}:${startM}:00`
-    const end = `${year!}-${String(month!).padStart(2,'0')}-${String(day!).padStart(2,'0')}T${endHStr}:${endMStr}:00`
+    // -03:00 offset: Brazil/São Paulo fixed offset (no DST since 2019)
+    const start = `${yy}-${mm}-${dd}T${startH}:${startM}:00-03:00`
+    const end   = `${yy}-${mm}-${dd}T${endHStr}:${endMStr}:00-03:00`
     slots.push({ start_time: start, end_time: end, label: `${startH}:${startM} – ${endHStr}:${endMStr}` })
     minute += 30
     if (minute >= 60) {
@@ -61,6 +71,11 @@ function generateSlots(dateStr: string): TimeSlot[] {
     }
   }
   return slots
+}
+
+// Compare two ISO datetime strings by instant (handles mixed UTC/offset formats)
+function sameInstant(a: string, b: string): boolean {
+  return new Date(a).getTime() === new Date(b).getTime()
 }
 
 // Format a date for display
@@ -90,7 +105,16 @@ export function PublicBookingForm({ clinicSlug, dentists }: PublicBookingFormPro
   const [success, setSuccess] = useState(false)
   const [isPending, startTransition] = useTransition()
 
+  // CLINIC-09: booked slots state — set of occupied start_time instants (ms)
+  const [bookedInstants, setBookedInstants] = useState<Set<number>>(new Set())
+  const [isFetchingSlots, setIsFetchingSlots] = useState(false)
+
   const slots = selectedDate ? generateSlots(selectedDate) : []
+
+  function isSlotBooked(slot: TimeSlot): boolean {
+    const slotMs = new Date(slot.start_time).getTime()
+    return bookedInstants.has(slotMs)
+  }
 
   function handleDentistSelect(d: Dentist) {
     setSelectedDentist(d)
@@ -102,9 +126,23 @@ export function PublicBookingForm({ clinicSlug, dentists }: PublicBookingFormPro
     setSelectedSlot(null)
     setSlotConflict(false)
     setStep(3)
+
+    // CLINIC-09: fetch booked slots for this dentist/date so we can disable them
+    if (selectedDentist && date) {
+      setIsFetchingSlots(true)
+      setBookedInstants(new Set())
+      startTransition(async () => {
+        const occupied = await getBookedSlots(clinicSlug, selectedDentist.id, date)
+        // Normalise to ms instants for offset-agnostic comparison
+        const instants = new Set(occupied.map((t) => new Date(t).getTime()))
+        setBookedInstants(instants)
+        setIsFetchingSlots(false)
+      })
+    }
   }
 
   function handleSlotSelect(slot: TimeSlot) {
+    if (isSlotBooked(slot)) return // guard: disabled slots must not be selectable
     setSelectedSlot(slot)
     setSlotConflict(false)
     setStep(4)
@@ -113,6 +151,17 @@ export function PublicBookingForm({ clinicSlug, dentists }: PublicBookingFormPro
   function handleReloadSlots() {
     setSelectedSlot(null)
     setSlotConflict(false)
+    // Re-fetch availability when reloading after 23P01
+    if (selectedDentist && selectedDate) {
+      setIsFetchingSlots(true)
+      setBookedInstants(new Set())
+      startTransition(async () => {
+        const occupied = await getBookedSlots(clinicSlug, selectedDentist.id, selectedDate)
+        const instants = new Set(occupied.map((t) => new Date(t).getTime()))
+        setBookedInstants(instants)
+        setIsFetchingSlots(false)
+      })
+    }
     setStep(3)
   }
 
@@ -122,8 +171,16 @@ export function PublicBookingForm({ clinicSlug, dentists }: PublicBookingFormPro
       return
     }
 
+    // Guard: slot may have been booked between selection and submit
+    if (isSlotBooked(selectedSlot)) {
+      setSlotConflict(true)
+      setStep(3)
+      return
+    }
+
     const input: PublicBookingInput = {
       dentist_id: selectedDentist.id,
+      // start_time and end_time now carry -03:00 offset — satisfies datetime({offset:true})
       start_time: selectedSlot.start_time,
       end_time: selectedSlot.end_time,
       requester_name: name.trim(),
@@ -262,25 +319,34 @@ export function PublicBookingForm({ clinicSlug, dentists }: PublicBookingFormPro
             </Alert>
           )}
 
-          {slots.length === 0 ? (
+          {isFetchingSlots ? (
+            <p className="text-sm text-muted-foreground">Verificando disponibilidade...</p>
+          ) : slots.length === 0 ? (
             <p className="text-sm text-muted-foreground">Sem horários disponíveis.</p>
           ) : (
             <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-              {slots.map((slot) => (
-                <button
-                  key={slot.start_time}
-                  type="button"
-                  onClick={() => handleSlotSelect(slot)}
-                  className={`min-h-[44px] flex items-center justify-center gap-1 rounded-md border px-2 py-2 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
-                    selectedSlot?.start_time === slot.start_time
-                      ? 'border-primary bg-primary/5 text-primary'
-                      : 'border-input bg-card hover:bg-accent/50'
-                  }`}
-                >
-                  <Clock className="size-3 shrink-0" />
-                  {slot.label}
-                </button>
-              ))}
+              {slots.map((slot) => {
+                const booked = isSlotBooked(slot)
+                return (
+                  <button
+                    key={slot.start_time}
+                    type="button"
+                    onClick={() => handleSlotSelect(slot)}
+                    disabled={booked}
+                    aria-label={booked ? `${slot.label} — indisponível` : slot.label}
+                    className={`min-h-[44px] flex items-center justify-center gap-1 rounded-md border px-2 py-2 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                      booked
+                        ? 'cursor-not-allowed border-input bg-muted text-muted-foreground opacity-50'
+                        : selectedSlot?.start_time === slot.start_time
+                        ? 'border-primary bg-primary/5 text-primary'
+                        : 'border-input bg-card hover:bg-accent/50'
+                    }`}
+                  >
+                    <Clock className="size-3 shrink-0" />
+                    {slot.label}
+                  </button>
+                )
+              })}
             </div>
           )}
         </section>
