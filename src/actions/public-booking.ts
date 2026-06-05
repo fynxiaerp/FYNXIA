@@ -1,4 +1,5 @@
 'use server'
+import { z } from 'zod'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { logBusinessEvent } from '@/lib/audit'
 
@@ -13,6 +14,19 @@ export interface PublicBookingInput {
   requester_phone: string
   requester_email?: string
 }
+
+// ─── Public Booking Zod Schema (CR-01) ────────────────────────────────────────
+// This action runs under the service-role client (RLS bypassed), so the
+// untrusted public payload MUST be validated strictly before use. Bounds the
+// free-text fields (they end up in `notes`) and enforces UUID/ISO-datetime shapes.
+const publicBookingSchema = z.object({
+  dentist_id: z.string().uuid('Dentista inválido'),
+  start_time: z.string().datetime({ offset: true }),
+  end_time: z.string().datetime({ offset: true }),
+  requester_name: z.string().trim().min(2, 'Nome inválido').max(120),
+  requester_phone: z.string().trim().min(8, 'Telefone inválido').max(20),
+  requester_email: z.string().trim().email().max(160).optional().or(z.literal('')),
+})
 
 // ─── createPublicAppointment ──────────────────────────────────────────────────
 // CLINIC-09: Paciente agenda sem login via /agendar/[clinic-slug].
@@ -29,12 +43,19 @@ export async function createPublicAppointment(
   clinicSlug: string,
   input: PublicBookingInput
 ): Promise<{ success: boolean; id?: string; error?: string }> {
-  if (!clinicSlug || !input.dentist_id || !input.start_time || !input.end_time) {
+  if (!clinicSlug) {
     return { success: false, error: 'Dados incompletos para o agendamento' }
   }
 
+  // CR-01: strict validation of the untrusted public payload (service-role flow).
+  const parsed = publicBookingSchema.safeParse(input)
+  if (!parsed.success) {
+    return { success: false, error: 'Dados incompletos para o agendamento' }
+  }
+  const data = parsed.data
+
   // Validate end_time > start_time
-  if (new Date(input.end_time) <= new Date(input.start_time)) {
+  if (new Date(data.end_time) <= new Date(data.start_time)) {
     return { success: false, error: 'Horário de fim deve ser posterior ao horário de início' }
   }
 
@@ -52,13 +73,30 @@ export async function createPublicAppointment(
     return { success: false, error: 'Clínica não encontrada' }
   }
 
+  // CR-01: verify the dentist exists, has role 'dentist', and belongs to THIS
+  // clinic. The appointments.dentist_id FK references users(id) globally (not
+  // tenant-scoped), so without this check a caller could inject a foreign
+  // dentist_id and mix tenant_id = clinic.id with another tenant's user.
+  const { data: dentist } = await admin
+    .from('users')
+    .select('id')
+    .eq('id', data.dentist_id)
+    .eq('tenant_id', clinic.id)
+    .eq('role', 'dentist')
+    .is('deleted_at', null)
+    .single()
+
+  if (!dentist) {
+    return { success: false, error: 'Dentista inválido para esta clínica' }
+  }
+
   // Build notes with requester contact info (staff links patient later)
   const notesLines = [
-    `Solicitante: ${input.requester_name}`,
-    `Telefone: ${input.requester_phone}`,
+    `Solicitante: ${data.requester_name}`,
+    `Telefone: ${data.requester_phone}`,
   ]
-  if (input.requester_email) {
-    notesLines.push(`E-mail: ${input.requester_email}`)
+  if (data.requester_email) {
+    notesLines.push(`E-mail: ${data.requester_email}`)
   }
   notesLines.push('[Agendamento público — vincular paciente na recepção]')
   const notes = notesLines.join('\n')
@@ -68,10 +106,10 @@ export async function createPublicAppointment(
     .from('appointments')
     .insert({
       tenant_id: clinic.id,
-      dentist_id: input.dentist_id,
+      dentist_id: data.dentist_id,
       patient_id: null, // linked by receptionist after
-      start_time: input.start_time,
-      end_time: input.end_time,
+      start_time: data.start_time,
+      end_time: data.end_time,
       status: 'agendado',
       source: 'publico',
       notes,
