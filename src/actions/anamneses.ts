@@ -222,20 +222,26 @@ export async function submitAnamnesisPresencial(
     return { success: false, error: 'Permissão insuficiente para registrar anamnese' }
   }
 
+  // WR-01: validate responses (defense in depth — same schema as public flow).
+  const parsedResponses = cfoResponsesSchema.safeParse(responses)
+  if (!parsedResponses.success) {
+    return { success: false, error: 'Respostas inválidas' }
+  }
+
   const { ip, userAgent } = await getRequestMeta()
   const signatureHash = sha256OfPngDataUrl(signatureDataUrl)
   const now = new Date().toISOString()
 
-  // Use admin client so INSERT bypasses RLS (same rationale as public flow — no RLS write policy)
-  const admin = createAdminClient()
-
-  const { data: inserted, error: insertError } = await admin
+  // WR-01: presencial flow IS authenticated AND has an RLS insert policy
+  // (anamneses_staff_insert). Use the RLS-aware client so the DB-level
+  // tenant-isolation WITH CHECK applies (defense in depth) — no service role.
+  const { data: inserted, error: insertError } = await supabase
     .from('anamneses')
     .insert({
       tenant_id: actor.tenant_id,
       patient_id: patientId,
       signature_hash: signatureHash,
-      responses: responses as unknown as Record<string, unknown>,
+      responses: parsedResponses.data,
       ip_address: ip,
       user_agent: userAgent,
       flow: 'presencial',
