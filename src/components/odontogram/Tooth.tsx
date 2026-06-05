@@ -79,7 +79,14 @@ export function mapDentalRecordsToToothStatus(
 
   for (const record of records) {
     const existing = statusMap[record.tooth_number]
-    if (!existing || record.created_at > existing.created_at) {
+    // WR-04: compare as timestamps, not lexicographically — timestamptz values
+    // serialized with differing precision/offset (e.g. `+00:00` vs `Z`) would
+    // sort incorrectly as strings and show a stale tooth status.
+    if (
+      !existing ||
+      new Date(record.created_at).getTime() >
+        new Date(existing.created_at).getTime()
+    ) {
       statusMap[record.tooth_number] = {
         status: record.status,
         created_at: record.created_at,
