@@ -67,7 +67,11 @@ export async function signUpClinic(formData: FormData) {
 
   // Step 4: Sign in the newly created user (establishes session cookies)
   const supabase = await createClient()
-  await supabase.auth.signInWithPassword({ email, password })
+  const { error: signInError } = await supabase.auth.signInWithPassword({ email, password })
+  if (signInError) {
+    // WR-01: surface sign-in failure so the user is not silently redirected without a session
+    return { error: 'Conta criada, mas não foi possível autenticar automaticamente. Faça login.' }
+  }
 
   redirect('/clinica')
 }
