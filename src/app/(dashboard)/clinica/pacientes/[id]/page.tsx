@@ -1,6 +1,6 @@
-import { headers } from 'next/headers'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { createClient } from '@/lib/supabase/server'
 import { getPatientDecrypted } from '@/actions/patients'
 import { PatientForm } from '@/components/patients/PatientForm'
 import { PatientDeleteDialog } from '@/components/patients/PatientDeleteDialog'
@@ -28,8 +28,16 @@ interface Props {
 export default async function PatientDetailPage({ params }: Props) {
   const { id } = await params
 
-  const headersList = await headers()
-  const userRole = headersList.get('x-user-role') ?? 'receptionist'
+  // WR-03: derive the role from a fresh authenticated lookup — do NOT trust the
+  // forwarded `x-user-role` header for masking / edit-gating security decisions.
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  const { data: actor } = user
+    ? await supabase.from('users').select('role').eq('id', user.id).single()
+    : { data: null }
+  const userRole = actor?.role ?? 'receptionist'
 
   const result = await getPatientDecrypted(id)
 

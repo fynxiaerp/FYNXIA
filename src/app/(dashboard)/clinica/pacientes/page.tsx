@@ -1,4 +1,3 @@
-import { headers } from 'next/headers'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { PatientTable } from '@/components/patients/PatientTable'
@@ -7,19 +6,23 @@ import { UserPlus } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 export default async function PacientesPage() {
-  const headersList = await headers()
-  const userRole = headersList.get('x-user-role') ?? 'receptionist'
-  const userId = headersList.get('x-user-id') ?? ''
-
   const supabase = await createClient()
 
-  // Get actor's tenant_id
-  const { data: actor } = await supabase
-    .from('users')
-    .select('tenant_id')
-    .eq('id', userId)
-    .single()
+  // WR-03: derive tenant + role from the authenticated user — do NOT trust the
+  // forwarded `x-user-role` / `x-user-id` headers for masking / gating decisions.
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
 
+  const { data: actor } = user
+    ? await supabase
+        .from('users')
+        .select('tenant_id, role')
+        .eq('id', user.id)
+        .single()
+    : { data: null }
+
+  const userRole = actor?.role ?? 'receptionist'
   const tenantId = actor?.tenant_id
 
   // Fetch active patients for this tenant (RLS also applies)

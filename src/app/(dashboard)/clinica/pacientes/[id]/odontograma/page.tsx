@@ -1,4 +1,3 @@
-import { headers } from 'next/headers'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
@@ -20,11 +19,19 @@ interface Props {
 export default async function OdontogramaPage({ params }: Props) {
   const { id } = await params
 
-  const headersList = await headers()
-  const userRole = headersList.get('x-user-role') ?? 'receptionist'
+  const supabase = await createClient()
+
+  // WR-03: derive role from the authenticated user — do NOT trust the forwarded
+  // `x-user-role` header for the edit-gating decision (D-15).
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  const { data: actor } = user
+    ? await supabase.from('users').select('role').eq('id', user.id).single()
+    : { data: null }
+  const userRole = actor?.role ?? 'receptionist'
 
   // Fetch patient for breadcrumb + validation
-  const supabase = await createClient()
   const { data: patient } = await supabase
     .from('patients')
     .select('id, full_name')
