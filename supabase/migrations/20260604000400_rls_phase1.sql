@@ -13,6 +13,10 @@ CREATE POLICY "invitations_admin_write" ON public.invitations
 ALTER TABLE public.patient_consents ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "patient_consents_tenant_read" ON public.patient_consents
   FOR SELECT USING (tenant_id = get_my_tenant_id());
+-- WR-04: explicit INSERT policy with WITH CHECK so write access is never implicitly granted
+CREATE POLICY "patient_consents_patient_write" ON public.patient_consents
+  FOR INSERT
+  WITH CHECK (tenant_id = get_my_tenant_id());
 
 -- ============ users_masked view (SEC-01, D-11, D-12) ============
 -- SECURITY INVOKER (PG default) — underlying users RLS still applies.
