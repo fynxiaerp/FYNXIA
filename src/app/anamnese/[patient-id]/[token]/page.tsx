@@ -29,7 +29,15 @@ export default async function PublicAnamnesisPage({ params }: PageProps) {
     .eq('patient_id', patientId)
     .single()
 
-  // Determine validity: row must exist, token must be valid, must be PENDING
+  // Determine validity: row must exist, token must be valid, must be PENDING.
+  //
+  // WR-05 (TOCTOU): this read-then-render check is NOT the authoritative gate.
+  // It only decides whether to render the form. The single-use guarantee lives
+  // entirely in submitAnamnesisPublic's atomic conditional UPDATE (token_used_at
+  // IS NULL AND token_expires_at > now() AND signature_hash = 'PENDING'). If the
+  // token is concurrently consumed between this render and submit, the page may
+  // show the form but the submit returns the same generic expired/used message.
+  // Do NOT treat this page check as the security boundary.
   const isValid =
     !error &&
     row !== null &&
