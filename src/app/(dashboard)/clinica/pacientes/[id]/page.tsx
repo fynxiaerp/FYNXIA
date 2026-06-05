@@ -2,8 +2,10 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getPatientDecrypted } from '@/actions/patients'
+import { listAnamneses } from '@/actions/anamneses'
 import { PatientForm } from '@/components/patients/PatientForm'
 import { PatientDeleteDialog } from '@/components/patients/PatientDeleteDialog'
+import { AnamnesisList } from '@/components/anamnesis/AnamnesisList'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -46,6 +48,10 @@ export default async function PatientDetailPage({ params }: Props) {
   }
 
   const patient = result.patient
+
+  // CLINIC-08: fetch anamneses for the Anamneses tab (listAnamneses is RLS-aware)
+  const anamnesisResult = await listAnamneses(patient.id)
+  const anamnesisItems = anamnesisResult.anamneses ?? []
 
   // Mask CPF for receptionist/patient roles (SEC-01, T-2-10)
   const shouldMask = userRole === 'receptionist' || userRole === 'patient'
@@ -109,8 +115,7 @@ export default async function PatientDetailPage({ params }: Props) {
 
       <Separator className="mb-6" />
 
-      {/* Tab structure — Plan 02-02 delivers: Dados (form) */}
-      {/* Plans 03 and 04 will deliver: Prontuário, Odontograma, Anamneses */}
+      {/* Tab structure: Dados (02-02), Prontuário (02-03), Odontograma (02-04), Anamneses (02-05) */}
       <Tabs defaultValue="dados">
         <TabsList>
           <TabsTrigger value="dados">Dados do Paciente</TabsTrigger>
@@ -176,14 +181,8 @@ export default async function PatientDetailPage({ params }: Props) {
         </TabsContent>
 
         <TabsContent value="anamneses" className="mt-6">
-          <div className="flex min-h-[200px] flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
-            <p className="text-base font-semibold text-muted-foreground">
-              Disponível após Plano 04
-            </p>
-            <p className="mt-2 text-sm text-muted-foreground">
-              As anamneses digitais serão entregues no Plano 02-04.
-            </p>
-          </div>
+          {/* CLINIC-08 (02-05): real anamneses list — stub removed */}
+          <AnamnesisList patientId={patient.id} anamneses={anamnesisItems} />
         </TabsContent>
       </Tabs>
     </div>

@@ -183,6 +183,92 @@ export async function submitAnamnesisPublic(
   return { success: true }
 }
 
+// ─── listAnamneses ────────────────────────────────────────────────────────────
+// CLINIC-08: Returns the anamnesis history for a patient, newest first.
+// Uses RLS-aware createClient() — tenant isolation enforced at DB level.
+// LGPD: does NOT return signature_hash or responses (clinical/biometric data).
+// Status derivation:
+//   - signature_hash='PENDING' + token_expires_at < now  → 'expired'
+//   - signature_hash='PENDING' + token_used_at IS NULL   → 'pending'
+//   - otherwise (real hash)                               → 'signed'
+
+export type AnamnesisListItem = {
+  id: string
+  flow: string
+  signed_at: string | null
+  created_at: string
+  status: 'pending' | 'expired' | 'signed'
+}
+
+export async function listAnamneses(patientId: string): Promise<{
+  success: boolean
+  anamneses?: AnamnesisListItem[]
+  error?: string
+}> {
+  const supabase = await createClient()
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser()
+
+  if (authError || !user) {
+    return { success: false, error: 'Não autenticado' }
+  }
+
+  const { data: actor, error: actorError } = await supabase
+    .from('users')
+    .select('id, tenant_id, role')
+    .eq('id', user.id)
+    .single()
+
+  if (actorError || !actor) {
+    return { success: false, error: 'Usuário não encontrado' }
+  }
+
+  // Role gate: only clinical staff may view anamneses
+  const staffRoles = ['admin', 'dentist', 'receptionist', 'superadmin']
+  if (!staffRoles.includes(actor.role)) {
+    return { success: false, error: 'Permissão insuficiente para visualizar anamneses' }
+  }
+
+  // Select only non-sensitive columns — exclude signature_hash and responses (LGPD)
+  const { data: rows, error } = await supabase
+    .from('anamneses')
+    .select('id, flow, signed_at, created_at, token_used_at, token_expires_at, signature_hash')
+    .eq('patient_id', patientId)
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    return { success: false, error: error.message }
+  }
+
+  const now = new Date()
+
+  const anamneses: AnamnesisListItem[] = (rows ?? []).map((row) => {
+    let status: 'pending' | 'expired' | 'signed'
+    if (row.signature_hash === 'PENDING') {
+      if (row.token_expires_at && new Date(row.token_expires_at) < now) {
+        status = 'expired'
+      } else if (!row.token_used_at) {
+        status = 'pending'
+      } else {
+        status = 'signed'
+      }
+    } else {
+      status = 'signed'
+    }
+    return {
+      id: row.id,
+      flow: row.flow,
+      signed_at: row.signed_at ?? null,
+      created_at: row.created_at,
+      status,
+    }
+  })
+
+  return { success: true, anamneses }
+}
+
 // ─── submitAnamnesisPresencial ────────────────────────────────────────────────
 // Authenticated staff flow: dentist/receptionist records the anamnesis in-office.
 // Uses RLS-aware createClient() (staff JWT). INSERT-only — no pending row.
