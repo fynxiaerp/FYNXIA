@@ -10,7 +10,7 @@
 - [ ] **INFRA-04**: Migrations de banco versionadas em supabase/migrations/
 - [ ] **INFRA-05**: Variáveis sensíveis gerenciadas via Vercel Environment Variables (nunca em código)
 - [ ] **INFRA-06**: RLS habilitado em todas as tabelas com políticas usando get_my_tenant_id() SECURITY DEFINER
-- [ ] **INFRA-07**: Custom Access Token Hook injetando tenant_id e user_role no JWT antes de qualquer módulo
+- [ ] **INFRA-07**: Isolamento multi-tenant via funções SECURITY DEFINER (get_my_tenant_id() + get_my_role()) — compatível com Supabase FREE plan. Custom Access Token Hook disponível como upgrade de performance ao migrar para Pro.
 
 ### AUTH — Autenticação e Autorização
 
@@ -20,7 +20,7 @@
 - [ ] **AUTH-04**: Middleware usa getUser() (não getSession()) para validar autenticidade do JWT
 - [ ] **AUTH-05**: Sistema suporta 4 perfis com RBAC: admin, dentist, receptionist, patient
 - [ ] **AUTH-06**: Dados completamente isolados por tenant_id via RLS (tenant A nunca vê dados do tenant B)
-- [ ] **AUTH-07**: tenant_id armazenado em app_metadata (somente service role pode alterar)
+- [ ] **AUTH-07**: tenant_id e role armazenados em public.users (somente service role pode alterar via RLS) — lidos via get_my_tenant_id()+get_my_role() SECURITY DEFINER; sem dependência de app_metadata/JWT claims (FREE plan)
 
 ### SEC — Segurança e LGPD
 

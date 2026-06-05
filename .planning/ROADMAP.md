@@ -46,8 +46,8 @@
   4. CPF, e-mail, and phone are masked in all list views and logs — raw values are never exposed in API responses for list endpoints
   5. Every role (admin, dentist, receptionist, patient) can log in; routing enforces role-appropriate access — a receptionist cannot access admin routes
 **Plans**: 3 plans
-- [ ] 01-01-PLAN.md — DB foundation: rename tenants→clinics (+CNPJ/phone), invitations + patient_consents tables, hybrid audit trigger, users_masked view, July/Aug partitions, [BLOCKING] db push + type gen
-- [ ] 01-02-PLAN.md — Auth lifecycle: signup (clinic + CPF/CNPJ), login/logout/password-reset, /auth/confirm, RBAC role matrix in proxy.ts, FYNXIA-branded auth pages (RHF + Zod v3)
+- [x] 01-01-PLAN.md — DB foundation: rename tenants→clinics (+CNPJ/phone), invitations + patient_consents tables, hybrid audit trigger, users_masked view, July/Aug partitions, [BLOCKING] db push + type gen
+- [x] 01-02-PLAN.md — Auth lifecycle: signup (clinic + CPF/CNPJ), login/logout/password-reset, /auth/confirm, RBAC role matrix in proxy.ts, FYNXIA-branded auth pages (RHF + Zod v3)
 - [ ] 01-03-PLAN.md — Invite lifecycle: Resend-branded email invite + direct create, /invite/[token] accept (24h single-use), patient self-register API, admin team page, business-event audit
 **UI hint**: yes
 
