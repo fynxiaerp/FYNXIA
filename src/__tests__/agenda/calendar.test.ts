@@ -106,7 +106,7 @@ describe('filterEventsByDentist', () => {
   it('returns only events for dentist B', () => {
     const filtered = filterEventsByDentist(events, DENTIST_B)
     expect(filtered.length).toBe(1)
-    expect(filtered[0].dentistId).toBe(DENTIST_B)
+    expect(filtered[0]!.dentistId).toBe(DENTIST_B)
   })
 
   it('excludes events from other dentists (cross-tenant isolation — Pitfall 3)', () => {
