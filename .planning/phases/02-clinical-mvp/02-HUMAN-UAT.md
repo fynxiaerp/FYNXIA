@@ -34,19 +34,23 @@ result: [pending]
 
 ### 6. Grade de horários do agendamento público (deferral de MVP)
 expected: Decisão de produto — `PublicBookingForm.generateSlots()` gera slots client-side sem consultar `appointments`, então horários já ocupados aparecem como selecionáveis. O constraint GIST é a rede de segurança real (impede o double-booking de fato, com mensagem amigável). Confirmar se essa lacuna de UX é aceitável para o release do MVP ou se deve virar gap de Phase 3.
-result: [pending]
+result: resolved — gap fechado no plano 02-05. `getBookedSlots()` consulta a agenda e marca slots ocupados como indisponíveis; também corrigido bug latente de datetime sem offset que rejeitava toda submissão pública. Comportamento funcional em runtime ainda coberto pelo teste E2E (item 1).
 
 ### 7. Aba "Anamneses" no detalhe do paciente
 expected: Decisão de produto — a aba de anamneses na página de detalhe do paciente ainda mostra o stub "Disponível após Plano 04" mesmo após o Plano 04; a listagem foi explicitamente adiada para Phase 3 no SUMMARY. Confirmar aceitação no release.
-result: [pending]
+result: resolved — gap fechado no plano 02-05. `listAnamneses()` + `AnamnesisList` entregam a listagem real (status assinada/aguardando/expirada) + botão "Gerar link"; stub removido.
 
 ## Summary
 
 total: 7
 passed: 0
 issues: 0
-pending: 7
+pending: 5
 skipped: 0
 blocked: 0
+resolved: 2
 
 ## Gaps
+
+- Itens 6 e 7 (decisões de produto / deferrals de MVP) foram implementados em vez de adiados — fechados no plano 02-05 (gap_closure). Ver 02-05-SUMMARY.md.
+- Itens 1–5 permanecem pendentes de teste manual em app rodando (sessão autenticada, banco live, render de PDF).
