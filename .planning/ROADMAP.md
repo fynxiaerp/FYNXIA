@@ -61,7 +61,11 @@
   3. Patient (or receptionist on behalf) completes the digital anamnesis form and signs electronically — timestamp, IP, and consent version are recorded; the record is immutable (soft delete only on `patients` via `deleted_at`)
   4. Any write to `patients`, `appointments`, or `medical_records` triggers the audit log — a test update produces a new row in `audit_logs` with actor, table, row ID, and change diff
   5. Patient can use a public booking link to request an appointment without logging in — request appears in the clinic's queue for receptionist confirmation
-**Plans**: TBD
+**Plans**: 4 plans
+- [ ] 02-01-PLAN.md — Migrations clinicas (patients/appointments/medical_records/dental_records/anamneses) + btree_gist + EXCLUDE GIST + audit triggers + RLS + [BLOCKING] db push
+- [ ] 02-02-PLAN.md — CRUD de pacientes (encrypt AES-256, anonimizacao LGPD) + agenda FullCalendar por dentista com tratamento de double-booking
+- [ ] 02-03-PLAN.md — Prontuario clinico + odontograma SVG FDI (9 status) + PDF do prontuario (@react-pdf/renderer)
+- [ ] 02-04-PLAN.md — Anamnese digital (canvas + SHA-256 + token single-use) + link de agendamento publico
 **UI hint**: yes
 
 ### Phase 3: Financial MVP
@@ -106,7 +110,7 @@
 |-------|----------------|--------|-----------|
 | 0. Foundation | 0/3 | Planned | - |
 | 1. Auth & Tenant Onboarding | 0/3 | Planned | - |
-| 2. Clinical MVP | 0/? | Not started | - |
+| 2. Clinical MVP | 0/4 | Planned | - |
 | 3. Financial MVP | 0/? | Not started | - |
 | 4. Communications & Async | 0/? | Not started | - |
 | 5. AI Agents | 0/? | Not started | - |
