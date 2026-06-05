@@ -173,21 +173,26 @@ export async function updatePatient(
 
   const supabase = await createClient()
 
+  // WR-06: build the update payload so omitted/empty health fields are treated
+  // as "no change" rather than silently nulling existing encrypted clinical
+  // data. Only re-encrypt and overwrite a health field when a non-empty value
+  // is provided (D-07 + Pitfall 2 still apply — never encrypt null/empty).
+  const updatePayload: Record<string, unknown> = {
+    full_name,
+    cpf,
+    date_of_birth: date_of_birth ?? null,
+    phone: phone ?? null,
+    email: email ?? null,
+    address: address ?? null,
+    updated_at: new Date().toISOString(),
+  }
+  if (medical_history) updatePayload.medical_history = encrypt(medical_history)
+  if (allergies) updatePayload.allergies = encrypt(allergies)
+  if (medications) updatePayload.medications = encrypt(medications)
+
   const { error: updateError } = await supabase
     .from('patients')
-    .update({
-      full_name,
-      cpf,
-      date_of_birth: date_of_birth ?? null,
-      phone: phone ?? null,
-      email: email ?? null,
-      address: address ?? null,
-      // D-07: re-encrypt health fields; guard against null/empty (Pitfall 2)
-      medical_history: medical_history ? encrypt(medical_history) : null,
-      allergies: allergies ? encrypt(allergies) : null,
-      medications: medications ? encrypt(medications) : null,
-      updated_at: new Date().toISOString(),
-    })
+    .update(updatePayload)
     .eq('id', id)
     .eq('tenant_id', actor.tenant_id) // Tenant scope guard (T-2-02)
 
