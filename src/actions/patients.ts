@@ -3,26 +3,10 @@ import { createClient } from '@/lib/supabase/server'
 import { logBusinessEvent } from '@/lib/audit'
 import { encrypt, decrypt } from '@/lib/crypto'
 import { patientSchema, type PatientInput } from '@/lib/validators/patient'
+import { buildAnonymizedPatch } from '@/lib/patient-anonymize'
 
-// ─── buildAnonymizedPatch ────────────────────────────────────────────────────
-// Pure deterministic function (no server-only restriction) — used in tests and
-// in the anonymizePatient action.
-// D-08: LGPD anonymization — name/CPF/phone/email replaced with generic values;
-// address and health fields set to null. Preserves medical_records/dental_records/anamneses.
-export function buildAnonymizedPatch() {
-  return {
-    full_name: 'Paciente Excluído',
-    cpf: '000.000.000-00',
-    phone: '(00) 00000-0000',
-    email: 'anonimizado@excluido.local',
-    address: null,
-    medical_history: null,
-    allergies: null,
-    medications: null,
-    is_anonymized: true,
-    deleted_at: new Date().toISOString(),
-  }
-}
+// buildAnonymizedPatch (D-08 LGPD anonymization) lives in '@/lib/patient-anonymize'
+// because a 'use server' module may only export async functions.
 
 // ─── Helper: get authenticated actor ────────────────────────────────────────
 

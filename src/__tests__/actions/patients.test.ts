@@ -49,7 +49,7 @@ beforeAll(() => {
 // ─── Import modules under test ───────────────────────────────────────────────
 import { encrypt, decrypt } from '@/lib/crypto'
 import { patientSchema } from '@/lib/validators/patient'
-import { buildAnonymizedPatch } from '@/actions/patients'
+import { buildAnonymizedPatch } from '@/lib/patient-anonymize'
 
 // ─── Test suite ──────────────────────────────────────────────────────────────
 
