@@ -72,6 +72,21 @@ export async function createMedicalRecord(
 
   const supabase = await createClient()
 
+  // WR-02: confirm the patient exists in the actor's tenant before insert.
+  // The FK only checks existence (not tenant), so without this a mismatched or
+  // non-existent patient_id would surface as a raw 23503 instead of a friendly
+  // error, and could orphan a clinical record.
+  const { data: patient } = await supabase
+    .from('patients')
+    .select('id')
+    .eq('id', patient_id)
+    .eq('tenant_id', actor.tenant_id)
+    .single()
+
+  if (!patient) {
+    return { success: false, error: 'Paciente não encontrado' }
+  }
+
   const { data: record, error: insertError } = await supabase
     .from('medical_records')
     .insert({
