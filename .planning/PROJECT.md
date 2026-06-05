@@ -12,6 +12,18 @@ Um dentista deve conseguir ver a agenda do dia, registrar atendimento e fechar o
 
 ### Validated
 
+#### Auth & Tenant Onboarding (Validated in Phase 1)
+- [x] Usuário pode criar conta com e-mail e senha via Supabase Auth — `signUpClinic` cria clinic + user atomicamente com rollback compensatório
+- [x] Usuário pode fazer login e manter sessão ativa — `updateSession` via proxy.ts; `signInWithPassword` + cookies HTTP-only
+- [x] Usuário pode fazer logout de qualquer página — `signOut` Server Action com redirect para /login
+- [x] Middleware usa getUser() — proxy.ts usa exclusivamente `getUser()`; zero `getSession()` no codebase
+- [x] Sistema suporta 4 perfis com RBAC — ROLE_ROUTES matrix em proxy.ts; admin/dentist/receptionist/patient/superadmin
+- [x] Dados isolados por tenant_id via RLS — `public.clinics` (renomeada de tenants); `get_my_tenant_id()` preservado; isolamento verificado em produção
+- [x] CPF/e-mail mascarados — view `users_masked` com CASE-based masking por role
+- [x] Consentimento LGPD — tabela `patient_consents` criada com tipos: data_processing, marketing_whatsapp, medical_record_sharing, ai_processing
+- [x] Invite por e-mail (Resend) + criação direta — `createInvitation` modo email/direct; 24h expiração; re-invite revoga anterior
+- [x] Deploy em produção — `fynxia.vercel.app` funcionando com gru1 (São Paulo) + todas env vars
+
 #### Infraestrutura (Validated in Phase 0: Foundation)
 - [x] Deploy automatizado na Vercel com CI/CD — `vercel.json` pina gru1 (São Paulo); gru1 region + Fluid Compute configurados
 - [x] Schema de banco no Supabase com migrations versionadas — 2 migrations aplicadas em sa-east-1; `src/types/database.types.ts` gerado ao vivo
