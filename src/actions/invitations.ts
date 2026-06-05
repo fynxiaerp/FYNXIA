@@ -308,13 +308,17 @@ export async function revokeInvitation(
     return { success: false, error: 'Não autenticado' }
   }
 
-  const { data: actor } = await supabase
+  const { data: actor, error: actorError } = await supabase
     .from('users')
     .select('id, tenant_id, email, role')
     .eq('id', user.id)
     .single()
 
-  if (!actor || (actor.role !== 'admin' && actor.role !== 'superadmin')) {
+  if (actorError ?? !actor) {
+    return { success: false, error: 'Usuário não encontrado' }
+  }
+
+  if (actor.role !== 'admin' && actor.role !== 'superadmin') {
     return {
       success: false,
       error: 'Apenas administradores podem revogar convites',
