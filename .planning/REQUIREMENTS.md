@@ -27,7 +27,7 @@
 - [ ] **SEC-01**: CPF, e-mail e telefone mascarados em listagens públicas/logs
 - [ ] **SEC-02**: Todas as ações sensíveis registradas em audit_logs imutável (sem DELETE policy)
 - [ ] **SEC-03**: Trigger automático de auditoria em tabelas: patients, appointments, medical_records, financial_transactions
-- [ ] **SEC-04**: Soft delete em patients via deleted_at (LGPD — nunca hard delete de prontuário)
+- [x] **SEC-04**: Soft delete em patients via deleted_at (LGPD — nunca hard delete de prontuário)
 - [ ] **SEC-05**: Tabela patient_consents com registro de consentimento LGPD por paciente
 - [ ] **SEC-06**: Headers de segurança configurados (CSP, X-Frame-Options, HSTS, X-Content-Type-Options)
 - [ ] **SEC-07**: Todas as colunas de timestamp usam TIMESTAMPTZ (suporte multi-fuso horário Brasil)
@@ -35,10 +35,10 @@
 
 ### CLINIC — Módulo Clínica
 
-- [ ] **CLINIC-01**: Usuário pode visualizar agenda semanal por dentista com slots de horário
-- [ ] **CLINIC-02**: Usuário pode criar, editar e cancelar agendamentos sem conflito de horário (EXCLUDE USING GIST)
-- [ ] **CLINIC-03**: Usuário pode cadastrar paciente com: nome, CPF, data de nascimento, telefone, e-mail, endereço, histórico de saúde, alergias
-- [ ] **CLINIC-04**: Usuário pode editar ficha de paciente existente
+- [x] **CLINIC-01**: Usuário pode visualizar agenda semanal por dentista com slots de horário
+- [x] **CLINIC-02**: Usuário pode criar, editar e cancelar agendamentos sem conflito de horário (EXCLUDE USING GIST)
+- [x] **CLINIC-03**: Usuário pode cadastrar paciente com: nome, CPF, data de nascimento, telefone, e-mail, endereço, histórico de saúde, alergias
+- [x] **CLINIC-04**: Usuário pode editar ficha de paciente existente
 - [ ] **CLINIC-05**: Dentista pode registrar prontuário clínico com diagnóstico, plano de tratamento e prescrições
 - [ ] **CLINIC-06**: Dentista pode registrar ocorrências no odontograma interativo por dente (hígido, cariado, extraído, em tratamento)
 - [ ] **CLINIC-07**: Sistema exibe histórico de atendimentos completo por paciente em ordem cronológica
@@ -119,17 +119,17 @@
 | SEC-01 | Phase 1 — Auth & Tenant Onboarding | Pending |
 | SEC-02 | Phase 1 — Auth & Tenant Onboarding | Pending |
 | SEC-05 | Phase 1 — Auth & Tenant Onboarding | Pending |
-| CLINIC-01 | Phase 2 — Clinical MVP | Pending |
-| CLINIC-02 | Phase 2 — Clinical MVP | Pending |
-| CLINIC-03 | Phase 2 — Clinical MVP | Pending |
-| CLINIC-04 | Phase 2 — Clinical MVP | Pending |
+| CLINIC-01 | Phase 2 — Clinical MVP | Complete |
+| CLINIC-02 | Phase 2 — Clinical MVP | Complete |
+| CLINIC-03 | Phase 2 — Clinical MVP | Complete |
+| CLINIC-04 | Phase 2 — Clinical MVP | Complete |
 | CLINIC-05 | Phase 2 — Clinical MVP | Pending |
 | CLINIC-06 | Phase 2 — Clinical MVP | Pending |
 | CLINIC-07 | Phase 2 — Clinical MVP | Pending |
 | CLINIC-08 | Phase 2 — Clinical MVP | Pending |
 | CLINIC-09 | Phase 2 — Clinical MVP | Pending |
 | SEC-03 | Phase 2 — Clinical MVP | Pending |
-| SEC-04 | Phase 2 — Clinical MVP | Pending |
+| SEC-04 | Phase 2 — Clinical MVP | Complete |
 | FIN-01 | Phase 3 — Financial MVP | Pending |
 | FIN-02 | Phase 3 — Financial MVP | Pending |
 | FIN-03 | Phase 3 — Financial MVP | Pending |
