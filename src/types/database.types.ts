@@ -39,6 +39,143 @@ export type Database = {
   }
   public: {
     Tables: {
+      anamneses: {
+        Row: {
+          created_at: string
+          flow: string
+          id: string
+          ip_address: unknown
+          patient_id: string
+          responses: Json
+          signature_hash: string
+          signature_url: string | null
+          signed_at: string
+          tenant_id: string
+          token: string | null
+          token_expires_at: string | null
+          token_used_at: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string
+          flow?: string
+          id?: string
+          ip_address?: unknown
+          patient_id: string
+          responses?: Json
+          signature_hash: string
+          signature_url?: string | null
+          signed_at?: string
+          tenant_id: string
+          token?: string | null
+          token_expires_at?: string | null
+          token_used_at?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string
+          flow?: string
+          id?: string
+          ip_address?: unknown
+          patient_id?: string
+          responses?: Json
+          signature_hash?: string
+          signature_url?: string | null
+          signed_at?: string
+          tenant_id?: string
+          token?: string | null
+          token_expires_at?: string | null
+          token_used_at?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "anamneses_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "anamneses_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      appointments: {
+        Row: {
+          created_at: string
+          dentist_id: string
+          end_time: string
+          id: string
+          notes: string | null
+          patient_id: string | null
+          source: string
+          start_time: string
+          status: string
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          dentist_id: string
+          end_time: string
+          id?: string
+          notes?: string | null
+          patient_id?: string | null
+          source?: string
+          start_time: string
+          status?: string
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          dentist_id?: string
+          end_time?: string
+          id?: string
+          notes?: string | null
+          patient_id?: string | null
+          source?: string
+          start_time?: string
+          status?: string
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appointments_dentist_id_fkey"
+            columns: ["dentist_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_dentist_id_fkey"
+            columns: ["dentist_id"]
+            isOneToOne: false
+            referencedRelation: "users_masked"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_logs: {
         Row: {
           action: string
@@ -207,6 +344,48 @@ export type Database = {
         }
         Relationships: []
       }
+      audit_logs_2026_09: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          id: string
+          ip_address: unknown
+          new_values: Json | null
+          old_values: Json | null
+          record_id: string | null
+          table_name: string | null
+          tenant_id: string
+          user_agent: string | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          ip_address?: unknown
+          new_values?: Json | null
+          old_values?: Json | null
+          record_id?: string | null
+          table_name?: string | null
+          tenant_id: string
+          user_agent?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          ip_address?: unknown
+          new_values?: Json | null
+          old_values?: Json | null
+          record_id?: string | null
+          table_name?: string | null
+          tenant_id?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       clinics: {
         Row: {
           address: string | null
@@ -255,6 +434,78 @@ export type Database = {
         }
         Relationships: []
       }
+      dental_records: {
+        Row: {
+          appointment_id: string | null
+          created_at: string
+          dentist_id: string
+          id: string
+          notes: string | null
+          patient_id: string
+          status: string
+          tenant_id: string
+          tooth_number: number
+        }
+        Insert: {
+          appointment_id?: string | null
+          created_at?: string
+          dentist_id: string
+          id?: string
+          notes?: string | null
+          patient_id: string
+          status: string
+          tenant_id: string
+          tooth_number: number
+        }
+        Update: {
+          appointment_id?: string | null
+          created_at?: string
+          dentist_id?: string
+          id?: string
+          notes?: string | null
+          patient_id?: string
+          status?: string
+          tenant_id?: string
+          tooth_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dental_records_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dental_records_dentist_id_fkey"
+            columns: ["dentist_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dental_records_dentist_id_fkey"
+            columns: ["dentist_id"]
+            isOneToOne: false
+            referencedRelation: "users_masked"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dental_records_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dental_records_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invitations: {
         Row: {
           accepted_at: string | null
@@ -294,17 +545,99 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "invitations_tenant_id_fkey"
-            columns: ["tenant_id"]
+            foreignKeyName: "invitations_invited_by_fkey"
+            columns: ["invited_by"]
             isOneToOne: false
-            referencedRelation: "clinics"
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "invitations_invited_by_fkey"
             columns: ["invited_by"]
             isOneToOne: false
+            referencedRelation: "users_masked"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invitations_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      medical_records: {
+        Row: {
+          appointment_id: string | null
+          created_at: string
+          dentist_id: string
+          diagnosis: string | null
+          id: string
+          patient_id: string
+          prescription: string | null
+          tenant_id: string
+          treatment_plan: string | null
+          updated_at: string
+        }
+        Insert: {
+          appointment_id?: string | null
+          created_at?: string
+          dentist_id: string
+          diagnosis?: string | null
+          id?: string
+          patient_id: string
+          prescription?: string | null
+          tenant_id: string
+          treatment_plan?: string | null
+          updated_at?: string
+        }
+        Update: {
+          appointment_id?: string | null
+          created_at?: string
+          dentist_id?: string
+          diagnosis?: string | null
+          id?: string
+          patient_id?: string
+          prescription?: string | null
+          tenant_id?: string
+          treatment_plan?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "medical_records_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "medical_records_dentist_id_fkey"
+            columns: ["dentist_id"]
+            isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "medical_records_dentist_id_fkey"
+            columns: ["dentist_id"]
+            isOneToOne: false
+            referencedRelation: "users_masked"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "medical_records_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "medical_records_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
             referencedColumns: ["id"]
           },
         ]
@@ -348,7 +681,93 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "patient_consents_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "patient_consents_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      patients: {
+        Row: {
+          address: string | null
+          allergies: string | null
+          cpf: string
+          created_at: string
+          date_of_birth: string | null
+          deleted_at: string | null
+          email: string | null
+          full_name: string
+          id: string
+          is_anonymized: boolean
+          medical_history: string | null
+          medications: string | null
+          phone: string | null
+          registered_by: string | null
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          allergies?: string | null
+          cpf: string
+          created_at?: string
+          date_of_birth?: string | null
+          deleted_at?: string | null
+          email?: string | null
+          full_name: string
+          id?: string
+          is_anonymized?: boolean
+          medical_history?: string | null
+          medications?: string | null
+          phone?: string | null
+          registered_by?: string | null
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          allergies?: string | null
+          cpf?: string
+          created_at?: string
+          date_of_birth?: string | null
+          deleted_at?: string | null
+          email?: string | null
+          full_name?: string
+          id?: string
+          is_anonymized?: boolean
+          medical_history?: string | null
+          medications?: string | null
+          phone?: string | null
+          registered_by?: string | null
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "patients_registered_by_fkey"
+            columns: ["registered_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "patients_registered_by_fkey"
+            columns: ["registered_by"]
+            isOneToOne: false
+            referencedRelation: "users_masked"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "patients_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "clinics"
@@ -413,6 +832,26 @@ export type Database = {
           tenant_id: string | null
           updated_at: string | null
         }
+        Insert: {
+          created_at?: string | null
+          deleted_at?: string | null
+          email?: never
+          full_name?: string | null
+          id?: string | null
+          role?: string | null
+          tenant_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          deleted_at?: string | null
+          email?: never
+          full_name?: string | null
+          id?: string | null
+          role?: string | null
+          tenant_id?: string | null
+          updated_at?: string | null
+        }
         Relationships: [
           {
             foreignKeyName: "users_tenant_id_fkey"
@@ -425,8 +864,8 @@ export type Database = {
       }
     }
     Functions: {
-      get_my_role: { Args: Record<PropertyKey, never>; Returns: string }
-      get_my_tenant_id: { Args: Record<PropertyKey, never>; Returns: string }
+      get_my_role: { Args: never; Returns: string }
+      get_my_tenant_id: { Args: never; Returns: string }
     }
     Enums: {
       [_ in never]: never
