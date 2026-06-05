@@ -120,7 +120,8 @@ export async function createInvitation(
         .from('invitations')
         .update({ status: 'revoked' })
         .eq('token', invitation.token)
-      return { success: false, error: 'Falha ao enviar e-mail de convite' }
+      const detail = (emailError as { message?: string }).message ?? JSON.stringify(emailError)
+      return { success: false, error: `Resend: ${detail}` }
     }
 
     // SEC-02: audit log
