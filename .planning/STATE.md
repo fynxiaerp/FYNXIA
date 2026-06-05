@@ -3,20 +3,20 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 02-04-PLAN.md
-last_updated: "2026-06-05T22:30:00.000Z"
+stopped_at: Completed 02-05-PLAN.md
+last_updated: "2026-06-05T23:00:00.000Z"
 progress:
   total_phases: 6
   completed_phases: 2
-  total_plans: 10
-  completed_plans: 10
+  total_plans: 11
+  completed_plans: 11
   percent: 100
 ---
 
 # FYNXIA ERP — Project State
 
 **Last updated:** 2026-06-05
-**Updated by:** gsd-execute-phase (02-04 completion)
+**Updated by:** gsd-execute-phase (02-05 completion)
 
 ---
 
@@ -33,10 +33,10 @@ progress:
 ## Current Position
 
 Phase: 02 (clinical-mvp) — COMPLETE
-Plan: 4 of 4 (COMPLETE)
+Plan: 5 of 5 (COMPLETE)
 **Phase:** 2
-**Plan:** 02-04 — COMPLETE (Wave 3)
-**Status:** Phase 2 fully complete — all 4 plans delivered
+**Plan:** 02-05 — COMPLETE (Wave 4 / gap closure)
+**Status:** Phase 2 fully complete — all 5 plans delivered (02-05 closes UAT items 6+7)
 
 ```
 Progress: [██████████████████████████████] 100% (10/10 plans complete)
@@ -146,8 +146,8 @@ Phase 5 [Not started] ░░░░░
 
 ## Session Continuity
 
-**Stopped at:** Completed 02-04-PLAN.md
+**Stopped at:** Completed 02-05-PLAN.md
 
 **Critical path:** Phase 0 → 1 → 2 → 4 → 5 (Phase 3 parallel with Phase 2)
 
-**Next action:** Phase 2 complete. Start Phase 3 (Financial MVP) or Phase 0 (Foundation infra). Phase 2 clinical MVP fully delivered: DB schema + RLS + migrations (02-01), patient CRUD + agenda (02-02), prontuário + odontograma + PDF (02-03), anamnese digital + agendamento público (02-04).
+**Next action:** Phase 2 fully complete including gap closure. Start Phase 3 (Financial MVP) or Phase 0 (Foundation infra). Phase 2 clinical MVP fully delivered: DB schema + RLS + migrations (02-01), patient CRUD + agenda (02-02), prontuário + odontograma + PDF (02-03), anamnese digital + agendamento público (02-04), availability-aware public booking + real anamneses tab (02-05).
