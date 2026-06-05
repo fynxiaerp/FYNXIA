@@ -64,7 +64,7 @@
 **Plans**: 4 plans
 - [x] 02-01-PLAN.md — Migrations clinicas (patients/appointments/medical_records/dental_records/anamneses) + btree_gist + EXCLUDE GIST + audit triggers + RLS + [BLOCKING] db push
 - [x] 02-02-PLAN.md — CRUD de pacientes (encrypt AES-256, anonimizacao LGPD) + agenda FullCalendar por dentista com tratamento de double-booking
-- [ ] 02-03-PLAN.md — Prontuario clinico + odontograma SVG FDI (9 status) + PDF do prontuario (@react-pdf/renderer)
+- [x] 02-03-PLAN.md — Prontuario clinico + odontograma SVG FDI (9 status) + PDF do prontuario (@react-pdf/renderer)
 - [ ] 02-04-PLAN.md — Anamnese digital (canvas + SHA-256 + token single-use) + link de agendamento publico
 **UI hint**: yes
 
@@ -110,7 +110,7 @@
 |-------|----------------|--------|-----------|
 | 0. Foundation | 0/3 | Planned | - |
 | 1. Auth & Tenant Onboarding | 0/3 | Planned | - |
-| 2. Clinical MVP | 1/4 | In Progress | 02-01 complete 2026-06-05 |
+| 2. Clinical MVP | 3/4 | In Progress | 02-01..03 complete 2026-06-05 |
 | 3. Financial MVP | 0/? | Not started | - |
 | 4. Communications & Async | 0/? | Not started | - |
 | 5. AI Agents | 0/? | Not started | - |
