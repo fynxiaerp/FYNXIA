@@ -123,38 +123,238 @@ export type Database = {
         }
         Relationships: []
       }
-      tenants: {
+      audit_logs_2026_07: {
         Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          id: string
+          ip_address: unknown
+          new_values: Json | null
+          old_values: Json | null
+          record_id: string | null
+          table_name: string | null
+          tenant_id: string
+          user_agent: string | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          ip_address?: unknown
+          new_values?: Json | null
+          old_values?: Json | null
+          record_id?: string | null
+          table_name?: string | null
+          tenant_id: string
+          user_agent?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          ip_address?: unknown
+          new_values?: Json | null
+          old_values?: Json | null
+          record_id?: string | null
+          table_name?: string | null
+          tenant_id?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
+      audit_logs_2026_08: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          id: string
+          ip_address: unknown
+          new_values: Json | null
+          old_values: Json | null
+          record_id: string | null
+          table_name: string | null
+          tenant_id: string
+          user_agent: string | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          ip_address?: unknown
+          new_values?: Json | null
+          old_values?: Json | null
+          record_id?: string | null
+          table_name?: string | null
+          tenant_id: string
+          user_agent?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          ip_address?: unknown
+          new_values?: Json | null
+          old_values?: Json | null
+          record_id?: string | null
+          table_name?: string | null
+          tenant_id?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
+      clinics: {
+        Row: {
+          address: string | null
+          cnpj: string | null
           created_at: string
           deleted_at: string | null
           id: string
+          logo_url: string | null
           name: string
+          phone: string | null
           plan: string
           slug: string
+          specialty: string | null
           timezone: string
           updated_at: string
         }
         Insert: {
+          address?: string | null
+          cnpj?: string | null
           created_at?: string
           deleted_at?: string | null
           id?: string
+          logo_url?: string | null
           name: string
+          phone?: string | null
           plan?: string
           slug: string
+          specialty?: string | null
           timezone?: string
           updated_at?: string
         }
         Update: {
+          address?: string | null
+          cnpj?: string | null
           created_at?: string
           deleted_at?: string | null
           id?: string
+          logo_url?: string | null
           name?: string
+          phone?: string | null
           plan?: string
           slug?: string
+          specialty?: string | null
           timezone?: string
           updated_at?: string
         }
         Relationships: []
+      }
+      invitations: {
+        Row: {
+          accepted_at: string | null
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          invited_by: string
+          role: string
+          status: string
+          tenant_id: string
+          token: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          created_at?: string
+          email: string
+          expires_at?: string
+          id?: string
+          invited_by: string
+          role: string
+          status?: string
+          tenant_id: string
+          token?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          invited_by?: string
+          role?: string
+          status?: string
+          tenant_id?: string
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invitations_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invitations_invited_by_fkey"
+            columns: ["invited_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      patient_consents: {
+        Row: {
+          consent_type: string
+          consented_at: string
+          created_at: string
+          id: string
+          ip_address: unknown
+          patient_id: string
+          policy_version: string
+          revoked_at: string | null
+          tenant_id: string
+          user_agent: string | null
+        }
+        Insert: {
+          consent_type: string
+          consented_at?: string
+          created_at?: string
+          id?: string
+          ip_address?: unknown
+          patient_id: string
+          policy_version: string
+          revoked_at?: string | null
+          tenant_id: string
+          user_agent?: string | null
+        }
+        Update: {
+          consent_type?: string
+          consented_at?: string
+          created_at?: string
+          id?: string
+          ip_address?: unknown
+          patient_id?: string
+          policy_version?: string
+          revoked_at?: string | null
+          tenant_id?: string
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "patient_consents_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       users: {
         Row: {
@@ -195,18 +395,38 @@ export type Database = {
             foreignKeyName: "users_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: false
-            referencedRelation: "tenants"
+            referencedRelation: "clinics"
             referencedColumns: ["id"]
           },
         ]
       }
     }
     Views: {
-      [_ in never]: never
+      users_masked: {
+        Row: {
+          created_at: string | null
+          deleted_at: string | null
+          email: string | null
+          full_name: string | null
+          id: string | null
+          role: string | null
+          tenant_id: string | null
+          updated_at: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "users_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
-      get_my_role: { Args: never; Returns: string }
-      get_my_tenant_id: { Args: never; Returns: string }
+      get_my_role: { Args: Record<PropertyKey, never>; Returns: string }
+      get_my_tenant_id: { Args: Record<PropertyKey, never>; Returns: string }
     }
     Enums: {
       [_ in never]: never
