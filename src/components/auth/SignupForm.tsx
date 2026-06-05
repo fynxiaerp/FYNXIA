@@ -24,7 +24,10 @@ export function SignupForm() {
       Object.entries(data).forEach(([key, value]) => formData.append(key, value))
       const result = await signUpClinic(formData)
       if (result?.error) {
-        setError('root', { message: 'Erro ao criar conta. Verifique os dados e tente novamente.' })
+        const msg = typeof result.error === 'string'
+          ? result.error
+          : 'Erro ao criar conta. Verifique os dados e tente novamente.'
+        setError('root', { message: msg })
       }
     })
   }
