@@ -9,9 +9,9 @@
 
 ## Phases
 
-- [ ] **Phase 0: Foundation** — DB schema, RLS (via get_my_tenant_id()+get_my_role() SECURITY DEFINER), middleware, Supabase client factories. Resolves all 6 critical pitfalls before any feature code. FREE plan compatible.
-- [ ] **Phase 1: Auth & Tenant Onboarding** — Complete auth flow (login/logout/register), RBAC enforcement, tenant provisioning, user invite. Gates all downstream modules.
-- [ ] **Phase 2: Clinical MVP** — Patient management, multi-dentist appointment calendar, prontuario, odontogram, digital anamnesis with e-signature, online booking link.
+- [x] **Phase 0: Foundation** — DB schema, RLS (via get_my_tenant_id()+get_my_role() SECURITY DEFINER), middleware, Supabase client factories. Resolves all 6 critical pitfalls before any feature code. FREE plan compatible.
+- [x] **Phase 1: Auth & Tenant Onboarding** — Complete auth flow (login/logout/register), RBAC enforcement, tenant provisioning, user invite. Gates all downstream modules.
+- [x] **Phase 2: Clinical MVP** — Patient management, multi-dentist appointment calendar, prontuario, odontogram, digital anamnesis with e-signature, online booking link.
 - [ ] **Phase 3: Financial MVP** — Cash flow, Pix/boleto via Asaas, accounts receivable, installments, automated collection sequence, PDF receipts.
 - [ ] **Phase 4: Communications & Async** — WhatsApp Cloud API, Resend email, pg_cron + pgmq background jobs, appointment reminders, collection automation.
 - [ ] **Phase 5: AI Agents** — Copilot sidebar (Vercel AI Gateway), appointment confirmation agent, collection agent.
@@ -66,6 +66,7 @@
 - [x] 02-02-PLAN.md — CRUD de pacientes (encrypt AES-256, anonimizacao LGPD) + agenda FullCalendar por dentista com tratamento de double-booking
 - [x] 02-03-PLAN.md — Prontuario clinico + odontograma SVG FDI (9 status) + PDF do prontuario (@react-pdf/renderer)
 - [x] 02-04-PLAN.md — Anamnese digital (canvas + SHA-256 + token single-use) + link de agendamento publico
+- [x] 02-05-PLAN.md — [gap closure] disponibilidade no agendamento publico (getBookedSlots + datetime offset) + aba Anamneses real (listAnamneses + AnamnesisList)
 **UI hint**: yes
 
 ### Phase 3: Financial MVP
@@ -108,9 +109,9 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 0. Foundation | 0/3 | Planned | - |
-| 1. Auth & Tenant Onboarding | 0/3 | Planned | - |
-| 2. Clinical MVP | 3/4 | In Progress | 02-01..03 complete 2026-06-05 |
+| 0. Foundation | 3/3 | Complete | 2026-06-05 |
+| 1. Auth & Tenant Onboarding | 3/3 | Complete | 2026-06-05 |
+| 2. Clinical MVP | 5/5 | Complete | 2026-06-05 |
 | 3. Financial MVP | 0/? | Not started | - |
 | 4. Communications & Async | 0/? | Not started | - |
 | 5. AI Agents | 0/? | Not started | - |
