@@ -105,6 +105,15 @@ export async function GET(request: Request) {
 
         if (targets.length === 0) continue
 
+        // WR-05: resolve the real clinic name once per tenant for the email greeting.
+        // Without this, patients would receive emails showing the raw tenant UUID.
+        const { data: clinic } = await admin
+          .from('clinics')
+          .select('name')
+          .eq('id', rule.tenant_id)
+          .single()
+        const clinicName = clinic?.name ?? 'Sua clínica'
+
         // ── For each target milestone: check idempotency, then send ─────────────
         for (const target of targets) {
           const receivable = receivables.find((r) => r.id === target.receivableId)
@@ -158,7 +167,7 @@ export async function GET(request: Request) {
               subject: emailSubject,
               react: createElement(CollectionReminderEmail, {
                 patientName: patient.full_name,
-                clinicName: rule.tenant_id, // resolved below via clinic lookup if needed
+                clinicName, // WR-05: real clinic name, not the tenant UUID
                 chargeDescription: charge.description ?? 'Cobrança odontológica',
                 amount: receivable.value,
                 dueDate: dueDateFormatted,
@@ -169,7 +178,7 @@ export async function GET(request: Request) {
             // Audit log per send (IDs only — no PHI in audit details)
             await logBusinessEvent({
               tenantId: rule.tenant_id,
-              actorId: rule.tenant_id, // system-generated event
+              actorId: null, // WR-05: system-generated event — no acting user
               action: 'collection.reminder_sent',
               details: {
                 receivable_id: target.receivableId,

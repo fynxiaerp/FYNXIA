@@ -3,7 +3,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 
 export async function logBusinessEvent(params: {
   tenantId: string // REQUIRED — never optional (Pitfall 4)
-  actorId: string
+  actorId: string | null // null for system-generated events (e.g. cron) — audit_logs.actor_id is nullable
   action: string
   details: Record<string, unknown>
 }): Promise<void> {
