@@ -136,12 +136,25 @@ async function processWebhookEvent(
       .maybeSingle()
 
     if (!existingTx) {
+      // CR-02: post the TRUSTED local receivable value, never the untrusted payload value.
+      // The token only authenticates the caller — it does not guarantee per-field integrity.
+      if (payment.value != null && payment.value !== receivable.value) {
+        console.error(
+          '[webhook] reconciliation discrepancy: payload value',
+          payment.value,
+          'does not match local receivable value',
+          receivable.value,
+          'for receivable',
+          receivable.id
+        )
+      }
+
       // Auto-post income row (D-08: regime de caixa)
       await admin.from('financial_transactions').insert({
         tenant_id: receivable.tenant_id,
         receivable_id: receivable.id,
         type: 'receita',
-        amount: payment.value,
+        amount: receivable.value, // trusted local amount (CR-02)
         transaction_date: new Date().toISOString().split('T')[0], // YYYY-MM-DD
         description: `Pagamento confirmado via Asaas (${event.event})`,
         posted_by: null, // auto-posted by webhook
@@ -167,12 +180,12 @@ async function processWebhookEvent(
       .update({ status: 'estornado', updated_at: new Date().toISOString() })
       .eq('id', receivable.id)
 
-    // Insert negative income row (reversal)
+    // Insert negative income row (reversal) — CR-02: reverse the trusted local amount.
     await admin.from('financial_transactions').insert({
       tenant_id: receivable.tenant_id,
       receivable_id: receivable.id,
       type: 'receita',
-      amount: -Math.abs(payment.value),
+      amount: -Math.abs(receivable.value),
       transaction_date: new Date().toISOString().split('T')[0],
       description: `Estorno via Asaas (${event.event})`,
       posted_by: null,
