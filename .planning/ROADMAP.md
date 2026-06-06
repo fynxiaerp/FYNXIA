@@ -81,7 +81,7 @@
   5. Asaas webhook handler returns HTTP 200 immediately for every incoming event and processes payment updates asynchronously with idempotency — a duplicate webhook for the same payment does not create a duplicate credit entry. Security headers (CSP, HSTS, X-Frame-Options, X-Content-Type-Options) are present on all responses.
 **Plans**: 4 plans
 - [x] 03-01-PLAN.md — Financial DB foundation: 7 tables + patients.asaas_customer_id + RLS + SEC-03 audit trigger + category seed + Wave 0 tests + [BLOCKING] db push
-- [ ] 03-02-PLAN.md — Asaas integration: PaymentGateway abstraction + adapter, createCharge (PIX/boleto/installments), idempotent webhook, [BLOCKING] live sandbox verification
+- [x] 03-02-PLAN.md — Asaas integration: PaymentGateway abstraction + adapter, createCharge (PIX/boleto/installments), idempotent webhook; 15/15 unit tests GREEN; live sandbox verification deferred to UAT (03-HUMAN-UAT.md)
 - [ ] 03-03-PLAN.md — Financial UI: cash flow, receivables (read-time vencido + installment accordion), Nova Cobranca form, Financeiro hub card
 - [ ] 03-04-PLAN.md — Collection ruler (Vercel Cron + Resend, idempotent), PDF receipt (ReceiboPDF), SEC-06 security headers
 **UI hint**: yes
@@ -116,7 +116,7 @@
 | 0. Foundation | 3/3 | Complete | 2026-06-05 |
 | 1. Auth & Tenant Onboarding | 3/3 | Complete | 2026-06-05 |
 | 2. Clinical MVP | 5/5 | Complete | 2026-06-05 |
-| 3. Financial MVP | 1/4 | In Progress | - |
+| 3. Financial MVP | 2/4 | In Progress | - |
 | 4. Communications & Async | 0/? | Not started | - |
 | 5. AI Agents | 0/? | Not started | - |
 

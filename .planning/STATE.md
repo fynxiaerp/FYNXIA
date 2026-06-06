@@ -3,20 +3,20 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: "03-02 Tasks 1-3 complete — blocked at Task 4 (live Asaas sandbox checkpoint)"
-last_updated: "2026-06-06T17:00:00Z"
+stopped_at: "03-02 complete (code done; Task 4 live verify deferred to UAT) — advancing to Wave 3 (03-03 + 03-04)"
+last_updated: "2026-06-06T18:00:00Z"
 progress:
   total_phases: 6
   completed_phases: 3
   total_plans: 15
-  completed_plans: 12
-  percent: 80
+  completed_plans: 13
+  percent: 87
 ---
 
 # FYNXIA ERP — Project State
 
 **Last updated:** 2026-06-06
-**Updated by:** gsd-execute-phase (03-01 completion)
+**Updated by:** gsd-execute-phase (03-02 completion)
 
 ---
 
@@ -33,18 +33,18 @@ progress:
 ## Current Position
 
 Phase: 03 (financial-mvp) — EXECUTING
-Plan: 2 of 4
+Plan: 3 of 4
 **Phase:** 3
-**Plan:** 03-02 (Wave 2 — Asaas integration)
+**Plan:** 03-03 (Wave 3 — Financial UI)
 **Status:** Executing Phase 03
 
 ```
-Progress: [████████████████████████░░░░░░] 80% (12/15 plans complete)
+Progress: [██████████████████████████░░░░] 87% (13/15 plans complete)
 
 Phase 0 [Complete] █████
 Phase 1 [Complete] █████
 Phase 2 [Complete] █████
-Phase 3 [In Progress — 1/4] ██░░░
+Phase 3 [In Progress — 2/4] ████░
 Phase 4 [Not started] ░░░░░
 Phase 5 [Not started] ░░░░░
 ```
@@ -70,7 +70,7 @@ Phase 5 [Not started] ░░░░░
 |--------|--------|---------|
 | Requirements coverage | 47/47 | 47/47 mapped |
 | Phases defined | 6 | 6 |
-| Plans complete | TBD | 12 (03-01 latest) |
+| Plans complete | TBD | 13 (03-02 latest) |
 | Phase 0 pitfalls resolved | 6/6 | 0/6 |
 
 ---
@@ -150,12 +150,12 @@ Phase 5 [Not started] ░░░░░
 
 ## Session Continuity
 
-**Stopped at:** 03-02 Tasks 1-3 complete — BLOCKING checkpoint at Task 4 (live Asaas sandbox verification, D-02)
+**Stopped at:** 03-02 complete — Wave 3 is next (03-03 Financial UI + 03-04 Collection/PDF/SEC-06)
 
 **Critical path:** Phase 0 → 1 → 2 → 4 → 5 (Phase 3 parallel with Phase 2)
 
-**Next action:** Task 4 of 03-02 is a human-verify checkpoint. Create Asaas sandbox account → set ASAAS_API_KEY, ASAAS_BASE_URL, ASAAS_WEBHOOK_SECRET env vars → register webhook → emit PIX charge → pay in sandbox → confirm receivable status flips to pago and no duplicate financial_transactions row on replay. Then proceed to Plan 03-03 (cash flow UI + manual transactions).
+**Next action:** Proceed to Plan 03-03 (cash flow UI, receivables list with read-time vencido, Nova Cobrança form, Financeiro hub card).
 
-**03-02 delivered (Tasks 1-3):** PaymentGateway interface + AsaasAdapter (D-01), asaasFetch typed client (server-only), chargeSchema Zod v3, createCharge Server Action (PIX QR, boleto, installments mirrored to N receivables, customer dedup via asaas_customer_id), cancelCharge, idempotent webhook handler (token validation → 401, upsert dedup, fire-and-forget processWebhookEvent, income auto-post, refund reversal). charges.test.ts + asaas.test.ts 15/15 GREEN. tsc --noEmit exit 0.
+**03-02 delivered:** PaymentGateway interface + AsaasAdapter (D-01), asaasFetch typed client (server-only), chargeSchema Zod v3, createCharge Server Action (PIX QR, boleto, installments mirrored to N receivables, customer dedup via asaas_customer_id), cancelCharge, idempotent webhook handler (token validation → 401, upsert dedup, fire-and-forget processWebhookEvent, income auto-post, refund reversal). charges.test.ts + asaas.test.ts 15/15 GREEN. tsc --noEmit exit 0. Task 4 (live sandbox) deferred to UAT — tracked in 03-HUMAN-UAT.md.
 
 **03-01 delivered:** 7 financial tables live in Supabase sa-east-1, provider-agnostic schema, RLS with USING+WITH CHECK on 6 tenant-scoped tables, audit trigger on financial_transactions reusing Phase 2 audit_table_changes(), 10 seeded dental categories, webhook_events dedup table, 7 Wave 0 test scaffolds (financial.test.ts 13/13 GREEN; 6 RED awaiting downstream plans), regenerated database.types.ts.
