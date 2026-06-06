@@ -219,6 +219,8 @@ Entry point for the financial module — mirrors the `/clinica` hub pattern (ico
 └─────────────────────────────────────────────────────────┘
 ```
 
+**Primary focal point:** the `CashFlowTotals` 3-card row (entradas / saídas / saldo) is the primary visual anchor of this screen — Display-size `tabular-nums` amounts, top of the content area. The `TransactionList` is secondary supporting detail. (Mirrors the Phase 2 precedent of an explicit focal-point declaration per screen.) For **Contas a Receber** the focal point is the receivables table itself; for **Nova Cobrança** it is the charge form's amount/result (Pix QR or boleto link).
+
 **Month navigation:** nuqs URL state `?month=2026-06`. Default: current month. Prev/Next buttons update URL. Server Component re-fetches on navigation.
 
 **Manual entry modal:** Dialog triggered by "+ Lançamento" button. Fields: tipo (receita/despesa), categoria (Select from seeded list, D-05), valor (BRL masked Input), data (Calendar picker), descrição (Input).
