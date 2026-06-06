@@ -29,7 +29,7 @@
 - [x] **SEC-03**: Trigger automático de auditoria em tabelas: patients, appointments, medical_records, financial_transactions
 - [x] **SEC-04**: Soft delete em patients via deleted_at (LGPD — nunca hard delete de prontuário)
 - [ ] **SEC-05**: Tabela patient_consents com registro de consentimento LGPD por paciente
-- [ ] **SEC-06**: Headers de segurança configurados (CSP, X-Frame-Options, HSTS, X-Content-Type-Options)
+- [x] **SEC-06**: Headers de segurança configurados (CSP, X-Frame-Options, HSTS, X-Content-Type-Options)
 - [ ] **SEC-07**: Todas as colunas de timestamp usam TIMESTAMPTZ (suporte multi-fuso horário Brasil)
 - [ ] **SEC-08**: Dados de saúde sensíveis criptografados com AES-256 antes de armazenar
 
@@ -53,8 +53,8 @@
 - [x] **FIN-04**: Usuário pode gerar link de pagamento via Pix (Asaas) e recebe confirmação automática por webhook
 - [x] **FIN-05**: Usuário pode gerar boleto bancário (Asaas) para paciente
 - [x] **FIN-06**: Sistema rastreia parcelamentos com data e status de cada parcela
-- [ ] **FIN-07**: Sistema dispara régua de cobrança automática (WhatsApp/e-mail) no vencimento e a cada N dias de atraso
-- [ ] **FIN-08**: Usuário pode emitir recibo de consulta em PDF usando @react-pdf/renderer
+- [x] **FIN-07**: Sistema dispara régua de cobrança automática (WhatsApp/e-mail) no vencimento e a cada N dias de atraso
+- [x] **FIN-08**: Usuário pode emitir recibo de consulta em PDF usando @react-pdf/renderer
 - [ ] **FIN-09**: Webhook handler do Asaas retorna HTTP 200 imediatamente e processa pagamento de forma assíncrona com idempotência
 
 ### COMMS — Comunicações
@@ -136,10 +136,10 @@
 | FIN-04 | Phase 3 — Financial MVP | Complete |
 | FIN-05 | Phase 3 — Financial MVP | Complete |
 | FIN-06 | Phase 3 — Financial MVP | Complete |
-| FIN-07 | Phase 3 — Financial MVP | Pending |
-| FIN-08 | Phase 3 — Financial MVP | Pending |
+| FIN-07 | Phase 3 — Financial MVP | Complete |
+| FIN-08 | Phase 3 — Financial MVP | Complete |
 | FIN-09 | Phase 3 — Financial MVP | Pending |
-| SEC-06 | Phase 3 — Financial MVP | Pending |
+| SEC-06 | Phase 3 — Financial MVP | Complete |
 | COMMS-01 | Phase 4 — Communications & Async | Pending |
 | COMMS-02 | Phase 4 — Communications & Async | Pending |
 | COMMS-03 | Phase 4 — Communications & Async | Pending |

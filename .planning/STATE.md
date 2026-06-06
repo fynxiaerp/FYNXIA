@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 03-03-PLAN.md — Wave 3 Financial UI done; 03-04 is next
-last_updated: "2026-06-06T17:57:51.625Z"
+stopped_at: "Completed 03-04-PLAN.md — Phase 3 complete: collection ruler + PDF receipt + SEC-06 headers"
+last_updated: "2026-06-06T19:54:10.234Z"
 progress:
   total_phases: 6
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 15
-  completed_plans: 14
-  percent: 93
+  completed_plans: 15
+  percent: 100
 ---
 
 # FYNXIA ERP — Project State
@@ -32,19 +32,19 @@ progress:
 
 ## Current Position
 
-Phase: 03 (financial-mvp) — EXECUTING
-Plan: 4 of 4
+Phase: 03 (financial-mvp) — COMPLETE
+Plan: 4 of 4 (all complete)
 **Phase:** 3
-**Plan:** 03-04 (Wave 3 — Collection Ruler + PDF + SEC-06)
-**Status:** Executing Phase 03
+**Plan:** 03-04 — DONE
+**Status:** Phase 03 Complete — all 15 plans executed
 
 ```
-Progress: [██████████████████████████░░░░] 87% (13/15 plans complete)
+Progress: [██████████] 100% (15/15 plans complete)
 
 Phase 0 [Complete] █████
 Phase 1 [Complete] █████
 Phase 2 [Complete] █████
-Phase 3 [In Progress — 2/4] ████░
+Phase 3 [Complete] █████
 Phase 4 [Not started] ░░░░░
 Phase 5 [Not started] ░░░░░
 ```
@@ -58,7 +58,7 @@ Phase 5 [Not started] ░░░░░
 | 0 | Foundation | INFRA-01..07, SEC-07, SEC-08 | Not started |
 | 1 | Auth & Tenant Onboarding | AUTH-01..07, SEC-01, SEC-02, SEC-05 | Not started |
 | 2 | Clinical MVP | CLINIC-01..09, SEC-03, SEC-04 | Not started |
-| 3 | Financial MVP | FIN-01..09, SEC-06 | Not started |
+| 3 | Financial MVP | FIN-01..09, SEC-06 | Complete |
 | 4 | Communications & Async | COMMS-01..04 | Not started |
 | 5 | AI Agents | AI-01..03 | Not started |
 
@@ -75,6 +75,7 @@ Phase 5 [Not started] ░░░░░
 
 ---
 | Phase 03 P03-03 | 20 | 3 tasks | 19 files |
+| Phase 03 P04 | 68 | 3 tasks | 12 files |
 
 ## Accumulated Context
 
@@ -103,6 +104,8 @@ Phase 5 [Not started] ░░░░░
 | Supabase CLI re-auth gotcha documentado | db push requer CLI logado na org FYNXIA (kczvihafddupruvsrrsc); padrão recorrente em todo checkpoint [BLOCKING] db push | 2026-06-06 |
 | No z.default() in Zod schemas with RHF zodResolver | .default() makes fields optional in input type causing resolver type mismatch; use RHF defaultValues instead | 2026-06-06 |
 | @base-ui render-prop pattern (no asChild anywhere) | Button render={<Link/>}, PopoverTrigger render={<button/>}, Accordion multiple prop — confirmed from PatientForm.tsx; no Radix asChild in this project | 2026-06-06 |
+| Lazy Resend singleton (getResend() factory) | new Resend(undefined) throws at module-eval time during next build static analysis; lazy factory defers instantiation to first runtime call; backward-compat wrapper preserves .emails.send() interface | 2026-06-06 |
+| Static CSP via next.config.ts headers() (no nonce) | Nonce-based CSP forces full dynamic render on every page — counterproductive for ERP with many SSR pages; unsafe-inline accepted for internal ERP (no third-party scripts, documented in RESEARCH §A3) | 2026-06-06 |
 
 ### Critical Pre-Phase-0 Actions
 
@@ -153,7 +156,7 @@ Phase 5 [Not started] ░░░░░
 
 ## Session Continuity
 
-**Stopped at:** Completed 03-03-PLAN.md — Wave 3 Financial UI done; 03-04 is next
+**Stopped at:** Completed 03-04-PLAN.md — Phase 3 complete: collection ruler + PDF receipt + SEC-06 headers
 
 **Critical path:** Phase 0 → 1 → 2 → 4 → 5 (Phase 3 parallel with Phase 2)
 
