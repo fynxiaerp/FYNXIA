@@ -69,7 +69,7 @@ export async function GET(_request: Request, { params }: RouteParams) {
     const { data: charge, error: chargeError } = await supabase
       .from('charges')
       .select(
-        'id, billing_type, total_value, status, provider_charge_id, patient_id, created_at'
+        'id, billing_type, total_value, status, provider_charge_id, patient_id, created_at, updated_at'
       )
       .eq('id', id)
       .single()
@@ -105,10 +105,20 @@ export async function GET(_request: Request, { params }: RouteParams) {
 
     const clinicName = clinic?.name ?? 'Clínica'
 
-    // ── Determine paid_at: prefer updated_at, fall back to created_at ──────────
-    // The charge may have a paid_at if we extended the table; otherwise use created_at.
-    const paidAt = (charge as Record<string, unknown>).paid_at as string | undefined
-      ?? charge.created_at
+    // ── Determine paid_at from the real payment timestamp ──────────────────────
+    // WR-03: `charges` has no `paid_at` column — the payment timestamp lives on the
+    // paid receivable. Use the most recent paid parcel's `paid_at`, falling back to the
+    // charge's `updated_at` (set when the webhook marks it pago), then `created_at`.
+    const { data: paidReceivable } = await supabase
+      .from('receivables')
+      .select('paid_at')
+      .eq('charge_id', id)
+      .eq('status', 'pago')
+      .order('paid_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+
+    const paidAt = paidReceivable?.paid_at ?? charge.updated_at ?? charge.created_at
 
     // ── Generate PDF buffer ────────────────────────────────────────────────────
     const pdfElement = createElement(ReceiboPDF, {
