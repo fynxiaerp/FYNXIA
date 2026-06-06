@@ -149,16 +149,32 @@ export async function createCharge(input: ChargeInput): Promise<{
       // Fetch all parcels from Asaas (Pitfall 4 — only first parcel in creation response)
       const parcels = await gateway.getInstallmentCharges(chargeResult.installmentId)
 
-      const receivableRows = parcels.map((parcel, idx) => ({
-        tenant_id: actor.tenant_id,
-        charge_id: charge.id,
-        patient_id: patient.id,
-        provider_charge_id: parcel.chargeId,
-        installment_number: idx + 1,
-        value: parcel.value ?? (data.value / data.installmentCount),
-        due_date: parcel.dueDate,
-        status: 'pendente',
-      }))
+      // CR-01: Distribute the charge total across parcels using integer-cent math so
+      // sum(parcels) === total exactly. The last parcel absorbs the rounding remainder.
+      // When Asaas reports a per-parcel value, trust it (Asaas may apply installment
+      // interest/fees); otherwise fall back to an even split with the remainder on the last.
+      const totalCents = Math.round(data.value * 100)
+      const baseCents = Math.floor(totalCents / parcels.length)
+
+      const receivableRows = parcels.map((parcel, idx) => {
+        const isLast = idx === parcels.length - 1
+        const cents =
+          parcel.value != null
+            ? Math.round(parcel.value * 100)
+            : isLast
+              ? totalCents - baseCents * (parcels.length - 1)
+              : baseCents
+        return {
+          tenant_id: actor.tenant_id,
+          charge_id: charge.id,
+          patient_id: patient.id,
+          provider_charge_id: parcel.chargeId,
+          installment_number: idx + 1,
+          value: cents / 100,
+          due_date: parcel.dueDate,
+          status: 'pendente',
+        }
+      })
 
       const { error: receivablesError } = await supabase
         .from('receivables')
