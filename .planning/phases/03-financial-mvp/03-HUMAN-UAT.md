@@ -1,70 +1,54 @@
 ---
 status: partial
 phase: 03-financial-mvp
-source: [03-02-PLAN.md Task 4]
+source: [03-VERIFICATION.md, 03-02-PLAN.md Task 4]
 started: "2026-06-06T00:00:00Z"
-updated: "2026-06-06T00:00:00Z"
+updated: "2026-06-06T20:10:56Z"
 ---
 
 ## Current Test
 
-[awaiting human testing — Asaas sandbox account not yet provisioned]
+[awaiting human testing — requires Asaas sandbox account + deployed app]
 
 ## Tests
 
-### 1. Fluxo Asaas live (sandbox): PIX createCharge → pagar → webhook → idempotência (FIN-09)
+### 1. Fluxo Asaas PIX live (sandbox): createCharge → pagar → webhook → status pago (FIN-04)
+expected: `createCharge` com `billingType='PIX'` retorna QR (`encodedImage` + `payload`); após pagar no simulador sandbox, o webhook dispara e `receivables.status` vira `pago` automaticamente (sem reconciliação manual); uma linha `financial_transactions` type='receita' é criada com o valor.
+result: [pending]
+setup: criar conta grátis em https://sandbox.asaas.com; setar `ASAAS_API_KEY` (`$aact_hmlg_...`), `ASAAS_BASE_URL=https://api-sandbox.asaas.com/v3`, `ASAAS_WEBHOOK_SECRET` (local `.env.local` + Vercel); expor via ngrok ou usar URL de preview Vercel; registrar webhook em Integrações → Webhooks → `{url}/api/webhooks/asaas`, authToken = ASAAS_WEBHOOK_SECRET, eventos PAYMENT_CREATED/CONFIRMED/RECEIVED/OVERDUE/REFUNDED/DELETED.
+arquivos: src/actions/charges.ts, src/app/api/webhooks/asaas/route.ts (unit: charges.test.ts 9/9, asaas.test.ts 6/6 GREEN).
 
-**Requer:** Conta sandbox Asaas gratuita + ASAAS_API_KEY + ASAAS_BASE_URL + ASAAS_WEBHOOK_SECRET + webhook registrado (ngrok ou URL Vercel preview).
+### 2. Idempotência do webhook (replay) (FIN-09)
+expected: reenviar o mesmo evento ("Reenviar" no painel Asaas) NÃO cria uma segunda linha em `financial_transactions` — dedup por `webhook_events.asaas_event_id` UNIQUE + guard em (receivable_id, type='receita').
+result: [pending]
 
-**expected:**
-1. `createCharge` com `billingType='PIX'` retorna `{ success: true, chargeId, pix: { encodedImage, payload } }` — QR code válido
-2. Após pagar a cobrança no simulador sandbox da Asaas, o webhook dispara para a URL registrada
-3. No banco: `receivables.status` passa de `'pendente'` para `'pago'` e `paid_at` é preenchido
-4. Uma linha é inserida em `financial_transactions` com `type='receita'`, `amount = valor da cobrança`
-5. Um segundo disparo do mesmo evento (reenvio via painel Asaas → "reenviar webhook") **NÃO** cria uma segunda linha em `financial_transactions` — idempotência garantida por `webhook_events.asaas_event_id` UNIQUE + guard em `(receivable_id, type='receita')`
+### 3. Boleto + parcelamento (FIN-05, FIN-06)
+expected: emitir cobrança parcelada → cada parcela aparece em Contas a Receber com vencimento e status próprios; a soma das parcelas é exatamente igual ao total (distribuição de centavos corrigida — última parcela absorve o resto).
+result: [pending]
 
-**result:** [pending]
+### 4. Recibo PDF — visual + gate (FIN-08)
+expected: baixar `/api/financeiro/charges/[id]/recibo.pdf` para uma cobrança paga → PDF renderiza nome da clínica, paciente, valor e data com acentuação correta (Roboto, Flexbox); cobrança não-paga retorna 409; recepcionista consegue baixar (ROADMAP SC-4).
+result: [pending]
 
-**Por que foi deferido (D-02):** Requer conta sandbox Asaas gratuita e registro do webhook com URL HTTPS pública — nenhuma dessas credenciais está provisionada ainda. O código está 100% unit-testado (15/15 GREEN); este teste valida o fluxo real de rede end-to-end.
+### 5. Headers de segurança no deploy (SEC-06)
+expected: `curl -I https://fynxia.vercel.app` mostra CSP (com `wss://*.supabase.co` + Asaas), HSTS, X-Frame-Options: DENY, X-Content-Type-Options: nosniff em todas as respostas; o app continua funcionando (Supabase Realtime + Asaas não bloqueados pela CSP).
+result: [pending]
 
-**Setup necessário antes de executar:**
-
-1. Criar conta sandbox em https://sandbox.asaas.com (gratuito)
-2. Copiar a API Key sandbox (`$aact_hmlg_...`) e adicionar ao `.env.local` + Vercel preview env:
-   ```
-   ASAAS_API_KEY=$aact_hmlg_SUA_CHAVE_AQUI
-   ASAAS_BASE_URL=https://api-sandbox.asaas.com/v3
-   ```
-3. Gerar um token de webhook (32-255 chars) e adicionar:
-   ```
-   ASAAS_WEBHOOK_SECRET=seu_token_secreto_aqui
-   ```
-4. Expor o app localmente via ngrok (ou usar URL de preview Vercel):
-   ```bash
-   ngrok http 3000
-   ```
-5. No painel Asaas sandbox → Configurações → Integrações → Webhooks → Criar webhook:
-   - URL: `{sua-url-publica}/api/webhooks/asaas`
-   - authToken: valor de `ASAAS_WEBHOOK_SECRET`
-   - Eventos: `PAYMENT_CREATED`, `PAYMENT_CONFIRMED`, `PAYMENT_RECEIVED`, `PAYMENT_OVERDUE`, `PAYMENT_REFUNDED`, `PAYMENT_DELETED`
-6. Executar o teste: criar PIX charge para um paciente teste → pagar no simulador → verificar DB
-
-**Arquivos relevantes:**
-- `src/actions/charges.ts` — createCharge Server Action
-- `src/app/api/webhooks/asaas/route.ts` — webhook handler
-- `src/__tests__/actions/charges.test.ts` — 9/9 GREEN (unit)
-- `src/__tests__/webhooks/asaas.test.ts` — 6/6 GREEN (unit)
+### 6. Régua de cobrança — entrega de e-mail (Resend) (FIN-07)
+expected: o Vercel Cron diário (`0 8 * * *`, protegido por `CRON_SECRET`) roda contra recebíveis vencidos → e-mail de cobrança real entregue via Resend com o nome real da clínica; segundo disparo do cron NÃO reenvia o mesmo lembrete (idempotente por recebível+marco via `collection_log`).
+result: [pending]
 
 ## Summary
 
-total: 1
+total: 6
 passed: 0
 issues: 0
-pending: 1
+pending: 6
 skipped: 0
 blocked: 0
-resolved: 0
 
 ## Gaps
 
-- Item 1 (live sandbox Asaas PIX → webhook → idempotência) pendente de conta Asaas sandbox + registro de webhook. Código unit-testado. Pode ser executado em paralelo com Wave 3 (03-03 + 03-04) assim que as credenciais forem provisionadas.
+- Todos os 6 itens dependem de runtime/live: conta sandbox Asaas (D-02), app deployado, e disparo do cron. O código está unit-testado (256/256 GREEN, next build limpo) — estas são confirmações de comportamento em produção.
+- FIN-09 permanece "Pending" na REQUIREMENTS.md até o replay de webhook live confirmar idempotência (código completo, 15/15 unit tests).
+- Pré-requisito recorrente: o teste do `db push`/Asaas exige o Supabase CLI logado na conta do FYNXIA (org kczvihafddupruvsrrsc) — ver memória do projeto.
