@@ -32,7 +32,7 @@ result: [pending]
 
 ### 5. Headers de segurança no deploy (SEC-06)
 expected: `curl -I https://fynxia.vercel.app` mostra CSP (com `wss://*.supabase.co` + Asaas), HSTS, X-Frame-Options: DENY, X-Content-Type-Options: nosniff em todas as respostas; o app continua funcionando (Supabase Realtime + Asaas não bloqueados pela CSP).
-result: [pending]
+result: passed — verificado em 2026-06-06 via `curl -I https://fynxia.vercel.app/login`: os 4 headers presentes; CSP connect-src permite supabase (https+wss) e Asaas; img-src permite data:/blob: (QR Pix); app responde 200.
 
 ### 6. Régua de cobrança — entrega de e-mail (Resend) (FIN-07)
 expected: o Vercel Cron diário (`0 8 * * *`, protegido por `CRON_SECRET`) roda contra recebíveis vencidos → e-mail de cobrança real entregue via Resend com o nome real da clínica; segundo disparo do cron NÃO reenvia o mesmo lembrete (idempotente por recebível+marco via `collection_log`).
@@ -41,9 +41,9 @@ result: [pending]
 ## Summary
 
 total: 6
-passed: 0
+passed: 1
 issues: 0
-pending: 6
+pending: 5
 skipped: 0
 blocked: 0
 
