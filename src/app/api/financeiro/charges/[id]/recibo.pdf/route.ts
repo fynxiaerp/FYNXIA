@@ -79,6 +79,12 @@ export async function GET(_request: Request, { params }: RouteParams) {
       return new Response('Cobrança não encontrada', { status: 404 })
     }
 
+    // WR-04: only issue a "Recibo de Pagamento" for an actually paid charge.
+    // The endpoint is directly reachable, so the UI-level link gating is not sufficient.
+    if (charge.status !== 'pago') {
+      return new Response('Recibo disponível apenas para cobranças pagas', { status: 409 })
+    }
+
     // ── Load patient (RLS-scoped) ──────────────────────────────────────────────
     const { data: patient, error: patientError } = await supabase
       .from('patients')
