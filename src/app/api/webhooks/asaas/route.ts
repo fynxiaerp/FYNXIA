@@ -174,6 +174,32 @@ async function processWebhookEvent(
         .eq('id', receivable.charge_id)
     }
   } else if (eventType === 'PAYMENT_REFUNDED') {
+    // WR-02: idempotency guard — Asaas can send multiple distinct refund-related events
+    // for the same receivable (refund + chargeback/partial). Without this guard each one
+    // would post another negative row and over-reverse the cash flow.
+    if (receivable.status === 'estornado') {
+      await admin
+        .from('webhook_events')
+        .update({ processed: true })
+        .eq('id', webhookEventRowId)
+      return
+    }
+
+    const { data: existingReversal } = await admin
+      .from('financial_transactions')
+      .select('id')
+      .eq('receivable_id', receivable.id)
+      .lt('amount', 0)
+      .maybeSingle()
+
+    if (existingReversal) {
+      await admin
+        .from('webhook_events')
+        .update({ processed: true })
+        .eq('id', webhookEventRowId)
+      return
+    }
+
     // Mark receivable as estornado
     await admin
       .from('receivables')
