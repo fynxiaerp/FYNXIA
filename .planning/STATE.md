@@ -3,20 +3,20 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: "03-02 complete (code done; Task 4 live verify deferred to UAT) — advancing to Wave 3 (03-03 + 03-04)"
-last_updated: "2026-06-06T18:00:00Z"
+stopped_at: Completed 03-03-PLAN.md — Wave 3 Financial UI done; 03-04 is next
+last_updated: "2026-06-06T17:57:51.625Z"
 progress:
   total_phases: 6
   completed_phases: 3
   total_plans: 15
-  completed_plans: 13
-  percent: 87
+  completed_plans: 14
+  percent: 93
 ---
 
 # FYNXIA ERP — Project State
 
 **Last updated:** 2026-06-06
-**Updated by:** gsd-execute-phase (03-02 completion)
+**Updated by:** gsd-execute-phase (03-03 completion)
 
 ---
 
@@ -33,9 +33,9 @@ progress:
 ## Current Position
 
 Phase: 03 (financial-mvp) — EXECUTING
-Plan: 3 of 4
+Plan: 4 of 4
 **Phase:** 3
-**Plan:** 03-03 (Wave 3 — Financial UI)
+**Plan:** 03-04 (Wave 3 — Collection Ruler + PDF + SEC-06)
 **Status:** Executing Phase 03
 
 ```
@@ -74,6 +74,7 @@ Phase 5 [Not started] ░░░░░
 | Phase 0 pitfalls resolved | 6/6 | 0/6 |
 
 ---
+| Phase 03 P03-03 | 20 | 3 tasks | 19 files |
 
 ## Accumulated Context
 
@@ -100,6 +101,8 @@ Phase 5 [Not started] ░░░░░
 | No stored vencido (D-04): status CHECK ('pendente','pago','estornado') only | vencido derivado em read-time de due_date vs NOW(); evita estados stale por clock-skew no banco | 2026-06-06 |
 | webhook_events sem RLS (T-3-04 aceito): service-role only, sem tenant_id | Tabela global de dedup de webhooks; nenhum path de cliente acessa; handler usa createAdminClient (Plan 02) | 2026-06-06 |
 | Supabase CLI re-auth gotcha documentado | db push requer CLI logado na org FYNXIA (kczvihafddupruvsrrsc); padrão recorrente em todo checkpoint [BLOCKING] db push | 2026-06-06 |
+| No z.default() in Zod schemas with RHF zodResolver | .default() makes fields optional in input type causing resolver type mismatch; use RHF defaultValues instead | 2026-06-06 |
+| @base-ui render-prop pattern (no asChild anywhere) | Button render={<Link/>}, PopoverTrigger render={<button/>}, Accordion multiple prop — confirmed from PatientForm.tsx; no Radix asChild in this project | 2026-06-06 |
 
 ### Critical Pre-Phase-0 Actions
 
@@ -150,11 +153,13 @@ Phase 5 [Not started] ░░░░░
 
 ## Session Continuity
 
-**Stopped at:** 03-02 complete — Wave 3 is next (03-03 Financial UI + 03-04 Collection/PDF/SEC-06)
+**Stopped at:** Completed 03-03-PLAN.md — Wave 3 Financial UI done; 03-04 is next
 
 **Critical path:** Phase 0 → 1 → 2 → 4 → 5 (Phase 3 parallel with Phase 2)
 
-**Next action:** Proceed to Plan 03-03 (cash flow UI, receivables list with read-time vencido, Nova Cobrança form, Financeiro hub card).
+**Next action:** Proceed to Plan 03-04 (collection ruler + Resend email + ReceiboPDF + SEC-06 security headers).
+
+**03-03 delivered:** formatBRL/deriveReceivableStatus helpers, createTransaction/listTransactions/listCategories/listReceivables Server Actions, Financeiro hub card + module hub, fluxo-de-caixa page (CashFlowTotals + TransactionList + TransactionModal), contas-a-receber page (ReceivablesTable with client-side vencido via deriveReceivableStatus + Accordion installment grouping), nova-cobranca page (ChargeForm wired to createCharge + PixQRDisplay with base64 QR). 23/23 plan tests GREEN; tsc exit 0; next build clean. Key lessons: no z.default() with RHF resolver; @base-ui uses render prop not asChild.
 
 **03-02 delivered:** PaymentGateway interface + AsaasAdapter (D-01), asaasFetch typed client (server-only), chargeSchema Zod v3, createCharge Server Action (PIX QR, boleto, installments mirrored to N receivables, customer dedup via asaas_customer_id), cancelCharge, idempotent webhook handler (token validation → 401, upsert dedup, fire-and-forget processWebhookEvent, income auto-post, refund reversal). charges.test.ts + asaas.test.ts 15/15 GREEN. tsc --noEmit exit 0. Task 4 (live sandbox) deferred to UAT — tracked in 03-HUMAN-UAT.md.
 

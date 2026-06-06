@@ -47,12 +47,12 @@
 
 ### FIN — Módulo Financeiro
 
-- [ ] **FIN-01**: Usuário pode visualizar fluxo de caixa com entradas e saídas do mês corrente
-- [ ] **FIN-02**: Usuário pode lançar transação financeira (receita/despesa) com categoria, valor e data
-- [ ] **FIN-03**: Sistema lista contas a receber com status (pendente/pago/vencido) e data de vencimento
-- [ ] **FIN-04**: Usuário pode gerar link de pagamento via Pix (Asaas) e recebe confirmação automática por webhook
-- [ ] **FIN-05**: Usuário pode gerar boleto bancário (Asaas) para paciente
-- [ ] **FIN-06**: Sistema rastreia parcelamentos com data e status de cada parcela
+- [x] **FIN-01**: Usuário pode visualizar fluxo de caixa com entradas e saídas do mês corrente
+- [x] **FIN-02**: Usuário pode lançar transação financeira (receita/despesa) com categoria, valor e data
+- [x] **FIN-03**: Sistema lista contas a receber com status (pendente/pago/vencido) e data de vencimento
+- [x] **FIN-04**: Usuário pode gerar link de pagamento via Pix (Asaas) e recebe confirmação automática por webhook
+- [x] **FIN-05**: Usuário pode gerar boleto bancário (Asaas) para paciente
+- [x] **FIN-06**: Sistema rastreia parcelamentos com data e status de cada parcela
 - [ ] **FIN-07**: Sistema dispara régua de cobrança automática (WhatsApp/e-mail) no vencimento e a cada N dias de atraso
 - [ ] **FIN-08**: Usuário pode emitir recibo de consulta em PDF usando @react-pdf/renderer
 - [ ] **FIN-09**: Webhook handler do Asaas retorna HTTP 200 imediatamente e processa pagamento de forma assíncrona com idempotência
@@ -130,12 +130,12 @@
 | CLINIC-09 | Phase 2 — Clinical MVP | Complete |
 | SEC-03 | Phase 2 — Clinical MVP | Complete |
 | SEC-04 | Phase 2 — Clinical MVP | Complete |
-| FIN-01 | Phase 3 — Financial MVP | Pending |
-| FIN-02 | Phase 3 — Financial MVP | Pending |
-| FIN-03 | Phase 3 — Financial MVP | Pending |
-| FIN-04 | Phase 3 — Financial MVP | Pending |
-| FIN-05 | Phase 3 — Financial MVP | Pending |
-| FIN-06 | Phase 3 — Financial MVP | Pending |
+| FIN-01 | Phase 3 — Financial MVP | Complete |
+| FIN-02 | Phase 3 — Financial MVP | Complete |
+| FIN-03 | Phase 3 — Financial MVP | Complete |
+| FIN-04 | Phase 3 — Financial MVP | Complete |
+| FIN-05 | Phase 3 — Financial MVP | Complete |
+| FIN-06 | Phase 3 — Financial MVP | Complete |
 | FIN-07 | Phase 3 — Financial MVP | Pending |
 | FIN-08 | Phase 3 — Financial MVP | Pending |
 | FIN-09 | Phase 3 — Financial MVP | Pending |

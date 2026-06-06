@@ -82,7 +82,7 @@
 **Plans**: 4 plans
 - [x] 03-01-PLAN.md — Financial DB foundation: 7 tables + patients.asaas_customer_id + RLS + SEC-03 audit trigger + category seed + Wave 0 tests + [BLOCKING] db push
 - [x] 03-02-PLAN.md — Asaas integration: PaymentGateway abstraction + adapter, createCharge (PIX/boleto/installments), idempotent webhook; 15/15 unit tests GREEN; live sandbox verification deferred to UAT (03-HUMAN-UAT.md)
-- [ ] 03-03-PLAN.md — Financial UI: cash flow, receivables (read-time vencido + installment accordion), Nova Cobranca form, Financeiro hub card
+- [x] 03-03-PLAN.md — Financial UI: cash flow, receivables (read-time vencido + installment accordion), Nova Cobranca form, Financeiro hub card
 - [ ] 03-04-PLAN.md — Collection ruler (Vercel Cron + Resend, idempotent), PDF receipt (ReceiboPDF), SEC-06 security headers
 **UI hint**: yes
 
