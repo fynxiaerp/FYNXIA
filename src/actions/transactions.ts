@@ -2,6 +2,7 @@
 import { z } from 'zod'
 import { createClient } from '@/lib/supabase/server'
 import { logBusinessEvent } from '@/lib/audit'
+import { isMoney2dp } from '@/lib/validators/charge'
 
 // ─── Helper: get authenticated actor ────────────────────────────────────────
 // Reuses the getActor pattern from src/actions/appointments.ts
@@ -44,7 +45,10 @@ const transactionSchema = z.object({
     errorMap: () => ({ message: 'Tipo inválido (receita ou despesa)' }),
   }),
   categoryId: z.string().uuid('Categoria inválida').optional().nullable(),
-  amount: z.number().positive('Valor deve ser maior que zero'),
+  amount: z
+    .number()
+    .positive('Valor deve ser maior que zero')
+    .refine(isMoney2dp, { message: 'Valor deve ter no máximo 2 casas decimais' }),
   transactionDate: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, 'Data inválida (YYYY-MM-DD)'),

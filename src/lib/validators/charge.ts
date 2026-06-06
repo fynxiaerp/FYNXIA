@@ -3,6 +3,11 @@ import { z } from 'zod'
 // Zod v3 (NUNCA v4) — matches project convention (see appointment.ts)
 // chargeSchema: validates createCharge Server Action input
 
+// WR-01: money must not have more than 2 decimal places. NUMERIC(12,2) silently
+// rounds otherwise, and excess precision breaks the integer-cent invariant downstream.
+export const isMoney2dp = (v: number): boolean =>
+  Number.isFinite(v) && Number(v.toFixed(2)) === v
+
 export const chargeSchema = z.object({
   patientId: z.string().uuid('ID do paciente inválido'),
 
@@ -12,7 +17,10 @@ export const chargeSchema = z.object({
     errorMap: () => ({ message: 'Tipo de cobrança inválido' }),
   }),
 
-  value: z.number().positive('Valor deve ser maior que zero'),
+  value: z
+    .number()
+    .positive('Valor deve ser maior que zero')
+    .refine(isMoney2dp, { message: 'Valor deve ter no máximo 2 casas decimais' }),
 
   // YYYY-MM-DD
   dueDate: z
