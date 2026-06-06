@@ -3,20 +3,20 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 3 UI-SPEC approved
-last_updated: "2026-06-06T14:47:13.903Z"
+stopped_at: "Completed 03-01-PLAN.md — advancing to 03-02"
+last_updated: "2026-06-06T15:30:00Z"
 progress:
   total_phases: 6
   completed_phases: 3
   total_plans: 15
-  completed_plans: 11
-  percent: 73
+  completed_plans: 12
+  percent: 80
 ---
 
 # FYNXIA ERP — Project State
 
-**Last updated:** 2026-06-05
-**Updated by:** gsd-execute-phase (02-05 completion)
+**Last updated:** 2026-06-06
+**Updated by:** gsd-execute-phase (03-01 completion)
 
 ---
 
@@ -33,18 +33,18 @@ progress:
 ## Current Position
 
 Phase: 03 (financial-mvp) — EXECUTING
-Plan: 1 of 4
+Plan: 2 of 4
 **Phase:** 3
-**Plan:** Not started
+**Plan:** 03-02 (Wave 2 — Asaas integration)
 **Status:** Executing Phase 03
 
 ```
-Progress: [██████████████████████████████] 100% (10/10 plans complete)
+Progress: [████████████████████████░░░░░░] 80% (12/15 plans complete)
 
 Phase 0 [Complete] █████
 Phase 1 [Complete] █████
 Phase 2 [Complete] █████
-Phase 3 [Not started] ░░░░░
+Phase 3 [In Progress — 1/4] ██░░░
 Phase 4 [Not started] ░░░░░
 Phase 5 [Not started] ░░░░░
 ```
@@ -70,7 +70,7 @@ Phase 5 [Not started] ░░░░░
 |--------|--------|---------|
 | Requirements coverage | 47/47 | 47/47 mapped |
 | Phases defined | 6 | 6 |
-| Plans complete | TBD | 1 (02-01) |
+| Plans complete | TBD | 12 (03-01 latest) |
 | Phase 0 pitfalls resolved | 6/6 | 0/6 |
 
 ---
@@ -96,6 +96,10 @@ Phase 5 [Not started] ░░░░░
 | Anamnese public-token flow via service role na Server Action | Sem RLS write policy para unauthenticated inserts; validação de token single-use na camada de aplicação | 2026-06-05 |
 | PENDING sentinel para signature_hash (NOT NULL constraint) | Schema exige NOT NULL; 'PENDING' satisfaz o constraint sem alterar schema; UPDATE gate inclui signature_hash='PENDING' impedindo re-write pós-assinatura (D-20) | 2026-06-05 |
 | patient_id=null no agendamento público | Evita placeholder de CPF (violação unique + PII); recepcionista vincula paciente depois; dados de contato ficam em notes | 2026-06-05 |
+| Provider-agnostic financial schema (D-01): provider TEXT DEFAULT 'asaas' | Evita lock-in no schema; future Stripe/outros gateways adicionam sem DDL change; provider_charge_id/provider_installment_id como colunas genéricas | 2026-06-06 |
+| No stored vencido (D-04): status CHECK ('pendente','pago','estornado') only | vencido derivado em read-time de due_date vs NOW(); evita estados stale por clock-skew no banco | 2026-06-06 |
+| webhook_events sem RLS (T-3-04 aceito): service-role only, sem tenant_id | Tabela global de dedup de webhooks; nenhum path de cliente acessa; handler usa createAdminClient (Plan 02) | 2026-06-06 |
+| Supabase CLI re-auth gotcha documentado | db push requer CLI logado na org FYNXIA (kczvihafddupruvsrrsc); padrão recorrente em todo checkpoint [BLOCKING] db push | 2026-06-06 |
 
 ### Critical Pre-Phase-0 Actions
 
@@ -146,8 +150,10 @@ Phase 5 [Not started] ░░░░░
 
 ## Session Continuity
 
-**Stopped at:** Phase 3 UI-SPEC approved
+**Stopped at:** Completed 03-01-PLAN.md — advancing to 03-02
 
 **Critical path:** Phase 0 → 1 → 2 → 4 → 5 (Phase 3 parallel with Phase 2)
 
-**Next action:** Phase 2 fully complete including gap closure. Start Phase 3 (Financial MVP) or Phase 0 (Foundation infra). Phase 2 clinical MVP fully delivered: DB schema + RLS + migrations (02-01), patient CRUD + agenda (02-02), prontuário + odontograma + PDF (02-03), anamnese digital + agendamento público (02-04), availability-aware public booking + real anamneses tab (02-05).
+**Next action:** Plan 03-02 (Wave 2) — Asaas integration: PaymentGateway abstraction + AsaasAdapter, createCharge (PIX/boleto/installments), idempotent webhook handler, live Asaas sandbox verification [BLOCKING checkpoint].
+
+**03-01 delivered:** 7 financial tables live in Supabase sa-east-1, provider-agnostic schema, RLS with USING+WITH CHECK on 6 tenant-scoped tables, audit trigger on financial_transactions reusing Phase 2 audit_table_changes(), 10 seeded dental categories, webhook_events dedup table, 7 Wave 0 test scaffolds (financial.test.ts 13/13 GREEN; 6 RED awaiting downstream plans), regenerated database.types.ts.
