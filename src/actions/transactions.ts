@@ -149,11 +149,17 @@ export async function listTransactions(month: string): Promise<{
     return { success: false, error: actorResult.error }
   }
 
-  // Derive month range: e.g. '2026-06' → '2026-06-01' to '2026-06-30'
-  const [year, mon] = month.split('-').map(Number)
-  if (!year || !mon) {
+  // WR-07: `month` is user-controlled (searchParams). Validate strict YYYY-MM before
+  // deriving the range — otherwise '2026-13' or '2026-6' produce a wrong range or a
+  // malformed Postgres date string.
+  if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(month)) {
     return { success: false, error: 'Mês inválido (YYYY-MM)' }
   }
+
+  // Derive month range: e.g. '2026-06' → '2026-06-01' to '2026-06-30'
+  // Safe: the regex above guarantees both parts parse to valid numbers.
+  const year = Number(month.slice(0, 4))
+  const mon = Number(month.slice(5, 7))
   const from = `${month}-01`
   const lastDay = new Date(year, mon, 0).getDate()
   const to = `${month}-${String(lastDay).padStart(2, '0')}`
