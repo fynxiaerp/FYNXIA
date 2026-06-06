@@ -930,7 +930,7 @@ function deriveStatus(status: string, dueDate: string) {
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Asaas webhook HTTPS URL during development**
    - What we know: Asaas webhooks require a public HTTPS URL; localhost is not reachable.
