@@ -268,6 +268,14 @@ export async function getCharge(id: string): Promise<{
   if ('error' in actorResult) {
     return { success: false, error: actorResult.error }
   }
+  const { actor } = actorResult
+
+  // WR-06: role gate — staff only. A `patient`-role user must not enumerate charges
+  // by id (RLS scopes by tenant but allows all tenant members to read).
+  const allowedRoles = ['admin', 'dentist', 'receptionist', 'superadmin']
+  if (!allowedRoles.includes(actor.role)) {
+    return { success: false, error: 'Permissão insuficiente para visualizar cobrança' }
+  }
 
   const supabase = await createClient()
   const { data: charge, error } = await supabase
