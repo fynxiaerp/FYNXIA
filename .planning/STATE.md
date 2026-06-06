@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: "Completed 03-01-PLAN.md — advancing to 03-02"
-last_updated: "2026-06-06T15:30:00Z"
+stopped_at: "03-02 Tasks 1-3 complete — blocked at Task 4 (live Asaas sandbox checkpoint)"
+last_updated: "2026-06-06T17:00:00Z"
 progress:
   total_phases: 6
   completed_phases: 3
@@ -150,10 +150,12 @@ Phase 5 [Not started] ░░░░░
 
 ## Session Continuity
 
-**Stopped at:** Completed 03-01-PLAN.md — advancing to 03-02
+**Stopped at:** 03-02 Tasks 1-3 complete — BLOCKING checkpoint at Task 4 (live Asaas sandbox verification, D-02)
 
 **Critical path:** Phase 0 → 1 → 2 → 4 → 5 (Phase 3 parallel with Phase 2)
 
-**Next action:** Plan 03-02 (Wave 2) — Asaas integration: PaymentGateway abstraction + AsaasAdapter, createCharge (PIX/boleto/installments), idempotent webhook handler, live Asaas sandbox verification [BLOCKING checkpoint].
+**Next action:** Task 4 of 03-02 is a human-verify checkpoint. Create Asaas sandbox account → set ASAAS_API_KEY, ASAAS_BASE_URL, ASAAS_WEBHOOK_SECRET env vars → register webhook → emit PIX charge → pay in sandbox → confirm receivable status flips to pago and no duplicate financial_transactions row on replay. Then proceed to Plan 03-03 (cash flow UI + manual transactions).
+
+**03-02 delivered (Tasks 1-3):** PaymentGateway interface + AsaasAdapter (D-01), asaasFetch typed client (server-only), chargeSchema Zod v3, createCharge Server Action (PIX QR, boleto, installments mirrored to N receivables, customer dedup via asaas_customer_id), cancelCharge, idempotent webhook handler (token validation → 401, upsert dedup, fire-and-forget processWebhookEvent, income auto-post, refund reversal). charges.test.ts + asaas.test.ts 15/15 GREEN. tsc --noEmit exit 0.
 
 **03-01 delivered:** 7 financial tables live in Supabase sa-east-1, provider-agnostic schema, RLS with USING+WITH CHECK on 6 tenant-scoped tables, audit trigger on financial_transactions reusing Phase 2 audit_table_changes(), 10 seeded dental categories, webhook_events dedup table, 7 Wave 0 test scaffolds (financial.test.ts 13/13 GREEN; 6 RED awaiting downstream plans), regenerated database.types.ts.
