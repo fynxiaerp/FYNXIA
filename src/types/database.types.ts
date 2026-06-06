@@ -386,6 +386,86 @@ export type Database = {
         }
         Relationships: []
       }
+      charges: {
+        Row: {
+          billing_type: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          installment_count: number
+          patient_id: string | null
+          provider: string
+          provider_charge_id: string | null
+          provider_installment_id: string | null
+          status: string
+          tenant_id: string
+          total_value: number
+          updated_at: string
+        }
+        Insert: {
+          billing_type: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          installment_count?: number
+          patient_id?: string | null
+          provider?: string
+          provider_charge_id?: string | null
+          provider_installment_id?: string | null
+          status?: string
+          tenant_id: string
+          total_value: number
+          updated_at?: string
+        }
+        Update: {
+          billing_type?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          installment_count?: number
+          patient_id?: string | null
+          provider?: string
+          provider_charge_id?: string | null
+          provider_installment_id?: string | null
+          status?: string
+          tenant_id?: string
+          total_value?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "charges_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "charges_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users_masked"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "charges_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "charges_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       clinics: {
         Row: {
           address: string | null
@@ -433,6 +513,86 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      collection_log: {
+        Row: {
+          channel: string
+          id: string
+          milestone: string
+          receivable_id: string
+          sent_at: string
+          tenant_id: string
+        }
+        Insert: {
+          channel?: string
+          id?: string
+          milestone: string
+          receivable_id: string
+          sent_at?: string
+          tenant_id: string
+        }
+        Update: {
+          channel?: string
+          id?: string
+          milestone?: string
+          receivable_id?: string
+          sent_at?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "collection_log_receivable_id_fkey"
+            columns: ["receivable_id"]
+            isOneToOne: false
+            referencedRelation: "receivables"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "collection_log_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      collection_rules: {
+        Row: {
+          created_at: string
+          due_date_reminder_enabled: boolean
+          id: string
+          overdue_interval_days: number
+          overdue_reminder_enabled: boolean
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          due_date_reminder_enabled?: boolean
+          id?: string
+          overdue_interval_days?: number
+          overdue_reminder_enabled?: boolean
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          due_date_reminder_enabled?: boolean
+          id?: string
+          overdue_interval_days?: number
+          overdue_reminder_enabled?: boolean
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "collection_rules_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: true
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       dental_records: {
         Row: {
@@ -499,6 +659,116 @@ export type Database = {
           },
           {
             foreignKeyName: "dental_records_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      financial_categories: {
+        Row: {
+          created_at: string
+          id: string
+          is_default: boolean
+          name: string
+          tenant_id: string
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_default?: boolean
+          name: string
+          tenant_id: string
+          type: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_default?: boolean
+          name?: string
+          tenant_id?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "financial_categories_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      financial_transactions: {
+        Row: {
+          amount: number
+          category_id: string | null
+          created_at: string
+          description: string | null
+          id: string
+          posted_by: string | null
+          receivable_id: string | null
+          tenant_id: string
+          transaction_date: string
+          type: string
+        }
+        Insert: {
+          amount: number
+          category_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          posted_by?: string | null
+          receivable_id?: string | null
+          tenant_id: string
+          transaction_date: string
+          type: string
+        }
+        Update: {
+          amount?: number
+          category_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          posted_by?: string | null
+          receivable_id?: string | null
+          tenant_id?: string
+          transaction_date?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "financial_transactions_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "financial_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "financial_transactions_posted_by_fkey"
+            columns: ["posted_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "financial_transactions_posted_by_fkey"
+            columns: ["posted_by"]
+            isOneToOne: false
+            referencedRelation: "users_masked"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "financial_transactions_receivable_id_fkey"
+            columns: ["receivable_id"]
+            isOneToOne: false
+            referencedRelation: "receivables"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "financial_transactions_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "clinics"
@@ -700,6 +970,7 @@ export type Database = {
         Row: {
           address: string | null
           allergies: string | null
+          asaas_customer_id: string | null
           cpf: string
           created_at: string
           date_of_birth: string | null
@@ -718,6 +989,7 @@ export type Database = {
         Insert: {
           address?: string | null
           allergies?: string | null
+          asaas_customer_id?: string | null
           cpf: string
           created_at?: string
           date_of_birth?: string | null
@@ -736,6 +1008,7 @@ export type Database = {
         Update: {
           address?: string | null
           allergies?: string | null
+          asaas_customer_id?: string | null
           cpf?: string
           created_at?: string
           date_of_birth?: string | null
@@ -768,6 +1041,73 @@ export type Database = {
           },
           {
             foreignKeyName: "patients_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      receivables: {
+        Row: {
+          charge_id: string
+          created_at: string
+          due_date: string
+          id: string
+          installment_number: number
+          paid_at: string | null
+          patient_id: string | null
+          provider_charge_id: string | null
+          status: string
+          tenant_id: string
+          updated_at: string
+          value: number
+        }
+        Insert: {
+          charge_id: string
+          created_at?: string
+          due_date: string
+          id?: string
+          installment_number?: number
+          paid_at?: string | null
+          patient_id?: string | null
+          provider_charge_id?: string | null
+          status?: string
+          tenant_id: string
+          updated_at?: string
+          value: number
+        }
+        Update: {
+          charge_id?: string
+          created_at?: string
+          due_date?: string
+          id?: string
+          installment_number?: number
+          paid_at?: string | null
+          patient_id?: string | null
+          provider_charge_id?: string | null
+          status?: string
+          tenant_id?: string
+          updated_at?: string
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "receivables_charge_id_fkey"
+            columns: ["charge_id"]
+            isOneToOne: false
+            referencedRelation: "charges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "receivables_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "receivables_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "clinics"
@@ -818,6 +1158,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      webhook_events: {
+        Row: {
+          asaas_event_id: string
+          created_at: string
+          event_type: string
+          id: string
+          payload: Json | null
+          processed: boolean
+        }
+        Insert: {
+          asaas_event_id: string
+          created_at?: string
+          event_type: string
+          id?: string
+          payload?: Json | null
+          processed?: boolean
+        }
+        Update: {
+          asaas_event_id?: string
+          created_at?: string
+          event_type?: string
+          id?: string
+          payload?: Json | null
+          processed?: boolean
+        }
+        Relationships: []
       }
     }
     Views: {
