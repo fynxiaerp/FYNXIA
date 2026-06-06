@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Calendar, Users, UserCog, Link2, FileText } from 'lucide-react'
+import { Calendar, Users, UserCog, Link2, FileText, DollarSign } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { signOut } from '@/actions/auth'
 import { Button } from '@/components/ui/button'
@@ -47,6 +47,13 @@ export default async function ClinicaPage() {
       description: 'Convidar e gerenciar dentistas e recepcionistas.',
       icon: UserCog,
       show: isAdmin,
+    },
+    {
+      href: '/clinica/financeiro',
+      title: 'Financeiro',
+      description: 'Fluxo de caixa, cobranças, recebíveis e recibos.',
+      icon: DollarSign,
+      show: true,
     },
   ].filter((item) => item.show)
 
