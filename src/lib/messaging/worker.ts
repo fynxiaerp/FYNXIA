@@ -5,10 +5,13 @@
 // declaration belongs on the cron route (Plan 04-04), not here.
 import 'server-only'
 
+import { createElement } from 'react'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { logBusinessEvent } from '@/lib/audit'
 import { sendTemplateMessage, isPermanentError } from '@/lib/whatsapp/client'
-import { getResend } from '@/lib/resend'
+import { getResend, FROM_EMAIL } from '@/lib/resend'
+import { AppointmentReminderEmail } from '@/emails/AppointmentReminderEmail'
+import type { AppointmentReminderEmailProps } from '@/emails/AppointmentReminderEmail'
 import type { OutboxRow } from './types'
 
 /**
@@ -80,20 +83,41 @@ export async function drainOutbox(
         }
       } else {
         // ── Email channel ─────────────────────────────────────────────────────
-        // TODO(Plan 04): kind-switch email branch — import AppointmentReminderEmail
-        // and build the React element based on payload.kind (e.g. 'appointment_reminder').
-        // Plan 04 Task 1 adds worker.ts to files_modified and extends this branch.
+        // Kind-switch: reconstruct React element from JSON-safe payload.kind + payload.props.
+        // outbox.payload is JSONB — no React elements possible. The worker reconstructs
+        // them here at drain time so each email type gets the correct template.
         const emailPayload = row.payload as {
+          kind?: string
           to: string | string[]
           subject: string
-          html: string
+          props?: Record<string, unknown>
+          html?: string
         }
-        const { error: emailError } = await getResend().emails.send({
-          from: process.env.RESEND_FROM_EMAIL ?? 'FYNXIA <onboarding@resend.dev>',
-          to: emailPayload.to,
-          subject: emailPayload.subject,
-          html: emailPayload.html ?? '',
-        })
+
+        let emailResult: { error?: unknown }
+        if (emailPayload.kind === 'appointment_reminder') {
+          // Build AppointmentReminderEmail from JSON props (COMMS-02 cross-plan contract)
+          const element = createElement(
+            AppointmentReminderEmail,
+            emailPayload.props as unknown as AppointmentReminderEmailProps
+          )
+          emailResult = await getResend().emails.send({
+            from: FROM_EMAIL,
+            to: emailPayload.to,
+            subject: emailPayload.subject,
+            react: element,
+          })
+        } else {
+          // Generic fallback: collection reminders + legacy payloads use html field
+          emailResult = await getResend().emails.send({
+            from: FROM_EMAIL,
+            to: emailPayload.to,
+            subject: emailPayload.subject,
+            html: emailPayload.html ?? '',
+          })
+        }
+
+        const { error: emailError } = emailResult
         sendSuccess = !emailError
         if (emailError) {
           errorMessage = typeof emailError === 'string'
