@@ -97,7 +97,7 @@
   4. All outbound messaging jobs are enqueued via pgmq and processed by pg_cron workers — a job failure does not crash the app and retries without duplicate sends; WhatsApp templates are categorized as utility (not marketing) to avoid Meta reclassification
 **Plans**: 4 plans
 - [x] 04-01-PLAN.md — DB foundation: message_outbox + message_log (RLS, dedup) + 5 Wave 0 test scaffolds + [BLOCKING] db push
-- [ ] 04-02-PLAN.md — WhatsApp Cloud API client (no SDK) + MessageQueue/OutboxQueue + outbox worker + E.164 normalizer
+- [x] 04-02-PLAN.md — WhatsApp Cloud API client (no SDK) + MessageQueue/OutboxQueue + outbox worker + E.164 normalizer
 - [ ] 04-03-PLAN.md — AppointmentReminderEmail (React Email) + pure reminder-scan selection logic
 - [ ] 04-04-PLAN.md — reminder-dispatch cron (scan+enqueue+drain) + D-05 collection WhatsApp channel + vercel.json + WHATSAPP_* env
 

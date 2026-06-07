@@ -59,10 +59,10 @@
 
 ### COMMS — Comunicações
 
-- [ ] **COMMS-01**: Sistema envia confirmação de consulta via WhatsApp (Meta Cloud API) 24h antes
+- [x] **COMMS-01**: Sistema envia confirmação de consulta via WhatsApp (Meta Cloud API) 24h antes
 - [ ] **COMMS-02**: Sistema envia lembrete de consulta via e-mail (Resend) 24h antes
-- [ ] **COMMS-03**: Templates WhatsApp separados por categoria (utility vs marketing) para evitar reclassificação Meta
-- [ ] **COMMS-04**: Sistema usa pg_cron + pgmq para jobs assíncronos de envio de mensagens
+- [x] **COMMS-03**: Templates WhatsApp separados por categoria (utility vs marketing) para evitar reclassificação Meta
+- [x] **COMMS-04**: Sistema usa pg_cron + pgmq para jobs assíncronos de envio de mensagens
 
 ### AI — IA e Automação
 
@@ -140,10 +140,10 @@
 | FIN-08 | Phase 3 — Financial MVP | Complete |
 | FIN-09 | Phase 3 — Financial MVP | Pending |
 | SEC-06 | Phase 3 — Financial MVP | Complete |
-| COMMS-01 | Phase 4 — Communications & Async | Pending |
+| COMMS-01 | Phase 4 — Communications & Async | Complete |
 | COMMS-02 | Phase 4 — Communications & Async | Pending |
-| COMMS-03 | Phase 4 — Communications & Async | Pending |
-| COMMS-04 | Phase 4 — Communications & Async | Pending |
+| COMMS-03 | Phase 4 — Communications & Async | Complete |
+| COMMS-04 | Phase 4 — Communications & Async | Complete |
 | AI-01 | Phase 5 — AI Agents | Pending |
 | AI-02 | Phase 5 — AI Agents | Pending |
 | AI-03 | Phase 5 — AI Agents | Pending |

@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: "Completed 04-01-PLAN.md — advancing to Wave 2 (04-02 + 04-03)"
-last_updated: "2026-06-07T23:30:00.000Z"
+stopped_at: "Completed 04-02-PLAN.md — Wave 2 ready: run 04-03 (email templates + reminder scan)"
+last_updated: "2026-06-07T16:50:04.821Z"
 progress:
   total_phases: 6
   completed_phases: 4
   total_plans: 19
-  completed_plans: 16
-  percent: 84
+  completed_plans: 17
+  percent: 89
 ---
 
 # FYNXIA ERP — Project State
@@ -76,6 +76,7 @@ Phase 5 [Not started] ░░░░░
 ---
 | Phase 03 P03-03 | 20 | 3 tasks | 19 files |
 | Phase 03 P04 | 68 | 3 tasks | 12 files |
+| Phase 04 P02 | 290 | 3 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -108,6 +109,9 @@ Phase 5 [Not started] ░░░░░
 | Static CSP via next.config.ts headers() (no nonce) | Nonce-based CSP forces full dynamic render on every page — counterproductive for ERP with many SSR pages; unsafe-inline accepted for internal ERP (no third-party scripts, documented in RESEARCH §A3) | 2026-06-06 |
 | COMMS-04 via outbox pattern (not pgmq): message_outbox + OutboxQueue + Vercel Cron | pgmq/pg_cron are Supabase Pro-only; message_outbox table (Plan 04-01) + MessageQueue interface (Plan 04-02) + Cron trigger (Plan 04-04) deliver same outcome; pgmq adapter swaps in at Pro upgrade behind interface seam | 2026-06-07 |
 | No client UPDATE/DELETE policy on message_outbox | Worker uses createAdminClient (service role) for all status transitions; prevents tenant tampering with send state (T-4-outbox-T); mirrors webhook_events pattern from Plan 03-01 | 2026-06-07 |
+| WhatsApp client call-time credential reads (not module scope) | WHATSAPP_* env vars read inside sendTemplateMessage() — same lazy pattern as getResend(); returns graceful error when absent; never throws at next build | 2026-06-07 |
+| isPermanentError([131026, 132000, 132001, 190]) no-retry gate | Permanent Meta errors mark outbox row failed immediately; transient (130429, network) remain pending for next cron run | 2026-06-07 |
+| Worker email branch generic html-send with TODO(Plan 04) marker | AppointmentReminderEmail import deferred to Plan 04 to keep 04-02 independent of 04-03 in Wave 2; email branch compiles and tests pass | 2026-06-07 |
 
 ### Critical Pre-Phase-0 Actions
 
@@ -158,7 +162,7 @@ Phase 5 [Not started] ░░░░░
 
 ## Session Continuity
 
-**Stopped at:** Completed 04-01-PLAN.md — Wave 2 ready: run 04-02 (WhatsApp client + outbox worker) and 04-03 (email templates + reminder scan) in parallel
+**Stopped at:** Completed 04-02-PLAN.md — Wave 2 ready: run 04-03 (email templates + reminder scan)
 
 **Critical path:** Phase 0 → 1 → 2 → 4 → 5 (Phase 3 parallel with Phase 2)
 
