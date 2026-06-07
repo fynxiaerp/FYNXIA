@@ -912,6 +912,110 @@ export type Database = {
           },
         ]
       }
+      message_log: {
+        Row: {
+          appointment_id: string
+          channel: Database["public"]["Enums"]["message_channel"]
+          created_at: string
+          id: string
+          sent_at: string
+          tenant_id: string
+          type: string
+        }
+        Insert: {
+          appointment_id: string
+          channel: Database["public"]["Enums"]["message_channel"]
+          created_at?: string
+          id?: string
+          sent_at?: string
+          tenant_id: string
+          type: string
+        }
+        Update: {
+          appointment_id?: string
+          channel?: Database["public"]["Enums"]["message_channel"]
+          created_at?: string
+          id?: string
+          sent_at?: string
+          tenant_id?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_log_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "message_log_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      message_outbox: {
+        Row: {
+          attempts: number
+          channel: Database["public"]["Enums"]["message_channel"]
+          created_at: string
+          error_message: string | null
+          id: string
+          idempotency_key: string
+          last_attempted_at: string | null
+          max_attempts: number
+          payload: Json
+          scheduled_for: string
+          sent_at: string | null
+          status: Database["public"]["Enums"]["message_status"]
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          attempts?: number
+          channel: Database["public"]["Enums"]["message_channel"]
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          idempotency_key: string
+          last_attempted_at?: string | null
+          max_attempts?: number
+          payload: Json
+          scheduled_for?: string
+          sent_at?: string | null
+          status?: Database["public"]["Enums"]["message_status"]
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          attempts?: number
+          channel?: Database["public"]["Enums"]["message_channel"]
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          idempotency_key?: string
+          last_attempted_at?: string | null
+          max_attempts?: number
+          payload?: Json
+          scheduled_for?: string
+          sent_at?: string | null
+          status?: Database["public"]["Enums"]["message_status"]
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_outbox_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       patient_consents: {
         Row: {
           consent_type: string
@@ -1235,7 +1339,8 @@ export type Database = {
       get_my_tenant_id: { Args: never; Returns: string }
     }
     Enums: {
-      [_ in never]: never
+      message_channel: "whatsapp" | "email"
+      message_status: "pending" | "sent" | "failed"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1365,6 +1470,9 @@ export const Constants = {
     Enums: {},
   },
   public: {
-    Enums: {},
+    Enums: {
+      message_channel: ["whatsapp", "email"],
+      message_status: ["pending", "sent", "failed"],
+    },
   },
 } as const

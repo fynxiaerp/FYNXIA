@@ -54,7 +54,7 @@ describe('WhatsApp Cloud API client — src/lib/whatsapp/client.ts (COMMS-01)', 
     const src = readFileSync(CLIENT_PATH, 'utf8')
     expect(src).toMatch(/messaging_product/)
     expect(src).toMatch(/'whatsapp'/)
-    expect(src).toMatch(/type.*['"]template['"]|['"]template['"].*type/s)
+    expect(src).toMatch(/type[\s\S]*['"]template['"]|['"]template['"][\s\S]*type/)
     expect(src).toMatch(/language/)
     expect(src).toMatch(/code/)
   })
