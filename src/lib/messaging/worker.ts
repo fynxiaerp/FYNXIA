@@ -12,6 +12,8 @@ import { sendTemplateMessage, isPermanentError } from '@/lib/whatsapp/client'
 import { getResend, FROM_EMAIL } from '@/lib/resend'
 import { AppointmentReminderEmail } from '@/emails/AppointmentReminderEmail'
 import type { AppointmentReminderEmailProps } from '@/emails/AppointmentReminderEmail'
+import { CollectionReminderEmail } from '@/emails/CollectionReminderEmail'
+import type { CollectionReminderEmailProps } from '@/emails/CollectionReminderEmail'
 import type { OutboxRow } from './types'
 
 /**
@@ -20,6 +22,14 @@ import type { OutboxRow } from './types'
  * Design guarantees:
  *  - Selects ONLY `status = 'pending'` rows — already-`sent` rows are never reprocessed.
  *  - Increments `attempts` BEFORE sending (Pitfall 5 — at-least-once cron safety).
+ *  - ATOMIC CLAIM (CR-02): the attempts-bump UPDATE is conditional on the row still
+ *    being `status='pending'` AND still carrying the `attempts` value we read. The
+ *    UPDATE returns the claimed row; 0 rows returned ⇒ a concurrent/overlapping drain
+ *    already claimed it ⇒ skip. This prevents duplicate WhatsApp/email sends when
+ *    Vercel Cron overlaps (at-least-once) or when both crons call drainOutbox().
+ *  - WR-03/WR-04: claim and final-status UPDATE errors are checked. On a claim error
+ *    we do NOT send (avoids widening the duplicate window); on a final-status error we
+ *    emit a loud log so a sent-but-still-pending row is detectable.
  *  - Per-row try/catch ensures one row's failure never aborts the loop.
  *  - Permanent WhatsApp errors (131026, 132000, 132001, 190) → mark `failed` immediately.
  *  - Transient errors → leave `pending` for the next cron invocation.
@@ -60,11 +70,29 @@ export async function drainOutbox(
   for (const row of eligibleRows) {
     const now = new Date().toISOString()
 
-    // Step 1: Bump attempts BEFORE sending (Pitfall 5 — idempotency on cron retry)
-    await admin
+    // Step 1: ATOMIC CLAIM (CR-02 + WR-03) — bump attempts BEFORE sending, but only
+    // if the row is STILL pending AND STILL at the attempts value we read. This makes
+    // the claim a single conditional UPDATE that only one concurrent drain can win:
+    //   - matched row → we own it, proceed to send
+    //   - 0 rows returned → another worker already claimed/sent it → skip (no send)
+    //   - DB error → skip (do NOT send — avoids widening the duplicate window)
+    const { data: claimed, error: claimErr } = await admin
       .from('message_outbox')
       .update({ attempts: row.attempts + 1, last_attempted_at: now })
       .eq('id', row.id)
+      .eq('status', 'pending')        // optimistic guard — loser sees 0 rows
+      .eq('attempts', row.attempts)   // CAS on attempts — only the original reader wins
+      .select('id')
+
+    if (claimErr) {
+      console.error('[worker] claim update failed, skipping row', row.id, claimErr.message)
+      continue
+    }
+    if (!claimed || claimed.length === 0) {
+      // Another overlapping drain already claimed this row — skip to avoid double-send.
+      skipped++
+      continue
+    }
 
     let sendSuccess = false
     let errorMessage: string | undefined
@@ -107,6 +135,20 @@ export async function drainOutbox(
             subject: emailPayload.subject,
             react: element,
           })
+        } else if (emailPayload.kind === 'collection_reminder') {
+          // WR-02: collection emails are now routed through the outbox so a transient
+          // Resend failure retries (attempts/max_attempts) instead of being permanently
+          // swallowed. Reconstruct CollectionReminderEmail from JSON-safe props.
+          const element = createElement(
+            CollectionReminderEmail,
+            emailPayload.props as unknown as CollectionReminderEmailProps
+          )
+          emailResult = await getResend().emails.send({
+            from: FROM_EMAIL,
+            to: emailPayload.to,
+            subject: emailPayload.subject,
+            react: element,
+          })
         } else {
           // Generic fallback: collection reminders + legacy payloads use html field
           emailResult = await getResend().emails.send({
@@ -131,11 +173,22 @@ export async function drainOutbox(
     }
 
     if (sendSuccess) {
-      // Step 3: Mark sent
-      await admin
+      // Step 3: Mark sent. WR-04: check the error — if this write fails the row stays
+      // 'pending' and the next drain would re-send it (duplicate). Emit a loud log so
+      // a sent-but-still-pending row is detectable; the atomic claim (CR-02) still
+      // prevents a concurrent re-send within the same window.
+      const { error: sentErr } = await admin
         .from('message_outbox')
         .update({ status: 'sent', sent_at: new Date().toISOString() })
         .eq('id', row.id)
+
+      if (sentErr) {
+        console.error(
+          '[worker] SENT-BUT-PENDING: message was sent but status update failed — manual reconciliation needed',
+          row.id,
+          sentErr.message
+        )
+      }
 
       // Audit log — IDs only, no PHI (T-4-worker-phi)
       await logBusinessEvent({
@@ -150,16 +203,28 @@ export async function drainOutbox(
       // Step 4: Determine if permanent failure
       const permanent =
         row.channel === 'whatsapp' && isPermanentError(errorCode)
+      // attempts was already incremented by the atomic claim above (CR-02), so the
+      // persisted attempts value is row.attempts + 1.
       const newAttempts = row.attempts + 1
       const final = permanent || newAttempts >= row.max_attempts
 
-      await admin
+      // WR-04: check the error. A failed write here leaves the row at the claimed
+      // attempts but with stale status — log loudly so it is detectable.
+      const { error: failErr } = await admin
         .from('message_outbox')
         .update({
           status: final ? 'failed' : 'pending',
           error_message: errorMessage ?? 'Unknown error',
         })
         .eq('id', row.id)
+
+      if (failErr) {
+        console.error(
+          '[worker] failed to write final status for row',
+          row.id,
+          failErr.message
+        )
+      }
 
       if (final) {
         failed++
