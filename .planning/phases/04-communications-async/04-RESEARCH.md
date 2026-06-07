@@ -134,11 +134,13 @@ src/
 │   ├── collection-ruler/route.ts      # EXISTING — add WhatsApp enqueue (D-05)
 │   └── reminder-dispatch/route.ts     # NEW — scan appointments + drain outbox
 └── __tests__/
-    └── communications/
-        ├── whatsapp-client.test.ts    # unit: mocked fetch
-        ├── outbox-worker.test.ts      # unit: drain logic, dedup, retry
-        ├── reminder-scan.test.ts      # unit: appointment scan + enqueue logic
-        └── email-reminder.test.ts     # unit: AppointmentReminderEmail render
+    ├── migrations/
+    │   └── comms.test.ts          # static SQL: message_outbox + message_log + RLS
+    └── comms/
+        ├── whatsapp.test.ts       # WhatsApp client source-inspection (mocked fetch)
+        ├── outbox.test.ts         # queue + worker drain, dedup, retry, kind-switch
+        ├── reminders.test.ts      # reminder-scan + cron auth source-inspection
+        └── email.test.ts          # AppointmentReminderEmail render
 ```
 
 ### Pattern 1: WhatsApp Client (typed fetch wrapper, no SDK)
@@ -840,34 +842,35 @@ The `message_outbox` itself serves as the send log. `idempotency_key UNIQUE` pre
 |----------|-------|
 | Framework | Vitest ^4.1.8 |
 | Config file | `vitest.config.ts` at project root |
-| Quick run command | `npx vitest run src/__tests__/communications/` |
+| Quick run command | `npx vitest run src/__tests__/comms/` |
 | Full suite command | `npx vitest run` |
 
 ### Phase Requirements → Test Map
 
 | Req ID | Behavior | Test Type | Automated Command | File Exists? |
 |--------|----------|-----------|-------------------|-------------|
-| COMMS-01 | WhatsApp client builds correct POST body for template message | unit (source inspection + mocked fetch) | `npx vitest run src/__tests__/communications/whatsapp-client.test.ts` | ❌ Wave 0 |
-| COMMS-01 | Outbox dedup: second enqueue with same idempotency_key returns success (23505 skip) | unit (source inspection) | `npx vitest run src/__tests__/communications/outbox-worker.test.ts` | ❌ Wave 0 |
-| COMMS-02 | AppointmentReminderEmail renders with patientName, clinicName, date, time, dentistName | unit (renderToStaticMarkup) | `npx vitest run src/__tests__/communications/email-reminder.test.ts` | ❌ Wave 0 |
-| COMMS-03 | WhatsApp client uses 'utility' category in template name; no marketing keywords in template body | unit (source inspection) | `npx vitest run src/__tests__/communications/whatsapp-client.test.ts` | ❌ Wave 0 |
-| COMMS-04 | Worker marks row `sent` on success, increments `attempts` before send, marks `failed` after max_attempts | unit (source inspection) | `npx vitest run src/__tests__/communications/outbox-worker.test.ts` | ❌ Wave 0 |
-| COMMS-01/04 | Reminder scan: appointments tomorrow with non-cancelled status enqueued; cancelled not enqueued | unit (pure function test) | `npx vitest run src/__tests__/communications/reminder-scan.test.ts` | ❌ Wave 0 |
-| COMMS-01 | Cron endpoint validates CRON_SECRET Bearer before processing | unit (source inspection) | `npx vitest run src/__tests__/communications/outbox-worker.test.ts` | ❌ Wave 0 |
+| COMMS-01 | WhatsApp client builds correct POST body for template message | unit (source inspection + mocked fetch) | `npx vitest run src/__tests__/comms/whatsapp.test.ts` | ❌ Wave 0 |
+| COMMS-01 | Outbox dedup: second enqueue with same idempotency_key returns success (23505 skip) | unit (source inspection) | `npx vitest run src/__tests__/comms/outbox.test.ts` | ❌ Wave 0 |
+| COMMS-02 | AppointmentReminderEmail renders with patientName, clinicName, date, time, dentistName | unit (renderToStaticMarkup) | `npx vitest run src/__tests__/comms/email.test.ts` | ❌ Wave 0 |
+| COMMS-03 | WhatsApp client uses 'utility' category in template name; no marketing keywords in template body | unit (source inspection) | `npx vitest run src/__tests__/comms/whatsapp.test.ts` | ❌ Wave 0 |
+| COMMS-04 | Worker marks row `sent` on success, increments `attempts` before send, marks `failed` after max_attempts | unit (source inspection) | `npx vitest run src/__tests__/comms/outbox.test.ts` | ❌ Wave 0 |
+| COMMS-01/04 | Reminder scan: appointments tomorrow with non-cancelled status enqueued; cancelled not enqueued | unit (pure function test) | `npx vitest run src/__tests__/comms/reminders.test.ts` | ❌ Wave 0 |
+| COMMS-01 | Cron endpoint validates CRON_SECRET Bearer before processing | unit (source inspection) | `npx vitest run src/__tests__/comms/reminders.test.ts` | ❌ Wave 0 |
 | D-05 | Collection ruler cron enqueues WhatsApp channel after email send | unit (source inspection) | Covered in existing `ruler.test.ts` supplement | ❌ Wave 0 addendum |
 
 **Note on live Meta API sends:** All tests mock `fetch()` or use source inspection. No test calls `graph.facebook.com` directly. Live delivery is verified in UAT (same strategy as Asaas Phase 3 Task 4 → `03-HUMAN-UAT.md`).
 
 ### Sampling Rate
-- **Per task commit:** `npx vitest run src/__tests__/communications/`
+- **Per task commit:** `npx vitest run src/__tests__/comms/`
 - **Per wave merge:** `npx vitest run`
 - **Phase gate:** Full suite green before `/gsd-verify-work`
 
 ### Wave 0 Gaps
-- [ ] `src/__tests__/communications/whatsapp-client.test.ts` — covers COMMS-01, COMMS-03
-- [ ] `src/__tests__/communications/outbox-worker.test.ts` — covers COMMS-04, dedup, retry, CRON_SECRET
-- [ ] `src/__tests__/communications/reminder-scan.test.ts` — covers scan logic, cancelled filter, dedup key format
-- [ ] `src/__tests__/communications/email-reminder.test.ts` — covers COMMS-02 (AppointmentReminderEmail render)
+- [ ] `src/__tests__/migrations/comms.test.ts` — covers COMMS-04 (message_outbox + message_log schema + RLS, static SQL)
+- [ ] `src/__tests__/comms/whatsapp.test.ts` — covers COMMS-01, COMMS-03
+- [ ] `src/__tests__/comms/outbox.test.ts` — covers COMMS-04, dedup, retry, CRON_SECRET
+- [ ] `src/__tests__/comms/reminders.test.ts` — covers scan logic, cancelled filter, dedup key format
+- [ ] `src/__tests__/comms/email.test.ts` — covers COMMS-02 (AppointmentReminderEmail render)
 
 ---
 

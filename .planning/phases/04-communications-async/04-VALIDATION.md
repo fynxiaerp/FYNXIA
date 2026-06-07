@@ -44,20 +44,22 @@ Test style: source-inspection for migrations/`'use server'` modules (readFileSyn
 |---------|------|------|-------------|------------|-----------------|-----------|-------------------|-------------|--------|
 | 04-01-00 | 01 | 0 | COMMS-01..04 | — | N/A | scaffold | `npx vitest run src/__tests__/migrations/comms.test.ts` | ❌ W0 | ⬜ pending |
 | 04-01-xx | 01 | 1 | COMMS-04 | T-4-* | outbox RLS + dedup (idempotency_key UNIQUE) | static SQL | `npx vitest run src/__tests__/migrations/comms.test.ts` | ❌ W0 | ⬜ pending |
-| 04-xx | — | — | COMMS-01,03 | T-4-wa | WhatsApp Cloud API template send (mocked fetch) | unit | `npx vitest run src/__tests__/comms/whatsapp.test.ts` | ❌ W0 | ⬜ pending |
-| 04-xx | — | — | COMMS-04 | T-4-worker | outbox worker drains pending, retries failed, no dup send | unit | `npx vitest run src/__tests__/comms/outbox.test.ts` | ❌ W0 | ⬜ pending |
-| 04-xx | — | — | COMMS-01,02 | T-4-cron | reminder scan selects next-day appts; dedup per (appt,channel,type) | unit | `npx vitest run src/__tests__/comms/reminders.test.ts` | ❌ W0 | ⬜ pending |
-| 04-xx | — | — | COMMS-02 | — | React Email reminder renders appt details | unit | `npx vitest run src/__tests__/comms/email.test.ts` | ❌ W0 | ⬜ pending |
+| 04-02 | 02 | 2 | COMMS-01,03 | T-4-wa | WhatsApp Cloud API template send (mocked fetch) | unit | `npx vitest run src/__tests__/comms/whatsapp.test.ts` | ❌ W0 | ⬜ pending |
+| 04-02/04 | 02/04 | 2/3 | COMMS-04 | T-4-worker | outbox worker drains pending, retries failed, no dup send; email kind-switch (Plan 04) | unit | `npx vitest run src/__tests__/comms/outbox.test.ts` | ❌ W0 | ⬜ pending |
+| 04-03/04 | 03/04 | 2/3 | COMMS-01,02 | T-4-cron | reminder scan selects next-day appts; dedup per (appt,channel,type); cron auth (Plan 04) | unit | `npx vitest run src/__tests__/comms/reminders.test.ts` | ❌ W0 | ⬜ pending |
+| 04-03 | 03 | 2 | COMMS-02 | — | React Email reminder renders appt details | unit | `npx vitest run src/__tests__/comms/email.test.ts` | ❌ W0 | ⬜ pending |
 
 ---
 
 ## Wave 0 Requirements
 
-- [ ] `src/__tests__/migrations/comms.test.ts` — SQL assertions: `message_outbox` (status enum, attempts, payload, channel, idempotency_key UNIQUE, scheduled_for) + `message_log` dedup (appointment_id, channel, type) + any templates/prefs table; RLS enabled + WITH CHECK; tenant_id indexed.
-- [ ] `src/__tests__/comms/whatsapp.test.ts` — Meta Cloud API client (mocked fetch): correct endpoint v21.0, body shape (type=template, template.name/language pt_BR/components), quick-reply button components, utility category; never references Evolution/Baileys (COMMS-01, COMMS-03).
-- [ ] `src/__tests__/comms/outbox.test.ts` — MessageQueue/outbox: enqueue dedups on idempotency_key; worker drains pending → sent, retries failed up to N with attempts increment, a send error does not throw out of the worker loop (COMMS-04).
-- [ ] `src/__tests__/comms/reminders.test.ts` — reminder scan selects tomorrow's non-cancelled appointments; enqueues both channels; dedup per (appointment_id, channel, type) (COMMS-01, COMMS-02).
-- [ ] `src/__tests__/comms/email.test.ts` — React Email reminder template renders appointment details via Resend wrapper (COMMS-02).
+> These 5 files are authored in Plan 01 Task 0 (`<files>`). The list below MUST match Plan 01 Task 0 exactly.
+
+- [ ] `src/__tests__/migrations/comms.test.ts` — SQL assertions: `message_outbox` (status enum, attempts, payload, channel, idempotency_key UNIQUE, scheduled_for) + `message_log` dedup (appointment_id, channel, type); RLS enabled + WITH CHECK; tenant_id indexed; no client UPDATE/DELETE policy on outbox.
+- [ ] `src/__tests__/comms/whatsapp.test.ts` — Meta Cloud API client (source-inspection of `src/lib/whatsapp/client.ts` + templates.ts): correct endpoint v21.0, body shape (type=template, template.name/language pt_BR/components), quick-reply button components, utility category; never references Evolution/Baileys (COMMS-01, COMMS-03).
+- [ ] `src/__tests__/comms/outbox.test.ts` — MessageQueue/outbox (source-inspection of `src/lib/messaging/queue.ts` + `worker.ts`): enqueue dedups on idempotency_key (23505); worker drains pending → sent, retries failed up to N with attempts increment, a send error does not throw out of the worker loop; drain selects only `status = 'pending'`; worker email branch switches on `payload.kind` and references `AppointmentReminderEmail` (this last assertion goes GREEN in Plan 04) (COMMS-04).
+- [ ] `src/__tests__/comms/reminders.test.ts` — reminder scan (`src/lib/messaging/reminder-scan.ts`) selects tomorrow's non-cancelled appointments; enqueues both channels; dedup per (appointment_id, channel, type); cron (`src/app/api/cron/reminder-dispatch/route.ts`) Bearer CRON_SECRET guard + runtime='nodejs' (COMMS-01, COMMS-02).
+- [ ] `src/__tests__/comms/email.test.ts` — React Email reminder template (`src/emails/AppointmentReminderEmail.tsx`) renders appointment details (COMMS-02).
 
 *vitest already installed — no framework install in Wave 0.*
 
@@ -84,3 +86,4 @@ Test style: source-inspection for migrations/`'use server'` modules (readFileSyn
 - [ ] `nyquist_compliant: true` set in frontmatter
 
 **Approval:** pending
+</content>
