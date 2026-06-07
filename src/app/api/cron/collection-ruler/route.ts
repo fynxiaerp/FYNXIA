@@ -23,12 +23,11 @@
 export const runtime = 'nodejs'
 
 import { createAdminClient } from '@/lib/supabase/admin'
-import { logBusinessEvent } from '@/lib/audit'
-import { resend, FROM_EMAIL } from '@/lib/resend'
-import { CollectionReminderEmail } from '@/emails/CollectionReminderEmail'
+import { isCronAuthorized } from '@/lib/cron-auth'
 import { selectReminders } from '@/lib/collection/ruler'
 import { getOutboxQueue } from '@/lib/messaging/queue'
 import { drainOutbox } from '@/lib/messaging/worker'
+import { gateway } from '@/lib/asaas/gateway'
 import { toE164 } from '@/lib/phone'
 import {
   TEMPLATE_COLLECTION,
@@ -37,14 +36,15 @@ import {
 } from '@/lib/whatsapp/templates'
 import { format, parseISO } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { createElement } from 'react'
 
 export async function GET(request: Request) {
-  // ── CRON_SECRET validation (T-3-cron-E, Pitfall 6) ──────────────────────────
+  // ── CRON_SECRET validation (T-3-cron-E, Pitfall 6, CR-01) ───────────────────
   // Vercel injects Authorization: Bearer {CRON_SECRET} when invoking the cron.
-  // Without the secret, any public caller would trigger mass email sends.
-  const authHeader = request.headers.get('authorization')
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  // isCronAuthorized fails CLOSED (rejects when CRON_SECRET is unset) and uses a
+  // constant-time compare — see src/lib/cron-auth.ts. Without this, any public
+  // caller (or a "Bearer undefined" probe on a misconfigured deploy) could
+  // trigger mass email sends. Returns 401 on mismatch before any DB query.
+  if (!isCronAuthorized(request.headers.get('authorization'))) {
     return new Response('Unauthorized', { status: 401 })
   }
 
@@ -73,7 +73,10 @@ export async function GET(request: Request) {
     // ── Process each tenant separately (T-3-cron-I — no cross-tenant mixing) ──
     for (const rule of rules) {
       try {
-        // Load unpaid receivables for this tenant with patient contact info
+        // Load unpaid receivables for this tenant with patient contact info.
+        // WR-06 (LGPD): exclude soft-deleted / anonymized patients — a patient who
+        // exercised deletion/opt-out must NOT receive automated billing messages.
+        // createAdminClient() bypasses RLS, so the soft-delete predicate is explicit.
         const { data: receivables, error: receivablesError } = await admin
           .from('receivables')
           .select(`
@@ -84,10 +87,12 @@ export async function GET(request: Request) {
             charge_id,
             provider_charge_id,
             charges!inner(description, billing_type),
-            patients!inner(id, full_name, email, phone)
+            patients!inner(id, full_name, email, phone, deleted_at, is_anonymized)
           `)
           .eq('tenant_id', rule.tenant_id)
           .in('status', ['pendente'])
+          .is('patients.deleted_at', null)
+          .eq('patients.is_anonymized', false)
 
         if (receivablesError || !receivables) {
           console.error(
@@ -131,80 +136,72 @@ export async function GET(request: Request) {
           const patient = receivable.patients as unknown as { id: string; full_name: string; email: string | null; phone: string | null }
           const charge = receivable.charges as unknown as { description: string | null; billing_type: string }
 
-          // Skip if patient has no email AND no phone — nothing to send
-          if (!patient?.email && !toE164(patient?.phone)) {
+          const e164Phone = toE164(patient?.phone)
+
+          // Skip if patient has no email AND no usable phone — nothing to send
+          if (!patient?.email && !e164Phone) {
             totalSkipped++
             continue
           }
 
           const isOverdue = target.milestone !== 'due_date'
           const dueDateFormatted = format(parseISO(receivable.due_date), 'dd/MM/yyyy', { locale: ptBR })
+          const queue = getOutboxQueue(admin)
 
-          // ── Email channel: idempotency check + send ──────────────────────────
-          // collection_log UNIQUE(receivable_id, milestone, channel='email') is the email dedup.
-          // WhatsApp dedup is handled independently via message_outbox idempotency_key.
+          // WR-01: resolve the VERIFIED Asaas payment link live (GET /payments/{id} →
+          // invoiceUrl). We no longer guess the `asaas.com/i/{id}` pattern. Resolved once
+          // per target and shared across channels; null if Asaas has no hosted page.
+          const providerChargeId = (receivable as { provider_charge_id?: string | null }).provider_charge_id
+          const paymentLink = providerChargeId
+            ? await gateway.getInvoiceUrl(providerChargeId)
+            : null
+
+          // ── Email channel: route through the outbox (WR-02 — durable retry) ──────
+          // Previously the email was sent INLINE after inserting collection_log, so a
+          // transient Resend failure permanently lost the reminder (the log row blocked
+          // the retry). Now the email is enqueued; the outbox worker retries on failure.
+          // Dedup: message_outbox idempotency_key UNIQUE — duplicate enqueue is a no-op.
           if (patient?.email) {
-            const { error: logError } = await admin
-              .from('collection_log')
-              .insert({
-                tenant_id: rule.tenant_id,
-                receivable_id: target.receivableId,
-                milestone: target.milestone,
-                channel: 'email',
-              })
+            const emailSubject = isOverdue
+              ? `Cobrança em atraso — ${charge.description ?? 'FYNXIA ERP'}`
+              : `Lembrete de vencimento hoje — ${charge.description ?? 'FYNXIA ERP'}`
 
-            if (logError) {
-              if (logError.code === '23505') {
-                // Already sent for this (receivable, milestone, email) — idempotent skip (T-3-cron-T)
-                totalSkipped++
-              } else {
-                console.error(
-                  `[cron/collection-ruler] Failed to insert collection_log for receivable ${target.receivableId}:`,
-                  logError.message
-                )
-              }
+            const emailResult = await queue.enqueue({
+              tenantId: rule.tenant_id,
+              channel: 'email',
+              idempotencyKey: `collection:${target.receivableId}:${target.milestone}:email`,
+              payload: {
+                kind: 'collection_reminder',
+                to: patient.email,
+                subject: emailSubject,
+                props: {
+                  patientName: patient.full_name,
+                  clinicName, // WR-05: real clinic name, not the tenant UUID
+                  chargeDescription: charge.description ?? 'Cobrança odontológica',
+                  amount: receivable.value,
+                  dueDate: dueDateFormatted,
+                  isOverdue,
+                },
+              },
+            })
+
+            if (!emailResult.success) {
+              console.error(
+                `[cron/collection-ruler] Failed to enqueue collection email for receivable ${target.receivableId}:`,
+                emailResult.error
+              )
             } else {
-              const emailSubject = isOverdue
-                ? `Cobrança em atraso — ${charge.description ?? 'FYNXIA ERP'}`
-                : `Lembrete de vencimento hoje — ${charge.description ?? 'FYNXIA ERP'}`
-
-              try {
-                await resend.emails.send({
-                  from: FROM_EMAIL,
-                  to: patient.email,
-                  subject: emailSubject,
-                  react: createElement(CollectionReminderEmail, {
-                    patientName: patient.full_name,
-                    clinicName, // WR-05: real clinic name, not the tenant UUID
-                    chargeDescription: charge.description ?? 'Cobrança odontológica',
-                    amount: receivable.value,
-                    dueDate: dueDateFormatted,
-                    isOverdue,
-                  }),
+              // Idempotency/metrics gate. Insert AFTER a successful enqueue so a failed
+              // enqueue does not block a future retry (23505 = already enqueued/logged).
+              await admin
+                .from('collection_log')
+                .insert({
+                  tenant_id: rule.tenant_id,
+                  receivable_id: target.receivableId,
+                  milestone: target.milestone,
+                  channel: 'email',
                 })
-
-                // Audit log per send (IDs only — no PHI in audit details)
-                await logBusinessEvent({
-                  tenantId: rule.tenant_id,
-                  actorId: null, // WR-05: system-generated event — no acting user
-                  action: 'collection.reminder_sent',
-                  details: {
-                    receivable_id: target.receivableId,
-                    milestone: target.milestone,
-                    channel: 'email',
-                    patient_id: patient.id,
-                  },
-                })
-
-                totalProcessed++
-              } catch (sendError) {
-                console.error(
-                  `[cron/collection-ruler] Failed to send email for receivable ${target.receivableId}:`,
-                  sendError
-                )
-                // On send failure: log row was already inserted but email failed.
-                // Acceptable — next cron run idempotency check prevents re-send.
-              }
+              totalProcessed++
             }
           }
 
@@ -212,20 +209,9 @@ export async function GET(request: Request) {
           // Dedup: message_outbox idempotency_key UNIQUE `collection:{receivableId}:{milestone}:whatsapp`.
           // This is independent of collection_log (email dedup) — Pitfall 8 compliance.
           // Guard: toE164 returns null if phone is absent or non-normalizable → skip silently.
-          const e164Phone = toE164(patient?.phone)
-          if (e164Phone) {
-            // Payment link resolution (T-4-d05-link / RESEARCH A3):
-            // charges schema stores provider_charge_id (Asaas pay_xxx) but NOT invoiceUrl.
-            // Preferred: stored invoiceUrl column — NOT present in current schema (verified against
-            //   supabase/migrations/20260606000100_financial_tables.sql, no invoiceUrl column).
-            // Fallback: Asaas public invoice URL pattern https://www.asaas.com/i/{id} [ASSUMED A3].
-            // Future: add getPaymentLink(providerChargeId) to Asaas gateway to fetch the live URL.
-            const providerChargeId = (receivable as { provider_charge_id?: string | null }).provider_charge_id
-            const paymentLink = providerChargeId
-              ? `https://www.asaas.com/i/${providerChargeId}`
-              : 'https://www.asaas.com'
-
-            const queue = getOutboxQueue(admin)
+          // WR-01: only send WhatsApp when we have a VERIFIED payment link — never ship a
+          // guessed/generic URL on a billing message.
+          if (e164Phone && paymentLink) {
             await queue.enqueue({
               tenantId: rule.tenant_id,
               channel: 'whatsapp',
@@ -244,6 +230,13 @@ export async function GET(request: Request) {
                 }),
               },
             })
+          } else if (e164Phone && !paymentLink) {
+            // No verified payment link — skip the WhatsApp collection send rather than
+            // shipping a dead/guessed link on the highest-stakes (money) message (WR-01).
+            console.warn(
+              `[cron/collection-ruler] Skipping WhatsApp collection for receivable ${target.receivableId}: no verified Asaas invoiceUrl`
+            )
+            totalSkipped++
           }
         }
       } catch (tenantError) {
