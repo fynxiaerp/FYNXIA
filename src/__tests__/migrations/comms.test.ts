@@ -19,7 +19,7 @@ describe('Phase 4 comms migrations — tables (20260607000100)', () => {
     expect(sql).toMatch(/CREATE TYPE public\.message_channel AS ENUM/i)
     expect(sql).toMatch(/'whatsapp'/)
     expect(sql).toMatch(/'email'/)
-    expect(sql).toMatch(/CREATE TYPE public\.message_status AS ENUM/i)
+    expect(sql).toMatch(/CREATE TYPE public\.message_status\s+AS ENUM/i)
     expect(sql).toMatch(/'pending'/)
     expect(sql).toMatch(/'sent'/)
     expect(sql).toMatch(/'failed'/)
