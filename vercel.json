@@ -1,9 +1,7 @@
 {
   "regions": ["gru1"],
   "crons": [
-    {
-      "path": "/api/cron/collection-ruler",
-      "schedule": "0 8 * * *"
-    }
+    { "path": "/api/cron/collection-ruler", "schedule": "0 8 * * *" },
+    { "path": "/api/cron/reminder-dispatch", "schedule": "0 11 * * *" }
   ]
 }
