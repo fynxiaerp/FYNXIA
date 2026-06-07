@@ -22,6 +22,12 @@ export interface PaymentGateway {
   createCharge(params: CreateChargeParams): Promise<ChargeResult>
   getPixQrCode(chargeId: string): Promise<{ encodedImage: string; payload: string; expirationDate: string }>
   getInstallmentCharges(installmentId: string): Promise<ChargeResult[]>
+  /**
+   * Fetches the live public invoice/payment URL for a charge (GET /payments/{id} → invoiceUrl).
+   * Returns null if Asaas does not return one (e.g. charge not found / no hosted page).
+   * Used by the collection ruler (WR-01) to avoid shipping a guessed `asaas.com/i/{id}` link.
+   */
+  getInvoiceUrl(chargeId: string): Promise<string | null>
   cancelCharge(chargeId: string): Promise<void>
 }
 
@@ -105,6 +111,19 @@ export class AsaasAdapter implements PaymentGateway {
       dueDate: p.dueDate,
       value: p.value,
     }))
+  }
+
+  // getInvoiceUrl — GET /v3/payments/{id} → invoiceUrl (WR-01)
+  // The hosted invoice URL is the verified, clickable payment page. We fetch it live
+  // at send time rather than guessing the `asaas.com/i/{id}` pattern. Returns null on
+  // any error or when no invoiceUrl is present so the caller can skip the send.
+  async getInvoiceUrl(chargeId: string): Promise<string | null> {
+    try {
+      const res = await asaasFetch<AsaasPayment>(`/payments/${chargeId}`)
+      return res.invoiceUrl ?? null
+    } catch {
+      return null
+    }
   }
 
   // cancelCharge — DELETE /v3/payments/{id}

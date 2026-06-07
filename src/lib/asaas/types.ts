@@ -18,6 +18,7 @@ export interface AsaasPayment {
   id: string
   status: string
   bankSlipUrl?: string | null
+  invoiceUrl?: string | null   // public hosted invoice/payment page (asaas.com/i/...)
   dueDate: string
   value: number
   installment?: string | null  // installment group ID (inst_xxx)
