@@ -95,7 +95,11 @@
   2. A patient with an appointment tomorrow also receives an email reminder via Resend — the email renders using the React Email template with correct appointment details
   3. A patient with an overdue balance receives an automated collection message via WhatsApp at the cadence configured for the collection sequence — message uses the correct Asaas-linked payment link
   4. All outbound messaging jobs are enqueued via pgmq and processed by pg_cron workers — a job failure does not crash the app and retries without duplicate sends; WhatsApp templates are categorized as utility (not marketing) to avoid Meta reclassification
-**Plans**: TBD
+**Plans**: 4 plans
+- [ ] 04-01-PLAN.md — DB foundation: message_outbox + message_log (RLS, dedup) + 5 Wave 0 test scaffolds + [BLOCKING] db push
+- [ ] 04-02-PLAN.md — WhatsApp Cloud API client (no SDK) + MessageQueue/OutboxQueue + outbox worker + E.164 normalizer
+- [ ] 04-03-PLAN.md — AppointmentReminderEmail (React Email) + pure reminder-scan selection logic
+- [ ] 04-04-PLAN.md — reminder-dispatch cron (scan+enqueue+drain) + D-05 collection WhatsApp channel + vercel.json + WHATSAPP_* env
 
 ### Phase 5: AI Agents
 **Goal**: Clinic staff have an AI copilot available on every screen that answers contextual questions about the clinic's data, and autonomous agents handle appointment confirmations and overdue collection without human intervention.
@@ -117,7 +121,7 @@
 | 1. Auth & Tenant Onboarding | 3/3 | Complete | 2026-06-05 |
 | 2. Clinical MVP | 5/5 | Complete | 2026-06-05 |
 | 3. Financial MVP | 4/4 | Complete | 2026-06-06 (FIN-09 live verify pending UAT) |
-| 4. Communications & Async | 0/? | Not started | - |
+| 4. Communications & Async | 0/4 | Not started | - |
 | 5. AI Agents | 0/? | Not started | - |
 
 ---
