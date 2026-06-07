@@ -3,20 +3,20 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: "04-01 BLOCKING checkpoint — awaiting db push to Supabase (org kczvihafddupruvsrrsc)"
-last_updated: "2026-06-07T22:52:00.000Z"
+stopped_at: "Completed 04-01-PLAN.md — advancing to Wave 2 (04-02 + 04-03)"
+last_updated: "2026-06-07T23:30:00.000Z"
 progress:
   total_phases: 6
   completed_phases: 4
   total_plans: 19
-  completed_plans: 15
-  percent: 79
+  completed_plans: 16
+  percent: 84
 ---
 
 # FYNXIA ERP — Project State
 
-**Last updated:** 2026-06-06
-**Updated by:** gsd-execute-phase (03-03 completion)
+**Last updated:** 2026-06-07
+**Updated by:** gsd-execute-phase (04-01 completion)
 
 ---
 
@@ -33,19 +33,19 @@ progress:
 ## Current Position
 
 Phase: 04 (communications-async) — EXECUTING
-Plan: 1 of 4 — BLOCKED at checkpoint:human-action (db push)
+Plan: 2 of 4 — Wave 2 ready (04-02 WhatsApp + 04-03 Email can run in parallel)
 **Phase:** 4
-**Plan:** 1 (blocked at Task 3 — awaiting supabase db push)
+**Plan:** 2 (04-01 complete; advancing to Wave 2: 04-02 + 04-03)
 **Status:** Executing Phase 04
 
 ```
-Progress: [████████░░] 79% (15/19 plans complete)
+Progress: [█████████░] 84% (16/19 plans complete)
 
 Phase 0 [Complete] █████
 Phase 1 [Complete] █████
 Phase 2 [Complete] █████
 Phase 3 [Complete] █████
-Phase 4 [In progress] █░░░░ (1/4 plans — blocked at db push)
+Phase 4 [In progress] ██░░░ (2/4 plans — Wave 2 next)
 Phase 5 [Not started] ░░░░░
 ```
 
@@ -106,6 +106,8 @@ Phase 5 [Not started] ░░░░░
 | @base-ui render-prop pattern (no asChild anywhere) | Button render={<Link/>}, PopoverTrigger render={<button/>}, Accordion multiple prop — confirmed from PatientForm.tsx; no Radix asChild in this project | 2026-06-06 |
 | Lazy Resend singleton (getResend() factory) | new Resend(undefined) throws at module-eval time during next build static analysis; lazy factory defers instantiation to first runtime call; backward-compat wrapper preserves .emails.send() interface | 2026-06-06 |
 | Static CSP via next.config.ts headers() (no nonce) | Nonce-based CSP forces full dynamic render on every page — counterproductive for ERP with many SSR pages; unsafe-inline accepted for internal ERP (no third-party scripts, documented in RESEARCH §A3) | 2026-06-06 |
+| COMMS-04 via outbox pattern (not pgmq): message_outbox + OutboxQueue + Vercel Cron | pgmq/pg_cron are Supabase Pro-only; message_outbox table (Plan 04-01) + MessageQueue interface (Plan 04-02) + Cron trigger (Plan 04-04) deliver same outcome; pgmq adapter swaps in at Pro upgrade behind interface seam | 2026-06-07 |
+| No client UPDATE/DELETE policy on message_outbox | Worker uses createAdminClient (service role) for all status transitions; prevents tenant tampering with send state (T-4-outbox-T); mirrors webhook_events pattern from Plan 03-01 | 2026-06-07 |
 
 ### Critical Pre-Phase-0 Actions
 
@@ -156,16 +158,16 @@ Phase 5 [Not started] ░░░░░
 
 ## Session Continuity
 
-**Stopped at:** 04-01 Task 3 checkpoint:human-action — awaiting `supabase db push` to live Supabase project (org kczvihafddupruvsrrsc)
+**Stopped at:** Completed 04-01-PLAN.md — Wave 2 ready: run 04-02 (WhatsApp client + outbox worker) and 04-03 (email templates + reminder scan) in parallel
 
 **Critical path:** Phase 0 → 1 → 2 → 4 → 5 (Phase 3 parallel with Phase 2)
 
-**Next action:** Human: `npx supabase logout && npx supabase login` (re-auth CLI to org kczvihafddupruvsrrsc), confirm `npx supabase projects list`. Orchestrator then runs `npx supabase db push` + `npx supabase gen types typescript --linked > src/types/database.types.ts`. Resume signal: "pushed".
+**Next action:** Run Wave 2 plans 04-02 + 04-03 (can execute in parallel). Both are unblocked — message_outbox + message_log live, types generated, RED test scaffolds in place.
+
+**04-01 delivered:** message_outbox durable queue table + message_log reminder dedup table live in Supabase sa-east-1 (enums, UNIQUE idempotency_key, UNIQUE (appointment_id,channel,type), composite drain index, tenant_id indexes); RLS policies (USING+WITH CHECK via get_my_tenant_id(); no client UPDATE/DELETE on outbox); 5 Wave 0 TDD scaffolds (comms.test.ts 11/11 GREEN; 4 comms/* RED-by-design); database.types.ts regenerated. Deviation: ES2017 dotAll /s regex flag fixed in whatsapp.test.ts scaffold. Checkpoint: Supabase CLI re-auth required (recurring gotcha).
 
 **03-03 delivered:** formatBRL/deriveReceivableStatus helpers, createTransaction/listTransactions/listCategories/listReceivables Server Actions, Financeiro hub card + module hub, fluxo-de-caixa page (CashFlowTotals + TransactionList + TransactionModal), contas-a-receber page (ReceivablesTable with client-side vencido via deriveReceivableStatus + Accordion installment grouping), nova-cobranca page (ChargeForm wired to createCharge + PixQRDisplay with base64 QR). 23/23 plan tests GREEN; tsc exit 0; next build clean. Key lessons: no z.default() with RHF resolver; @base-ui uses render prop not asChild.
 
 **03-02 delivered:** PaymentGateway interface + AsaasAdapter (D-01), asaasFetch typed client (server-only), chargeSchema Zod v3, createCharge Server Action (PIX QR, boleto, installments mirrored to N receivables, customer dedup via asaas_customer_id), cancelCharge, idempotent webhook handler (token validation → 401, upsert dedup, fire-and-forget processWebhookEvent, income auto-post, refund reversal). charges.test.ts + asaas.test.ts 15/15 GREEN. tsc --noEmit exit 0. Task 4 (live sandbox) deferred to UAT — tracked in 03-HUMAN-UAT.md.
-
-**04-01 code tasks delivered:** 5 Wave 0 test scaffolds (comms.test.ts 11/11 GREEN; 4 comms/* RED-by-design pending Plans 02/03/04); message_outbox + message_log migrations authored (enums, UNIQUE idempotency_key, UNIQUE (appointment_id,channel,type) dedup, composite drain index, tenant_id indexes); RLS policies authored (USING+WITH CHECK via get_my_tenant_id(); no client UPDATE/DELETE on outbox). BLOCKED at Task 3: db push + type regen requires human Supabase CLI re-auth.
 
 **03-01 delivered:** 7 financial tables live in Supabase sa-east-1, provider-agnostic schema, RLS with USING+WITH CHECK on 6 tenant-scoped tables, audit trigger on financial_transactions reusing Phase 2 audit_table_changes(), 10 seeded dental categories, webhook_events dedup table, 7 Wave 0 test scaffolds (financial.test.ts 13/13 GREEN; 6 RED awaiting downstream plans), regenerated database.types.ts.
