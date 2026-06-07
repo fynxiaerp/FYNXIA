@@ -99,7 +99,7 @@
 - [x] 04-01-PLAN.md — DB foundation: message_outbox + message_log (RLS, dedup) + 5 Wave 0 test scaffolds + [BLOCKING] db push
 - [x] 04-02-PLAN.md — WhatsApp Cloud API client (no SDK) + MessageQueue/OutboxQueue + outbox worker + E.164 normalizer
 - [x] 04-03-PLAN.md — AppointmentReminderEmail (React Email) + pure reminder-scan selection logic
-- [ ] 04-04-PLAN.md — reminder-dispatch cron (scan+enqueue+drain) + D-05 collection WhatsApp channel + vercel.json + WHATSAPP_* env
+- [x] 04-04-PLAN.md — reminder-dispatch cron (scan+enqueue+drain) + D-05 collection WhatsApp channel + vercel.json + WHATSAPP_* env
 
 ### Phase 5: AI Agents
 **Goal**: Clinic staff have an AI copilot available on every screen that answers contextual questions about the clinic's data, and autonomous agents handle appointment confirmations and overdue collection without human intervention.
