@@ -88,7 +88,7 @@ All color tokens are CSS custom properties from `globals.css` (Phase 2). No new 
 - **Assistant message:** `bg-card` (same as panel, no fill — appears as plain text with left border marker), `text-foreground`, left-aligned. Tailwind: `mr-auto max-w-[85%] px-3 py-2`. No background fill on assistant messages — keeps visual hierarchy clean and avoids competing surfaces.
 
 **Accent usage in Phase 5 (added to Phase 2 reserved list):**
-5. Copilot trigger button icon (Bot icon from lucide-react) — fills with `text-primary` in the trigger.
+5. Copilot trigger button **background** — `bg-primary` (the accent fill); the Bot icon (lucide-react) inside is `text-primary-foreground` (contrast color, not accent).
 6. "Perguntar" send button when input is non-empty — `bg-primary text-primary-foreground`.
 
 **Accent is NOT used for:** message bubbles, streaming cursor (uses `bg-foreground`), suggested prompt chips, clear-conversation affordance.
@@ -171,6 +171,8 @@ The current `/clinica/*` layout has no persistent shell (the Phase 2 hub page is
 
 **Message list padding:** `px-4 py-3 space-y-3`.
 
+**Primary focal point (sidebar interior):** the **MessageList scroll area** is the primary visual anchor of the panel — it owns the `flex-1` space and the user's attention rests on the conversation. The input area is the secondary anchor and pulls attention via the prominent `bg-primary` send button only when the user is ready to engage. The header is tertiary.
+
 **Input area layout:** Textarea on top row (full width), bottom row has `justify-between` flex: "Limpar conversa" (ghost/text button, left) and "Perguntar" (primary button, right). Textarea: `min-h-[40px] max-h-[120px] resize-none` — auto-expands up to 3 rows.
 
 ### Agent Outreach Log Page Layout (`/clinica/ia/agentes`)
@@ -220,7 +222,7 @@ Shown when `messages.length === 0`. Three context-aware chips derived from curre
 
 Chip interaction: clicking a chip populates the input field and immediately submits (calls `handleSubmit`). Chips disappear after first message.
 
-**Chip styling:** `inline-flex items-center gap-1.5 rounded-full border border-border bg-muted px-3 py-1.5 text-sm text-muted-foreground hover:border-primary hover:text-foreground cursor-pointer transition-colors`. Wrap in a `flex flex-wrap gap-2 px-4 pt-4` container.
+**Chip styling:** `inline-flex items-center gap-2 rounded-full border border-border bg-muted px-3 py-2 text-sm text-muted-foreground hover:border-primary hover:text-foreground cursor-pointer transition-colors`. Wrap in a `flex flex-wrap gap-2 px-4 pt-4` container. (Spacing on the 4pt grid: `gap-2`/`py-2` = 8px.)
 
 ### Typing Indicator (while awaiting first token)
 
