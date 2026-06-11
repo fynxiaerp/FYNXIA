@@ -109,7 +109,13 @@
   1. Copilot sidebar is accessible from any page in the app — a staff member can ask "Quais consultas tenho hoje?" and receive a correct, tenant-scoped answer via Vercel AI Gateway without exposing raw patient data to the AI provider
   2. The appointment confirmation agent autonomously sends a WhatsApp confirmation request to patients with appointments the next day and records the patient's confirm/cancel reply in the appointments table — no manual trigger required
   3. The collection agent autonomously identifies patients with overdue balances, sends a personalized payment message via WhatsApp with the Asaas payment link, and logs the outreach in the audit trail — staff can see which patients were contacted and when
-**Plans**: TBD
+**Plans**: 5 plans
+- [ ] 05-01-PLAN.md — DB foundation: agent_outreach_log + whatsapp_inbound_events migrations + 5 Wave 0 scaffolds + [BLOCKING] db push
+- [ ] 05-02-PLAN.md — Copilot backend: AI SDK v6 install + read-only tenant-scoped tools (PII masked) + help/FAQ tool + chat Route Handler (ZDR)
+- [ ] 05-03-PLAN.md — Copilot sidebar UI: Sheet + useChat (v6) + trigger in clinica/layout + context prompts (read-only)
+- [ ] 05-04-PLAN.md — AI-02 inbound WhatsApp webhook (HMAC + dedup + status) + confirmation agent send side + audit
+- [ ] 05-05-PLAN.md — AI-03 collection agent (LLM text + real Asaas link) + agent outreach log page /clinica/ia/agentes
+**Waves**: W1=05-01 · W2=05-02 · W3=05-03,05-04 · W4=05-05
 
 ---
 
