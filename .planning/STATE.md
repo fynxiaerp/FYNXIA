@@ -3,20 +3,20 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: "05-02 — Wave 2, plan 2 of 5 (AI Copilot Chat API)"
-last_updated: "2026-06-10T23:00:00.000Z"
+stopped_at: Completed 05-02 (AI Copilot Backend)
+last_updated: "2026-06-11T01:46:38.239Z"
 progress:
   total_phases: 6
   completed_phases: 5
   total_plans: 24
-  completed_plans: 20
-  percent: 83
+  completed_plans: 21
+  percent: 88
 ---
 
 # FYNXIA ERP — Project State
 
 **Last updated:** 2026-06-10
-**Updated by:** gsd-execute-phase (05-01 complete; advancing to 05-02)
+**Updated by:** gsd-execute-phase (05-02 complete; advancing to 05-03)
 
 ---
 
@@ -33,9 +33,9 @@ progress:
 ## Current Position
 
 Phase: 05 (ai-agents) — EXECUTING
-Plan: 2 of 5
+Plan: 3 of 5
 **Phase:** 5
-**Plan:** 05-02 (Wave 2 — AI Copilot Chat API)
+**Plan:** 05-03 (Wave 3 — Copilot UI)
 **Status:** Executing Phase 05
 
 ```
@@ -79,6 +79,7 @@ Phase 5 [In progress] █░░░░ (1/5 plans complete)
 | Phase 04 P02 | 290 | 3 tasks | 7 files |
 | Phase 04 P04-03 | 8 | 2 tasks | 2 files |
 | Phase 04 P04-04 | 9 | 3 tasks | 5 files |
+| Phase 05 P05-02 | 18 | 3 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -114,6 +115,8 @@ Phase 5 [In progress] █░░░░ (1/5 plans complete)
 | WhatsApp client call-time credential reads (not module scope) | WHATSAPP_* env vars read inside sendTemplateMessage() — same lazy pattern as getResend(); returns graceful error when absent; never throws at next build | 2026-06-07 |
 | isPermanentError([131026, 132000, 132001, 190]) no-retry gate | Permanent Meta errors mark outbox row failed immediately; transient (130429, network) remain pending for next cron run | 2026-06-07 |
 | Worker email branch generic html-send with TODO(Plan 04) marker | AppointmentReminderEmail import deferred to Plan 04 to keep 04-02 independent of 04-03 in Wave 2; email branch compiles and tests pass | 2026-06-07 |
+| AI SDK v6 tool() uses inputSchema not parameters | RESEARCH Assumption A1 confirmed incorrect; @ai-sdk/provider-utils Tool type uses inputSchema: FlexibleSchema<INPUT>; confirmed from installed node_modules type defs | 2026-06-10 |
+| maskCPF for copilot keeps LAST 2 digits (***.***.***-XX) | PatientTable.tsx keeps first 3 (123.***.***-**) for reception display; copilot masking is more aggressive per D-01 — last 2 verifier digits only | 2026-06-10 |
 
 ### Critical Pre-Phase-0 Actions
 
@@ -164,11 +167,13 @@ Phase 5 [In progress] █░░░░ (1/5 plans complete)
 
 ## Session Continuity
 
-**Stopped at:** Completed 05-01. Next: 05-02 (Wave 2 — AI Copilot Chat API).
+**Stopped at:** Completed 05-02 (AI Copilot Backend)
 
 **Critical path:** Phase 0 → 1 → 2 → 4 → 5 (Phase 3 parallel with Phase 2)
 
-**Next action:** Execute 05-02-PLAN.md (Wave 2 — Copilot Chat API: masking helpers, AI tools, POST /api/copilot route, Claude claude-sonnet-4-6 via AI SDK).
+**Next action:** Execute 05-03-PLAN.md (Wave 3 — Copilot UI: CopilotTrigger, CopilotSidebar, useChat wiring, suggested prompts).
+
+**05-02 delivered:** AI SDK v6 installed (ai@6.0.200, @ai-sdk/react@3.0.202, @ai-sdk/gateway@3.0.127); src/lib/ai/masking.ts (maskCPF keeps last 2 digits, maskPhone keeps last 4); src/lib/ai/help-docs.ts (8 pt-BR topics + searchHelpDocs); src/lib/ai/tools.ts (4 read-only RLS-scoped tools: getTodayAppointments, getOverdueReceivables, getPatientSummary, searchHelpDocsTool); src/app/api/copilot/route.ts (streamText + Gateway model anthropic/claude-sonnet-4.6 + ZDR + 401 auth gate + call-time key read). tools.test.ts 12/12 + chat-route.test.ts 9/9 GREEN; tsc exit 0; next build clean. Key deviation: AI SDK v6 tool() uses inputSchema (not parameters) — RESEARCH A1 confirmed; source-inspection tests matched forbidden words in comments — rephrased.
 
 **05-01 delivered:** agent_outreach_log + whatsapp_inbound_events tables live in Supabase sa-east-1; SELECT-only RLS on agent_outreach_log (tenant isolation, no client write); wamid UNIQUE dedup on whatsapp_inbound_events (no RLS, service-role only); 5 Wave 0 test scaffolds (ai.test.ts 13/13 GREEN; 4 ai/* RED-by-design via source-inspection). database.types.ts regenerated; tsc clean. Deviation: direct-import scaffolds converted to source-inspection style to keep tsc green across waves. Checkpoint: Supabase CLI re-auth required (recurring gotcha).
 
