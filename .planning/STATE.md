@@ -3,20 +3,20 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: "05-01 checkpoint:human-action — awaiting supabase db push (Task 2)"
-last_updated: "2026-06-10T22:21:00.000Z"
+stopped_at: "05-02 — Wave 2, plan 2 of 5 (AI Copilot Chat API)"
+last_updated: "2026-06-10T23:00:00.000Z"
 progress:
   total_phases: 6
   completed_phases: 5
   total_plans: 24
-  completed_plans: 19
-  percent: 79
+  completed_plans: 20
+  percent: 83
 ---
 
 # FYNXIA ERP — Project State
 
 **Last updated:** 2026-06-10
-**Updated by:** gsd-execute-phase (05-01 Task 0+1 completion; awaiting db push checkpoint)
+**Updated by:** gsd-execute-phase (05-01 complete; advancing to 05-02)
 
 ---
 
@@ -33,20 +33,20 @@ progress:
 ## Current Position
 
 Phase: 05 (ai-agents) — EXECUTING
-Plan: 1 of 5
+Plan: 2 of 5
 **Phase:** 5
-**Plan:** Not started
+**Plan:** 05-02 (Wave 2 — AI Copilot Chat API)
 **Status:** Executing Phase 05
 
 ```
-Progress: [█████████░] 84% (16/19 plans complete)
+Progress: [██████████] 83% (20/24 plans complete)
 
 Phase 0 [Complete] █████
 Phase 1 [Complete] █████
 Phase 2 [Complete] █████
 Phase 3 [Complete] █████
 Phase 4 [In progress] ██░░░ (2/4 plans — Wave 2 next)
-Phase 5 [Not started] ░░░░░
+Phase 5 [In progress] █░░░░ (1/5 plans complete)
 ```
 
 ---
@@ -164,16 +164,13 @@ Phase 5 [Not started] ░░░░░
 
 ## Session Continuity
 
-**Stopped at:** 05-01 checkpoint:human-action — supabase db push + type regen (Task 2). Human must re-auth CLI into FYNXIA org (kczvihafddupruvsrrsc) then push migrations 20260610000100/200/300.
+**Stopped at:** Completed 05-01. Next: 05-02 (Wave 2 — AI Copilot Chat API).
 
 **Critical path:** Phase 0 → 1 → 2 → 4 → 5 (Phase 3 parallel with Phase 2)
 
-**Next action:** Human: `supabase login` (confirm jqjwyqlbbuqnrffdnlpp visible), then orchestrator runs `supabase db push` + `supabase gen types typescript --linked > src/types/database.types.ts`. Resume signal: "pushed".
+**Next action:** Execute 05-02-PLAN.md (Wave 2 — Copilot Chat API: masking helpers, AI tools, POST /api/copilot route, Claude claude-sonnet-4-6 via AI SDK).
 
-**05-01 partial (Tasks 0+1 complete; Task 2 blocked on db push):**
-  - Task 0: 5 Wave 0 test scaffolds committed (74bd724) — ai.test.ts 13/13 GREEN; 4 ai/* RED-by-design
-  - Task 1: 3 migration files authored and committed (895262b) — agent_outreach_log (tenant_id→clinics FK, CHECK agent_type, SELECT-only RLS); whatsapp_inbound_events (wamid UNIQUE, no RLS)
-  - Task 2: BLOCKED — awaiting supabase db push + database.types.ts regen
+**05-01 delivered:** agent_outreach_log + whatsapp_inbound_events tables live in Supabase sa-east-1; SELECT-only RLS on agent_outreach_log (tenant isolation, no client write); wamid UNIQUE dedup on whatsapp_inbound_events (no RLS, service-role only); 5 Wave 0 test scaffolds (ai.test.ts 13/13 GREEN; 4 ai/* RED-by-design via source-inspection). database.types.ts regenerated; tsc clean. Deviation: direct-import scaffolds converted to source-inspection style to keep tsc green across waves. Checkpoint: Supabase CLI re-auth required (recurring gotcha).
 
 **04-01 delivered:** message_outbox durable queue table + message_log reminder dedup table live in Supabase sa-east-1 (enums, UNIQUE idempotency_key, UNIQUE (appointment_id,channel,type), composite drain index, tenant_id indexes); RLS policies (USING+WITH CHECK via get_my_tenant_id(); no client UPDATE/DELETE on outbox); 5 Wave 0 TDD scaffolds (comms.test.ts 11/11 GREEN; 4 comms/* RED-by-design); database.types.ts regenerated. Deviation: ES2017 dotAll /s regex flag fixed in whatsapp.test.ts scaffold. Checkpoint: Supabase CLI re-auth required (recurring gotcha).
 

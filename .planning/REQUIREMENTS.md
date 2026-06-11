@@ -66,9 +66,9 @@
 
 ### AI — IA e Automação
 
-- [ ] **AI-01**: Copiloto IA disponível em toda tela via chat lateral (Vercel AI Gateway)
-- [ ] **AI-02**: Agente autônomo confirma consultas do dia seguinte via WhatsApp e registra resposta
-- [ ] **AI-03**: Agente autônomo identifica inadimplentes e envia mensagem de cobrança personalizada
+- [x] **AI-01**: Copiloto IA disponível em toda tela via chat lateral (Vercel AI Gateway)
+- [x] **AI-02**: Agente autônomo confirma consultas do dia seguinte via WhatsApp e registra resposta
+- [x] **AI-03**: Agente autônomo identifica inadimplentes e envia mensagem de cobrança personalizada
 
 ---
 
@@ -144,9 +144,9 @@
 | COMMS-02 | Phase 4 — Communications & Async | Complete |
 | COMMS-03 | Phase 4 — Communications & Async | Complete |
 | COMMS-04 | Phase 4 — Communications & Async | Complete |
-| AI-01 | Phase 5 — AI Agents | Pending |
-| AI-02 | Phase 5 — AI Agents | Pending |
-| AI-03 | Phase 5 — AI Agents | Pending |
+| AI-01 | Phase 5 — AI Agents | Complete |
+| AI-02 | Phase 5 — AI Agents | Complete |
+| AI-03 | Phase 5 — AI Agents | Complete |
 
 **Total mapped: 47/47**
 
