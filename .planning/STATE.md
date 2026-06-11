@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 05-04 (AI-02 WhatsApp Inbound Webhook + Confirmation Agent)
-last_updated: "2026-06-11T13:25:46.711Z"
+stopped_at: Completed 05-05 (AI-03 Collection Agent + Agent Outreach Log Page) — LAST plan of v1 milestone
+last_updated: "2026-06-11T18:39:42.684Z"
 progress:
   total_phases: 6
-  completed_phases: 5
+  completed_phases: 6
   total_plans: 24
-  completed_plans: 23
-  percent: 96
+  completed_plans: 24
+  percent: 100
 ---
 
 # FYNXIA ERP — Project State
@@ -82,6 +82,7 @@ Phase 5 [In progress] ████░ (4/5 plans complete)
 | Phase 05 P05-02 | 18 | 3 tasks | 7 files |
 | Phase 05 P03 | 7 | 3 tasks | 10 files |
 | Phase 05 P04 | 76 | 3 tasks | 8 files |
+| Phase 05 P05 | 15 | 3 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -122,6 +123,9 @@ Phase 5 [In progress] ████░ (4/5 plans complete)
 | TEMPLATE_APPOINTMENT_CONFIRMATION = TEMPLATE_APPOINTMENT_REMINDER (reuse same template) | Same approved quick-reply template; button payloads embed appointmentId for inbound webhook routing — no need to register a second Meta template | 2026-06-11 |
 | Ambiguous free-text inbound: NO appointments.status change (T-5-intent safe fallback) | classifyConfirmationIntent returns 'ambiguous' on missing key/error/unclear text; webhook logs agent_outreach_log{status:ambiguous} for human review; D-04 principle | 2026-06-11 |
 | Tenant derived from appointment row on inbound webhook, never from payload (T-5-webhook-I) | Admin fetches appointment by id from buttonPayload; tenant_id sourced from DB row — untrusted payload can never change tenant scope | 2026-06-11 |
+| AI-03 LLM personalization sends only first name + amount (RESEARCH Pattern 6, T-5-collect-I) | No CPF/health data to LLM; ZDR enabled; fallback to neutral static message when AI_GATEWAY_API_KEY absent | 2026-06-11 |
+| collection-agent and collection-ruler coexist independently | Ruler = template reminders + email; agent = AI-03 LLM-personalized WhatsApp; drainOutbox is status-idempotent so both crons are safe | 2026-06-11 |
+| Patient name masked to FirstName L. in agent outreach log (SEC-01) | maskPatientName() in listAgentOutreach Server Action; consistent with other masking conventions in the codebase | 2026-06-11 |
 
 ### Critical Pre-Phase-0 Actions
 
@@ -172,7 +176,7 @@ Phase 5 [In progress] ████░ (4/5 plans complete)
 
 ## Session Continuity
 
-**Stopped at:** Completed 05-04 (AI-02 WhatsApp Inbound Webhook + Confirmation Agent)
+**Stopped at:** Completed 05-05 (AI-03 Collection Agent + Agent Outreach Log Page) — LAST plan of v1 milestone
 
 **Critical path:** Phase 0 → 1 → 2 → 4 → 5 (Phase 3 parallel with Phase 2)
 
