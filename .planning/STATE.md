@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 5 UI-SPEC approved
-last_updated: "2026-06-11T00:19:34.218Z"
+stopped_at: "05-01 checkpoint:human-action — awaiting supabase db push (Task 2)"
+last_updated: "2026-06-10T22:21:00.000Z"
 progress:
   total_phases: 6
   completed_phases: 5
@@ -15,8 +15,8 @@ progress:
 
 # FYNXIA ERP — Project State
 
-**Last updated:** 2026-06-07
-**Updated by:** gsd-execute-phase (04-01 completion)
+**Last updated:** 2026-06-10
+**Updated by:** gsd-execute-phase (05-01 Task 0+1 completion; awaiting db push checkpoint)
 
 ---
 
@@ -32,11 +32,11 @@ progress:
 
 ## Current Position
 
-Phase: 04 (communications-async) — EXECUTING
-Plan: 2 of 4 — Wave 2 ready (04-02 WhatsApp + 04-03 Email can run in parallel)
+Phase: 05 (ai-agents) — EXECUTING
+Plan: 1 of 5
 **Phase:** 5
 **Plan:** Not started
-**Status:** Ready to execute
+**Status:** Executing Phase 05
 
 ```
 Progress: [█████████░] 84% (16/19 plans complete)
@@ -164,11 +164,16 @@ Phase 5 [Not started] ░░░░░
 
 ## Session Continuity
 
-**Stopped at:** Phase 5 UI-SPEC approved
+**Stopped at:** 05-01 checkpoint:human-action — supabase db push + type regen (Task 2). Human must re-auth CLI into FYNXIA org (kczvihafddupruvsrrsc) then push migrations 20260610000100/200/300.
 
 **Critical path:** Phase 0 → 1 → 2 → 4 → 5 (Phase 3 parallel with Phase 2)
 
-**Next action:** Run Wave 2 plans 04-02 + 04-03 (can execute in parallel). Both are unblocked — message_outbox + message_log live, types generated, RED test scaffolds in place.
+**Next action:** Human: `supabase login` (confirm jqjwyqlbbuqnrffdnlpp visible), then orchestrator runs `supabase db push` + `supabase gen types typescript --linked > src/types/database.types.ts`. Resume signal: "pushed".
+
+**05-01 partial (Tasks 0+1 complete; Task 2 blocked on db push):**
+  - Task 0: 5 Wave 0 test scaffolds committed (74bd724) — ai.test.ts 13/13 GREEN; 4 ai/* RED-by-design
+  - Task 1: 3 migration files authored and committed (895262b) — agent_outreach_log (tenant_id→clinics FK, CHECK agent_type, SELECT-only RLS); whatsapp_inbound_events (wamid UNIQUE, no RLS)
+  - Task 2: BLOCKED — awaiting supabase db push + database.types.ts regen
 
 **04-01 delivered:** message_outbox durable queue table + message_log reminder dedup table live in Supabase sa-east-1 (enums, UNIQUE idempotency_key, UNIQUE (appointment_id,channel,type), composite drain index, tenant_id indexes); RLS policies (USING+WITH CHECK via get_my_tenant_id(); no client UPDATE/DELETE on outbox); 5 Wave 0 TDD scaffolds (comms.test.ts 11/11 GREEN; 4 comms/* RED-by-design); database.types.ts regenerated. Deviation: ES2017 dotAll /s regex flag fixed in whatsapp.test.ts scaffold. Checkpoint: Supabase CLI re-auth required (recurring gotcha).
 
