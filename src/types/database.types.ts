@@ -39,6 +39,80 @@ export type Database = {
   }
   public: {
     Tables: {
+      agent_outreach_log: {
+        Row: {
+          agent_type: string
+          appointment_id: string | null
+          created_at: string
+          error_message: string | null
+          id: string
+          intent_result: string | null
+          patient_id: string | null
+          receivable_id: string | null
+          status: string
+          tenant_id: string
+          updated_at: string
+          whatsapp_message_id: string | null
+        }
+        Insert: {
+          agent_type: string
+          appointment_id?: string | null
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          intent_result?: string | null
+          patient_id?: string | null
+          receivable_id?: string | null
+          status?: string
+          tenant_id: string
+          updated_at?: string
+          whatsapp_message_id?: string | null
+        }
+        Update: {
+          agent_type?: string
+          appointment_id?: string | null
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          intent_result?: string | null
+          patient_id?: string | null
+          receivable_id?: string | null
+          status?: string
+          tenant_id?: string
+          updated_at?: string
+          whatsapp_message_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_outreach_log_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_outreach_log_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_outreach_log_receivable_id_fkey"
+            columns: ["receivable_id"]
+            isOneToOne: false
+            referencedRelation: "receivables"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_outreach_log_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       anamneses: {
         Row: {
           created_at: string
@@ -1287,6 +1361,33 @@ export type Database = {
           id?: string
           payload?: Json | null
           processed?: boolean
+        }
+        Relationships: []
+      }
+      whatsapp_inbound_events: {
+        Row: {
+          created_at: string
+          from_phone: string
+          id: string
+          payload: Json
+          processed: boolean
+          wamid: string
+        }
+        Insert: {
+          created_at?: string
+          from_phone: string
+          id?: string
+          payload: Json
+          processed?: boolean
+          wamid: string
+        }
+        Update: {
+          created_at?: string
+          from_phone?: string
+          id?: string
+          payload?: Json
+          processed?: boolean
+          wamid?: string
         }
         Relationships: []
       }
