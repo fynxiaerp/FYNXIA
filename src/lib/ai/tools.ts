@@ -17,15 +17,16 @@ import { searchHelpDocs } from './help-docs'
  */
 export const getTodayAppointments = tool({
   description:
-    "Busca as consultas do dia (ou de uma data específica) para a clínica autenticada. " +
-    "Retorna horário, status, nome do paciente e nome do dentista.",
-  parameters: z.object({
+    'Busca as consultas do dia (ou de uma data específica) para a clínica autenticada. ' +
+    'Retorna horário, status, nome do paciente e nome do dentista.',
+  inputSchema: z.object({
     date: z
       .string()
       .optional()
       .describe('Data no formato ISO YYYY-MM-DD. Padrão: hoje.'),
   }),
-  execute: async ({ date }) => {
+  execute: async (input) => {
+    const { date } = input
     const supabase = await createClient()
     const targetDate = date ?? new Date().toISOString().split('T')[0]
 
@@ -54,10 +55,10 @@ export const getTodayAppointments = tool({
  */
 export const getOverdueReceivables = tool({
   description:
-    "Lista os recebíveis vencidos (status pendente com vencimento antes de hoje) da clínica. " +
-    "Retorna valor, data de vencimento e nome do paciente.",
-  parameters: z.object({}),
-  execute: async () => {
+    'Lista os recebíveis vencidos (status pendente com vencimento antes de hoje) da clínica. ' +
+    'Retorna valor, data de vencimento e nome do paciente.',
+  inputSchema: z.object({}),
+  execute: async (_input) => {
     const supabase = await createClient()
     const today = new Date().toISOString().split('T')[0]
 
@@ -76,7 +77,7 @@ export const getOverdueReceivables = tool({
       id: r.id,
       dueDate: r.due_date,
       value: r.value,
-      patientName: (r.patient as { full_name: string } | null)?.full_name ?? 'Desconhecido',
+      patientName: (r.patient as unknown as { full_name: string } | null)?.full_name ?? 'Desconhecido',
     }))
 
     return { today, overdueCount: mapped.length, receivables: mapped }
@@ -91,18 +92,19 @@ export const getOverdueReceivables = tool({
  */
 export const getPatientSummary = tool({
   description:
-    "Busca o resumo de um paciente pelo nome (pesquisa parcial). " +
-    "Retorna nome, CPF mascarado, telefone mascarado e contagem de próximas consultas.",
-  parameters: z.object({
+    'Busca o resumo de um paciente pelo nome (pesquisa parcial). ' +
+    'Retorna nome, CPF mascarado, telefone mascarado e contagem de próximas consultas.',
+  inputSchema: z.object({
     fullName: z
       .string()
       .min(2)
       .describe('Nome completo ou parcial do paciente para busca.'),
   }),
-  execute: async ({ fullName }) => {
+  execute: async (input) => {
+    const { fullName } = input
     const supabase = await createClient()
 
-    // Search patient — NEVER select health columns
+    // Search patient — only safe columns; no health data columns
     const { data: patients, error } = await supabase
       .from('patients')
       .select('id, full_name, cpf, phone, email')
@@ -119,7 +121,7 @@ export const getPatientSummary = tool({
     }
 
     // Count upcoming appointments for each patient
-    const today = new Date().toISOString()
+    const nowIso = new Date().toISOString()
 
     const summaries = await Promise.all(
       patients.map(async (p) => {
@@ -127,19 +129,14 @@ export const getPatientSummary = tool({
           .from('appointments')
           .select('id', { count: 'exact', head: true })
           .eq('patient_id', p.id)
-          .gte('start_time', today)
+          .gte('start_time', nowIso)
           .neq('status', 'cancelado')
-
-        // Mask email: keep first char + domain
-        const maskedEmail = p.email
-          ? maskEmail(p.email)
-          : null
 
         return {
           fullName: p.full_name,
           cpf: maskCPF(p.cpf ?? ''),
           phone: maskPhone(p.phone ?? ''),
-          email: maskedEmail,
+          email: p.email ? maskEmail(p.email) : null,
           upcomingAppointments: count ?? 0,
         }
       })
@@ -155,12 +152,12 @@ export const getPatientSummary = tool({
  */
 export const searchHelpDocsTool = tool({
   description:
-    "Busca documentação de ajuda e guias de uso do sistema FYNXIA. " +
-    "Use esta ferramenta para responder perguntas sobre como usar o sistema (cadastrar paciente, agendar, gerar cobrança, etc.).",
-  parameters: z.object({
+    'Busca documentação de ajuda e guias de uso do sistema FYNXIA. ' +
+    'Use esta ferramenta para responder perguntas sobre como usar o sistema (cadastrar paciente, agendar, gerar cobrança, etc.).',
+  inputSchema: z.object({
     query: z.string().describe('Pergunta ou palavra-chave sobre o uso do sistema.'),
   }),
-  execute: async ({ query }) => searchHelpDocs(query),
+  execute: async (input) => searchHelpDocs(input.query),
 })
 
 // ─── Internal helpers ────────────────────────────────────────────────────────
