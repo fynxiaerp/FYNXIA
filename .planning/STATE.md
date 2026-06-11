@@ -3,20 +3,20 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 05-03 (Copilot Sidebar UI)
-last_updated: "2026-06-11T01:58:10.684Z"
+stopped_at: Completed 05-04 (AI-02 WhatsApp Inbound Webhook + Confirmation Agent)
+last_updated: "2026-06-11T13:25:46.711Z"
 progress:
   total_phases: 6
   completed_phases: 5
   total_plans: 24
-  completed_plans: 22
-  percent: 92
+  completed_plans: 23
+  percent: 96
 ---
 
 # FYNXIA ERP — Project State
 
-**Last updated:** 2026-06-10
-**Updated by:** gsd-execute-phase (05-02 complete; advancing to 05-03)
+**Last updated:** 2026-06-11
+**Updated by:** gsd-execute-phase (05-04 complete; advancing to 05-05)
 
 ---
 
@@ -33,20 +33,20 @@ progress:
 ## Current Position
 
 Phase: 05 (ai-agents) — EXECUTING
-Plan: 3 of 5
+Plan: 4 of 5
 **Phase:** 5
-**Plan:** 05-03 (Wave 3 — Copilot UI)
+**Plan:** 05-04 (Wave 3 — AI-02 WhatsApp Inbound Webhook + Confirmation Agent)
 **Status:** Executing Phase 05
 
 ```
-Progress: [██████████] 83% (20/24 plans complete)
+Progress: [██████████] 96% (23/24 plans complete)
 
 Phase 0 [Complete] █████
 Phase 1 [Complete] █████
 Phase 2 [Complete] █████
 Phase 3 [Complete] █████
-Phase 4 [In progress] ██░░░ (2/4 plans — Wave 2 next)
-Phase 5 [In progress] █░░░░ (1/5 plans complete)
+Phase 4 [Complete] █████
+Phase 5 [In progress] ████░ (4/5 plans complete)
 ```
 
 ---
@@ -81,6 +81,7 @@ Phase 5 [In progress] █░░░░ (1/5 plans complete)
 | Phase 04 P04-04 | 9 | 3 tasks | 5 files |
 | Phase 05 P05-02 | 18 | 3 tasks | 7 files |
 | Phase 05 P03 | 7 | 3 tasks | 10 files |
+| Phase 05 P04 | 76 | 3 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -118,6 +119,9 @@ Phase 5 [In progress] █░░░░ (1/5 plans complete)
 | Worker email branch generic html-send with TODO(Plan 04) marker | AppointmentReminderEmail import deferred to Plan 04 to keep 04-02 independent of 04-03 in Wave 2; email branch compiles and tests pass | 2026-06-07 |
 | AI SDK v6 tool() uses inputSchema not parameters | RESEARCH Assumption A1 confirmed incorrect; @ai-sdk/provider-utils Tool type uses inputSchema: FlexibleSchema<INPUT>; confirmed from installed node_modules type defs | 2026-06-10 |
 | maskCPF for copilot keeps LAST 2 digits (***.***.***-XX) | PatientTable.tsx keeps first 3 (123.***.***-**) for reception display; copilot masking is more aggressive per D-01 — last 2 verifier digits only | 2026-06-10 |
+| TEMPLATE_APPOINTMENT_CONFIRMATION = TEMPLATE_APPOINTMENT_REMINDER (reuse same template) | Same approved quick-reply template; button payloads embed appointmentId for inbound webhook routing — no need to register a second Meta template | 2026-06-11 |
+| Ambiguous free-text inbound: NO appointments.status change (T-5-intent safe fallback) | classifyConfirmationIntent returns 'ambiguous' on missing key/error/unclear text; webhook logs agent_outreach_log{status:ambiguous} for human review; D-04 principle | 2026-06-11 |
+| Tenant derived from appointment row on inbound webhook, never from payload (T-5-webhook-I) | Admin fetches appointment by id from buttonPayload; tenant_id sourced from DB row — untrusted payload can never change tenant scope | 2026-06-11 |
 
 ### Critical Pre-Phase-0 Actions
 
@@ -168,7 +172,7 @@ Phase 5 [In progress] █░░░░ (1/5 plans complete)
 
 ## Session Continuity
 
-**Stopped at:** Completed 05-03 (Copilot Sidebar UI)
+**Stopped at:** Completed 05-04 (AI-02 WhatsApp Inbound Webhook + Confirmation Agent)
 
 **Critical path:** Phase 0 → 1 → 2 → 4 → 5 (Phase 3 parallel with Phase 2)
 

@@ -113,7 +113,7 @@
 - [x] 05-01-PLAN.md — DB foundation: agent_outreach_log + whatsapp_inbound_events migrations + 5 Wave 0 scaffolds + [BLOCKING] db push
 - [x] 05-02-PLAN.md — Copilot backend: AI SDK v6 install + read-only tenant-scoped tools (PII masked) + help/FAQ tool + chat Route Handler (ZDR)
 - [x] 05-03-PLAN.md — Copilot sidebar UI: Sheet + useChat (v6) + trigger in clinica/layout + context prompts (read-only)
-- [ ] 05-04-PLAN.md — AI-02 inbound WhatsApp webhook (HMAC + dedup + status) + confirmation agent send side + audit
+- [x] 05-04-PLAN.md — AI-02 inbound WhatsApp webhook (HMAC + dedup + status) + confirmation agent send side + audit
 - [ ] 05-05-PLAN.md — AI-03 collection agent (LLM text + real Asaas link) + agent outreach log page /clinica/ia/agentes
 **Waves**: W1=05-01 · W2=05-02 · W3=05-03,05-04 · W4=05-05
 
