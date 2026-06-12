@@ -1,14 +1,8 @@
 import Link from 'next/link'
-import { TrendingUp, Receipt, CreditCard, Bell } from 'lucide-react'
+import { TrendingUp, Receipt, FilePlus, Settings2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb'
+import { PageHeader } from '@/components/shell/PageHeader'
+import { Button } from '@/components/ui/button'
 
 // Financeiro module hub — mirrors /clinica hub pattern (icon card grid).
 // Régua de Cobrança card is admin-only (role check for display; action-level gates enforce writes).
@@ -43,36 +37,38 @@ export default async function FinanceiroPage() {
       href: '/clinica/financeiro/nova-cobranca',
       title: 'Nova Cobrança',
       description: 'Emita cobranças via PIX, boleto ou cartão pelo Asaas.',
-      icon: CreditCard,
+      icon: FilePlus,
       show: true,
     },
     {
       href: '/clinica/financeiro/regua-de-cobranca',
       title: 'Régua de Cobrança',
       description: 'Configure lembretes automáticos por e-mail para recebíveis vencidos.',
-      icon: Bell,
+      icon: Settings2,
       show: isAdmin,
     },
   ].filter((item) => item.show)
 
   return (
-    <main className="min-h-screen bg-background p-8">
-      <div className="mx-auto max-w-4xl space-y-8">
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/clinica">Clínica</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>Financeiro</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-
-        <div>
-          <h1 className="text-xl font-semibold leading-tight">Financeiro</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
+    <>
+      <PageHeader
+        title="Financeiro"
+        breadcrumbs={[
+          { label: 'Clínica', href: '/clinica' },
+          { label: 'Financeiro' },
+        ]}
+        actions={
+          <Button
+            size="sm"
+            render={<Link href="/clinica/financeiro/nova-cobranca" />}
+          >
+            Nova Cobrança
+          </Button>
+        }
+      />
+      <main className="p-6 max-w-5xl mx-auto w-full">
+        <div className="mb-4">
+          <p className="text-sm text-muted-foreground">
             Gerencie cobranças, recebíveis e o fluxo de caixa da clínica.
           </p>
         </div>
@@ -86,9 +82,9 @@ export default async function FinanceiroPage() {
                 href={item.href}
                 className="group flex flex-col gap-3 rounded-lg border border-border bg-card p-6 transition-colors hover:border-primary hover:bg-accent/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
-                <Icon className="size-6 text-primary" />
+                <Icon className="size-6 text-muted-foreground group-hover:text-primary" />
                 <div>
-                  <h2 className="text-base font-semibold group-hover:text-primary">
+                  <h2 className="text-sm font-semibold group-hover:text-primary">
                     {item.title}
                   </h2>
                   <p className="mt-1 text-sm text-muted-foreground">{item.description}</p>
@@ -97,7 +93,7 @@ export default async function FinanceiroPage() {
             )
           })}
         </div>
-      </div>
-    </main>
+      </main>
+    </>
   )
 }
