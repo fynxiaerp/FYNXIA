@@ -56,7 +56,7 @@ export default async function PublicBookingPage({ params }: PageProps) {
               className="mx-auto mb-3 h-12 w-auto object-contain"
             />
           )}
-          <h1 className="text-2xl font-bold text-foreground">Agendar Consulta</h1>
+          <h1 className="text-2xl font-semibold font-display text-foreground">Agendar Consulta</h1>
           <p className="mt-1 text-sm text-muted-foreground">{clinic.name}</p>
         </header>
 

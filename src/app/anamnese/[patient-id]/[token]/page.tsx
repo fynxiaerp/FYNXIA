@@ -72,7 +72,8 @@ export default async function PublicAnamnesisPage({ params }: PageProps) {
       <div className="max-w-lg w-full mx-auto flex flex-col gap-6">
         {/* Header */}
         <header className="text-center">
-          <h1 className="text-2xl font-bold text-foreground">Anamnese Digital</h1>
+          <h1 className="text-2xl font-bold font-display tracking-tight text-primary">FYNXIA</h1>
+          <h2 className="mt-2 text-xl font-semibold font-display text-foreground">Anamnese Odontológica</h2>
           <p className="mt-1 text-sm text-muted-foreground">
             Preencha o questionário de saúde e assine digitalmente para concluir.
           </p>
@@ -80,10 +81,10 @@ export default async function PublicAnamnesisPage({ params }: PageProps) {
 
         {/* Progress indicator */}
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <span className="flex size-5 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-medium">1</span>
-          <span className="text-foreground font-medium">Questionário</span>
+          <span className="flex size-5 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-semibold">1</span>
+          <span className="text-foreground font-semibold">Questionário</span>
           <div className="flex-1 h-px bg-border" />
-          <span className="flex size-5 items-center justify-center rounded-full bg-border text-muted-foreground text-xs font-medium">2</span>
+          <span className="flex size-5 items-center justify-center rounded-full bg-border text-muted-foreground text-xs font-semibold">2</span>
           <span>Assinatura</span>
         </div>
 
