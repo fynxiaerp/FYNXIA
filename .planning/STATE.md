@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 6 UI-SPEC approved
-last_updated: "2026-06-12T22:21:59.385Z"
+stopped_at: Completed 06-01-PLAN.md (Wave 0 test scaffolds)
+last_updated: "2026-06-12T22:32:00.357Z"
 progress:
   total_phases: 7
   completed_phases: 6
   total_plans: 32
-  completed_plans: 24
-  percent: 75
+  completed_plans: 25
+  percent: 78
 ---
 
 # FYNXIA ERP — Project State
@@ -32,21 +32,22 @@ progress:
 
 ## Current Position
 
-Phase: 05 (ai-agents) — EXECUTING
-Plan: 4 of 5
-**Phase:** 05
-**Plan:** Not started
-**Status:** Ready to execute
+Phase: 06 (ux-polish-and-app-shell) — EXECUTING
+Plan: 2 of 8
+**Phase:** 06
+**Plan:** 02 (next)
+**Status:** Executing Phase 06
 
 ```
-Progress: [██████████] 96% (23/24 plans complete)
+Progress: [████████░░] 78% (25/32 plans complete)
 
 Phase 0 [Complete] █████
 Phase 1 [Complete] █████
 Phase 2 [Complete] █████
 Phase 3 [Complete] █████
 Phase 4 [Complete] █████
-Phase 5 [In progress] ████░ (4/5 plans complete)
+Phase 5 [Complete] █████ (5/5 plans complete)
+Phase 6 [In progress] █░░░░░░░ (1/8 plans complete)
 ```
 
 ---
@@ -83,6 +84,7 @@ Phase 5 [In progress] ████░ (4/5 plans complete)
 | Phase 05 P03 | 7 | 3 tasks | 10 files |
 | Phase 05 P04 | 76 | 3 tasks | 8 files |
 | Phase 05 P05 | 15 | 3 tasks | 6 files |
+| Phase 06 P01 | 25 | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -176,11 +178,13 @@ Phase 5 [In progress] ████░ (4/5 plans complete)
 
 ## Session Continuity
 
-**Stopped at:** Phase 6 UI-SPEC approved
+**Stopped at:** Completed 06-01-PLAN.md (Wave 0 test scaffolds)
 
 **Critical path:** Phase 0 → 1 → 2 → 4 → 5 (Phase 3 parallel with Phase 2)
 
-**Next action:** Execute 05-03-PLAN.md (Wave 3 — Copilot UI: CopilotTrigger, CopilotSidebar, useChat wiring, suggested prompts).
+**Next action:** Execute 06-02-PLAN.md (Wave 1 — Theme tokens: globals.css hsl token blocks + layout.tsx font/ThemeProvider wiring).
+
+**06-01 delivered:** 5 Wave-0 source-inspection test scaffolds under src/__tests__/ui/ — contrast.test.ts (7/7 GREEN; pure WCAG math asserting #007a85 >=4.5:1 and regression guard #008c99 <4.5:1); theme.test.ts, shell.test.ts, page-pattern.test.ts, typography.test.ts (all RED-by-design against current sources); tsc exit 0. Deviation: ES2017 tsconfig target does not support regex s-flag — replaced with extractBlock() line-splitting helper.
 
 **05-02 delivered:** AI SDK v6 installed (ai@6.0.200, @ai-sdk/react@3.0.202, @ai-sdk/gateway@3.0.127); src/lib/ai/masking.ts (maskCPF keeps last 2 digits, maskPhone keeps last 4); src/lib/ai/help-docs.ts (8 pt-BR topics + searchHelpDocs); src/lib/ai/tools.ts (4 read-only RLS-scoped tools: getTodayAppointments, getOverdueReceivables, getPatientSummary, searchHelpDocsTool); src/app/api/copilot/route.ts (streamText + Gateway model anthropic/claude-sonnet-4.6 + ZDR + 401 auth gate + call-time key read). tools.test.ts 12/12 + chat-route.test.ts 9/9 GREEN; tsc exit 0; next build clean. Key deviation: AI SDK v6 tool() uses inputSchema (not parameters) — RESEARCH A1 confirmed; source-inspection tests matched forbidden words in comments — rephrased.
 

@@ -191,10 +191,10 @@
 **Goal:** Elevar a UI do v1 (auditoria 15/24) para uma experiência clara, navegável e production-grade, alinhada à marca FYNXIA — app shell com sidebar persistente, dual-theme (claro clínico padrão + dark/neon da marca), PageHeader/estados consistentes e varredura visual tela-a-tela. Sem novas features.
 **Requirements**: none (UI/design phase — derives from phase goal + 06-UI-SPEC + UI-REVIEW-v1.0)
 **Depends on:** Phase 5
-**Plans:** 8 plans
+**Plans:** 1/8 plans executed
 
 Plans:
-- [ ] 06-01-PLAN.md — Wave 0 TDD scaffolds (theme/contrast/shell/page-pattern/typography source-inspection tests)
+- [x] 06-01-PLAN.md — Wave 0 TDD scaffolds (theme/contrast/shell/page-pattern/typography source-inspection tests)
 - [ ] 06-02-PLAN.md — Foundation: next-themes + dual-theme globals.css tokens + Space Grotesk/Inter fonts + ThemeProvider
 - [ ] 06-03-PLAN.md — App shell: AppSidebar (role-gated nav + logo + footer theme toggle/Sair) replaces clinica/layout passthrough
 - [ ] 06-04-PLAN.md — Page pattern: PageHeader + MobileMenuTrigger + EmptyState + ErrorState + skeletons toolkit
@@ -222,5 +222,5 @@ These must be resolved before or during the corresponding phase:
 | 3 | Meta Business verification started? | Phase 4 | Start at Phase 1 kickoff |
 | 4 | Supabase project confirmed in sa-east-1? | Phase 0 | Immediately |
 | 5 | Supabase Pro plan activated (pg_cron, pgmq, Auth Hooks)? | Phase 0 | Immediately |
-| 6 | AI provider DPA strategy for LGPD (Anthropic Enterprise or prompt sanitization)? | Phase 5 | Before Phase 5 kickoff |
+| 6 | 1/8 | In Progress|  |
 | 7 | NFSe scope: Nacional only or top-5 cities? | Phase 3 (if in v1) | Before Phase 3 kickoff |
