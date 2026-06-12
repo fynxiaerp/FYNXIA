@@ -22,6 +22,35 @@ function read(rel: string): string {
 // globals.css assertions
 // ---------------------------------------------------------------------------
 
+/**
+ * Extract the content between the first occurrence of `marker {` and its
+ * closing `}`. Works without the regex `s` flag (ES2017-compatible) by
+ * splitting the file into lines and collecting the block content manually.
+ */
+function extractBlock(css: string, markerRegex: RegExp): string {
+  const lines = css.split('\n')
+  let inBlock = false
+  let depth = 0
+  const collected: string[] = []
+
+  for (const line of lines) {
+    if (!inBlock) {
+      if (markerRegex.test(line) && line.includes('{')) {
+        inBlock = true
+        depth = (line.match(/\{/g) ?? []).length - (line.match(/\}/g) ?? []).length
+        collected.push(line)
+        if (depth <= 0) break
+      }
+    } else {
+      collected.push(line)
+      depth += (line.match(/\{/g) ?? []).length - (line.match(/\}/g) ?? []).length
+      if (depth <= 0) break
+    }
+  }
+
+  return collected.join('\n')
+}
+
 describe('globals.css — dual-theme token blocks', () => {
   const css = read('src/app/globals.css')
 
@@ -40,40 +69,40 @@ describe('globals.css — dual-theme token blocks', () => {
 
   it('does NOT contain the AA-failing values 30%/38% as --primary in :root', () => {
     // Extract only the :root block to avoid false positives from .dark
-    const rootBlock = css.match(/:root\s*\{([^}]*)\}/s)?.[1] ?? ''
+    const rootBlock = extractBlock(css, /:root\s*\{/)
     expect(rootBlock).not.toMatch(/185 100% 30%/)
     expect(rootBlock).not.toMatch(/185 100% 38%/)
   })
 
   it('light :root does NOT use oklch for --primary (must be hsl)', () => {
-    const rootBlock = css.match(/:root\s*\{([^}]*)\}/s)?.[1] ?? ''
+    const rootBlock = extractBlock(css, /:root\s*\{/)
     // Should not have oklch on the primary token line
     const primaryLine = rootBlock.match(/--primary:[^\n;]*/)?.[0] ?? ''
     expect(primaryLine).not.toMatch(/oklch/)
   })
 
   it('dark .dark block allows hsl(185 100% 50%) for --primary (neon cyan)', () => {
-    const darkBlock = css.match(/\.dark\s*\{([^}]*)\}/s)?.[1] ?? ''
+    const darkBlock = extractBlock(css, /\.dark\s*\{/)
     expect(darkBlock).toMatch(/--primary:\s*hsl\(185 100% 50%\)/)
   })
 
   it('globals.css declares --background in both :root and .dark', () => {
-    const rootBlock = css.match(/:root\s*\{([^}]*)\}/s)?.[1] ?? ''
-    const darkBlock = css.match(/\.dark\s*\{([^}]*)\}/s)?.[1] ?? ''
+    const rootBlock = extractBlock(css, /:root\s*\{/)
+    const darkBlock = extractBlock(css, /\.dark\s*\{/)
     expect(rootBlock).toMatch(/--background:/)
     expect(darkBlock).toMatch(/--background:/)
   })
 
   it('globals.css declares --foreground in both :root and .dark', () => {
-    const rootBlock = css.match(/:root\s*\{([^}]*)\}/s)?.[1] ?? ''
-    const darkBlock = css.match(/\.dark\s*\{([^}]*)\}/s)?.[1] ?? ''
+    const rootBlock = extractBlock(css, /:root\s*\{/)
+    const darkBlock = extractBlock(css, /\.dark\s*\{/)
     expect(rootBlock).toMatch(/--foreground:/)
     expect(darkBlock).toMatch(/--foreground:/)
   })
 
   it('globals.css declares --card in both :root and .dark', () => {
-    const rootBlock = css.match(/:root\s*\{([^}]*)\}/s)?.[1] ?? ''
-    const darkBlock = css.match(/\.dark\s*\{([^}]*)\}/s)?.[1] ?? ''
+    const rootBlock = extractBlock(css, /:root\s*\{/)
+    const darkBlock = extractBlock(css, /\.dark\s*\{/)
     expect(rootBlock).toMatch(/--card:/)
     expect(darkBlock).toMatch(/--card:/)
   })
