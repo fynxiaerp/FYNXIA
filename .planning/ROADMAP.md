@@ -188,13 +188,20 @@
 
 ### Phase 6: UX Polish and App Shell — persistent sidebar navigation, consistent page headers and visual hierarchy, typography normalization, equipe page rewrite on design tokens, empty/loading/error states, cross-module visual consistency (no new features, clarity + polish only)
 
-**Goal:** [To be planned]
-**Requirements**: TBD
+**Goal:** Elevar a UI do v1 (auditoria 15/24) para uma experiência clara, navegável e production-grade, alinhada à marca FYNXIA — app shell com sidebar persistente, dual-theme (claro clínico padrão + dark/neon da marca), PageHeader/estados consistentes e varredura visual tela-a-tela. Sem novas features.
+**Requirements**: none (UI/design phase — derives from phase goal + 06-UI-SPEC + UI-REVIEW-v1.0)
 **Depends on:** Phase 5
-**Plans:** 0 plans
+**Plans:** 8 plans
 
 Plans:
-- [ ] TBD (run /gsd-plan-phase 6 to break down)
+- [ ] 06-01-PLAN.md — Wave 0 TDD scaffolds (theme/contrast/shell/page-pattern/typography source-inspection tests)
+- [ ] 06-02-PLAN.md — Foundation: next-themes + dual-theme globals.css tokens + Space Grotesk/Inter fonts + ThemeProvider
+- [ ] 06-03-PLAN.md — App shell: AppSidebar (role-gated nav + logo + footer theme toggle/Sair) replaces clinica/layout passthrough
+- [ ] 06-04-PLAN.md — Page pattern: PageHeader + MobileMenuTrigger + EmptyState + ErrorState + skeletons toolkit
+- [ ] 06-05-PLAN.md — Sweep: hub redesign + auth brand chip + invite rewrite + public pages tokens
+- [ ] 06-06-PLAN.md — Sweep: agenda (empty-state/filter fix) + pacientes (sortable table, inline detail tabs)
+- [ ] 06-07-PLAN.md — Sweep: financeiro hub/fluxo/contas/nova-cobrança/régua (PageHeader + widths + loading/error)
+- [ ] 06-08-PLAN.md — Sweep: equipe rewrite on tokens + IA/agentes shadcn Table + copilot Bot-icon polish
 
 ---
 
