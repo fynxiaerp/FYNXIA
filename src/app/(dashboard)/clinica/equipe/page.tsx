@@ -5,6 +5,18 @@ import { headers } from 'next/headers'
 import { createClient } from '@/lib/supabase/server'
 import { InviteForm } from '@/components/invitations/InviteForm'
 import { PageHeader } from '@/components/shell/PageHeader'
+import { EmptyState } from '@/components/shell/EmptyState'
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from '@/components/ui/table'
+import { Badge } from '@/components/ui/badge'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Users } from 'lucide-react'
 
 const ROLE_LABELS: Record<string, string> = {
   admin: 'Administrador',
@@ -71,12 +83,12 @@ export default async function EquipePage() {
             {isAdmin ? (
               <InviteForm />
             ) : (
-              <div className="rounded-md bg-amber-50 border border-amber-200 px-4 py-3">
-                <p className="text-sm text-amber-800">
+              <Alert>
+                <AlertDescription>
                   Apenas administradores podem convidar novos membros.
                   Entre em contato com o administrador da clínica.
-                </p>
-              </div>
+                </AlertDescription>
+              </Alert>
             )}
           </div>
         </section>
@@ -93,50 +105,42 @@ export default async function EquipePage() {
           </div>
 
           {!pendingInvites || pendingInvites.length === 0 ? (
-            <div className="px-6 py-8 text-center">
-              <p className="text-sm text-muted-foreground">
-                Nenhum convite pendente no momento.
-              </p>
+            <div className="px-6 py-8">
+              <EmptyState
+                icon={Users}
+                title="Nenhum membro na equipe"
+                description="Convide dentistas e recepcionistas para trabalhar com você."
+              />
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-border bg-muted/40">
-                    <th className="px-6 py-3 text-left text-sm font-semibold text-foreground">
-                      E-mail
-                    </th>
-                    <th className="px-6 py-3 text-left text-sm font-semibold text-foreground">
-                      Perfil
-                    </th>
-                    <th className="px-6 py-3 text-left text-sm font-semibold text-foreground">
-                      Status
-                    </th>
-                    <th className="px-6 py-3 text-left text-sm font-semibold text-foreground">
-                      Expira em
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {pendingInvites.map((invite) => (
-                    <tr key={invite.id} className="hover:bg-muted/30 transition-colors">
-                      <td className="px-6 py-3 text-foreground">{invite.email}</td>
-                      <td className="px-6 py-3 text-muted-foreground">
-                        {ROLE_LABELS[invite.role] ?? invite.role}
-                      </td>
-                      <td className="px-6 py-3">
-                        <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-muted text-muted-foreground">
-                          {STATUS_LABELS[invite.status] ?? invite.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-3 text-muted-foreground">
-                        {formatDate(invite.expires_at)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="px-6 text-sm font-semibold">E-mail</TableHead>
+                  <TableHead className="px-6 text-sm font-semibold">Perfil</TableHead>
+                  <TableHead className="px-6 text-sm font-semibold">Status</TableHead>
+                  <TableHead className="px-6 text-sm font-semibold">Expira em</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {pendingInvites.map((invite) => (
+                  <TableRow key={invite.id}>
+                    <TableCell className="px-6 text-foreground">{invite.email}</TableCell>
+                    <TableCell className="px-6 text-muted-foreground">
+                      {ROLE_LABELS[invite.role] ?? invite.role}
+                    </TableCell>
+                    <TableCell className="px-6">
+                      <Badge variant="secondary">
+                        {STATUS_LABELS[invite.status] ?? invite.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="px-6 text-muted-foreground">
+                      {formatDate(invite.expires_at)}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           )}
         </section>
       </main>
