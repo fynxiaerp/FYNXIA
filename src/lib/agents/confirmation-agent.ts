@@ -155,6 +155,9 @@ export async function runConfirmationAgent(
       patient_id: appt.patient_id ?? null,
       appointment_id: appt.id,
       status: 'sent',
+      // CR-01: bind the outreach to the recipient phone (E.164) so the inbound
+      // free-text reply path can resolve ONLY among rows actually sent to that sender.
+      to_phone: to,
     })
 
     if (logError) {

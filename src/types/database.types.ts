@@ -51,6 +51,7 @@ export type Database = {
           receivable_id: string | null
           status: string
           tenant_id: string
+          to_phone: string | null
           updated_at: string
           whatsapp_message_id: string | null
         }
@@ -65,6 +66,7 @@ export type Database = {
           receivable_id?: string | null
           status?: string
           tenant_id: string
+          to_phone?: string | null
           updated_at?: string
           whatsapp_message_id?: string | null
         }
@@ -79,6 +81,7 @@ export type Database = {
           receivable_id?: string | null
           status?: string
           tenant_id?: string
+          to_phone?: string | null
           updated_at?: string
           whatsapp_message_id?: string | null
         }
