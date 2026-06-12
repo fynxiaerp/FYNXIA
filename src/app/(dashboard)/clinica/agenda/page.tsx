@@ -3,6 +3,10 @@ import { createClient } from '@/lib/supabase/server'
 import { AgendaCalendar } from '@/components/agenda/AgendaCalendar'
 import { mapAppointmentToEvent } from '@/lib/validators/appointment'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
+import { PageHeader } from '@/components/shell/PageHeader'
+import { EmptyState } from '@/components/shell/EmptyState'
+import { Button } from '@/components/ui/button'
+import { CalendarX, Plus } from 'lucide-react'
 
 export default async function AgendaPage() {
   const headersList = await headers()
@@ -74,25 +78,33 @@ export default async function AgendaPage() {
   return (
     <NuqsAdapter>
       <div className="flex h-full flex-col">
-        <div className="border-b px-4 py-3">
-          <h1 className="text-xl font-semibold leading-tight">Agenda</h1>
-        </div>
+        <PageHeader
+          title="Agenda"
+          actions={
+            <Button size="sm">
+              <Plus className="size-4" />
+              Nova Consulta
+            </Button>
+          }
+        />
 
-        {dentists.length === 0 ? (
-          <div className="flex flex-1 flex-col items-center justify-center p-8 text-center">
-            <p className="text-base font-semibold text-muted-foreground">
-              Nenhuma consulta esta semana
-            </p>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Clique em um horário no calendário para agendar a primeira consulta.
-            </p>
+        {/* Empty state fires on appointments.length === 0 (not dentists.length === 0) */}
+        {events.length === 0 ? (
+          <div className="flex flex-1 flex-col items-center justify-center p-8">
+            <EmptyState
+              icon={CalendarX}
+              title="Nenhuma consulta esta semana"
+              description="Clique em um horário no calendário para agendar a primeira consulta."
+            />
           </div>
         ) : (
-          <AgendaCalendar
-            dentists={dentists}
-            events={events}
-            tenantId={tenantId}
-          />
+          <div className="h-[calc(100vh-64px)] p-0 overflow-hidden">
+            <AgendaCalendar
+              dentists={dentists}
+              events={events}
+              tenantId={tenantId}
+            />
+          </div>
         )}
       </div>
     </NuqsAdapter>

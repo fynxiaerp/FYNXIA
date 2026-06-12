@@ -181,7 +181,7 @@ function NewAppointmentDialog({
             Cancelar
           </Button>
           <Button onClick={handleCreate} disabled={isSubmitting}>
-            {isSubmitting ? 'Salvando...' : 'Salvar Agendamento'}
+            {isSubmitting ? 'Salvando…' : 'Salvar Agendamento'}
           </Button>
         </div>
       </DialogContent>
@@ -277,13 +277,14 @@ export function AgendaCalendar({ dentists, events: initialEvents, tenantId }: Ag
       {/* Header row: dentist dropdown + conflict alert */}
       <div className="flex h-14 items-center gap-4 border-b px-4">
         <Select
-          value={dentistId ?? ''}
-          onValueChange={(v) => setDentistId(v || null)}
+          value={dentistId ?? '__all__'}
+          onValueChange={(v) => setDentistId(v === '__all__' ? null : v)}
         >
           <SelectTrigger className="w-[240px]">
             <SelectValue placeholder="Selecionar dentista..." />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value="__all__">Todos os dentistas</SelectItem>
             {dentists.map((d) => (
               <SelectItem key={d.id} value={d.id}>
                 {d.full_name}
