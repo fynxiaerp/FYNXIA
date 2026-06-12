@@ -198,7 +198,7 @@ Plans:
 - [x] 06-02-PLAN.md — Foundation: next-themes + dual-theme globals.css tokens + Space Grotesk/Inter fonts + ThemeProvider
 - [x] 06-03-PLAN.md — App shell: AppSidebar (role-gated nav + logo + footer theme toggle/Sair) replaces clinica/layout passthrough
 - [x] 06-04-PLAN.md — Page pattern: PageHeader + MobileMenuTrigger + EmptyState + ErrorState + skeletons toolkit
-- [ ] 06-05-PLAN.md — Sweep: hub redesign + auth brand chip + invite rewrite + public pages tokens
+- [x] 06-05-PLAN.md — Sweep: hub redesign + auth brand chip + invite rewrite + public pages tokens
 - [ ] 06-06-PLAN.md — Sweep: agenda (empty-state/filter fix) + pacientes (sortable table, inline detail tabs)
 - [ ] 06-07-PLAN.md — Sweep: financeiro hub/fluxo/contas/nova-cobrança/régua (PageHeader + widths + loading/error)
 - [ ] 06-08-PLAN.md — Sweep: equipe rewrite on tokens + IA/agentes shadcn Table + copilot Bot-icon polish

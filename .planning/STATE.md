@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 06-04-PLAN.md (page pattern primitives)
-last_updated: "2026-06-12T22:55:00.000Z"
+stopped_at: Completed 06-05-PLAN.md (hub + auth + public pages token sweep)
+last_updated: "2026-06-12T23:03:18.211Z"
 progress:
   total_phases: 7
   completed_phases: 6
   total_plans: 32
-  completed_plans: 28
-  percent: 88
+  completed_plans: 29
+  percent: 91
 ---
 
 # FYNXIA ERP — Project State
@@ -88,6 +88,7 @@ Phase 6 [In progress] ████░░░░ (4/8 plans complete)
 | Phase 06 P02 | 142 | 3 tasks | 5 files |
 | Phase 06 P03 | 25 | 3 tasks | 11 files |
 | Phase 06 P04 | 5 | 2 tasks | 25 files |
+| Phase 06 P05 | 25 | 3 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -137,6 +138,9 @@ Phase 6 [In progress] ████░░░░ (4/8 plans complete)
 | PageHeader Server Component with mobileMenuTrigger slot | Client hamburger can live inside Server Component header via ReactNode slot — avoids making the entire header a client component | 2026-06-12 |
 | ErrorState never renders error.message (T-06-07) | Static pt-BR copy only; prevents stack trace / detail leakage to end users | 2026-06-12 |
 | EmptyState icon text-muted-foreground (not text-primary) | Accent reserved list: decorative icons in empty states are not accent usage per 60/30/10 rule | 2026-06-12 |
+| Hub removes Sair button + role/plan slug; sidebar footer owns identity (06-05) | Shell sidebar footer is the canonical location for user identity — duplicating it on the hub violates 06-UI-SPEC hub redesign spec | 2026-06-12 |
+| Auth forms wrap in bg-card rounded-xl card; wordmark text-2xl font-bold font-display (brand exception) | 2-weight system enforced; font-bold allowed only paired with font-display per typography contract | 2026-06-12 |
+| Public pages (invite/agendar/anamnese) use design tokens only — no slate/gray/white raw classes | Dark-mode correctness requires all colors via CSS variables; raw Tailwind color classes break .dark theme | 2026-06-12 |
 
 ### Critical Pre-Phase-0 Actions
 
@@ -187,7 +191,7 @@ Phase 6 [In progress] ████░░░░ (4/8 plans complete)
 
 ## Session Continuity
 
-**Stopped at:** Completed 06-03-PLAN.md (app shell persistent sidebar)
+**Stopped at:** Completed 06-05-PLAN.md (hub + auth + public pages token sweep)
 
 **Critical path:** Phase 0 → 1 → 2 → 4 → 5 (Phase 3 parallel with Phase 2)
 
