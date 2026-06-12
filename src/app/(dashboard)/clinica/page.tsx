@@ -1,103 +1,128 @@
 import Link from 'next/link'
-import { Calendar, Users, UserCog, Link2, FileText, DollarSign } from 'lucide-react'
+import { Calendar, Users, Link2, FileText, DollarSign, MessageSquare, Plus, BotMessageSquare } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
-import { signOut } from '@/actions/auth'
-import { Button } from '@/components/ui/button'
+import { PageHeader } from '@/components/shell/PageHeader'
 
-// Dashboard home — navigation hub for the clinic.
-// Links to the features delivered through Phase 2 (agenda, patients, team).
+// Hub — dashboard overview for the authenticated clinic user.
+// Server Component. RLS-scoped server reads for quick stats.
 export default async function ClinicaPage() {
   const supabase = await createClient()
 
-  // WR-03: derive role from a fresh authenticated lookup — not the forwardable header.
+  // Derive user and first name
   const {
     data: { user },
   } = await supabase.auth.getUser()
+
   const { data: me } = user
-    ? await supabase.from('users').select('role').eq('id', user.id).single()
+    ? await supabase.from('users').select('role, full_name').eq('id', user.id).single()
     : { data: null }
-  const role = me?.role ?? 'receptionist'
+
+  const firstName = me?.full_name?.split(' ')[0] ?? 'Doutor'
+
+  // Time-based greeting
+  const hour = new Date().getHours()
+  const greeting =
+    hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite'
+
+  // Quick stats — RLS automatically scopes to tenant
+  const today = new Date().toISOString().slice(0, 10)
+
+  const [{ count: consultasHoje }, { count: pacientesAtivos }, { count: recebiveis }] =
+    await Promise.all([
+      supabase
+        .from('appointments')
+        .select('*', { count: 'exact', head: true })
+        .eq('date', today),
+      supabase
+        .from('patients')
+        .select('*', { count: 'exact', head: true })
+        .is('deleted_at', null),
+      supabase
+        .from('receivables')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'pendente'),
+    ])
 
   const { data: clinic } = await supabase
     .from('clinics')
-    .select('name, plan, slug')
+    .select('name, slug')
     .single()
-  // RLS automatically scopes to the user's tenant
 
-  const isAdmin = role === 'admin' || role === 'superadmin'
+  const statCards = [
+    { label: 'Consultas hoje', value: consultasHoje ?? 0 },
+    { label: 'Pacientes ativos', value: pacientesAtivos ?? 0 },
+    { label: 'Recebíveis em aberto', value: recebiveis ?? 0 },
+  ]
 
-  const navItems = [
+  const shortcuts = [
     {
       href: '/clinica/agenda',
-      title: 'Agenda',
-      description: 'Agenda semanal por dentista, agendar e remarcar consultas.',
+      label: 'Nova Consulta',
       icon: Calendar,
-      show: true,
     },
     {
-      href: '/clinica/pacientes',
-      title: 'Pacientes',
-      description: 'Cadastro, prontuário, odontograma e anamneses.',
+      href: '/clinica/pacientes/novo',
+      label: 'Novo Paciente',
       icon: Users,
-      show: true,
     },
     {
-      href: '/clinica/equipe',
-      title: 'Equipe',
-      description: 'Convidar e gerenciar dentistas e recepcionistas.',
-      icon: UserCog,
-      show: isAdmin,
-    },
-    {
-      href: '/clinica/financeiro',
-      title: 'Financeiro',
-      description: 'Fluxo de caixa, cobranças, recebíveis e recibos.',
+      href: '/clinica/financeiro/nova-cobranca',
+      label: 'Emitir Cobrança',
       icon: DollarSign,
-      show: true,
     },
-  ].filter((item) => item.show)
+    {
+      href: '/clinica',
+      label: 'Abrir Copiloto',
+      icon: BotMessageSquare,
+    },
+  ]
 
   return (
-    <main className="min-h-screen bg-background p-8">
-      <div className="mx-auto max-w-4xl space-y-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-              FYNXIA
-            </p>
-            <h1 className="text-2xl font-bold">{clinic?.name ?? 'Minha Clínica'}</h1>
-            <p className="text-sm text-muted-foreground capitalize">
-              Perfil: {role} · Plano: {clinic?.plan ?? 'free'}
-            </p>
-          </div>
-          <form action={signOut}>
-            <Button type="submit" variant="outline">
-              Sair
-            </Button>
-          </form>
-        </div>
+    <>
+      <PageHeader title="Início" />
 
-        {/* Feature navigation */}
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {navItems.map((item) => {
-            const Icon = item.icon
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="group flex flex-col gap-3 rounded-lg border border-border bg-card p-6 transition-colors hover:border-primary hover:bg-accent/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      <div className="p-6 max-w-5xl mx-auto w-full space-y-8">
+        {/* Greeting */}
+        <h2 className="text-2xl font-semibold font-display">
+          {greeting}, {firstName}
+        </h2>
+
+        {/* Quick stat cards */}
+        <section aria-label="Resumo do dia">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {statCards.map((card) => (
+              <div
+                key={card.label}
+                className="rounded-lg border border-border bg-card p-4 flex flex-col gap-1"
               >
-                <Icon className="size-6 text-primary" />
-                <div>
-                  <h2 className="text-base font-semibold group-hover:text-primary">
-                    {item.title}
-                  </h2>
-                  <p className="mt-1 text-sm text-muted-foreground">{item.description}</p>
-                </div>
-              </Link>
-            )
-          })}
-        </div>
+                <span className="text-sm text-muted-foreground">{card.label}</span>
+                <span className="text-2xl font-semibold tabular-nums">{card.value}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Shortcut grid */}
+        <section aria-label="Ações rápidas">
+          <h3 className="text-xl font-semibold font-display mb-3">Ações rápidas</h3>
+          <div className="grid grid-cols-2 gap-4">
+            {shortcuts.map((s) => {
+              const Icon = s.icon
+              return (
+                <Link
+                  key={s.href + s.label}
+                  href={s.href}
+                  className="group flex flex-col gap-3 rounded-lg border border-border bg-card p-5 transition-colors hover:border-primary hover:bg-accent/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  <Icon className="size-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                  <span className="text-sm font-semibold group-hover:text-primary transition-colors">
+                    {s.label}
+                  </span>
+                </Link>
+              )
+            })}
+          </div>
+        </section>
 
         {/* Public booking link */}
         {clinic?.slug && (
@@ -111,7 +136,7 @@ export default async function ClinicaPage() {
             </p>
             <Link
               href={`/agendar/${clinic.slug}`}
-              className="mt-2 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+              className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline"
             >
               <FileText className="size-3.5" />
               /agendar/{clinic.slug}
@@ -119,6 +144,6 @@ export default async function ClinicaPage() {
           </div>
         )}
       </div>
-    </main>
+    </>
   )
 }
