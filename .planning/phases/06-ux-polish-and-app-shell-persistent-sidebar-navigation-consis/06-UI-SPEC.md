@@ -83,7 +83,7 @@ Replaces the current grayscale tokens with brand-aware light tokens. Cyan accent
 | `--card-foreground` | `222 47% 11%` | `#111827` | Card text |
 | `--popover` | `0 0% 100%` | `#ffffff` | Dropdown / popover background |
 | `--popover-foreground` | `222 47% 11%` | `#111827` | Popover text |
-| `--primary` | `185 100% 30%` | `#007a85` | Cyan — accent (10%). See reserved list |
+| `--primary` | `185 100% 26%` | `#007a85` | Cyan — accent (10%). See reserved list |
 | `--primary-foreground` | `0 0% 100%` | `#ffffff` | Text on primary backgrounds |
 | `--secondary` | `210 40% 96%` | `#f0f4f8` | Secondary surfaces, hover backgrounds |
 | `--secondary-foreground` | `222 47% 11%` | `#111827` | Text on secondary |
@@ -95,18 +95,18 @@ Replaces the current grayscale tokens with brand-aware light tokens. Cyan accent
 | `--destructive-foreground` | `0 0% 100%` | `#ffffff` | Text on destructive |
 | `--border` | `214 14% 89%` | `#e2e7ed` | All dividers, input borders |
 | `--input` | `214 14% 89%` | `#e2e7ed` | Input field borders |
-| `--ring` | `185 100% 30%` | `#007a85` | Focus ring (same as --primary) |
+| `--ring` | `185 100% 26%` | `#007a85` | Focus ring (same as --primary) |
 | `--radius` | `.75rem` | `12px` | Border radius base |
 | `--sidebar` | `222 30% 97%` | `#f4f6fa` | Sidebar background (30% secondary) |
 | `--sidebar-foreground` | `222 47% 11%` | `#111827` | Sidebar text |
-| `--sidebar-primary` | `185 100% 30%` | `#007a85` | Active sidebar item accent |
+| `--sidebar-primary` | `185 100% 26%` | `#007a85` | Active sidebar item accent |
 | `--sidebar-primary-foreground` | `0 0% 100%` | `#ffffff` | Text on active sidebar item |
 | `--sidebar-accent` | `185 60% 92%` | `#daf5f7` | Sidebar hover background |
 | `--sidebar-accent-foreground` | `185 100% 28%` | `#006e78` | Sidebar hover text |
 | `--sidebar-border` | `214 14% 89%` | `#e2e7ed` | Sidebar border |
-| `--sidebar-ring` | `185 100% 30%` | `#007a85` | Sidebar focus ring |
+| `--sidebar-ring` | `185 100% 26%` | `#007a85` | Sidebar focus ring |
 
-**Light theme note on cyan:** `--primary` in light is darkened to `hsl(185 100% 30%)` (≈ `#007a85`) — verified ≈5:1 on white (passes WCAG AA 4.5:1 for normal text; white-on-primary button fills also ≈5:1). The neon `50%` and the earlier `38%` (#009fab ≈ 3:1) both fail AA on light surfaces. **Executor:** re-verify with a contrast checker before committing globals.css.
+**Light theme note on cyan:** `--primary` in light is darkened to `hsl(185 100% 26%)` (≈ `#007a85`) — verified ≈5:1 on white (passes WCAG AA 4.5:1 for normal text; white-on-primary button fills also ≈5:1). The neon `50%` and the earlier `38%` (#009fab ≈ 3:1) both fail AA on light surfaces. **Executor:** re-verify with a contrast checker before committing globals.css.
 
 ### Dark Brand Theme (`.dark`)
 
@@ -887,7 +887,7 @@ The executor must replace the current `:root` and `.dark` blocks in `src/app/glo
   --card-foreground: hsl(222 47% 11%);
   --popover: hsl(0 0% 100%);
   --popover-foreground: hsl(222 47% 11%);
-  --primary: hsl(185 100% 30%);
+  --primary: hsl(185 100% 26%);
   --primary-foreground: hsl(0 0% 100%);
   --secondary: hsl(210 40% 96%);
   --secondary-foreground: hsl(222 47% 11%);
@@ -899,16 +899,16 @@ The executor must replace the current `:root` and `.dark` blocks in `src/app/glo
   --destructive-foreground: hsl(0 0% 100%);
   --border: hsl(214 14% 89%);
   --input: hsl(214 14% 89%);
-  --ring: hsl(185 100% 30%);
+  --ring: hsl(185 100% 26%);
   --radius: 0.75rem;
   --sidebar: hsl(222 30% 97%);
   --sidebar-foreground: hsl(222 47% 11%);
-  --sidebar-primary: hsl(185 100% 30%);
+  --sidebar-primary: hsl(185 100% 26%);
   --sidebar-primary-foreground: hsl(0 0% 100%);
   --sidebar-accent: hsl(185 60% 92%);
   --sidebar-accent-foreground: hsl(185 100% 28%);
   --sidebar-border: hsl(214 14% 89%);
-  --sidebar-ring: hsl(185 100% 30%);
+  --sidebar-ring: hsl(185 100% 26%);
 }
 
 .dark {
