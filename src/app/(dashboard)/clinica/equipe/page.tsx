@@ -4,6 +4,7 @@
 import { headers } from 'next/headers'
 import { createClient } from '@/lib/supabase/server'
 import { InviteForm } from '@/components/invitations/InviteForm'
+import { PageHeader } from '@/components/shell/PageHeader'
 
 const ROLE_LABELS: Record<string, string> = {
   admin: 'Administrador',
@@ -45,33 +46,23 @@ export default async function EquipePage() {
     .order('created_at', { ascending: false })
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Page header */}
-      <header className="bg-white border-b border-slate-200">
-        <div className="mx-auto max-w-5xl px-6 py-4 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-slate-900">Equipe</h1>
-            <p className="text-sm text-slate-500 mt-0.5">
-              Gerencie convites e membros da clínica
-            </p>
-          </div>
-          <a
-            href="/clinica"
-            className="text-sm font-medium text-slate-600 hover:text-slate-900 underline underline-offset-4"
-          >
-            ← Voltar
-          </a>
-        </div>
-      </header>
+    <>
+      <PageHeader
+        title="Equipe"
+        breadcrumbs={[
+          { label: 'Clínica', href: '/clinica' },
+          { label: 'Equipe' },
+        ]}
+      />
 
-      <main className="mx-auto max-w-5xl px-6 py-8 space-y-8">
+      <main className="p-6 max-w-4xl mx-auto w-full space-y-8">
         {/* Invite section — admin only */}
-        <section className="bg-white rounded-xl border border-slate-200 shadow-sm">
-          <div className="px-6 py-5 border-b border-slate-200">
-            <h2 className="text-lg font-semibold text-slate-900">
+        <section className="bg-card rounded-xl border border-border">
+          <div className="px-6 py-5 border-b border-border">
+            <h2 className="text-xl font-semibold font-display">
               Adicionar membro
             </h2>
-            <p className="text-sm text-slate-500 mt-0.5">
+            <p className="text-sm text-muted-foreground mt-0.5">
               Convite por e-mail (válido 24h) ou criação direta com senha temporária
             </p>
           </div>
@@ -91,19 +82,19 @@ export default async function EquipePage() {
         </section>
 
         {/* Pending invitations table */}
-        <section className="bg-white rounded-xl border border-slate-200 shadow-sm">
-          <div className="px-6 py-5 border-b border-slate-200">
-            <h2 className="text-lg font-semibold text-slate-900">
+        <section className="bg-card rounded-xl border border-border">
+          <div className="px-6 py-5 border-b border-border">
+            <h2 className="text-xl font-semibold font-display">
               Convites pendentes
             </h2>
-            <p className="text-sm text-slate-500 mt-0.5">
+            <p className="text-sm text-muted-foreground mt-0.5">
               Convites enviados aguardando aceitação
             </p>
           </div>
 
           {!pendingInvites || pendingInvites.length === 0 ? (
             <div className="px-6 py-8 text-center">
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-muted-foreground">
                 Nenhum convite pendente no momento.
               </p>
             </div>
@@ -111,34 +102,34 @@ export default async function EquipePage() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-slate-200 bg-slate-50">
-                    <th className="px-6 py-3 text-left font-medium text-slate-600">
+                  <tr className="border-b border-border bg-muted/40">
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-foreground">
                       E-mail
                     </th>
-                    <th className="px-6 py-3 text-left font-medium text-slate-600">
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-foreground">
                       Perfil
                     </th>
-                    <th className="px-6 py-3 text-left font-medium text-slate-600">
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-foreground">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-left font-medium text-slate-600">
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-foreground">
                       Expira em
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-border">
                   {pendingInvites.map((invite) => (
-                    <tr key={invite.id} className="hover:bg-slate-50 transition-colors">
-                      <td className="px-6 py-3 text-slate-800">{invite.email}</td>
-                      <td className="px-6 py-3 text-slate-600">
+                    <tr key={invite.id} className="hover:bg-muted/30 transition-colors">
+                      <td className="px-6 py-3 text-foreground">{invite.email}</td>
+                      <td className="px-6 py-3 text-muted-foreground">
                         {ROLE_LABELS[invite.role] ?? invite.role}
                       </td>
                       <td className="px-6 py-3">
-                        <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-yellow-100 text-yellow-800">
+                        <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-muted text-muted-foreground">
                           {STATUS_LABELS[invite.status] ?? invite.status}
                         </span>
                       </td>
-                      <td className="px-6 py-3 text-slate-500">
+                      <td className="px-6 py-3 text-muted-foreground">
                         {formatDate(invite.expires_at)}
                       </td>
                     </tr>
@@ -148,12 +139,7 @@ export default async function EquipePage() {
             </div>
           )}
         </section>
-
-        {/* Phase note */}
-        <p className="text-center text-xs text-slate-400">
-          Gestão completa de equipe (editar, remover membros) disponível na Fase 2.
-        </p>
       </main>
-    </div>
+    </>
   )
 }

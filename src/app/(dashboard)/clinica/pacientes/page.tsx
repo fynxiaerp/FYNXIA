@@ -1,9 +1,10 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { PatientTable } from '@/components/patients/PatientTable'
-import { buttonVariants } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { UserPlus } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { PageHeader } from '@/components/shell/PageHeader'
 
 export default async function PacientesPage() {
   const supabase = await createClient()
@@ -42,46 +43,45 @@ export default async function PacientesPage() {
     userRole === 'superadmin'
 
   return (
-    <div className="p-4">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-semibold leading-tight">Pacientes</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Gerencie os pacientes da sua clínica
-          </p>
-        </div>
-        {isStaff && (
-          <Link
-            href="/clinica/pacientes/novo"
-            className={cn(buttonVariants({ variant: 'default' }), 'inline-flex items-center gap-2')}
-          >
-            <UserPlus className="h-4 w-4" />
-            Novo Paciente
-          </Link>
-        )}
-      </div>
-
-      {!patients || patients.length === 0 ? (
-        <div className="flex min-h-[240px] flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
-          <p className="text-base font-semibold text-muted-foreground">
-            Nenhum paciente cadastrado
-          </p>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Cadastre o primeiro paciente da clínica para começar o atendimento.
-          </p>
-          {isStaff && (
-            <Link
-              href="/clinica/pacientes/novo"
-              className={cn(buttonVariants({ variant: 'default' }), 'mt-4 inline-flex items-center gap-2')}
-            >
-              <UserPlus className="h-4 w-4" />
+    <>
+      <PageHeader
+        title="Pacientes"
+        breadcrumbs={[
+          { label: 'Clínica', href: '/clinica' },
+          { label: 'Pacientes' },
+        ]}
+        actions={
+          isStaff ? (
+            <Button render={<Link href="/clinica/pacientes/novo" />}>
+              <UserPlus className="size-4" />
               Novo Paciente
-            </Link>
-          )}
-        </div>
-      ) : (
-        <PatientTable patients={patients} userRole={userRole} />
-      )}
-    </div>
+            </Button>
+          ) : undefined
+        }
+      />
+      <main className="p-6 max-w-5xl mx-auto w-full">
+        {!patients || patients.length === 0 ? (
+          <div className="flex min-h-[240px] flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
+            <p className="text-xl font-semibold font-display">
+              Nenhum paciente cadastrado
+            </p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Cadastre o primeiro paciente da clínica para começar o atendimento.
+            </p>
+            {isStaff && (
+              <Button
+                className="mt-4"
+                render={<Link href="/clinica/pacientes/novo" />}
+              >
+                <UserPlus className="size-4" />
+                Novo Paciente
+              </Button>
+            )}
+          </div>
+        ) : (
+          <PatientTable patients={patients} userRole={userRole} />
+        )}
+      </main>
+    </>
   )
 }

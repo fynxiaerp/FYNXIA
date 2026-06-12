@@ -5,40 +5,31 @@
 // Tenant isolation is guaranteed by the agent_outreach_log SELECT policy.
 // The CopilotTrigger is mounted by the parent clinica/layout.tsx.
 
-import Link from 'next/link'
-import { ChevronRight } from 'lucide-react'
 import { listAgentOutreach } from '@/actions/agent-outreach'
 import { AgentOutreachLog } from '@/components/copilot/AgentOutreachLog'
+import { PageHeader } from '@/components/shell/PageHeader'
 
 export default async function AgentesPage() {
   const rows = await listAgentOutreach()
 
   return (
-    <main className="min-h-screen bg-background p-8">
-      <div className="mx-auto max-w-4xl space-y-6">
-
-        {/* Breadcrumb */}
-        <nav className="flex items-center gap-1 text-sm text-muted-foreground" aria-label="Breadcrumb">
-          <Link href="/clinica" className="hover:text-foreground transition-colors">
-            Clínica
-          </Link>
-          <ChevronRight className="size-3.5 shrink-0" />
-          <span>IA</span>
-          <ChevronRight className="size-3.5 shrink-0" />
-          <span className="text-foreground font-medium">Agentes</span>
-        </nav>
-
-        {/* Page title */}
-        <div>
-          <h1 className="text-xl font-semibold leading-tight">Ações dos Agentes IA</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Últimas 20 ações registradas pelos agentes de confirmação de consulta e cobrança automática.
-          </p>
-        </div>
+    <>
+      <PageHeader
+        title="Ações dos Agentes IA"
+        breadcrumbs={[
+          { label: 'Clínica', href: '/clinica' },
+          { label: 'IA' },
+          { label: 'Agentes' },
+        ]}
+      />
+      <main className="p-6 max-w-4xl mx-auto w-full space-y-6">
+        <p className="text-sm text-muted-foreground">
+          Últimas 20 ações registradas pelos agentes de confirmação de consulta e cobrança automática.
+        </p>
 
         {/* Agent outreach log table */}
         <AgentOutreachLog rows={rows} />
-      </div>
-    </main>
+      </main>
+    </>
   )
 }
