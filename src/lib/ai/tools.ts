@@ -10,6 +10,24 @@ import { createClient } from '@/lib/supabase/server'
 import { maskCPF, maskPhone } from './masking'
 import { searchHelpDocs } from './help-docs'
 
+// ─── Internal helpers ────────────────────────────────────────────────────────
+
+/**
+ * maskEmail — keeps first character + masks local part + keeps domain.
+ * Example: joao.silva@gmail.com → j***@gmail.com
+ *
+ * WR-01: declared above the tool definitions (rather than relying on function
+ * hoisting from below) so the security-sensitive masking path stays readable and
+ * is safe against a future refactor to a `const` arrow (which would TDZ-error).
+ */
+function maskEmail(email: string): string {
+  const atIdx = email.indexOf('@')
+  if (atIdx <= 0) return '***@***'
+  const local = email.slice(0, atIdx)
+  const domain = email.slice(atIdx) // includes @
+  return `${local[0]}***${domain}`
+}
+
 /**
  * getTodayAppointments — returns appointment metadata for the authenticated tenant.
  * RLS ensures only the user's clinic appointments are returned.
@@ -159,17 +177,3 @@ export const searchHelpDocsTool = tool({
   }),
   execute: async (input) => searchHelpDocs(input.query),
 })
-
-// ─── Internal helpers ────────────────────────────────────────────────────────
-
-/**
- * maskEmail — keeps first character + masks local part + keeps domain.
- * Example: joao.silva@gmail.com → j***@gmail.com
- */
-function maskEmail(email: string): string {
-  const atIdx = email.indexOf('@')
-  if (atIdx <= 0) return '***@***'
-  const local = email.slice(0, atIdx)
-  const domain = email.slice(atIdx) // includes @
-  return `${local[0]}***${domain}`
-}
