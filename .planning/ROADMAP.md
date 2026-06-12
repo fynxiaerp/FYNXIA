@@ -14,7 +14,7 @@
 - [x] **Phase 2: Clinical MVP** — Patient management, multi-dentist appointment calendar, prontuario, odontogram, digital anamnesis with e-signature, online booking link.
 - [x] **Phase 3: Financial MVP** — Cash flow, Pix/boleto via Asaas, accounts receivable, installments, automated collection sequence, PDF receipts.
 - [x] **Phase 4: Communications & Async** — WhatsApp Cloud API, Resend email, pg_cron + pgmq background jobs, appointment reminders, collection automation.
-- [ ] **Phase 5: AI Agents** — Copilot sidebar (Vercel AI Gateway), appointment confirmation agent, collection agent.
+- [x] **Phase 5: AI Agents** — Copilot sidebar (Vercel AI Gateway), appointment confirmation agent, collection agent.
 
 ---
 
@@ -128,7 +128,7 @@
 | 2. Clinical MVP | 5/5 | Complete | 2026-06-05 |
 | 3. Financial MVP | 4/4 | Complete | 2026-06-06 (FIN-09 live verify pending UAT) |
 | 4. Communications & Async | 4/4 | Complete | 2026-06-08 (live WhatsApp/email pending UAT — Meta verification) |
-| 5. AI Agents | 0/? | Not started | - |
+| 5. AI Agents | 5/5 | Complete | 2026-06-11 (live copilot/WhatsApp pending UAT — AI_GATEWAY_API_KEY + Meta) |
 
 ---
 
