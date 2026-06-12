@@ -86,7 +86,7 @@ export default async function ContasAReceberPage({ searchParams }: ContasARecebe
           {/* Primary focal point: receivables table (UI-SPEC) */}
           {receivables.length === 0 && result.success ? (
             <div className="rounded-md border border-dashed p-12 text-center">
-              <p className="text-sm font-medium">Nenhum recebível cadastrado</p>
+              <p className="text-sm font-semibold">Nenhum recebível cadastrado</p>
               <p className="mt-1 text-xs text-muted-foreground">
                 Emita a primeira cobrança para um paciente para começar a rastrear os recebíveis.
               </p>
