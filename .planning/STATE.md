@@ -3,20 +3,20 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 06-03-PLAN.md (app shell persistent sidebar)
-last_updated: "2026-06-12T23:00:00.000Z"
+stopped_at: Completed 06-04-PLAN.md (page pattern primitives)
+last_updated: "2026-06-12T22:55:00.000Z"
 progress:
   total_phases: 7
   completed_phases: 6
   total_plans: 32
-  completed_plans: 27
-  percent: 84
+  completed_plans: 28
+  percent: 88
 ---
 
 # FYNXIA ERP — Project State
 
-**Last updated:** 2026-06-11
-**Updated by:** gsd-execute-phase (05-04 complete; advancing to 05-05)
+**Last updated:** 2026-06-12
+**Updated by:** gsd-execute-phase (06-04 complete; advancing to 06-05)
 
 ---
 
@@ -33,13 +33,13 @@ progress:
 ## Current Position
 
 Phase: 06 (ux-polish-and-app-shell) — EXECUTING
-Plan: 3 of 8
+Plan: 4 of 8
 **Phase:** 06
-**Plan:** 03 (completed) → 04 (next)
+**Plan:** 04 (completed) → 05 (next)
 **Status:** Executing Phase 06
 
 ```
-Progress: [████████░░] 84% (27/32 plans complete)
+Progress: [█████████░] 88% (28/32 plans complete)
 
 Phase 0 [Complete] █████
 Phase 1 [Complete] █████
@@ -47,7 +47,7 @@ Phase 2 [Complete] █████
 Phase 3 [Complete] █████
 Phase 4 [Complete] █████
 Phase 5 [Complete] █████ (5/5 plans complete)
-Phase 6 [In progress] ███░░░░░ (3/8 plans complete)
+Phase 6 [In progress] ████░░░░ (4/8 plans complete)
 ```
 
 ---
@@ -87,6 +87,7 @@ Phase 6 [In progress] ███░░░░░ (3/8 plans complete)
 | Phase 06 P01 | 25 | 3 tasks | 5 files |
 | Phase 06 P02 | 142 | 3 tasks | 5 files |
 | Phase 06 P03 | 25 | 3 tasks | 11 files |
+| Phase 06 P04 | 5 | 2 tasks | 25 files |
 
 ## Accumulated Context
 
@@ -133,6 +134,9 @@ Phase 6 [In progress] ███░░░░░ (3/8 plans complete)
 | AppSidebar Server Component + client sub-components read Zustand store directly | Avoids prop-drilling isCollapsed through Server/Client boundary; SidebarNavClient, SidebarFooter, SidebarCollapseButton each call useSidebarStore() independently | 2026-06-12 |
 | Fixed-width sidebar (w-[240px]/w-[56px]) + Zustand — no shadcn sidebar installed | shadcn sidebar has Tailwind-v4 width bug (06-RESEARCH Pitfall 1); custom fixed-width layout is simpler and stable | 2026-06-12 |
 | Outer flex h-screen overflow-hidden in layout.tsx, not AppShellClient | Spec line 561 diagram places wrapper in layout; also required for shell.test.ts assertion on layout file source | 2026-06-12 |
+| PageHeader Server Component with mobileMenuTrigger slot | Client hamburger can live inside Server Component header via ReactNode slot — avoids making the entire header a client component | 2026-06-12 |
+| ErrorState never renders error.message (T-06-07) | Static pt-BR copy only; prevents stack trace / detail leakage to end users | 2026-06-12 |
+| EmptyState icon text-muted-foreground (not text-primary) | Accent reserved list: decorative icons in empty states are not accent usage per 60/30/10 rule | 2026-06-12 |
 
 ### Critical Pre-Phase-0 Actions
 
