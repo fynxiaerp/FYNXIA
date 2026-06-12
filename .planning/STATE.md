@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 06-02-PLAN.md (dual-theme tokens + fonts + ThemeProvider)
-last_updated: "2026-06-12T22:39:02.461Z"
+stopped_at: Completed 06-03-PLAN.md (app shell persistent sidebar)
+last_updated: "2026-06-12T23:00:00.000Z"
 progress:
   total_phases: 7
   completed_phases: 6
   total_plans: 32
-  completed_plans: 26
-  percent: 81
+  completed_plans: 27
+  percent: 84
 ---
 
 # FYNXIA ERP — Project State
@@ -33,13 +33,13 @@ progress:
 ## Current Position
 
 Phase: 06 (ux-polish-and-app-shell) — EXECUTING
-Plan: 2 of 8
+Plan: 3 of 8
 **Phase:** 06
-**Plan:** 02 (next)
+**Plan:** 03 (completed) → 04 (next)
 **Status:** Executing Phase 06
 
 ```
-Progress: [████████░░] 78% (25/32 plans complete)
+Progress: [████████░░] 84% (27/32 plans complete)
 
 Phase 0 [Complete] █████
 Phase 1 [Complete] █████
@@ -47,7 +47,7 @@ Phase 2 [Complete] █████
 Phase 3 [Complete] █████
 Phase 4 [Complete] █████
 Phase 5 [Complete] █████ (5/5 plans complete)
-Phase 6 [In progress] █░░░░░░░ (1/8 plans complete)
+Phase 6 [In progress] ███░░░░░ (3/8 plans complete)
 ```
 
 ---
@@ -86,6 +86,7 @@ Phase 6 [In progress] █░░░░░░░ (1/8 plans complete)
 | Phase 05 P05 | 15 | 3 tasks | 6 files |
 | Phase 06 P01 | 25 | 3 tasks | 5 files |
 | Phase 06 P02 | 142 | 3 tasks | 5 files |
+| Phase 06 P03 | 25 | 3 tasks | 11 files |
 
 ## Accumulated Context
 
@@ -129,6 +130,9 @@ Phase 6 [In progress] █░░░░░░░ (1/8 plans complete)
 | AI-03 LLM personalization sends only first name + amount (RESEARCH Pattern 6, T-5-collect-I) | No CPF/health data to LLM; ZDR enabled; fallback to neutral static message when AI_GATEWAY_API_KEY absent | 2026-06-11 |
 | collection-agent and collection-ruler coexist independently | Ruler = template reminders + email; agent = AI-03 LLM-personalized WhatsApp; drainOutbox is status-idempotent so both crons are safe | 2026-06-11 |
 | Patient name masked to FirstName L. in agent outreach log (SEC-01) | maskPatientName() in listAgentOutreach Server Action; consistent with other masking conventions in the codebase | 2026-06-11 |
+| AppSidebar Server Component + client sub-components read Zustand store directly | Avoids prop-drilling isCollapsed through Server/Client boundary; SidebarNavClient, SidebarFooter, SidebarCollapseButton each call useSidebarStore() independently | 2026-06-12 |
+| Fixed-width sidebar (w-[240px]/w-[56px]) + Zustand — no shadcn sidebar installed | shadcn sidebar has Tailwind-v4 width bug (06-RESEARCH Pitfall 1); custom fixed-width layout is simpler and stable | 2026-06-12 |
+| Outer flex h-screen overflow-hidden in layout.tsx, not AppShellClient | Spec line 561 diagram places wrapper in layout; also required for shell.test.ts assertion on layout file source | 2026-06-12 |
 
 ### Critical Pre-Phase-0 Actions
 
@@ -179,11 +183,11 @@ Phase 6 [In progress] █░░░░░░░ (1/8 plans complete)
 
 ## Session Continuity
 
-**Stopped at:** Completed 06-02-PLAN.md (dual-theme tokens + fonts + ThemeProvider)
+**Stopped at:** Completed 06-03-PLAN.md (app shell persistent sidebar)
 
 **Critical path:** Phase 0 → 1 → 2 → 4 → 5 (Phase 3 parallel with Phase 2)
 
-**Next action:** Execute 06-02-PLAN.md (Wave 1 — Theme tokens: globals.css hsl token blocks + layout.tsx font/ThemeProvider wiring).
+**Next action:** Execute 06-04-PLAN.md (Wave 2 — PageHeader + loading/error states).
 
 **06-01 delivered:** 5 Wave-0 source-inspection test scaffolds under src/__tests__/ui/ — contrast.test.ts (7/7 GREEN; pure WCAG math asserting #007a85 >=4.5:1 and regression guard #008c99 <4.5:1); theme.test.ts, shell.test.ts, page-pattern.test.ts, typography.test.ts (all RED-by-design against current sources); tsc exit 0. Deviation: ES2017 tsconfig target does not support regex s-flag — replaced with extractBlock() line-splitting helper.
 
