@@ -33,13 +33,13 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="w-full max-w-md space-y-6">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold tracking-tight text-primary">FYNXIA</h1>
-          <p className="mt-2 text-sm text-muted-foreground">Defina sua nova senha</p>
-        </div>
+    <div className="w-full max-w-md space-y-6">
+      <div className="text-center">
+        <h1 className="text-2xl font-bold font-display tracking-tight text-primary">FYNXIA</h1>
+        <p className="mt-2 text-sm text-muted-foreground">Defina sua nova senha</p>
+      </div>
 
+      <div className="bg-card rounded-xl border border-border p-8 shadow-md">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {errors.root && (
             <p className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
@@ -48,7 +48,7 @@ export default function ResetPasswordPage() {
           )}
 
           <div className="space-y-1">
-            <label htmlFor="password" className="block text-sm font-medium">
+            <label htmlFor="password" className="block text-sm font-semibold">
               Nova senha
             </label>
             <input
