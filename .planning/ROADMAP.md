@@ -186,6 +186,16 @@
 
 **Total mapped: 47/47**
 
+### Phase 6: UX Polish and App Shell — persistent sidebar navigation, consistent page headers and visual hierarchy, typography normalization, equipe page rewrite on design tokens, empty/loading/error states, cross-module visual consistency (no new features, clarity + polish only)
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 5
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd-plan-phase 6 to break down)
+
 ---
 
 ## Critical Path
