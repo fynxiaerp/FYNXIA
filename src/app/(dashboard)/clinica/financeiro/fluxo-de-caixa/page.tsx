@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ChevronLeft, ChevronRight, Plus } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Plus, Receipt } from 'lucide-react'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
 
 import { listTransactions, listCategories } from '@/actions/transactions'
@@ -9,6 +9,7 @@ import { TransactionModal } from '@/components/financeiro/TransactionModal'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { PageHeader } from '@/components/shell/PageHeader'
+import { EmptyState } from '@/components/shell/EmptyState'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
@@ -128,14 +129,11 @@ export default async function FluxoDeCaixaPage({ searchParams }: CashFlowPagePro
 
         {/* Transaction list */}
         {transactions.length === 0 ? (
-          <div className="rounded-md border border-dashed p-12 text-center">
-            <p className="text-xl font-semibold font-display">
-              Nenhum lançamento em {monthLabel}
-            </p>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Lance a primeira transação do mês usando o botão acima.
-            </p>
-          </div>
+          <EmptyState
+            icon={Receipt}
+            title={`Nenhum lançamento em ${monthLabel}`}
+            description="Lance a primeira transação do mês usando o botão acima."
+          />
         ) : (
           <TransactionList transactions={transactions} categories={categories} />
         )}

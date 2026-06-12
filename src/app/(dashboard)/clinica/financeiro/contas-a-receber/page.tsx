@@ -1,17 +1,11 @@
 import Link from 'next/link'
-import { Plus } from 'lucide-react'
+import { Plus, ReceiptText } from 'lucide-react'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
 
 import { listReceivables } from '@/actions/receivables'
 import { ReceivablesTable } from '@/components/financeiro/ReceivablesTable'
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb'
+import { PageHeader } from '@/components/shell/PageHeader'
+import { EmptyState } from '@/components/shell/EmptyState'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 
@@ -43,58 +37,50 @@ export default async function ContasAReceberPage({ searchParams }: ContasARecebe
 
   return (
     <NuqsAdapter>
-      <main className="min-h-screen bg-background p-8">
-        <div className="mx-auto max-w-5xl space-y-8">
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink href="/clinica">Clínica</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbLink href="/clinica/financeiro">Financeiro</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage>Contas a Receber</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
+      <PageHeader
+        title="Contas a Receber"
+        breadcrumbs={[
+          { label: 'Financeiro', href: '/clinica/financeiro' },
+          { label: 'Contas a Receber' },
+        ]}
+        actions={
+          <Button
+            size="sm"
+            render={<Link href="/clinica/financeiro/nova-cobranca" />}
+          >
+            <Plus className="mr-1 size-4" />
+            Emitir Cobrança
+          </Button>
+        }
+      />
+      <main className="p-6 max-w-5xl mx-auto w-full space-y-6">
+        {/* Error state */}
+        {!result.success && (
+          <Alert variant="destructive">
+            <AlertDescription>
+              {result.error ?? 'Erro ao carregar recebíveis.'}
+            </AlertDescription>
+          </Alert>
+        )}
 
-          {/* Header */}
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <h1 className="text-xl font-semibold leading-tight">Contas a Receber</h1>
-            {/* @base-ui/react Button: use render prop instead of asChild */}
-            <Button
-              size="sm"
-              render={<Link href="/clinica/financeiro/nova-cobranca" />}
-            >
-              <Plus className="mr-1 size-4" />
-              Cobrança
-            </Button>
-          </div>
-
-          {/* Error state */}
-          {!result.success && (
-            <Alert variant="destructive">
-              <AlertDescription>
-                {result.error ?? 'Erro ao carregar recebíveis.'}
-              </AlertDescription>
-            </Alert>
-          )}
-
-          {/* Primary focal point: receivables table (UI-SPEC) */}
-          {receivables.length === 0 && result.success ? (
-            <div className="rounded-md border border-dashed p-12 text-center">
-              <p className="text-sm font-semibold">Nenhum recebível cadastrado</p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Emita a primeira cobrança para um paciente para começar a rastrear os recebíveis.
-              </p>
-            </div>
-          ) : (
-            <ReceivablesTable receivables={receivables} />
-          )}
-        </div>
+        {/* Primary focal point: receivables table (UI-SPEC) */}
+        {receivables.length === 0 && result.success ? (
+          <EmptyState
+            icon={ReceiptText}
+            title="Nenhum recebível cadastrado"
+            description="Emita a primeira cobrança para um paciente para começar a rastrear os recebíveis."
+            cta={
+              <Button
+                size="sm"
+                render={<Link href="/clinica/financeiro/nova-cobranca" />}
+              >
+                Emitir Cobrança
+              </Button>
+            }
+          />
+        ) : (
+          <ReceivablesTable receivables={receivables} />
+        )}
       </main>
     </NuqsAdapter>
   )
