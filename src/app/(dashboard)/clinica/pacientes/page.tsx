@@ -1,10 +1,10 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { PatientTable } from '@/components/patients/PatientTable'
-import { Button, buttonVariants } from '@/components/ui/button'
-import { UserPlus } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
+import { UserPlus, UserX } from 'lucide-react'
 import { PageHeader } from '@/components/shell/PageHeader'
+import { EmptyState } from '@/components/shell/EmptyState'
 
 export default async function PacientesPage() {
   const supabase = await createClient()
@@ -61,23 +61,19 @@ export default async function PacientesPage() {
       />
       <main className="p-6 max-w-5xl mx-auto w-full">
         {!patients || patients.length === 0 ? (
-          <div className="flex min-h-[240px] flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
-            <p className="text-xl font-semibold font-display">
-              Nenhum paciente cadastrado
-            </p>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Cadastre o primeiro paciente da clínica para começar o atendimento.
-            </p>
-            {isStaff && (
-              <Button
-                className="mt-4"
-                render={<Link href="/clinica/pacientes/novo" />}
-              >
-                <UserPlus className="size-4" />
-                Novo Paciente
-              </Button>
-            )}
-          </div>
+          <EmptyState
+            icon={UserX}
+            title="Nenhum paciente cadastrado"
+            description="Cadastre o primeiro paciente da clínica para começar o atendimento."
+            cta={
+              isStaff ? (
+                <Button render={<Link href="/clinica/pacientes/novo" />}>
+                  <UserPlus className="size-4" />
+                  Novo Paciente
+                </Button>
+              ) : undefined
+            }
+          />
         ) : (
           <PatientTable patients={patients} userRole={userRole} />
         )}

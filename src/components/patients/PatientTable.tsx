@@ -23,7 +23,7 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Eye, Pencil } from 'lucide-react'
+import { Eye, ArrowUp, ArrowDown, ArrowUpDown } from 'lucide-react'
 import Link from 'next/link'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -85,10 +85,11 @@ export function PatientTable({ patients, userRole }: PatientTableProps) {
     {
       accessorKey: 'full_name',
       header: 'Nome',
+      enableSorting: true,
       cell: ({ row }) => (
         <Link
           href={`/clinica/pacientes/${row.original.id}`}
-          className="font-medium hover:underline"
+          className="font-semibold hover:underline"
         >
           {row.getValue('full_name')}
         </Link>
@@ -97,6 +98,7 @@ export function PatientTable({ patients, userRole }: PatientTableProps) {
     {
       accessorKey: 'cpf',
       header: 'CPF',
+      enableSorting: true,
       cell: ({ row }) => {
         const cpf = row.getValue<string>('cpf')
         return (
@@ -109,6 +111,7 @@ export function PatientTable({ patients, userRole }: PatientTableProps) {
     {
       accessorKey: 'phone',
       header: 'Telefone',
+      enableSorting: false,
       cell: ({ row }) => {
         const phone = row.getValue<string | null>('phone')
         if (!phone) return <span className="text-muted-foreground text-sm">—</span>
@@ -122,6 +125,7 @@ export function PatientTable({ patients, userRole }: PatientTableProps) {
     {
       accessorKey: 'email',
       header: 'E-mail',
+      enableSorting: false,
       cell: ({ row }) => {
         const email = row.getValue<string | null>('email')
         if (!email) return <span className="text-muted-foreground text-sm">—</span>
@@ -135,6 +139,7 @@ export function PatientTable({ patients, userRole }: PatientTableProps) {
     {
       id: 'status',
       header: 'Status',
+      enableSorting: false,
       cell: ({ row }) => {
         if (row.original.is_anonymized) {
           return <Badge variant="destructive">Anonimizado</Badge>
@@ -145,6 +150,7 @@ export function PatientTable({ patients, userRole }: PatientTableProps) {
     {
       id: 'actions',
       header: 'Ações',
+      enableSorting: false,
       cell: ({ row }) => (
         <div className="flex items-center gap-2">
           <Button
@@ -155,20 +161,6 @@ export function PatientTable({ patients, userRole }: PatientTableProps) {
           >
             <Eye className="h-4 w-4" />
           </Button>
-          {!row.original.is_anonymized && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() =>
-                // WR-07: no `/editar` route exists — editing lives in the detail
-                // page's "Dados" tab. Route to the detail page to avoid a 404.
-                router.push(`/clinica/pacientes/${row.original.id}`)
-              }
-              aria-label={`Editar paciente ${row.original.full_name}`}
-            >
-              <Pencil className="h-4 w-4" />
-            </Button>
-          )}
         </div>
       ),
     },
@@ -199,13 +191,39 @@ export function PatientTable({ patients, userRole }: PatientTableProps) {
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(header.column.columnDef.header, header.getContext())}
-                  </TableHead>
-                ))}
+                {headerGroup.headers.map((header) => {
+                  const canSort = header.column.getCanSort()
+                  const sorted = header.column.getIsSorted()
+                  const ariaSortValue: React.AriaAttributes['aria-sort'] =
+                    sorted === 'asc'
+                      ? 'ascending'
+                      : sorted === 'desc'
+                      ? 'descending'
+                      : canSort
+                      ? 'none'
+                      : undefined
+                  return (
+                    <TableHead
+                      key={header.id}
+                      aria-sort={ariaSortValue}
+                      className={canSort ? 'cursor-pointer select-none' : undefined}
+                      onClick={canSort ? header.column.getToggleSortingHandler() : undefined}
+                    >
+                      {header.isPlaceholder ? null : (
+                        <span className={`inline-flex items-center gap-1 ${sorted ? 'text-primary' : ''}`}>
+                          {flexRender(header.column.columnDef.header, header.getContext())}
+                          {canSort && (
+                            sorted === 'asc'
+                              ? <ArrowUp className="size-3.5 text-primary" />
+                              : sorted === 'desc'
+                              ? <ArrowDown className="size-3.5 text-primary" />
+                              : <ArrowUpDown className="size-3.5 text-muted-foreground" />
+                          )}
+                        </span>
+                      )}
+                    </TableHead>
+                  )
+                })}
               </TableRow>
             ))}
           </TableHeader>
