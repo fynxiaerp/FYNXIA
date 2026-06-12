@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 06-05-PLAN.md (hub + auth + public pages token sweep)
-last_updated: "2026-06-12T23:03:18.211Z"
+stopped_at: Completed 06-06-PLAN.md (clinical module sweep — Agenda + Pacientes)
+last_updated: "2026-06-12T23:10:30.207Z"
 progress:
   total_phases: 7
   completed_phases: 6
@@ -33,13 +33,13 @@ progress:
 ## Current Position
 
 Phase: 06 (ux-polish-and-app-shell) — EXECUTING
-Plan: 4 of 8
+Plan: 6 of 8
 **Phase:** 06
-**Plan:** 04 (completed) → 05 (next)
+**Plan:** 06 (completed) → 07 (next)
 **Status:** Executing Phase 06
 
 ```
-Progress: [█████████░] 88% (28/32 plans complete)
+Progress: [█████████░] 91% (29/32 plans complete)
 
 Phase 0 [Complete] █████
 Phase 1 [Complete] █████
@@ -47,7 +47,7 @@ Phase 2 [Complete] █████
 Phase 3 [Complete] █████
 Phase 4 [Complete] █████
 Phase 5 [Complete] █████ (5/5 plans complete)
-Phase 6 [In progress] ████░░░░ (4/8 plans complete)
+Phase 6 [In progress] ██████░░ (6/8 plans complete)
 ```
 
 ---
@@ -89,6 +89,7 @@ Phase 6 [In progress] ████░░░░ (4/8 plans complete)
 | Phase 06 P03 | 25 | 3 tasks | 11 files |
 | Phase 06 P04 | 5 | 2 tasks | 25 files |
 | Phase 06 P05 | 25 | 3 tasks | 10 files |
+| Phase 06 P06 | 20 | 3 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -141,6 +142,9 @@ Phase 6 [In progress] ████░░░░ (4/8 plans complete)
 | Hub removes Sair button + role/plan slug; sidebar footer owns identity (06-05) | Shell sidebar footer is the canonical location for user identity — duplicating it on the hub violates 06-UI-SPEC hub redesign spec | 2026-06-12 |
 | Auth forms wrap in bg-card rounded-xl card; wordmark text-2xl font-bold font-display (brand exception) | 2-weight system enforced; font-bold allowed only paired with font-display per typography contract | 2026-06-12 |
 | Public pages (invite/agendar/anamnese) use design tokens only — no slate/gray/white raw classes | Dark-mode correctness requires all colors via CSS variables; raw Tailwind color classes break .dark theme | 2026-06-12 |
+| Patient detail Prontuário/Odontograma tabs render inline (no redirect cards) | Sub-route content components lifted into tab panels; router.push pattern breaks tab visual context; same RLS-scoped data, no new data path | 2026-06-12 |
+| PdfButton 'use client' component with Loader2 spinner | Plain anchor cannot show loading state; client component fetches blob + triggers download via createObjectURL; server PDF generation logic unchanged | 2026-06-12 |
+| Agenda empty-state fires on events.length===0 (not dentists.length===0) | Previous trigger hid empty state when dentists existed but had no appointments — misleading; correct trigger is zero appointments for the week | 2026-06-12 |
 
 ### Critical Pre-Phase-0 Actions
 
@@ -191,7 +195,7 @@ Phase 6 [In progress] ████░░░░ (4/8 plans complete)
 
 ## Session Continuity
 
-**Stopped at:** Completed 06-05-PLAN.md (hub + auth + public pages token sweep)
+**Stopped at:** Completed 06-06-PLAN.md (clinical module sweep — Agenda + Pacientes)
 
 **Critical path:** Phase 0 → 1 → 2 → 4 → 5 (Phase 3 parallel with Phase 2)
 
