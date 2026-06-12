@@ -55,7 +55,7 @@ export function CopilotSidebar() {
         {/* Header */}
         <SheetHeader className="flex-shrink-0 border-b px-6 py-4">
           <div className="flex items-center gap-3">
-            <Bot size={20} className="text-primary flex-shrink-0" aria-hidden="true" />
+            <Bot size={20} className="text-muted-foreground flex-shrink-0" aria-hidden="true" />
             <div>
               <SheetTitle className="text-sm font-semibold leading-snug">
                 Copiloto FYNXIA
