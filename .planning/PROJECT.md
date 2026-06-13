@@ -8,6 +8,19 @@ FYNXIA é um ERP SaaS multi-tenant para clínicas odontológicas que unifica ges
 
 Um dentista deve conseguir ver a agenda do dia, registrar atendimento e fechar o caixa — tudo em menos de 3 cliques por etapa, com dados protegidos por LGPD.
 
+## Current Milestone: v2.0 — Produto Completo
+
+**Goal:** Expandir o MVP v1.0 para a plataforma ERP odontológica completa — os 27 módulos do blueprint ([.planning/MODULES-SPEC-v2.md](MODULES-SPEC-v2.md)), construídos em blocos sobre as fundações de multiunidade, assinatura ICP, integrações e IA governada (L0–L4).
+
+**Blocos (ordem de entrega):**
+- **A — Fundações:** Configuração do Sistema + multiunidade/rede + papéis novos; Documentos & Assinatura ICP-Brasil; Integrações Externas (hub de credenciais/webhooks); IA L0–L4 + Auditoria/Logs/Estornos + OCR.
+- **B — Clínico:** Profissionais; Recursos & Sala de Espera; Receituário/Atestados/Exames; Teleodontologia; Esterilização/CME; Laboratório de Prótese.
+- **C — Financeiro:** Cadastros (plano de contas/centro de custo); Serviços/OS/Faturamento + NFS-e; Contas a Pagar/Conciliação; Convênios/TISS; Tributos/Repasses/RPA.
+- **D — Operação/Crescimento:** Estoque & Materiais; CRC & Marketing (leads/campanhas/NPS/indicação).
+- **E — Analítico/Canais:** Relatórios/Orçamento/Societário; BI & Dashboards; Portal do Paciente; App do Profissional; Migração/Importação; Ensino.
+
+**Contexto-chave:** multi-unidade/franquia; domínios regulatórios (NFS-e, TISS/ANS, EFD-Reinf, ICP-Brasil, ANVISA, CFO); novos papéis (DPO, Auditor, Sócio, TI, Implantação, Aluno). Reaproveita v1: pacientes/prontuário/agenda/copiloto/recebíveis/auditoria. Protótipos navegáveis já existem para Convênios, BI/Relatórios e Dashboard de Franquias.
+
 ## Requirements
 
 ### Validated
@@ -60,9 +73,13 @@ Um dentista deve conseguir ver a agenda do dia, registrar atendimento e fechar o
 - [x] Dual-theme (claro clínico + dark/neon da marca) em tokens FYNXIA, WCAG-AA
 - [x] App shell com sidebar persistente colapsável + PageHeader + estados loading/empty/error
 
-### Active
+### Active (v2.0 — em REQUIREMENTS.md por REQ-ID)
 
-_Nenhum — v1.0 entregue. Próximo milestone definido via `/gsd-new-milestone`._
+- Fundações: Configuração do Sistema, multiunidade/rede, papéis novos, Assinatura ICP/Documentos, Integrações, IA L0–L4, Auditoria/Estornos, OCR
+- Clínico: Profissionais, Recursos/Sala de espera, Receituário, Teleodontologia, Esterilização/CME, Prótese
+- Financeiro: Cadastros, OS/Faturamento/NFS-e, Contas a Pagar/Conciliação, Convênios/TISS, Tributos/Repasses/RPA
+- Operação/Crescimento: Estoque, CRC/Marketing
+- Analítico/Canais: Relatórios/Societário, BI, Portal do Paciente, App do Profissional, Migração, Ensino
 
 ### Out of Scope (v1)
 
@@ -129,4 +146,4 @@ Este documento evolui a cada transição de fase e marco de milestone.
 4. Atualizar Context com estado atual
 
 ---
-*Last updated: 2026-06-12 — after v1.0 MVP milestone (Phases 0–6 shipped)*
+*Last updated: 2026-06-12 — milestone v2.0 (Produto Completo) iniciado*

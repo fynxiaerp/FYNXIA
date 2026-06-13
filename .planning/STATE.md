@@ -1,16 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
-milestone_name: MVP
-status: completed
-stopped_at: Completed 06-08-PLAN.md (team/AI-log/copilot sweep — Wave 3 final)
-last_updated: "2026-06-13T01:23:05.191Z"
+milestone: v2.0
+milestone_name: Produto Completo
+status: planning
+stopped_at: Milestone v2.0 iniciado — definindo roadmap (27 módulos, blocos A–E)
+last_updated: "2026-06-13T02:00:00.000Z"
 progress:
-  total_phases: 7
-  completed_phases: 7
-  total_plans: 32
-  completed_plans: 32
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # FYNXIA ERP — Project State
@@ -34,23 +34,11 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 
 ## Current Position
 
-Phase: 06 (ux-polish-and-app-shell) — COMPLETE
-Plan: 8 of 8
-**Phase:** 06
-**Plan:** Not started
-**Status:** v1.0 milestone complete
-
-```
-Progress: [██████████] 100% (32/32 plans complete)
-
-Phase 0 [Complete] █████
-Phase 1 [Complete] █████
-Phase 2 [Complete] █████
-Phase 3 [Complete] █████
-Phase 4 [Complete] █████
-Phase 5 [Complete] █████ (5/5 plans complete)
-Phase 6 [Complete] ████████ (8/8 plans complete)
-```
+**Milestone:** v2.0 — Produto Completo (27 módulos, blocos A–E)
+**Phase:** Não iniciada (definindo roadmap)
+**Plan:** —
+**Status:** Definindo requisitos/roadmap (fases continuam do 07)
+**Last activity:** 2026-06-12 — milestone v2.0 iniciado; v1.0 arquivado e em produção (fynxia.vercel.app)
 
 ---
 
