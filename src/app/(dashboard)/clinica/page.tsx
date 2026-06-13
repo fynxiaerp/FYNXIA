@@ -25,14 +25,17 @@ export default async function ClinicaPage() {
     hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite'
 
   // Quick stats — RLS automatically scopes to tenant
-  const today = new Date().toISOString().slice(0, 10)
+  // Compute today's bounds in ISO format (UTC midnight boundaries)
+  const todayStart = new Date(new Date().toISOString().slice(0, 10) + 'T00:00:00.000Z').toISOString()
+  const todayEnd   = new Date(new Date().toISOString().slice(0, 10) + 'T23:59:59.999Z').toISOString()
 
   const [{ count: consultasHoje }, { count: pacientesAtivos }, { count: recebiveis }] =
     await Promise.all([
       supabase
         .from('appointments')
         .select('*', { count: 'exact', head: true })
-        .eq('date', today),
+        .gte('start_time', todayStart)
+        .lt('start_time', todayEnd),
       supabase
         .from('patients')
         .select('*', { count: 'exact', head: true })
