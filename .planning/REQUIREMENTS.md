@@ -161,7 +161,83 @@
 
 | REQ-ID | Phase | Status |
 |--------|-------|--------|
-| _(preenchido pelo roadmapper)_ | | |
+| SYS-01 | Phase 7 | Pending |
+| SYS-02 | Phase 7 | Pending |
+| SYS-03 | Phase 7 | Pending |
+| SYS-04 | Phase 7 | Pending |
+| SYS-05 | Phase 7 | Pending |
+| ROLE-01 | Phase 7 | Pending |
+| ROLE-02 | Phase 7 | Pending |
+| DOC-01 | Phase 8 | Pending |
+| DOC-02 | Phase 8 | Pending |
+| DOC-03 | Phase 8 | Pending |
+| INT-01 | Phase 9 | Pending |
+| INT-02 | Phase 9 | Pending |
+| INT-03 | Phase 9 | Pending |
+| AIG-01 | Phase 10 | Pending |
+| AIG-02 | Phase 10 | Pending |
+| AIG-03 | Phase 10 | Pending |
+| AUD-01 | Phase 10 | Pending |
+| AUD-02 | Phase 10 | Pending |
+| AUD-03 | Phase 10 | Pending |
+| OCR-01 | Phase 10 | Pending |
+| OCR-02 | Phase 10 | Pending |
+| PRO-01 | Phase 11 | Pending |
+| PRO-02 | Phase 11 | Pending |
+| PRO-03 | Phase 11 | Pending |
+| RES-01 | Phase 11 | Pending |
+| RES-02 | Phase 11 | Pending |
+| RES-03 | Phase 11 | Pending |
+| RX-01 | Phase 12 | Pending |
+| RX-02 | Phase 12 | Pending |
+| RX-03 | Phase 12 | Pending |
+| TEL-01 | Phase 12 | Pending |
+| TEL-02 | Phase 12 | Pending |
+| CME-01 | Phase 13 | Pending |
+| CME-02 | Phase 13 | Pending |
+| CME-03 | Phase 13 | Pending |
+| LAB-01 | Phase 13 | Pending |
+| LAB-02 | Phase 13 | Pending |
+| FCAD-01 | Phase 14 | Pending |
+| FCAD-02 | Phase 14 | Pending |
+| OS-01 | Phase 15 | Pending |
+| OS-02 | Phase 15 | Pending |
+| OS-03 | Phase 15 | Pending |
+| CONV-01 | Phase 15 | Pending |
+| CONV-02 | Phase 15 | Pending |
+| CONV-03 | Phase 15 | Pending |
+| FOP-01 | Phase 16 | Pending |
+| FOP-02 | Phase 16 | Pending |
+| FOP-03 | Phase 16 | Pending |
+| TRIB-01 | Phase 16 | Pending |
+| TRIB-02 | Phase 16 | Pending |
+| TRIB-03 | Phase 16 | Pending |
+| EST-01 | Phase 17 | Pending |
+| EST-02 | Phase 17 | Pending |
+| EST-03 | Phase 17 | Pending |
+| CRC-01 | Phase 18 | Pending |
+| CRC-02 | Phase 18 | Pending |
+| CRC-03 | Phase 18 | Pending |
+| CRC-04 | Phase 18 | Pending |
+| CRC-05 | Phase 18 | Pending |
+| REP-01 | Phase 19 | Pending |
+| REP-02 | Phase 19 | Pending |
+| REP-03 | Phase 19 | Pending |
+| BI-01 | Phase 19 | Pending |
+| BI-02 | Phase 19 | Pending |
+| POR-01 | Phase 20 | Pending |
+| POR-02 | Phase 20 | Pending |
+| POR-03 | Phase 20 | Pending |
+| APP-01 | Phase 20 | Pending |
+| APP-02 | Phase 20 | Pending |
+| APP-03 | Phase 20 | Pending |
+| MIG-01 | Phase 21 | Pending |
+| MIG-02 | Phase 21 | Pending |
+| EDU-01 | Phase 21 | Pending |
+| EDU-02 | Phase 21 | Pending |
+| EDU-03 | Phase 21 | Pending |
+
+**Coverage:** 75/75 v2 requirements mapped. No orphans.
 
 ---
 

@@ -3,20 +3,81 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Produto Completo
 status: planning
-stopped_at: Milestone v2.0 iniciado — definindo roadmap (27 módulos, blocos A–E)
-last_updated: "2026-06-13T02:00:00.000Z"
+stopped_at: Roadmap v2.0 criado — 15 fases (7–21), 75 requisitos mapeados 100%. Próximo passo: /gsd-plan-phase 7
+last_updated: "2026-06-13T00:00:00.000Z"
 progress:
-  total_phases: 0
+  total_phases: 15
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
   percent: 0
+phases:
+  - id: 7
+    name: Sistema, Multiunidade & Papéis
+    block: A
+    status: not_started
+  - id: 8
+    name: Documentos & Assinatura ICP-Brasil
+    block: A
+    status: not_started
+  - id: 9
+    name: Hub de Integrações Externas
+    block: A
+    status: not_started
+  - id: 10
+    name: IA Governada (L0–L4), Auditoria & OCR
+    block: A
+    status: not_started
+  - id: 11
+    name: Profissionais & Recursos
+    block: B
+    status: not_started
+  - id: 12
+    name: Receituário & Teleodontologia
+    block: B
+    status: not_started
+  - id: 13
+    name: Esterilização/CME & Laboratório de Prótese
+    block: B
+    status: not_started
+  - id: 14
+    name: Financeiro — Cadastros Base
+    block: C
+    status: not_started
+  - id: 15
+    name: Faturamento/NFS-e & Convênios/TISS
+    block: C
+    status: not_started
+  - id: 16
+    name: Contas a Pagar, Conciliação & Tributos
+    block: C
+    status: not_started
+  - id: 17
+    name: Estoque & Materiais
+    block: D
+    status: not_started
+  - id: 18
+    name: CRC & Marketing
+    block: D
+    status: not_started
+  - id: 19
+    name: Relatórios, Orçamento & BI
+    block: E
+    status: not_started
+  - id: 20
+    name: Portal do Paciente & App do Profissional
+    block: E
+    status: not_started
+  - id: 21
+    name: Migração & Ensino
+    block: E
+    status: not_started
 ---
 
 # FYNXIA ERP — Project State
 
-**Last updated:** 2026-06-12
-**Updated by:** gsd-complete-milestone (v1.0 MVP shipped & archived)
+**Last updated:** 2026-06-13
+**Updated by:** gsd-roadmapper (v2.0 roadmap created — 15 phases, 75 requirements)
 
 ---
 
@@ -28,30 +89,39 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 
 **Stack:** Next.js 15 + TypeScript (strict) + Supabase (sa-east-1) + Vercel (gru1) + shadcn/ui + Tailwind v4
 
-**Current focus:** v1.0 MVP shipped (Phases 0–6, 47/47 requisitos). Planning next milestone — run `/gsd-new-milestone`.
+**Current focus:** v2.0 — Produto Completo. Roadmap definido (Phases 7–21, blocos A–E, 75 requisitos). Pronto para iniciar Phase 7.
 
 ---
 
 ## Current Position
 
 **Milestone:** v2.0 — Produto Completo (27 módulos, blocos A–E)
-**Phase:** Não iniciada (definindo roadmap)
+**Phase:** 7 — Sistema, Multiunidade & Papéis (não iniciada)
 **Plan:** —
-**Status:** Definindo requisitos/roadmap (fases continuam do 07)
-**Last activity:** 2026-06-12 — milestone v2.0 iniciado; v1.0 arquivado e em produção (fynxia.vercel.app)
+**Status:** Roadmap aprovado. Aguardando `/gsd-plan-phase 7`
+**Last activity:** 2026-06-13 — roadmap v2.0 criado; 15 fases (7–21) mapeadas com 75 requisitos
 
 ---
 
 ## Phase Summary
 
-| Phase | Name | Requirements | Status |
-|-------|------|--------------|--------|
-| 0 | Foundation | INFRA-01..07, SEC-07, SEC-08 | Not started |
-| 1 | Auth & Tenant Onboarding | AUTH-01..07, SEC-01, SEC-02, SEC-05 | Not started |
-| 2 | Clinical MVP | CLINIC-01..09, SEC-03, SEC-04 | Not started |
-| 3 | Financial MVP | FIN-01..09, SEC-06 | Complete |
-| 4 | Communications & Async | COMMS-01..04 | Not started |
-| 5 | AI Agents | AI-01..03 | Not started |
+| Phase | Name | Block | Requirements | Status |
+|-------|------|-------|--------------|--------|
+| 7 | Sistema, Multiunidade & Papéis | A | SYS-01..05, ROLE-01..02 | Not started |
+| 8 | Documentos & Assinatura ICP-Brasil | A | DOC-01..03 | Not started |
+| 9 | Hub de Integrações Externas | A | INT-01..03 | Not started |
+| 10 | IA Governada, Auditoria & OCR | A | AIG-01..03, AUD-01..03, OCR-01..02 | Not started |
+| 11 | Profissionais & Recursos | B | PRO-01..03, RES-01..03 | Not started |
+| 12 | Receituário & Teleodontologia | B | RX-01..03, TEL-01..02 | Not started |
+| 13 | Esterilização/CME & Laboratório de Prótese | B | CME-01..03, LAB-01..02 | Not started |
+| 14 | Financeiro — Cadastros Base | C | FCAD-01..02 | Not started |
+| 15 | Faturamento/NFS-e & Convênios/TISS | C | OS-01..03, CONV-01..03 | Not started |
+| 16 | Contas a Pagar, Conciliação & Tributos | C | FOP-01..03, TRIB-01..03 | Not started |
+| 17 | Estoque & Materiais | D | EST-01..03 | Not started |
+| 18 | CRC & Marketing | D | CRC-01..05 | Not started |
+| 19 | Relatórios, Orçamento & BI | E | REP-01..03, BI-01..02 | Not started |
+| 20 | Portal do Paciente & App do Profissional | E | POR-01..03, APP-01..03 | Not started |
+| 21 | Migração & Ensino | E | MIG-01..02, EDU-01..03 | Not started |
 
 ---
 
@@ -59,27 +129,12 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 
 | Metric | Target | Current |
 |--------|--------|---------|
-| Requirements coverage | 47/47 | 47/47 mapped |
-| Phases defined | 6 | 6 |
-| Plans complete | TBD | 13 (03-02 latest) |
-| Phase 0 pitfalls resolved | 6/6 | 0/6 |
+| Requirements coverage | 75/75 | 75/75 mapped |
+| Phases defined | 15 | 15 |
+| Plans complete | TBD | 0 |
+| Phases complete | 15 | 0 |
 
 ---
-| Phase 03 P03-03 | 20 | 3 tasks | 19 files |
-| Phase 03 P04 | 68 | 3 tasks | 12 files |
-| Phase 04 P02 | 290 | 3 tasks | 7 files |
-| Phase 04 P04-03 | 8 | 2 tasks | 2 files |
-| Phase 04 P04-04 | 9 | 3 tasks | 5 files |
-| Phase 05 P05-02 | 18 | 3 tasks | 7 files |
-| Phase 05 P03 | 7 | 3 tasks | 10 files |
-| Phase 05 P04 | 76 | 3 tasks | 8 files |
-| Phase 05 P05 | 15 | 3 tasks | 6 files |
-| Phase 06 P01 | 25 | 3 tasks | 5 files |
-| Phase 06 P02 | 142 | 3 tasks | 5 files |
-| Phase 06 P03 | 25 | 3 tasks | 11 files |
-| Phase 06 P04 | 5 | 2 tasks | 25 files |
-| Phase 06 P05 | 25 | 3 tasks | 10 files |
-| Phase 06 P06 | 20 | 3 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -95,112 +150,59 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 | Meta WhatsApp Cloud API only (no Evolution API/Baileys) | ToS violation; existential risk for healthcare SaaS | 2026-06-02 |
 | @react-pdf/renderer (no Puppeteer) | Puppeteer binary ~100MB; Vercel function limit 50MB | 2026-06-02 |
 | Phase 3 runs parallel to Phase 2 | Shares Phase 1 patient data model; accelerates financial validation | 2026-06-03 |
-| Phase 6 (Dashboard/Polish) deferred to v2 | No v1 requirements map to dashboard KPIs or franchise aggregation | 2026-06-03 |
 | Supabase FREE plan para MVP; sem Custom Access Token Hook | Hook é Pro-only; get_my_tenant_id()+get_my_role() SECURITY DEFINER substitui com segurança equivalente | 2026-06-03 |
-| CPF plaintext; AES-256 em medical_history/allergies/medications via Server Action | CPF necessário para busca na recepção; dados de saúde nunca em plaintext no banco — ciphertext no audit log | 2026-06-05 |
-| dental_records policy INSERT-only (sem UPDATE/DELETE) | Preserva integridade do histórico do odontograma; override requer service role explícito | 2026-06-05 |
-| Anamnese public-token flow via service role na Server Action | Sem RLS write policy para unauthenticated inserts; validação de token single-use na camada de aplicação | 2026-06-05 |
-| PENDING sentinel para signature_hash (NOT NULL constraint) | Schema exige NOT NULL; 'PENDING' satisfaz o constraint sem alterar schema; UPDATE gate inclui signature_hash='PENDING' impedindo re-write pós-assinatura (D-20) | 2026-06-05 |
-| patient_id=null no agendamento público | Evita placeholder de CPF (violação unique + PII); recepcionista vincula paciente depois; dados de contato ficam em notes | 2026-06-05 |
-| Provider-agnostic financial schema (D-01): provider TEXT DEFAULT 'asaas' | Evita lock-in no schema; future Stripe/outros gateways adicionam sem DDL change; provider_charge_id/provider_installment_id como colunas genéricas | 2026-06-06 |
-| No stored vencido (D-04): status CHECK ('pendente','pago','estornado') only | vencido derivado em read-time de due_date vs NOW(); evita estados stale por clock-skew no banco | 2026-06-06 |
-| webhook_events sem RLS (T-3-04 aceito): service-role only, sem tenant_id | Tabela global de dedup de webhooks; nenhum path de cliente acessa; handler usa createAdminClient (Plan 02) | 2026-06-06 |
-| Supabase CLI re-auth gotcha documentado | db push requer CLI logado na org FYNXIA (kczvihafddupruvsrrsc); padrão recorrente em todo checkpoint [BLOCKING] db push | 2026-06-06 |
-| No z.default() in Zod schemas with RHF zodResolver | .default() makes fields optional in input type causing resolver type mismatch; use RHF defaultValues instead | 2026-06-06 |
-| @base-ui render-prop pattern (no asChild anywhere) | Button render={<Link/>}, PopoverTrigger render={<button/>}, Accordion multiple prop — confirmed from PatientForm.tsx; no Radix asChild in this project | 2026-06-06 |
-| Lazy Resend singleton (getResend() factory) | new Resend(undefined) throws at module-eval time during next build static analysis; lazy factory defers instantiation to first runtime call; backward-compat wrapper preserves .emails.send() interface | 2026-06-06 |
-| Static CSP via next.config.ts headers() (no nonce) | Nonce-based CSP forces full dynamic render on every page — counterproductive for ERP with many SSR pages; unsafe-inline accepted for internal ERP (no third-party scripts, documented in RESEARCH §A3) | 2026-06-06 |
-| COMMS-04 via outbox pattern (not pgmq): message_outbox + OutboxQueue + Vercel Cron | pgmq/pg_cron are Supabase Pro-only; message_outbox table (Plan 04-01) + MessageQueue interface (Plan 04-02) + Cron trigger (Plan 04-04) deliver same outcome; pgmq adapter swaps in at Pro upgrade behind interface seam | 2026-06-07 |
-| No client UPDATE/DELETE policy on message_outbox | Worker uses createAdminClient (service role) for all status transitions; prevents tenant tampering with send state (T-4-outbox-T); mirrors webhook_events pattern from Plan 03-01 | 2026-06-07 |
-| WhatsApp client call-time credential reads (not module scope) | WHATSAPP_* env vars read inside sendTemplateMessage() — same lazy pattern as getResend(); returns graceful error when absent; never throws at next build | 2026-06-07 |
-| isPermanentError([131026, 132000, 132001, 190]) no-retry gate | Permanent Meta errors mark outbox row failed immediately; transient (130429, network) remain pending for next cron run | 2026-06-07 |
-| Worker email branch generic html-send with TODO(Plan 04) marker | AppointmentReminderEmail import deferred to Plan 04 to keep 04-02 independent of 04-03 in Wave 2; email branch compiles and tests pass | 2026-06-07 |
-| AI SDK v6 tool() uses inputSchema not parameters | RESEARCH Assumption A1 confirmed incorrect; @ai-sdk/provider-utils Tool type uses inputSchema: FlexibleSchema<INPUT>; confirmed from installed node_modules type defs | 2026-06-10 |
-| maskCPF for copilot keeps LAST 2 digits (***.***.***-XX) | PatientTable.tsx keeps first 3 (123.***.***-**) for reception display; copilot masking is more aggressive per D-01 — last 2 verifier digits only | 2026-06-10 |
-| TEMPLATE_APPOINTMENT_CONFIRMATION = TEMPLATE_APPOINTMENT_REMINDER (reuse same template) | Same approved quick-reply template; button payloads embed appointmentId for inbound webhook routing — no need to register a second Meta template | 2026-06-11 |
-| Ambiguous free-text inbound: NO appointments.status change (T-5-intent safe fallback) | classifyConfirmationIntent returns 'ambiguous' on missing key/error/unclear text; webhook logs agent_outreach_log{status:ambiguous} for human review; D-04 principle | 2026-06-11 |
-| Tenant derived from appointment row on inbound webhook, never from payload (T-5-webhook-I) | Admin fetches appointment by id from buttonPayload; tenant_id sourced from DB row — untrusted payload can never change tenant scope | 2026-06-11 |
-| AI-03 LLM personalization sends only first name + amount (RESEARCH Pattern 6, T-5-collect-I) | No CPF/health data to LLM; ZDR enabled; fallback to neutral static message when AI_GATEWAY_API_KEY absent | 2026-06-11 |
-| collection-agent and collection-ruler coexist independently | Ruler = template reminders + email; agent = AI-03 LLM-personalized WhatsApp; drainOutbox is status-idempotent so both crons are safe | 2026-06-11 |
-| Patient name masked to FirstName L. in agent outreach log (SEC-01) | maskPatientName() in listAgentOutreach Server Action; consistent with other masking conventions in the codebase | 2026-06-11 |
-| AppSidebar Server Component + client sub-components read Zustand store directly | Avoids prop-drilling isCollapsed through Server/Client boundary; SidebarNavClient, SidebarFooter, SidebarCollapseButton each call useSidebarStore() independently | 2026-06-12 |
-| Fixed-width sidebar (w-[240px]/w-[56px]) + Zustand — no shadcn sidebar installed | shadcn sidebar has Tailwind-v4 width bug (06-RESEARCH Pitfall 1); custom fixed-width layout is simpler and stable | 2026-06-12 |
-| Outer flex h-screen overflow-hidden in layout.tsx, not AppShellClient | Spec line 561 diagram places wrapper in layout; also required for shell.test.ts assertion on layout file source | 2026-06-12 |
-| PageHeader Server Component with mobileMenuTrigger slot | Client hamburger can live inside Server Component header via ReactNode slot — avoids making the entire header a client component | 2026-06-12 |
-| ErrorState never renders error.message (T-06-07) | Static pt-BR copy only; prevents stack trace / detail leakage to end users | 2026-06-12 |
-| EmptyState icon text-muted-foreground (not text-primary) | Accent reserved list: decorative icons in empty states are not accent usage per 60/30/10 rule | 2026-06-12 |
-| Hub removes Sair button + role/plan slug; sidebar footer owns identity (06-05) | Shell sidebar footer is the canonical location for user identity — duplicating it on the hub violates 06-UI-SPEC hub redesign spec | 2026-06-12 |
-| Auth forms wrap in bg-card rounded-xl card; wordmark text-2xl font-bold font-display (brand exception) | 2-weight system enforced; font-bold allowed only paired with font-display per typography contract | 2026-06-12 |
-| Public pages (invite/agendar/anamnese) use design tokens only — no slate/gray/white raw classes | Dark-mode correctness requires all colors via CSS variables; raw Tailwind color classes break .dark theme | 2026-06-12 |
-| Patient detail Prontuário/Odontograma tabs render inline (no redirect cards) | Sub-route content components lifted into tab panels; router.push pattern breaks tab visual context; same RLS-scoped data, no new data path | 2026-06-12 |
-| PdfButton 'use client' component with Loader2 spinner | Plain anchor cannot show loading state; client component fetches blob + triggers download via createObjectURL; server PDF generation logic unchanged | 2026-06-12 |
-| Agenda empty-state fires on events.length===0 (not dentists.length===0) | Previous trigger hid empty state when dentists existed but had no appointments — misleading; correct trigger is zero appointments for the week | 2026-06-12 |
-
-### Critical Pre-Phase-0 Actions
-
-- [ ] Verify Supabase project is in sa-east-1 (São Paulo) — if not, recreate before any development
-- [ ] Start Meta Business verification NOW (7-14 day lead time; blocks Phase 4)
-- [x] ~~Activate Supabase Pro plan~~ — MVP permanece no FREE plan; Custom Access Token Hook não é usado
+| CPF plaintext; AES-256 em medical_history/allergies/medications via Server Action | CPF necessário para busca na recepção; dados de saúde nunca em plaintext no banco | 2026-06-05 |
+| dental_records policy INSERT-only (sem UPDATE/DELETE) | Preserva integridade do histórico do odontograma | 2026-06-05 |
+| Anamnese public-token flow via service role na Server Action | Sem RLS write policy para unauthenticated inserts; token single-use na camada de aplicação | 2026-06-05 |
+| Provider-agnostic financial schema: provider TEXT DEFAULT 'asaas' | Evita lock-in no schema; future Stripe/outros gateways adicionam sem DDL change | 2026-06-06 |
+| No stored vencido: status CHECK ('pendente','pago','estornado') only | vencido derivado em read-time de due_date vs NOW() | 2026-06-06 |
+| webhook_events sem RLS: service-role only | Tabela global de dedup de webhooks; nenhum path de cliente acessa | 2026-06-06 |
+| COMMS-04 via outbox pattern (not pgmq): message_outbox + Vercel Cron | pgmq/pg_cron são Supabase Pro-only; adapter troca no upgrade Pro | 2026-06-07 |
+| AI SDK v6 tool() uses inputSchema not parameters | RESEARCH Assumption A1 confirmed incorrect; confirmed from installed node_modules type defs | 2026-06-10 |
+| AI-03 LLM personalization sends only first name + amount | No CPF/health data to LLM; ZDR enabled; fallback to neutral static message when key absent | 2026-06-11 |
+| Fixed-width sidebar (w-[240px]/w-[56px]) + Zustand — no shadcn sidebar installed | shadcn sidebar has Tailwind-v4 width bug (06-RESEARCH Pitfall 1) | 2026-06-12 |
+| v2.0 Bloco A (SYS+ROLE+DOC+INT+AIG+AUD+OCR) entregue antes de Clínico e Financeiro | Prontuário/receituário/NFS-e precisam de ICP (DOC); faturamento/convênios precisam do hub de integrações (INT); agentes precisam do framework IA L0–L4 | 2026-06-13 |
+| Granularidade standard: 15 fases para 75 requisitos | Cada fase cobre 1–2 módulos acoplados; shippable/plannable independentemente | 2026-06-13 |
 
 ### Architecture Constraints Locked
 
 - Shared schema + RLS (not per-tenant schemas — incompatible with Supabase Realtime)
-- `tenant_id` e `user_role` lidos via `get_my_tenant_id()` + `get_my_role()` SECURITY DEFINER — sem Custom Access Token Hook (Pro-only; FREE plan MVP). Upgrade path ao migrar para Pro.
-- `tenant_id` stored in `public.users` (NOT `user_metadata` — user-mutable, C-5 risk)
+- `tenant_id` e `user_role` lidos via `get_my_tenant_id()` + `get_my_role()` SECURITY DEFINER
 - All caching calls must include `tenantId` in cache key array (C-3 risk)
 - No service role key with `NEXT_PUBLIC_` prefix (C-2 risk)
-- All connections via Supabase JS client only — no direct pg/Prisma from Vercel (C-6 risk)
-- LGPD/CFO conflict strategy: anonymize patient identity on erasure request; retain clinical records 20 years (Lei 13.787/2018)
-- Digital anamnesis must use ICP-Brasil-level e-signature (D4Sign recommended)
+- ICP-Brasil signing via certificado A1 cadastrado em SYS-02 (Phase 7); DOC (Phase 8) consome
+- Hub de integrações (Phase 9) é o único ponto de gestão de credenciais externas
+- Agentes IA operam dentro dos limites L0–L4 configurados em SYS-04 (Phase 7)
+- LGPD/CFO: anonymize patient identity on erasure; retain clinical records 20 years (Lei 13.787/2018)
 
 ### Upgrades Pendentes (pós-validação comercial)
 
 | Upgrade | Trigger sugerido | Benefício | Impacto no código |
 |---------|-----------------|-----------|-------------------|
-| Migrar Supabase FREE → Pro | Quando o produto tiver pagantes ou precisar de Auth Hooks, pg_cron, pgmq | Custom Access Token Hook: reduz 1 DB lookup por query RLS; pg_cron/pgmq: jobs agendados nativos (Phase 4) | Adicionar migration `custom_access_token_hook`, registrar no dashboard Auth > Hooks — zero mudança nas policies existentes |
-
-### Deferred to v2
-
-- Dashboard de franquias com agregação cross-tenant
-- Relatórios BI avançados
-- App mobile nativo
-- NF-e fiscal (NFSe is v1 if in scope)
-- TISS/ANS insurance integration
-- Voice-to-text em prontuário
-- NFSe para municípios além do Nacional + top-5
+| Migrar Supabase FREE → Pro | Quando tiver pagantes ou precisar de Auth Hooks, pg_cron, pgmq | Custom Access Token Hook; pg_cron/pgmq nativos | Migration `custom_access_token_hook` + dashboard Auth > Hooks |
+| NFS-e: municípios além do Nacional | Volume justificar | Cobertura de mais prefeituras | Adapter no hub de integrações (Phase 9) |
 
 ### Open Questions
 
 | # | Question | Blocks | Status |
 |---|----------|--------|--------|
-| 1 | FullCalendar commercial license (~$500/yr) approved? | Phase 2 | Open |
-| 2 | D4Sign account provisioned? | Phase 2 (CLINIC-08) | Open |
-| 3 | Meta Business verification started? | Phase 4 | Open — start NOW |
-| 4 | Supabase project confirmed in sa-east-1? | Phase 0 | Open — verify immediately |
-| 5 | Supabase Pro plan activated? | Phase 0 | **Closed** — MVP no FREE plan; sem hook; RLS via SECURITY DEFINER |
-| 6 | AI provider DPA strategy for LGPD? | Phase 5 | Open |
-| 7 | NFSe scope: Nacional only or top-5 cities? | Phase 3 | Open |
+| 1 | FullCalendar commercial license (~$500/yr) approved? | Phase 11 | Open |
+| 2 | Provedor de assinatura ICP-Brasil definido (D4Sign, Certisign, BirdSign)? | Phase 8 | Open — definir antes de iniciar Phase 8 |
+| 3 | Meta Business verification concluída? | Phase 4 (v1 pendente) / Phase 18 | Open — iniciar imediatamente |
+| 4 | Conta Asaas sandbox ativa? | Phase 3 (v1 UAT) / Phase 15 | Open — necessário para testes NFS-e |
+| 5 | Supabase Pro plan a ativar? | Phase 7+ | Open — avaliar timing pós-primeiros pagantes |
+| 6 | AI provider DPA strategy para LGPD (agentes v2)? | Phase 10 | Open |
+| 7 | Municípios alvo para NFS-e: Nacional apenas ou top-5? | Phase 15 | Open |
+| 8 | Provedor de teleconsulta (vídeo CFO-compliant): Whereby, Daily.co ou outro? | Phase 12 | Open — definir antes de iniciar Phase 12 |
 
 ---
 
 ## Session Continuity
 
-**Stopped at:** Completed 06-08-PLAN.md (team/AI-log/copilot sweep — Wave 3 final)
+**Stopped at:** Roadmap v2.0 criado (Phases 7–21, 75/75 requisitos mapeados).
 
-**Critical path:** Phase 0 → 1 → 2 → 4 → 5 (Phase 3 parallel with Phase 2)
+**Critical path (v2.0):** Phase 7 → Phase 8 → Phase 9 → Phase 10 → Phase 11 → Phase 12 → Phase 13 → Phase 14 → Phase 15 → Phase 16 → Phase 17 → Phase 18 → Phase 19 → Phase 20 → Phase 21
 
-**Next action:** v1.0 MVP shipped & archived (milestones/v1.0-*). Visual UAT in browser, then `/gsd-new-milestone` to scope v2.
+**Parallelism opportunity:** Phase 14 (Financeiro Cadastros) pode iniciar em paralelo com Phase 13 (CME+Lab), pois ambas dependem de Phase 10 e não têm dependência entre si.
 
-**06-01 delivered:** 5 Wave-0 source-inspection test scaffolds under src/__tests__/ui/ — contrast.test.ts (7/7 GREEN; pure WCAG math asserting #007a85 >=4.5:1 and regression guard #008c99 <4.5:1); theme.test.ts, shell.test.ts, page-pattern.test.ts, typography.test.ts (all RED-by-design against current sources); tsc exit 0. Deviation: ES2017 tsconfig target does not support regex s-flag — replaced with extractBlock() line-splitting helper.
-
-**05-02 delivered:** AI SDK v6 installed (ai@6.0.200, @ai-sdk/react@3.0.202, @ai-sdk/gateway@3.0.127); src/lib/ai/masking.ts (maskCPF keeps last 2 digits, maskPhone keeps last 4); src/lib/ai/help-docs.ts (8 pt-BR topics + searchHelpDocs); src/lib/ai/tools.ts (4 read-only RLS-scoped tools: getTodayAppointments, getOverdueReceivables, getPatientSummary, searchHelpDocsTool); src/app/api/copilot/route.ts (streamText + Gateway model anthropic/claude-sonnet-4.6 + ZDR + 401 auth gate + call-time key read). tools.test.ts 12/12 + chat-route.test.ts 9/9 GREEN; tsc exit 0; next build clean. Key deviation: AI SDK v6 tool() uses inputSchema (not parameters) — RESEARCH A1 confirmed; source-inspection tests matched forbidden words in comments — rephrased.
-
-**05-01 delivered:** agent_outreach_log + whatsapp_inbound_events tables live in Supabase sa-east-1; SELECT-only RLS on agent_outreach_log (tenant isolation, no client write); wamid UNIQUE dedup on whatsapp_inbound_events (no RLS, service-role only); 5 Wave 0 test scaffolds (ai.test.ts 13/13 GREEN; 4 ai/* RED-by-design via source-inspection). database.types.ts regenerated; tsc clean. Deviation: direct-import scaffolds converted to source-inspection style to keep tsc green across waves. Checkpoint: Supabase CLI re-auth required (recurring gotcha).
-
-**04-01 delivered:** message_outbox durable queue table + message_log reminder dedup table live in Supabase sa-east-1 (enums, UNIQUE idempotency_key, UNIQUE (appointment_id,channel,type), composite drain index, tenant_id indexes); RLS policies (USING+WITH CHECK via get_my_tenant_id(); no client UPDATE/DELETE on outbox); 5 Wave 0 TDD scaffolds (comms.test.ts 11/11 GREEN; 4 comms/* RED-by-design); database.types.ts regenerated. Deviation: ES2017 dotAll /s regex flag fixed in whatsapp.test.ts scaffold. Checkpoint: Supabase CLI re-auth required (recurring gotcha).
-
-**03-03 delivered:** formatBRL/deriveReceivableStatus helpers, createTransaction/listTransactions/listCategories/listReceivables Server Actions, Financeiro hub card + module hub, fluxo-de-caixa page (CashFlowTotals + TransactionList + TransactionModal), contas-a-receber page (ReceivablesTable with client-side vencido via deriveReceivableStatus + Accordion installment grouping), nova-cobranca page (ChargeForm wired to createCharge + PixQRDisplay with base64 QR). 23/23 plan tests GREEN; tsc exit 0; next build clean. Key lessons: no z.default() with RHF resolver; @base-ui uses render prop not asChild.
-
-**03-02 delivered:** PaymentGateway interface + AsaasAdapter (D-01), asaasFetch typed client (server-only), chargeSchema Zod v3, createCharge Server Action (PIX QR, boleto, installments mirrored to N receivables, customer dedup via asaas_customer_id), cancelCharge, idempotent webhook handler (token validation → 401, upsert dedup, fire-and-forget processWebhookEvent, income auto-post, refund reversal). charges.test.ts + asaas.test.ts 15/15 GREEN. tsc --noEmit exit 0. Task 4 (live sandbox) deferred to UAT — tracked in 03-HUMAN-UAT.md.
-
-**03-01 delivered:** 7 financial tables live in Supabase sa-east-1, provider-agnostic schema, RLS with USING+WITH CHECK on 6 tenant-scoped tables, audit trigger on financial_transactions reusing Phase 2 audit_table_changes(), 10 seeded dental categories, webhook_events dedup table, 7 Wave 0 test scaffolds (financial.test.ts 13/13 GREEN; 6 RED awaiting downstream plans), regenerated database.types.ts.
+**Next action:** `/gsd-plan-phase 7` — Sistema, Multiunidade & Papéis (SYS-01..05, ROLE-01..02)
