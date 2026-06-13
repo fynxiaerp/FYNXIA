@@ -1,7 +1,7 @@
 // nav-config.ts — Single source of truth for app navigation items.
 // Consumed by AppSidebar (desktop) and MobileMenuTrigger (mobile drawer).
 // Import type NavItem from SidebarNavClient to keep a single interface definition.
-import { Calendar, Users, UserCog, DollarSign, BrainCircuit, type LucideIcon } from 'lucide-react'
+import { Calendar, Users, UserCog, DollarSign, BrainCircuit, FlaskConical, type LucideIcon } from 'lucide-react'
 
 export interface NavItemConfig {
   href: string
@@ -18,6 +18,7 @@ export const ALL_NAV_ITEMS: NavItemConfig[] = [
   { href: '/clinica/financeiro', label: 'Financeiro',  icon: DollarSign },
   { href: '/clinica/equipe',     label: 'Equipe',      icon: UserCog, adminOnly: true },
   { href: '/clinica/ia/agentes', label: 'IA / Agentes', icon: BrainCircuit },
+  { href: '/clinica/prototipos', label: 'Protótipos', icon: FlaskConical, adminOnly: true },
 ]
 
 /**
