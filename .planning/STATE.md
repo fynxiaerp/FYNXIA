@@ -1,10 +1,10 @@
 ---
 gsd_state_version: 1.0
 milestone: v1.0
-milestone_name: milestone
+milestone_name: MVP
 status: completed
 stopped_at: Completed 06-08-PLAN.md (team/AI-log/copilot sweep — Wave 3 final)
-last_updated: "2026-06-12T23:44:16.920Z"
+last_updated: "2026-06-13T01:23:05.191Z"
 progress:
   total_phases: 7
   completed_phases: 7
@@ -16,17 +16,19 @@ progress:
 # FYNXIA ERP — Project State
 
 **Last updated:** 2026-06-12
-**Updated by:** gsd-execute-phase (06-04 complete; advancing to 06-05)
+**Updated by:** gsd-complete-milestone (v1.0 MVP shipped & archived)
 
 ---
 
 ## Project Reference
 
+See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
+
 **Core Value:** Um dentista deve conseguir ver a agenda do dia, registrar atendimento e fechar o caixa — tudo em menos de 3 cliques por etapa, com dados protegidos por LGPD.
 
 **Stack:** Next.js 15 + TypeScript (strict) + Supabase (sa-east-1) + Vercel (gru1) + shadcn/ui + Tailwind v4
 
-**Current Milestone:** M1 — Full Product (Phases 0–5)
+**Current focus:** v1.0 MVP shipped (Phases 0–6, 47/47 requisitos). Planning next milestone — run `/gsd-new-milestone`.
 
 ---
 
@@ -35,8 +37,8 @@ progress:
 Phase: 06 (ux-polish-and-app-shell) — COMPLETE
 Plan: 8 of 8
 **Phase:** 06
-**Plan:** 08 (completed) — Phase 06 DONE
-**Status:** All phases complete
+**Plan:** Not started
+**Status:** v1.0 milestone complete
 
 ```
 Progress: [██████████] 100% (32/32 plans complete)
@@ -199,7 +201,7 @@ Phase 6 [Complete] ████████ (8/8 plans complete)
 
 **Critical path:** Phase 0 → 1 → 2 → 4 → 5 (Phase 3 parallel with Phase 2)
 
-**Next action:** Execute 06-04-PLAN.md (Wave 2 — PageHeader + loading/error states).
+**Next action:** v1.0 MVP shipped & archived (milestones/v1.0-*). Visual UAT in browser, then `/gsd-new-milestone` to scope v2.
 
 **06-01 delivered:** 5 Wave-0 source-inspection test scaffolds under src/__tests__/ui/ — contrast.test.ts (7/7 GREEN; pure WCAG math asserting #007a85 >=4.5:1 and regression guard #008c99 <4.5:1); theme.test.ts, shell.test.ts, page-pattern.test.ts, typography.test.ts (all RED-by-design against current sources); tsc exit 0. Deviation: ES2017 tsconfig target does not support regex s-flag — replaced with extractBlock() line-splitting helper.
 

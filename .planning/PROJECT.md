@@ -31,39 +31,38 @@ Um dentista deve conseguir ver a agenda do dia, registrar atendimento e fechar o
 - [x] Dados isolados por tenant_id (multi-tenant) com RLS no Supabase — `get_my_tenant_id()` + `get_my_role()` SECURITY DEFINER; RLS em 3 tabelas; C-1 resolvido
 - [x] Todas as ações sensíveis registradas em audit_log imutável — `audit_logs` com DELETE/UPDATE = false via RLS
 
+#### Clínica (Validated in Phase 2)
+- [x] Agenda semanal multi-dentista com anti-double-booking (EXCLUDE GIST) — FullCalendar timeGridWeek
+- [x] CRUD de pacientes com CPF, dados de saúde (AES-256) e contato + anonimização LGPD
+- [x] Prontuário clínico com diagnóstico, plano de tratamento e prescrição (histórico cronológico)
+- [x] Odontograma interativo SVG por dente (32 FDI, 9 status)
+- [x] Anamnese digital com assinatura (signature_pad + SHA-256 + token single-use)
+- [x] Link de agendamento online público com slot locking atômico
+
+#### Financeiro (Validated in Phase 3)
+- [x] Fluxo de caixa mensal (entradas/saídas) em BRL
+- [x] Lançamento de transações (receita/despesa) com categoria
+- [x] Contas a receber com status (pendente/pago/vencido derivado) + parcelamento
+- [x] Pix/boleto via Asaas (PaymentGateway provider-agnostic) + webhook idempotente
+- [x] Recibo de consulta em PDF (@react-pdf/renderer)
+
+#### Comunicações (Validated in Phase 4)
+- [x] Confirmação/lembrete de consulta via WhatsApp (Meta Cloud API) + e-mail (Resend)
+- [x] Jobs assíncronos via outbox pattern + Vercel Cron (substitui pg_cron/pgmq do FREE plan)
+- [x] Régua de cobrança automática no vencimento/atraso
+
+#### IA / Copiloto (Validated in Phase 5)
+- [x] Copiloto IA em toda tela (Vercel AI Gateway + AI SDK v6, read-only, PII masking, ZDR)
+- [x] Agente de confirmação de consultas via WhatsApp (inbound webhook sender-bound, cross-tenant-safe)
+- [x] Agente de cobrança de inadimplentes com mensagem personalizada por IA
+
+#### UX / App Shell (Validated in Phase 6)
+- [x] Dual-theme (claro clínico + dark/neon da marca) em tokens FYNXIA, WCAG-AA
+- [x] App shell com sidebar persistente colapsável + PageHeader + estados loading/empty/error
+
 ### Active
 
-#### Clínica
-- [ ] Usuário pode visualizar e gerenciar agenda semanal por dentista
-- [ ] Usuário pode cadastrar e editar fichas de pacientes com CPF, dados de saúde e contato
-- [ ] Dentista pode registrar prontuário clínico com diagnóstico, plano de tratamento e prescrição
-- [ ] Dentista pode registrar ocorrências no odontograma interativo por dente
-- [ ] Sistema envia confirmação automática de consultas via WhatsApp/e-mail
-- [ ] Paciente pode solicitar agendamento online
-
-#### Financeiro
-- [ ] Usuário pode visualizar fluxo de caixa com entradas e saídas do mês
-- [ ] Usuário pode lançar transações financeiras (receita/despesa) com categoria
-- [ ] Sistema lista contas a receber com status e data de vencimento
-- [ ] Sistema alerta sobre inadimplência e permite acionar cobrança via agente IA
-- [ ] Usuário pode emitir recibo de consulta em PDF
-
-#### Autenticação e Segurança
-- [ ] Usuário pode criar conta, fazer login e logout com JWT
-- [ ] Sistema suporta múltiplos perfis: admin, dentista, recepcionista, paciente
-- [ ] Dados isolados por tenant_id (multi-tenant) com RLS no Supabase
-- [ ] Todas as ações sensíveis registradas em audit_log imutável
-- [ ] CPF, e-mail e telefone mascarados em listagens (LGPD)
-
-#### IA / Copiloto
-- [ ] Copiloto IA disponível em toda tela para responder perguntas contextuais
-- [ ] Agente autônomo confirma consultas do dia seguinte via WhatsApp/e-mail
-- [ ] Agente autônomo lista e contata inadimplentes com cobrança personalizada
-
-#### Infraestrutura
-- [ ] Deploy automatizado na Vercel com CI/CD
-- [ ] Schema de banco no Supabase com migrations versionadas
-- [ ] Variáveis sensíveis gerenciadas via Vercel environment variables
+_Nenhum — v1.0 entregue. Próximo milestone definido via `/gsd-new-milestone`._
 
 ### Out of Scope (v1)
 
@@ -78,13 +77,19 @@ Um dentista deve conseguir ver a agenda do dia, registrar atendimento e fechar o
 - **Arquitetura documentada** em `FYNXIA-ERP.md` e `ARQUITETURA.docx` — análise completa já realizada
 - **Wireframes aprovados** para Dashboard, Agenda, Ficha do Paciente e Fluxo de Caixa
 - **Supabase já criado** pelo usuário — URL e chaves disponíveis
-- **Stack decidida**: Next.js 14 App Router + TypeScript + Tailwind CSS + shadcn/ui + Supabase + Vercel
+- **Stack decidida**: Next.js 15 App Router + TypeScript + Tailwind v4 + shadcn/ui + @base-ui + Supabase + Vercel
 - **Mercado**: Brasil, setor odontológico, foco em clínicas individuais e pequenas redes
 - **Conformidade**: LGPD obrigatório; HIPAA e CFO a considerar
 
+### Estado atual (pós-v1.0)
+- **Shipped:** v1.0 MVP em 2026-06-12 — 7 fases, 32 planos, ~76k linhas TS. Live em fynxia.vercel.app.
+- **Stack em produção:** Next.js 15 + Supabase (sa-east-1, FREE plan) + Vercel (gru1) + Tailwind v4 + AI SDK v6.
+- **Gated em setup externo (não-código):** conta Asaas (sandbox Pix), verificação Meta Business + templates WhatsApp, `AI_GATEWAY_API_KEY`, `CRON_SECRET`. Upgrade Supabase Pro habilita Auth Hook + pg_cron/pgmq.
+- **Dívida técnica conhecida:** Zod pinado em v3; audit cross-fase do milestone não executado (cada fase verificada individualmente).
+
 ## Constraints
 
-- **Tech Stack**: Next.js 14 + TypeScript + Supabase + Vercel — decisão tomada, não renegociar
+- **Tech Stack**: Next.js 15 (App Router) + TypeScript (strict) + Supabase + Vercel — decisão tomada, não renegociar
 - **Segurança**: LGPD obrigatório — RLS, soft delete, audit trail, mascaramento de dados sensíveis
 - **Performance**: Latência < 200ms, 1.000+ usuários simultâneos
 - **Pagamentos**: Asaas (primário, BR) + Stripe (secundário) — ambos necessários
@@ -95,13 +100,16 @@ Um dentista deve conseguir ver a agenda do dia, registrar atendimento e fechar o
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Next.js App Router | SSR/SSG nativo, melhor SEO, integração Vercel | — Pending |
-| Supabase como BaaS | Auth + DB + Storage + Realtime em um lugar, RLS nativo | — Pending |
-| Multi-tenant via RLS | Isolamento de dados sem schemas separados, escalável | — Pending |
-| Vercel AI Gateway | Observabilidade de IA, fallbacks entre provedores | — Pending |
-| shadcn/ui | Componentes customizáveis, acessibilidade, Tailwind nativo | — Pending |
-| Asaas como gateway primário | Suporte nativo a Pix + boleto + cartão no Brasil | — Pending |
-| MVP Clínica + Financeiro paralelos | Entregas simultâneas aceleram validação de negócio | — Pending |
+| Next.js 15 App Router (upgrade do 14) | Opt-in caching melhor para freshness de ERP; Turbopack dev | ✓ Good — usado em produção |
+| Supabase como BaaS | Auth + DB + Storage + Realtime em um lugar, RLS nativo | ✓ Good |
+| Multi-tenant via RLS (SECURITY DEFINER, sem Auth Hook) | Isolamento sem schemas separados; compatível com FREE plan | ✓ Good — isolamento verificado em prod |
+| @supabase/ssr (não auth-helpers depreciado) | Pacote oficial atual; auth em Server Components | ✓ Good |
+| Vercel AI Gateway + AI SDK v6 | Observabilidade, fallbacks, ZDR para LGPD | ✓ Good |
+| shadcn/ui + @base-ui (render-prop, sem asChild) + Tailwind v4 | Componentes acessíveis customizáveis | ✓ Good |
+| Asaas via REST direto (sem SDK community) | Pix/boleto BR nativo; controle de idempotência | ✓ Good — sandbox live pendente de conta |
+| Outbox pattern + Vercel Cron (não pg_cron/pgmq) | pg_cron/pgmq são Pro-only; outbox entrega o mesmo no FREE | ✓ Good — adapter troca no upgrade Pro |
+| Zod v3 (pin) | hookform/resolvers v5 tem issues com v4 | ⚠️ Revisit — migrar quando resolvers estabilizar |
+| MVP Clínica + Financeiro paralelos | Entregas simultâneas aceleram validação | ✓ Good |
 
 ## Evolution
 
@@ -121,4 +129,4 @@ Este documento evolui a cada transição de fase e marco de milestone.
 4. Atualizar Context com estado atual
 
 ---
-*Last updated: 2026-06-04 — Phase 0 (Foundation) complete*
+*Last updated: 2026-06-12 — after v1.0 MVP milestone (Phases 0–6 shipped)*
