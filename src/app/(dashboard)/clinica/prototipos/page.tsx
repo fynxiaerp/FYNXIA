@@ -21,18 +21,18 @@ const PROTOTYPES = [
     ready: true,
   },
   {
-    href: '#',
+    href: '/clinica/prototipos/nfse',
     title: 'NFSe Fiscal',
-    description: 'Emissão de nota de serviço odontológica + histórico. (a desenhar)',
+    description: 'Emissão de nota de serviço odontológica, ISS e histórico de notas.',
     icon: FileText,
-    ready: false,
+    ready: true,
   },
   {
-    href: '#',
+    href: '/clinica/prototipos/convenios',
     title: 'Convênios / Planos',
-    description: 'Cadastro de convênios, guias TISS, faturamento por plano. (a desenhar)',
+    description: 'Cadastro de convênios, guias TISS, faturamento por plano e glosas.',
     icon: ShieldPlus,
-    ready: false,
+    ready: true,
   },
 ]
 

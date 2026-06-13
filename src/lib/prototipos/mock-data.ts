@@ -119,3 +119,92 @@ export const biKpis = () => {
     margin: (profit / revenue) * 100,
   }
 }
+
+// ───────────────────────────── NFSe Fiscal ─────────────────────────────
+
+export const ISS_RATE = 0.05 // alíquota ISS (exemplo município)
+export const NFSE_ISSUED_6M = [38, 42, 40, 47, 51, 56]
+
+export type NfseStatus = 'emitida' | 'processando' | 'cancelada' | 'erro'
+
+export interface NfseRow {
+  numero: string
+  tomador: string // paciente (mascarado)
+  servico: string
+  data: string // dd/mm
+  valor: number
+  status: NfseStatus
+}
+
+export const NFSE_ROWS: NfseRow[] = [
+  { numero: '2026/000412', tomador: 'Marina A.',  servico: 'Tratamento de canal',     data: '11/06', valor: 1200, status: 'emitida' },
+  { numero: '2026/000411', tomador: 'Rafael C.',  servico: 'Clareamento dental',       data: '11/06', valor: 800,  status: 'emitida' },
+  { numero: '2026/000410', tomador: 'Beatriz L.', servico: 'Restauração em resina',    data: '10/06', valor: 350,  status: 'processando' },
+  { numero: '2026/000409', tomador: 'Thiago N.',  servico: 'Profilaxia',               data: '10/06', valor: 150,  status: 'emitida' },
+  { numero: '2026/000408', tomador: 'Helena P.',  servico: 'Implante unitário',        data: '09/06', valor: 3500, status: 'emitida' },
+  { numero: '2026/000407', tomador: 'Carlos M.',  servico: 'Extração',                 data: '09/06', valor: 300,  status: 'cancelada' },
+  { numero: '2026/000406', tomador: 'Júlia S.',   servico: 'Restauração em resina',    data: '08/06', valor: 350,  status: 'erro' },
+  { numero: '2026/000405', tomador: 'André F.',   servico: 'Tratamento de canal',      data: '08/06', valor: 1200, status: 'emitida' },
+]
+
+export const nfseKpis = () => {
+  const emitidas = NFSE_ROWS.filter((r) => r.status === 'emitida')
+  const valor = emitidas.reduce((s, r) => s + r.valor, 0)
+  const iss = valor * ISS_RATE
+  const pendentes = NFSE_ROWS.filter((r) => r.status === 'processando' || r.status === 'erro').length
+  return { mesCount: NFSE_ISSUED_6M[NFSE_ISSUED_6M.length - 1] ?? 0, valor, iss, pendentes }
+}
+
+// ───────────────────────────── Convênios / Planos (TISS) ─────────────────────────────
+
+export type InsurerStatus = 'ativo' | 'em_negociacao'
+
+export interface InsurerRow {
+  name: string
+  guias: number
+  faturado: number
+  glosaRate: number // % glosa
+  status: InsurerStatus
+  tone: ChartTone
+}
+
+export const INSURERS: InsurerRow[] = [
+  { name: 'Odontoprev',      guias: 184, faturado: 96400, glosaRate: 3.2, status: 'ativo', tone: 'chart-2' },
+  { name: 'Amil Dental',     guias: 142, faturado: 71800, glosaRate: 5.1, status: 'ativo', tone: 'chart-3' },
+  { name: 'Bradesco Saúde',  guias: 118, faturado: 58300, glosaRate: 4.4, status: 'ativo', tone: 'chart-1' },
+  { name: 'SulAmérica',      guias: 87,  faturado: 41200, glosaRate: 7.8, status: 'ativo', tone: 'chart-4' },
+  { name: 'Unimed',          guias: 56,  faturado: 28900, glosaRate: 6.0, status: 'em_negociacao', tone: 'chart-5' },
+]
+
+export type TissStatus = 'autorizada' | 'em_analise' | 'glosada' | 'paga'
+
+export interface TissGuideRow {
+  numero: string
+  paciente: string
+  convenio: string
+  procedimento: string
+  valor: number
+  status: TissStatus
+}
+
+export const TISS_GUIDES: TissGuideRow[] = [
+  { numero: 'G-58213', paciente: 'Marina A.',  convenio: 'Odontoprev',     procedimento: 'Restauração resina',  valor: 350,  status: 'paga' },
+  { numero: 'G-58212', paciente: 'Rafael C.',  convenio: 'Amil Dental',    procedimento: 'Profilaxia',          valor: 150,  status: 'autorizada' },
+  { numero: 'G-58211', paciente: 'Beatriz L.', convenio: 'Bradesco Saúde', procedimento: 'Tratamento de canal', valor: 1200, status: 'em_analise' },
+  { numero: 'G-58210', paciente: 'Thiago N.',  convenio: 'SulAmérica',     procedimento: 'Extração',            valor: 300,  status: 'glosada' },
+  { numero: 'G-58209', paciente: 'Helena P.',  convenio: 'Odontoprev',     procedimento: 'Raspagem',            valor: 420,  status: 'autorizada' },
+  { numero: 'G-58208', paciente: 'Carlos M.',  convenio: 'Amil Dental',    procedimento: 'Restauração resina',  valor: 350,  status: 'paga' },
+  { numero: 'G-58207', paciente: 'Júlia S.',   convenio: 'Unimed',         procedimento: 'Profilaxia',          valor: 150,  status: 'em_analise' },
+]
+
+export const insurerKpis = () => {
+  const faturado = INSURERS.reduce((s, i) => s + i.faturado, 0)
+  const guias = INSURERS.reduce((s, i) => s + i.guias, 0)
+  const glosaAvg = INSURERS.reduce((s, i) => s + i.glosaRate, 0) / INSURERS.length
+  const glosaValor = INSURERS.reduce((s, i) => s + i.faturado * (i.glosaRate / 100), 0)
+  const pendentes = TISS_GUIDES.filter((g) => g.status === 'em_analise').length
+  return { faturado, guias, glosaAvg, glosaValor, ativos: INSURERS.filter((i) => i.status === 'ativo').length, pendentes }
+}
+
+export const insurerSplit = (): { label: string; value: number; tone: ChartTone }[] =>
+  INSURERS.map((i) => ({ label: i.name, value: i.faturado, tone: i.tone }))
