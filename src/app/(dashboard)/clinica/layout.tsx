@@ -11,26 +11,31 @@ import { AppShellClient } from '@/components/shell/AppShellClient'
 import { CopilotTrigger } from '@/components/copilot/CopilotTrigger'
 import { MobileMenuTrigger } from '@/components/shell/MobileMenuTrigger'
 import { buildNavItems } from '@/components/shell/nav-config'
+import { DebugError } from '@/lib/debug-error' // TEMP-DEBUG
 
 export default async function ClinicaLayout({ children }: { children: React.ReactNode }) {
-  // Read role server-side for mobile nav role gating (same logic as AppSidebar).
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  const { data: me } = user
-    ? await supabase.from('users').select('role').eq('id', user.id).single()
-    : { data: null }
-  const isAdmin = (me?.role ?? 'receptionist') === 'admin' || me?.role === 'superadmin'
-  const mobileNavItems = buildNavItems(isAdmin)
+  try { // TEMP-DEBUG
+    // Read role server-side for mobile nav role gating (same logic as AppSidebar).
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    const { data: me } = user
+      ? await supabase.from('users').select('role').eq('id', user.id).single()
+      : { data: null }
+    const isAdmin = (me?.role ?? 'receptionist') === 'admin' || me?.role === 'superadmin'
+    const mobileNavItems = buildNavItems(isAdmin)
 
-  return (
-    <div className="flex h-screen overflow-hidden">
-      <AppShellClient
-        sidebar={<AppSidebar />}
-        mobileHeader={<MobileMenuTrigger items={mobileNavItems} />}
-      >
-        {children}
-      </AppShellClient>
-      <CopilotTrigger />
-    </div>
-  )
+    return (
+      <div className="flex h-screen overflow-hidden">
+        <AppShellClient
+          sidebar={<AppSidebar />}
+          mobileHeader={<MobileMenuTrigger items={mobileNavItems} />}
+        >
+          {children}
+        </AppShellClient>
+        <CopilotTrigger />
+      </div>
+    )
+  } catch (error) { // TEMP-DEBUG
+    return <DebugError where="clinica/layout.tsx" error={error} />
+  }
 }
