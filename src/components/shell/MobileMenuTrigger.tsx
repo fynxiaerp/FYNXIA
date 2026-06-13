@@ -5,7 +5,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, type LucideIcon } from 'lucide-react'
+import { Menu } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
   Sheet,
@@ -13,15 +13,14 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet'
+import type { NavItemConfig } from './nav-config'
+import { NAV_ICONS } from './nav-icons'
 
-export interface MobileNavItem {
-  href: string
-  label: string
-  icon: LucideIcon
-}
+// Re-exported for callers that previously imported MobileNavItem from here.
+export type MobileNavItem = NavItemConfig
 
 interface MobileMenuTriggerProps {
-  items: MobileNavItem[]
+  items: NavItemConfig[]
 }
 
 export function MobileMenuTrigger({ items }: MobileMenuTriggerProps) {
@@ -55,7 +54,7 @@ export function MobileMenuTrigger({ items }: MobileMenuTriggerProps) {
           >
             {items.map((item) => {
               const isActive = pathname.startsWith(item.href)
-              const Icon = item.icon
+              const Icon = NAV_ICONS[item.icon]
               return (
                 <Link
                   key={item.href}

@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { type LucideIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
   Tooltip,
@@ -11,15 +10,14 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { useSidebarStore } from '@/hooks/useSidebarStore'
+import type { NavItemConfig } from './nav-config'
+import { NAV_ICONS } from './nav-icons'
 
-export interface NavItem {
-  href: string
-  label: string
-  icon: LucideIcon
-}
+// Re-exported for callers that previously imported NavItem from here.
+export type NavItem = NavItemConfig
 
 interface SidebarNavClientProps {
-  items: NavItem[]
+  items: NavItemConfig[]
 }
 
 export function SidebarNavClient({ items }: SidebarNavClientProps) {
@@ -31,7 +29,7 @@ export function SidebarNavClient({ items }: SidebarNavClientProps) {
       <nav aria-label="Navegação principal" className="flex flex-col gap-1 px-2">
         {items.map((item) => {
           const isActive = pathname.startsWith(item.href)
-          const Icon = item.icon
+          const Icon = NAV_ICONS[item.icon]
 
           if (isCollapsed) {
             return (

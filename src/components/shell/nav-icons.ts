@@ -1,0 +1,22 @@
+// nav-icons.ts — maps serializable NavIconKey strings to Lucide components.
+// Imported ONLY by Client Components (SidebarNavClient, MobileMenuTrigger) so the
+// icon components stay on the client and never cross the RSC server→client boundary.
+import {
+  Calendar,
+  Users,
+  DollarSign,
+  UserCog,
+  BrainCircuit,
+  FlaskConical,
+  type LucideIcon,
+} from 'lucide-react'
+import type { NavIconKey } from './nav-config'
+
+export const NAV_ICONS: Record<NavIconKey, LucideIcon> = {
+  agenda: Calendar,
+  pacientes: Users,
+  financeiro: DollarSign,
+  equipe: UserCog,
+  ia: BrainCircuit,
+  prototipos: FlaskConical,
+}
