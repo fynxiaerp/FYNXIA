@@ -1,6 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { updateSession } from '@/lib/supabase/middleware'
-import { createClient } from '@/lib/supabase/server'
 
 // ─── Role → allowed path prefixes (D-07) ────────────────────────────────────
 export const ROLE_ROUTES: Record<string, string[]> = {
@@ -21,7 +20,8 @@ export function isPathAllowed(role: string, pathname: string): boolean {
 }
 
 export async function proxy(request: NextRequest) {
-  const { user, supabaseResponse } = await updateSession(request)
+  try { // TEMP-DEBUG
+  const { user, supabaseResponse, supabase } = await updateSession(request)
 
   const pathname = request.nextUrl.pathname
 
@@ -64,9 +64,9 @@ export async function proxy(request: NextRequest) {
 
   // For authenticated users on protected routes: enforce RBAC (D-06/D-07/D-08)
   if (user && !isAuthRoute && !isPublicApiRoute && !isPublicRoute && !isAuthCallbackRoute) {
-    // Single DB call — read role directly from public.users (Anti-Pattern: don't use RPC)
-    // createClient() uses the user's JWT cookie context so RLS applies correctly
-    const supabase = await createClient()
+    // Single DB call — read role directly from public.users (Anti-Pattern: don't use RPC).
+    // Use the request-scoped client from updateSession — the server-component
+    // createClient() (next/headers cookies()) is INVALID inside middleware and throws.
     const { data: roleRow } = await supabase
       .from('users')
       .select('role')
@@ -92,6 +92,12 @@ export async function proxy(request: NextRequest) {
   }
 
   return supabaseResponse
+  } catch (error) { // TEMP-DEBUG
+    return new NextResponse(
+      `MIDDLEWARE ERROR (proxy.ts)\n\n${(error as Error)?.stack ?? String(error)}`,
+      { status: 500, headers: { 'content-type': 'text/plain; charset=utf-8' } }
+    )
+  }
 }
 
 export const config = {

@@ -32,5 +32,8 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  return { user, supabaseResponse }
+  // Expose the request-scoped client so the proxy can do RLS-scoped reads
+  // (e.g. role lookup) WITHOUT calling the server-component client, whose
+  // next/headers cookies() is invalid inside middleware.
+  return { user, supabaseResponse, supabase }
 }
