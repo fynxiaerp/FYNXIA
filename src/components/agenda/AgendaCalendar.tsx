@@ -47,11 +47,11 @@ interface AgendaCalendarProps {
 // Applied via eventClassNames — Tailwind utility classes on event blocks.
 
 const STATUS_CLASS_MAP: Record<string, string> = {
-  agendado: 'bg-blue-100 text-blue-800 border-l-2 border-blue-500',
-  confirmado: 'bg-green-100 text-green-800 border-l-2 border-green-500',
-  em_atendimento: 'bg-amber-100 text-amber-800 border-l-2 border-amber-500',
-  concluido: 'bg-gray-100 text-gray-600 border-l-2 border-gray-400',
-  cancelado: 'bg-red-50 text-red-500 line-through border-l-2 border-red-300',
+  agendado: 'bg-blue-100 text-blue-800 border-l-2 border-blue-500 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-700',
+  confirmado: 'bg-green-100 text-green-800 border-l-2 border-green-500 dark:bg-green-950/40 dark:text-green-300 dark:border-green-700',
+  em_atendimento: 'bg-amber-100 text-amber-800 border-l-2 border-amber-500 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-700',
+  concluido: 'bg-muted text-muted-foreground border-l-2 border-border',
+  cancelado: 'bg-red-50 text-red-500 line-through border-l-2 border-red-300 dark:bg-red-950/40 dark:text-red-400 dark:border-red-800',
 }
 
 // ─── New Appointment Dialog ───────────────────────────────────────────────────

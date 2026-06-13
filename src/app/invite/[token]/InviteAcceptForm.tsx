@@ -42,14 +42,14 @@ export default function InviteAcceptForm({
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       {serverError && (
-        <p className="rounded-md bg-red-50 px-4 py-3 text-sm text-red-700 border border-red-200">
+        <p className="rounded-md bg-destructive/10 px-4 py-3 text-sm text-destructive border border-destructive/20">
           {serverError}
         </p>
       )}
 
       {/* Email is read-only — comes from the invitation row (T-01-17) */}
       <div className="space-y-1">
-        <label htmlFor="email" className="block text-sm font-medium text-slate-700">
+        <label htmlFor="email" className="block text-sm font-semibold">
           E-mail
         </label>
         <input
@@ -58,12 +58,12 @@ export default function InviteAcceptForm({
           value={email}
           readOnly
           disabled
-          className="w-full rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-500 cursor-not-allowed"
+          className="w-full rounded-md border border-input bg-muted px-3 py-2 text-sm text-muted-foreground cursor-not-allowed"
         />
       </div>
 
       <div className="space-y-1">
-        <label htmlFor="password" className="block text-sm font-medium text-slate-700">
+        <label htmlFor="password" className="block text-sm font-semibold">
           Defina sua senha
         </label>
         <input
@@ -71,11 +71,11 @@ export default function InviteAcceptForm({
           type="password"
           autoComplete="new-password"
           placeholder="Mínimo 8 caracteres"
-          className="w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900"
+          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
           {...register('password')}
         />
         {errors.password && (
-          <p className="text-xs text-red-600">{errors.password.message}</p>
+          <p className="text-xs text-destructive">{errors.password.message}</p>
         )}
       </div>
 

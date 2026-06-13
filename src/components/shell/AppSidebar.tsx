@@ -2,6 +2,7 @@
 // Reads role + clinic server-side; renders logo chip, role-gated nav, SidebarFooter.
 // SidebarFooter contains ThemeToggle + Sair (sign-out) button.
 // Nav items sourced from nav-config.ts (single source of truth shared with mobile nav).
+// Modules: Agenda, Pacientes, Financeiro, Equipe (admin only), IA / Agentes.
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/server'
 import { SidebarNavClient } from './SidebarNavClient'
