@@ -10,10 +10,8 @@ import { SidebarFooter } from './SidebarFooter'
 // ThemeToggle is rendered inside SidebarFooter (imported there)
 import { SidebarCollapseButton } from './SidebarCollapseButton'
 import { buildNavItems } from './nav-config'
-import { DebugError } from '@/lib/debug-error' // TEMP-DEBUG
 
 export async function AppSidebar() {
-  try { // TEMP-DEBUG
   const supabase = await createClient()
 
   const {
@@ -59,9 +57,6 @@ export async function AppSidebar() {
       <SidebarFooter clinicName={clinicName} userEmail={userEmail} />
     </aside>
   )
-  } catch (error) { // TEMP-DEBUG
-    return <DebugError where="AppSidebar.tsx" error={error} />
-  }
 }
 
 // Client component to hide wordmark when collapsed

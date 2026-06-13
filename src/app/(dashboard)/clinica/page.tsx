@@ -1,13 +1,11 @@
 import Link from 'next/link'
-import { Calendar, Users, Link2, FileText, DollarSign, MessageSquare, Plus, BotMessageSquare } from 'lucide-react'
+import { Calendar, Users, Link2, FileText, DollarSign, BotMessageSquare } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { PageHeader } from '@/components/shell/PageHeader'
-import { DebugError } from '@/lib/debug-error' // TEMP-DEBUG
 
 // Hub — dashboard overview for the authenticated clinic user.
 // Server Component. RLS-scoped server reads for quick stats.
 export default async function ClinicaPage() {
-  try { // TEMP-DEBUG
   const supabase = await createClient()
 
   // Derive user and first name
@@ -151,7 +149,4 @@ export default async function ClinicaPage() {
       </div>
     </>
   )
-  } catch (error) { // TEMP-DEBUG
-    return <DebugError where="clinica/page.tsx (hub)" error={error} />
-  }
 }
