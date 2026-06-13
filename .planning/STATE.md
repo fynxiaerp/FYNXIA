@@ -1,77 +1,16 @@
 ---
 gsd_state_version: 1.0
 milestone: v2.0
-milestone_name: Produto Completo
-status: planning
-stopped_at: Roadmap v2.0 criado — 15 fases (7–21), 75 requisitos mapeados 100%. Próximo passo: /gsd-plan-phase 7
-last_updated: "2026-06-13T00:00:00.000Z"
+milestone_name: — Produto Completo
+status: Roadmap aprovado. Aguardando `/gsd-plan-phase 7`
+stopped_at: Phase 7 context gathered
+last_updated: "2026-06-13T23:04:30.080Z"
+last_activity: 2026-06-13 — roadmap v2.0 criado; 15 fases (7–21) mapeadas com 75 requisitos
 progress:
   total_phases: 15
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
-  percent: 0
-phases:
-  - id: 7
-    name: Sistema, Multiunidade & Papéis
-    block: A
-    status: not_started
-  - id: 8
-    name: Documentos & Assinatura ICP-Brasil
-    block: A
-    status: not_started
-  - id: 9
-    name: Hub de Integrações Externas
-    block: A
-    status: not_started
-  - id: 10
-    name: IA Governada (L0–L4), Auditoria & OCR
-    block: A
-    status: not_started
-  - id: 11
-    name: Profissionais & Recursos
-    block: B
-    status: not_started
-  - id: 12
-    name: Receituário & Teleodontologia
-    block: B
-    status: not_started
-  - id: 13
-    name: Esterilização/CME & Laboratório de Prótese
-    block: B
-    status: not_started
-  - id: 14
-    name: Financeiro — Cadastros Base
-    block: C
-    status: not_started
-  - id: 15
-    name: Faturamento/NFS-e & Convênios/TISS
-    block: C
-    status: not_started
-  - id: 16
-    name: Contas a Pagar, Conciliação & Tributos
-    block: C
-    status: not_started
-  - id: 17
-    name: Estoque & Materiais
-    block: D
-    status: not_started
-  - id: 18
-    name: CRC & Marketing
-    block: D
-    status: not_started
-  - id: 19
-    name: Relatórios, Orçamento & BI
-    block: E
-    status: not_started
-  - id: 20
-    name: Portal do Paciente & App do Profissional
-    block: E
-    status: not_started
-  - id: 21
-    name: Migração & Ensino
-    block: E
-    status: not_started
 ---
 
 # FYNXIA ERP — Project State
@@ -199,7 +138,7 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 
 ## Session Continuity
 
-**Stopped at:** Roadmap v2.0 criado (Phases 7–21, 75/75 requisitos mapeados).
+**Stopped at:** Phase 7 context gathered
 
 **Critical path (v2.0):** Phase 7 → Phase 8 → Phase 9 → Phase 10 → Phase 11 → Phase 12 → Phase 13 → Phase 14 → Phase 15 → Phase 16 → Phase 17 → Phase 18 → Phase 19 → Phase 20 → Phase 21
 
