@@ -47,12 +47,20 @@ interface CardGridSkeletonProps {
   count?: number
   columns?: number
 }
+// Explicit static map — Tailwind requires full class names at build time (no interpolation).
+const COLS_CLASS: Record<number, string> = {
+  1: 'sm:grid-cols-1',
+  2: 'sm:grid-cols-2',
+  3: 'sm:grid-cols-3',
+  4: 'sm:grid-cols-4',
+}
+
 export function CardGridSkeleton({ count = 3, columns = 3 }: CardGridSkeletonProps) {
   return (
     <div
       aria-busy="true"
       aria-label="Carregando…"
-      className={`grid grid-cols-1 gap-4 sm:grid-cols-${columns}`}
+      className={`grid grid-cols-1 gap-4 ${COLS_CLASS[columns] ?? 'sm:grid-cols-3'}`}
     >
       {Array.from({ length: count }).map((_, i) => (
         <div key={i} className="rounded-lg border border-border bg-card p-4 h-28 flex flex-col gap-3">
