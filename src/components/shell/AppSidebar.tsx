@@ -1,13 +1,14 @@
 // AppSidebar — persistent left sidebar Server Component.
 // Reads role + clinic server-side; renders logo chip, role-gated nav, SidebarFooter.
 // SidebarFooter contains ThemeToggle + Sair (sign-out) button.
+// Nav items sourced from nav-config.ts (single source of truth shared with mobile nav).
 import Image from 'next/image'
-import { Calendar, Users, UserCog, DollarSign, BrainCircuit } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
-import { SidebarNavClient, type NavItem } from './SidebarNavClient'
+import { SidebarNavClient } from './SidebarNavClient'
 import { SidebarFooter } from './SidebarFooter'
 // ThemeToggle is rendered inside SidebarFooter (imported there)
 import { SidebarCollapseButton } from './SidebarCollapseButton'
+import { buildNavItems } from './nav-config'
 
 export async function AppSidebar() {
   const supabase = await createClient()
@@ -27,14 +28,7 @@ export async function AppSidebar() {
   const clinicName = clinic?.name ?? 'Minha Clínica'
 
   const isAdmin = role === 'admin' || role === 'superadmin'
-
-  const navItems: NavItem[] = [
-    { href: '/clinica/agenda', label: 'Agenda', icon: Calendar },
-    { href: '/clinica/pacientes', label: 'Pacientes', icon: Users },
-    { href: '/clinica/financeiro', label: 'Financeiro', icon: DollarSign },
-    ...(isAdmin ? [{ href: '/clinica/equipe', label: 'Equipe', icon: UserCog }] : []),
-    { href: '/clinica/ia/agentes', label: 'IA / Agentes', icon: BrainCircuit },
-  ]
+  const navItems = buildNavItems(isAdmin)
 
   return (
     <aside className="flex flex-col h-full bg-sidebar border-r border-sidebar-border">

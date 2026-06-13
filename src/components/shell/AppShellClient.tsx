@@ -6,9 +6,12 @@ import { useSidebarStore } from '@/hooks/useSidebarStore'
 interface AppShellClientProps {
   sidebar: React.ReactNode
   children: React.ReactNode
+  /** Mobile header bar — rendered md:hidden above page content.
+   *  Pass a pre-built <MobileMenuTrigger> from the server layout so role gating stays server-side. */
+  mobileHeader?: React.ReactNode
 }
 
-export function AppShellClient({ sidebar, children }: AppShellClientProps) {
+export function AppShellClient({ sidebar, children, mobileHeader }: AppShellClientProps) {
   const isCollapsed = useSidebarStore((state) => state.isCollapsed)
 
   return (
@@ -31,6 +34,12 @@ export function AppShellClient({ sidebar, children }: AppShellClientProps) {
           isCollapsed && 'md:ml-[56px]'
         )}
       >
+        {/* Mobile top bar — visible only below md breakpoint */}
+        {mobileHeader && (
+          <div className="md:hidden flex items-center h-14 border-b border-border bg-background px-4 shrink-0">
+            {mobileHeader}
+          </div>
+        )}
         <main id="main-content" className="flex-1 overflow-y-auto">
           {children}
         </main>
