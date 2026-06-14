@@ -139,7 +139,7 @@ Plans:
 - [x] 10-01-PLAN.md — Wave 0: RED test scaffolds (migrations + policy + approvals + audit + ocr)
 - [x] 10-02-PLAN.md — Wave 1: 3 migrations (ai_decision_log/approval_requests/ocr_extractions) + audit_logs indexes + conformidade RBAC module
 - [x] 10-03-PLAN.md — Wave 1: withAgentPolicy + approval actions + additive governance wrap of tools/agents (AIG-01/02/03)
-- [ ] 10-04-PLAN.md — Wave 2: audit query lib + generic estorno via approval-by-alçada (AUD-01/02)
+- [x] 10-04-PLAN.md — Wave 2: audit query lib + generic estorno via approval-by-alçada (AUD-01/02)
 - [ ] 10-05-PLAN.md — Wave 2: OCR extract route (Gateway multimodal + ZDR + FilePart) + confidence gating + review/commit actions (OCR-01/02)
 - [ ] 10-06-PLAN.md — Wave 3: [BLOCKING] supabase db push + gen types (truncation guard)
 - [ ] 10-07-PLAN.md — Wave 4: conformidade UI — audit screen + approval inbox (AUD-01/03, AIG-02, AUD-02)
@@ -325,7 +325,7 @@ Plans:
 | 7. Sistema, Multiunidade & Papéis | v2.0 | 0/6 | Planned | - |
 | 8. Documentos & Assinatura ICP-Brasil | v2.0 | 0/5 | Planned | - |
 | 9. Hub de Integrações Externas | v2.0 | 0/? | Not started | - |
-| 10. IA Governada, Auditoria & OCR | v2.0 | 3/8 | In Progress|  |
+| 10. IA Governada, Auditoria & OCR | v2.0 | 4/8 | In Progress|  |
 | 11. Profissionais & Recursos | v2.0 | 0/? | Not started | - |
 | 12. Receituário & Teleodontologia | v2.0 | 0/? | Not started | - |
 | 13. Esterilização/CME & Laboratório de Prótese | v2.0 | 0/? | Not started | - |
