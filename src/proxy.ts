@@ -119,7 +119,6 @@ const _derivedRoleRoutes = deriveRoleRoutes()
 export const ROLE_ROUTES: Record<string, string[]> = _derivedRoleRoutes
 
 export async function proxy(request: NextRequest) {
-  try { // TEMP-DEBUG
   const { user, supabaseResponse, supabase } = await updateSession(request)
 
   const pathname = request.nextUrl.pathname
@@ -194,12 +193,6 @@ export async function proxy(request: NextRequest) {
   }
 
   return supabaseResponse
-  } catch (error) { // TEMP-DEBUG
-    return new NextResponse(
-      `MIDDLEWARE ERROR (proxy.ts)\n\n${(error as Error)?.stack ?? String(error)}`,
-      { status: 500, headers: { 'content-type': 'text/plain; charset=utf-8' } }
-    )
-  }
 }
 
 export const config = {
