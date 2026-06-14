@@ -95,7 +95,7 @@ export function canApprove(role: string, requiredRole: string): boolean {
   const requiredRank = APPROVER_RANK[requiredRole]
   // Unknown requiredRole: require superadmin rank (escape hatch — WR-02)
   if (requiredRank === undefined) {
-    return actorRank >= APPROVER_RANK['superadmin']
+    return actorRank >= (APPROVER_RANK['superadmin'] ?? 100)
   }
   return actorRank >= requiredRank
 }
