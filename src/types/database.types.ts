@@ -184,6 +184,45 @@ export type Database = {
           },
         ]
       }
+      ai_decision_log: {
+        Row: {
+          action: string
+          actor_id: string | null
+          agent_key: string
+          autonomy_level: string
+          clinic_id: string
+          created_at: string
+          decision: string
+          id: string
+          payload: Json | null
+          reason: string | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          agent_key: string
+          autonomy_level: string
+          clinic_id: string
+          created_at?: string
+          decision: string
+          id?: string
+          payload?: Json | null
+          reason?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          agent_key?: string
+          autonomy_level?: string
+          clinic_id?: string
+          created_at?: string
+          decision?: string
+          id?: string
+          payload?: Json | null
+          reason?: string | null
+        }
+        Relationships: []
+      }
       anamneses: {
         Row: {
           created_at: string
@@ -327,6 +366,99 @@ export type Database = {
             columns: ["unit_id"]
             isOneToOne: false
             referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      approval_requests: {
+        Row: {
+          agent_key: string | null
+          approver: string | null
+          clinic_id: string
+          created_at: string
+          decided_at: string | null
+          executed_at: string | null
+          expires_at: string | null
+          id: string
+          idempotency_key: string | null
+          payload: Json
+          reason: string | null
+          requested_by: string
+          required_role: string
+          status: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          agent_key?: string | null
+          approver?: string | null
+          clinic_id: string
+          created_at?: string
+          decided_at?: string | null
+          executed_at?: string | null
+          expires_at?: string | null
+          id?: string
+          idempotency_key?: string | null
+          payload?: Json
+          reason?: string | null
+          requested_by: string
+          required_role?: string
+          status?: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          agent_key?: string | null
+          approver?: string | null
+          clinic_id?: string
+          created_at?: string
+          decided_at?: string | null
+          executed_at?: string | null
+          expires_at?: string | null
+          id?: string
+          idempotency_key?: string | null
+          payload?: Json
+          reason?: string | null
+          requested_by?: string
+          required_role?: string
+          status?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "approval_requests_approver_fkey"
+            columns: ["approver"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "approval_requests_approver_fkey"
+            columns: ["approver"]
+            isOneToOne: false
+            referencedRelation: "users_masked"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "approval_requests_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "approval_requests_requested_by_fkey"
+            columns: ["requested_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "approval_requests_requested_by_fkey"
+            columns: ["requested_by"]
+            isOneToOne: false
+            referencedRelation: "users_masked"
             referencedColumns: ["id"]
           },
         ]
@@ -500,6 +632,90 @@ export type Database = {
         Relationships: []
       }
       audit_logs_2026_09: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          id: string
+          ip_address: unknown
+          new_values: Json | null
+          old_values: Json | null
+          record_id: string | null
+          table_name: string | null
+          tenant_id: string
+          user_agent: string | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          ip_address?: unknown
+          new_values?: Json | null
+          old_values?: Json | null
+          record_id?: string | null
+          table_name?: string | null
+          tenant_id: string
+          user_agent?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          ip_address?: unknown
+          new_values?: Json | null
+          old_values?: Json | null
+          record_id?: string | null
+          table_name?: string | null
+          tenant_id?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
+      audit_logs_2026_10: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          id: string
+          ip_address: unknown
+          new_values: Json | null
+          old_values: Json | null
+          record_id: string | null
+          table_name: string | null
+          tenant_id: string
+          user_agent: string | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          ip_address?: unknown
+          new_values?: Json | null
+          old_values?: Json | null
+          record_id?: string | null
+          table_name?: string | null
+          tenant_id: string
+          user_agent?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          ip_address?: unknown
+          new_values?: Json | null
+          old_values?: Json | null
+          record_id?: string | null
+          table_name?: string | null
+          tenant_id?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
+      audit_logs_2026_11: {
         Row: {
           action: string
           actor_id: string | null
@@ -1614,6 +1830,90 @@ export type Database = {
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ocr_extractions: {
+        Row: {
+          clinic_id: string
+          created_at: string
+          created_by: string
+          deleted_at: string | null
+          extracted_fields: Json
+          id: string
+          min_confidence: number
+          reviewed_at: string | null
+          reviewed_by: string | null
+          source_filename: string | null
+          status: string
+          target_id: string | null
+          target_table: string | null
+        }
+        Insert: {
+          clinic_id: string
+          created_at?: string
+          created_by: string
+          deleted_at?: string | null
+          extracted_fields: Json
+          id?: string
+          min_confidence: number
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          source_filename?: string | null
+          status?: string
+          target_id?: string | null
+          target_table?: string | null
+        }
+        Update: {
+          clinic_id?: string
+          created_at?: string
+          created_by?: string
+          deleted_at?: string | null
+          extracted_fields?: Json
+          id?: string
+          min_confidence?: number
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          source_filename?: string | null
+          status?: string
+          target_id?: string | null
+          target_table?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ocr_extractions_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ocr_extractions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ocr_extractions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users_masked"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ocr_extractions_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ocr_extractions_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "users_masked"
             referencedColumns: ["id"]
           },
         ]
