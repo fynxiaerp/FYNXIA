@@ -79,8 +79,8 @@ Full detail archived in [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
 - [x] 07-01-PLAN.md — Wave 0: node-forge install + assertNotReadOnly guard + RED test scaffolds + .pfx fixture
 - [x] 07-02-PLAN.md — Wave 1: multiunidade migrations (units, user_units + get_my_unit_ids, role expansion, unit_id backfill)
 - [x] 07-03-PLAN.md — Wave 1: RBAC module matrix + read-only gating in proxy.ts, node-forge pfx reader, certificates + ai_agent_config migrations
-- [ ] 07-04-PLAN.md — Wave 2: [BLOCKING] supabase db push + regenerate types (human re-auth)
-- [ ] 07-05-PLAN.md — Wave 3: Empresa & Unidades config UI (SYS-01)
+- [x] 07-04-PLAN.md — Wave 2: [BLOCKING] supabase db push + regenerate types (human re-auth)
+- [x] 07-05-PLAN.md — Wave 3: Empresa & Unidades config UI (SYS-01)
 - [ ] 07-06-PLAN.md — Wave 3: Certificado ICP + Autonomia IA + Perfis config UI (SYS-02/03/04)
 **v1 reuse**: Expande `public.clinics` + `public.users` + RBAC matrix do Phase 1; novos papéis adicionam linhas ao ROLE_ROUTES; SYS-02 prepara keystore para DOC (Phase 8)
 
