@@ -114,24 +114,33 @@ export async function signPdfBuffer(
  * Uses a FRESH MessageDigest object — Pitfall 2: md is consumed after sign();
  * a second call to md.digest() on the same object returns wrong bytes.
  *
+ * IN-01: Returns a discriminated result so callers can distinguish a genuine
+ * invalid signature (valid=false, no error) from an unexpected forge exception
+ * (valid=false, error set). This prevents misleading "invalid signature" UI
+ * when the failure is actually a malformed certPem or an internal forge error.
+ *
  * @param pdfBuffer    Original PDF bytes (from Storage or re-render of same content).
  * @param signatureB64 RSA signature (base64, 344 chars for 2048-bit RSA).
  * @param certPem      PEM of the signing certificate (stored in document_versions.cert_pem).
- * @returns            true if signature is valid; false otherwise.
+ * @returns            { valid: boolean; error?: string }
  */
 export function verifyPdfSignature(
   pdfBuffer: Buffer,
   signatureB64: string,
   certPem: string
-): boolean {
+): { valid: boolean; error?: string } {
   try {
     const sig = forge.util.decode64(signatureB64)
     const cert = forge.pki.certificateFromPem(certPem)
     // Fresh md2 — Pitfall 2: never reuse the md from signing
     const md2 = forge.md.sha256.create()
     md2.update(pdfBuffer.toString('binary'), 'raw')
-    return (cert.publicKey as forge.pki.rsa.PublicKey).verify(md2.digest().bytes(), sig)
-  } catch {
-    return false
+    const valid = (cert.publicKey as forge.pki.rsa.PublicKey).verify(md2.digest().bytes(), sig)
+    return { valid }
+  } catch (err) {
+    // Log unexpected forge errors so operators can diagnose malformed certs or inputs.
+    // Do NOT re-throw — callers receive valid=false with a stable error message.
+    console.error('[verifyPdfSignature] forge error:', err)
+    return { valid: false, error: 'Erro interno na verificação criptográfica' }
   }
 }
