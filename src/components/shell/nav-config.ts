@@ -12,6 +12,7 @@ export type NavIconKey =
   | 'agenda'
   | 'pacientes'
   | 'financeiro'
+  | 'documentos'
   | 'equipe'
   | 'ia'
   | 'prototipos'
@@ -26,12 +27,13 @@ export interface NavItemConfig {
 
 /** Full nav item list (unfiltered). */
 export const ALL_NAV_ITEMS: NavItemConfig[] = [
-  { href: '/clinica/agenda',     label: 'Agenda',       icon: 'agenda' },
-  { href: '/clinica/pacientes',  label: 'Pacientes',    icon: 'pacientes' },
-  { href: '/clinica/financeiro', label: 'Financeiro',   icon: 'financeiro' },
-  { href: '/clinica/equipe',     label: 'Equipe',       icon: 'equipe', adminOnly: true },
-  { href: '/clinica/ia/agentes', label: 'IA / Agentes', icon: 'ia' },
-  { href: '/clinica/prototipos', label: 'Protótipos',   icon: 'prototipos', adminOnly: true },
+  { href: '/clinica/agenda',      label: 'Agenda',       icon: 'agenda' },
+  { href: '/clinica/pacientes',   label: 'Pacientes',    icon: 'pacientes' },
+  { href: '/clinica/financeiro',  label: 'Financeiro',   icon: 'financeiro' },
+  { href: '/clinica/documentos',  label: 'Documentos',   icon: 'documentos' },
+  { href: '/clinica/equipe',      label: 'Equipe',       icon: 'equipe', adminOnly: true },
+  { href: '/clinica/ia/agentes',  label: 'IA / Agentes', icon: 'ia' },
+  { href: '/clinica/prototipos',  label: 'Protótipos',   icon: 'prototipos', adminOnly: true },
 ]
 
 /**
