@@ -11,7 +11,7 @@ export type AppRole =
   | 'admin' | 'superadmin' | 'dentist' | 'receptionist' | 'patient'
   | 'dpo' | 'auditor' | 'socio' | 'ti' | 'implantacao' | 'aluno'
 
-type ModuleKey = 'clinica' | 'config' | 'superadmin' | 'paciente' | 'financeiro' | 'ia' | 'bi' | 'documentos'
+type ModuleKey = 'clinica' | 'config' | 'superadmin' | 'paciente' | 'financeiro' | 'ia' | 'bi' | 'documentos' | 'integracoes'
 
 interface ModuleAccess {
   allowed: boolean
@@ -19,15 +19,15 @@ interface ModuleAccess {
 }
 
 export const MODULE_PERMISSIONS: Record<AppRole, Partial<Record<ModuleKey, ModuleAccess>>> = {
-  superadmin:   { clinica: {allowed:true}, config: {allowed:true}, superadmin: {allowed:true}, paciente: {allowed:true}, financeiro: {allowed:true}, ia: {allowed:true}, bi: {allowed:true}, documentos: {allowed:true} },
-  admin:        { clinica: {allowed:true}, config: {allowed:true}, superadmin: {allowed:true}, financeiro: {allowed:true}, ia: {allowed:true}, bi: {allowed:true}, documentos: {allowed:true} },
+  superadmin:   { clinica: {allowed:true}, config: {allowed:true}, superadmin: {allowed:true}, paciente: {allowed:true}, financeiro: {allowed:true}, ia: {allowed:true}, bi: {allowed:true}, documentos: {allowed:true}, integracoes: {allowed:true} },
+  admin:        { clinica: {allowed:true}, config: {allowed:true}, superadmin: {allowed:true}, financeiro: {allowed:true}, ia: {allowed:true}, bi: {allowed:true}, documentos: {allowed:true}, integracoes: {allowed:true} },
   dentist:      { clinica: {allowed:true}, documentos: {allowed:true} },
   receptionist: { clinica: {allowed:true} },
   patient:      { paciente: {allowed:true} },
-  dpo:          { clinica: {allowed:true, readOnly:true}, config: {allowed:true, readOnly:true}, bi: {allowed:true, readOnly:true}, documentos: {allowed:true, readOnly:true} },
-  auditor:      { clinica: {allowed:true, readOnly:true}, financeiro: {allowed:true, readOnly:true}, bi: {allowed:true, readOnly:true}, documentos: {allowed:true, readOnly:true} },
-  socio:        { financeiro: {allowed:true, readOnly:true}, bi: {allowed:true, readOnly:true}, config: {allowed:true, readOnly:true}, documentos: {allowed:true, readOnly:true} },
-  ti:           { config: {allowed:true}, ia: {allowed:true} },
+  dpo:          { clinica: {allowed:true, readOnly:true}, config: {allowed:true, readOnly:true}, bi: {allowed:true, readOnly:true}, documentos: {allowed:true, readOnly:true}, integracoes: {allowed:true, readOnly:true} },
+  auditor:      { clinica: {allowed:true, readOnly:true}, financeiro: {allowed:true, readOnly:true}, bi: {allowed:true, readOnly:true}, documentos: {allowed:true, readOnly:true}, integracoes: {allowed:true, readOnly:true} },
+  socio:        { financeiro: {allowed:true, readOnly:true}, bi: {allowed:true, readOnly:true}, config: {allowed:true, readOnly:true}, documentos: {allowed:true, readOnly:true}, integracoes: {allowed:true, readOnly:true} },
+  ti:           { config: {allowed:true}, ia: {allowed:true}, integracoes: {allowed:true} },
   implantacao:  { clinica: {allowed:true}, config: {allowed:true, readOnly:true} },
   aluno:        { clinica: {allowed:true} },
 }
@@ -38,6 +38,7 @@ const ROUTE_MODULE_MAP: Array<{ prefix: string; module: ModuleKey }> = [
   { prefix: '/clinica/documentos', module: 'documentos' },
   { prefix: '/clinica/financeiro', module: 'financeiro' },
   { prefix: '/clinica',            module: 'clinica'    },
+  { prefix: '/config/integracoes', module: 'integracoes' },
   { prefix: '/config',             module: 'config'     },
   { prefix: '/superadmin',         module: 'superadmin' },
   { prefix: '/paciente',           module: 'paciente'   },
