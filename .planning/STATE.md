@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 08-02-PLAN.md
-last_updated: "2026-06-14T14:44:21Z"
+stopped_at: Completed 08-04-PLAN.md
+last_updated: "2026-06-14T15:34:50.122Z"
 last_activity: 2026-06-14
 progress:
   total_phases: 15
   completed_phases: 1
   total_plans: 11
-  completed_plans: 8
-  percent: 73
+  completed_plans: 10
+  percent: 91
 ---
 
 # FYNXIA ERP — Project State
@@ -85,6 +85,7 @@ Plan: 1 of 5
 | Phase 07 P06 | 14 | 3 tasks | 11 files |
 | Phase 08 P01 | 10 | 2 tasks | 5 files |
 | Phase 08 P02 | 7 | 3 tasks | 9 files |
+| Phase 08 P04 | 28 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -128,6 +129,8 @@ Plan: 1 of 5
 | signPdfBuffer retorna certPem em SignatureResult | Evita segundo DB read em documents.ts para obter o PEM antes de armazenar em document_versions | 2026-06-14 |
 | document_versions.content cifrado com is_content_encrypted=true por padrão | Conteúdo preenchido pode conter CPF/nome do paciente (PII LGPD); Open Question 1 do RESEARCH resolvido: criptografar | 2026-06-14 |
 | detectVariables usa .filter((v): v is string) após matchAll | matchAll captures tipados string\|undefined no tsconfig strict; type guard necessário para inferir string[] | 2026-06-14 |
+| documentTemplateSchema sem .default() | RHF v7+resolvers v5 compara input vs output types; .default() cria mismatch rejeitado pelo tsc — form defaultValues fornece os valores | 2026-06-14 |
+| listTemplates inclui coluna content | Permite pré-população no edit sem fetch adicional; limitado pelo schema de 20000 chars | 2026-06-14 |
 
 ### Architecture Constraints Locked
 
@@ -164,7 +167,7 @@ Plan: 1 of 5
 
 ## Session Continuity
 
-**Stopped at:** Completed 08-02-PLAN.md
+**Stopped at:** Completed 08-04-PLAN.md
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 
