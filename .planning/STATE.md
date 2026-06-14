@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 09-05-PLAN.md
-last_updated: "2026-06-14T19:22:12.227Z"
+stopped_at: Completed 10-01-PLAN.md
+last_updated: "2026-06-14T19:28:15Z"
 last_activity: 2026-06-14
 progress:
   total_phases: 15
@@ -91,6 +91,7 @@ Plan: 1 of 8
 | Phase 09 P02 | 25 | 3 tasks | 8 files |
 | Phase 09 P03 | 22 | 3 tasks | 8 files |
 | Phase 09 P05 | 7 | 2 tasks | 4 files |
+| Phase 10 P01 | 15 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -148,6 +149,8 @@ Plan: 1 of 8
 | logToHub fire-and-forget após processWebhookEvent/.catch() — nunca antes do return 200 | Hub log error não pode suprimir o 200 nem triggerar retry flood do provider (T-09-09) | 2026-06-14 |
 | drainIntegrationEvents usa .eq('status','pending') (não .in) no fetch e no CAS guard | Matches health.test.ts assertion exata; 'failed'→'pending' requeue deferido para Plan 05 manual reprocess action | 2026-06-14 |
 | /config/integracoes inserido ANTES de /config em ROUTE_MODULE_MAP | Most-specific-first mirrors /clinica/documentos pattern; garante que routeToModule retorna 'integracoes' para /config/integracoes (T-09-13) | 2026-06-14 |
+| Dynamic import via absolute path (não @-alias) em RED scaffolds (D-144) | @-alias causa TS2307 quando módulo alvo ainda não existe; absolute path + existsSync guard mantém tsc exit 0 em todos os Wave 0 scaffolds | 2026-06-14 |
+| Regex /is (dotAll) não suportada em tsconfig target ES2017 | TS1501 no approvals.test.ts; substituído por assertions separadas — cobertura equivalente sem cross-line dot match | 2026-06-14 |
 
 ### Architecture Constraints Locked
 
@@ -200,4 +203,4 @@ Plan: 1 of 8
 
 **Parallelism opportunity:** Phase 14 (Financeiro Cadastros) pode iniciar em paralelo com Phase 13 (CME+Lab), pois ambas dependem de Phase 10 e não têm dependência entre si.
 
-**Next action:** `/gsd-plan-phase 8` — Documentos & Assinatura ICP-Brasil (DOC-01..03)
+**Next action:** `/gsd-execute-phase 10 02` — Phase 10 Plan 02 (Wave 0: migrations — ai_decision_log, approval_requests, ocr_extractions, audit_logs indexes)

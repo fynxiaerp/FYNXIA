@@ -136,7 +136,7 @@ Plans:
   4. Estorno requer motivo e aprovação por alçada configurada; o fluxo é registrado na trilha de auditoria
   5. Usuário faz upload/foto de documento e a IA extrai campos; extrações abaixo do threshold de confiança ficam em fila de revisão antes de gravar
 **Plans**: 8 plans
-- [ ] 10-01-PLAN.md — Wave 0: RED test scaffolds (migrations + policy + approvals + audit + ocr)
+- [x] 10-01-PLAN.md — Wave 0: RED test scaffolds (migrations + policy + approvals + audit + ocr)
 - [ ] 10-02-PLAN.md — Wave 1: 3 migrations (ai_decision_log/approval_requests/ocr_extractions) + audit_logs indexes + conformidade RBAC module
 - [ ] 10-03-PLAN.md — Wave 1: withAgentPolicy + approval actions + additive governance wrap of tools/agents (AIG-01/02/03)
 - [ ] 10-04-PLAN.md — Wave 2: audit query lib + generic estorno via approval-by-alçada (AUD-01/02)
@@ -325,7 +325,7 @@ Plans:
 | 7. Sistema, Multiunidade & Papéis | v2.0 | 0/6 | Planned | - |
 | 8. Documentos & Assinatura ICP-Brasil | v2.0 | 0/5 | Planned | - |
 | 9. Hub de Integrações Externas | v2.0 | 0/? | Not started | - |
-| 10. IA Governada, Auditoria & OCR | v2.0 | 0/8 | Planned | - |
+| 10. IA Governada, Auditoria & OCR | v2.0 | 1/8 | In Progress|  |
 | 11. Profissionais & Recursos | v2.0 | 0/? | Not started | - |
 | 12. Receituário & Teleodontologia | v2.0 | 0/? | Not started | - |
 | 13. Esterilização/CME & Laboratório de Prótese | v2.0 | 0/? | Not started | - |

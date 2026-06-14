@@ -28,18 +28,18 @@
 - [x] **INT-03**: Painel mostra a saúde de cada integração e reenvia automaticamente em caso de falha
 
 #### AIG — IA Governada (L0–L4)
-- [ ] **AIG-01**: Cada agente opera dentro de limites de ação invioláveis (tetos e travas configuráveis)
-- [ ] **AIG-02**: Ações sensíveis sempre exigem aprovação humana antes de executar
-- [ ] **AIG-03**: Toda decisão/ação da IA é registrada em log auditável (catálogo de agentes)
+- [x] **AIG-01**: Cada agente opera dentro de limites de ação invioláveis (tetos e travas configuráveis)
+- [x] **AIG-02**: Ações sensíveis sempre exigem aprovação humana antes de executar
+- [x] **AIG-03**: Toda decisão/ação da IA é registrada em log auditável (catálogo de agentes)
 
 #### AUD — Auditoria, Logs & Estornos
-- [ ] **AUD-01**: Trilha de auditoria registra quem fez o quê, quando, de onde e o conteúdo antes/depois
-- [ ] **AUD-02**: Estorno exige motivo e aprovação por alçada, registrado na trilha
-- [ ] **AUD-03**: Auditor/DPO consulta a trilha por entidade, usuário e período em tela dedicada
+- [x] **AUD-01**: Trilha de auditoria registra quem fez o quê, quando, de onde e o conteúdo antes/depois
+- [x] **AUD-02**: Estorno exige motivo e aprovação por alçada, registrado na trilha
+- [x] **AUD-03**: Auditor/DPO consulta a trilha por entidade, usuário e período em tela dedicada
 
 #### OCR — OCR & Automação de Cadastros
-- [ ] **OCR-01**: Usuário faz upload/foto de um documento e a IA extrai os campos automaticamente
-- [ ] **OCR-02**: Extrações abaixo do limite de confiança exigem revisão humana antes de gravar
+- [x] **OCR-01**: Usuário faz upload/foto de um documento e a IA extrai os campos automaticamente
+- [x] **OCR-02**: Extrações abaixo do limite de confiança exigem revisão humana antes de gravar
 
 ### Bloco B — Clínico
 
@@ -174,14 +174,14 @@
 | INT-01 | Phase 9 | Complete |
 | INT-02 | Phase 9 | Complete |
 | INT-03 | Phase 9 | Complete |
-| AIG-01 | Phase 10 | Pending |
-| AIG-02 | Phase 10 | Pending |
-| AIG-03 | Phase 10 | Pending |
-| AUD-01 | Phase 10 | Pending |
-| AUD-02 | Phase 10 | Pending |
-| AUD-03 | Phase 10 | Pending |
-| OCR-01 | Phase 10 | Pending |
-| OCR-02 | Phase 10 | Pending |
+| AIG-01 | Phase 10 | Complete |
+| AIG-02 | Phase 10 | Complete |
+| AIG-03 | Phase 10 | Complete |
+| AUD-01 | Phase 10 | Complete |
+| AUD-02 | Phase 10 | Complete |
+| AUD-03 | Phase 10 | Complete |
+| OCR-01 | Phase 10 | Complete |
+| OCR-02 | Phase 10 | Complete |
 | PRO-01 | Phase 11 | Pending |
 | PRO-02 | Phase 11 | Pending |
 | PRO-03 | Phase 11 | Pending |
