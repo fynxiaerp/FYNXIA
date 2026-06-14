@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 09-02-PLAN.md
-last_updated: "2026-06-14T17:11:21Z"
+stopped_at: Completed 09-03-PLAN.md
+last_updated: "2026-06-14T17:40:00Z"
 last_activity: 2026-06-14
 progress:
   total_phases: 15
@@ -89,6 +89,7 @@ Plan: 1 of 5
 | Phase 08 P05 | 30 | 3 tasks | 8 files |
 | Phase 09 P01 | 30 | 3 tasks | 3 files |
 | Phase 09 P02 | 25 | 3 tasks | 8 files |
+| Phase 09 P03 | 22 | 3 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -143,6 +144,9 @@ Plan: 1 of 5
 | integration_events status/direction como TEXT CHECK (não ENUMs) | Evita Postgres ENUM lock complexity; TEXT CHECK suficiente para tabela nova (Pitfall 3 do RESEARCH) | 2026-06-14 |
 | listConnectors usa createAdminClient para ler credential_enc | REVOKE bloqueia cliente authenticated; admin client (service role) decodifica server-side e retorna apenas masked tail | 2026-06-14 |
 | connectorFormSchema sem .default() em status | Mirrors decisão D-133 (documentTemplateSchema); RHF defaultValues fornece 'disabled'; evita resolvers v5 type mismatch | 2026-06-14 |
+| logToHub fire-and-forget após processWebhookEvent/.catch() — nunca antes do return 200 | Hub log error não pode suprimir o 200 nem triggerar retry flood do provider (T-09-09) | 2026-06-14 |
+| drainIntegrationEvents usa .eq('status','pending') (não .in) no fetch e no CAS guard | Matches health.test.ts assertion exata; 'failed'→'pending' requeue deferido para Plan 05 manual reprocess action | 2026-06-14 |
+| /config/integracoes inserido ANTES de /config em ROUTE_MODULE_MAP | Most-specific-first mirrors /clinica/documentos pattern; garante que routeToModule retorna 'integracoes' para /config/integracoes (T-09-13) | 2026-06-14 |
 
 ### Architecture Constraints Locked
 
