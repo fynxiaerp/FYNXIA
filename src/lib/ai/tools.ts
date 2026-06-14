@@ -22,16 +22,19 @@ import { withAgentPolicy } from './policy'
 /**
  * getGovContext — resolves clinicId + actorId from the authenticated session.
  *
- * Falls back to sentinel values if session is unavailable (unauthenticated calls).
- * withAgentPolicy try/catch ensures an INSERT failure never throws out of the tool.
+ * Returns clinicId: null when unauthenticated or tenant_id cannot be resolved.
+ * CR-02: sentinel strings ('unauthenticated', 'unknown') were previously returned
+ * and passed to withAgentPolicy, which tried to INSERT them into ai_decision_log.clinic_id
+ * (UUID NOT NULL). PostgreSQL rejects non-UUID strings, causing a silent log failure.
+ * Now returns null — callers skip withAgentPolicy when clinicId is null.
  */
-async function getGovContext(): Promise<{ clinicId: string; actorId: string | null }> {
+async function getGovContext(): Promise<{ clinicId: string | null; actorId: string | null }> {
   try {
     const supabase = await createClient()
     const {
       data: { user },
     } = await supabase.auth.getUser()
-    if (!user) return { clinicId: 'unauthenticated', actorId: null }
+    if (!user) return { clinicId: null, actorId: null }
 
     const { data: userData } = await supabase
       .from('users')
@@ -40,11 +43,11 @@ async function getGovContext(): Promise<{ clinicId: string; actorId: string | nu
       .single()
 
     return {
-      clinicId: userData?.tenant_id ?? 'unknown',
+      clinicId: userData?.tenant_id ?? null,
       actorId: user.id,
     }
   } catch {
-    return { clinicId: 'unknown', actorId: null }
+    return { clinicId: null, actorId: null }
   }
 }
 
@@ -108,6 +111,8 @@ export const getTodayAppointments = tool({
     }
 
     const { clinicId, actorId } = await getGovContext()
+    // CR-02: skip governance log when clinicId is null (no valid UUID → don't corrupt ai_decision_log)
+    if (!clinicId) return originalExecute()
     const result = await withAgentPolicy(
       { clinicId, agentKey: 'copilot', actorId, action: 'copilot.getTodayAppointments', actionSensitivity: 'safe' },
       originalExecute,
@@ -157,6 +162,8 @@ export const getOverdueReceivables = tool({
     }
 
     const { clinicId, actorId } = await getGovContext()
+    // CR-02: skip governance log when clinicId is null (no valid UUID → don't corrupt ai_decision_log)
+    if (!clinicId) return originalExecute()
     const result = await withAgentPolicy(
       { clinicId, agentKey: 'copilot', actorId, action: 'copilot.getOverdueReceivables', actionSensitivity: 'safe' },
       originalExecute,
@@ -231,6 +238,8 @@ export const getPatientSummary = tool({
     }
 
     const { clinicId, actorId } = await getGovContext()
+    // CR-02: skip governance log when clinicId is null (no valid UUID → don't corrupt ai_decision_log)
+    if (!clinicId) return originalExecute()
     const result = await withAgentPolicy(
       { clinicId, agentKey: 'copilot', actorId, action: 'copilot.getPatientSummary', actionSensitivity: 'safe' },
       originalExecute,
@@ -257,6 +266,8 @@ export const searchHelpDocsTool = tool({
     const originalExecute = async () => searchHelpDocs(input.query)
 
     const { clinicId, actorId } = await getGovContext()
+    // CR-02: skip governance log when clinicId is null (no valid UUID → don't corrupt ai_decision_log)
+    if (!clinicId) return originalExecute()
     const result = await withAgentPolicy(
       { clinicId, agentKey: 'copilot', actorId, action: 'copilot.searchHelpDocs', actionSensitivity: 'safe' },
       originalExecute,

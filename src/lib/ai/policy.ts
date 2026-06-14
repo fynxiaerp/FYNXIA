@@ -78,22 +78,28 @@ export async function withAgentPolicy<T>(
 
   // 3. Log EVERY decision to ai_decision_log (AIG-03)
   // Best-effort: a logging failure MUST NOT propagate out of withAgentPolicy.
-  // ctx.clinicId is always a real tenant UUID (never null) — the NOT NULL
-  // constraint on ai_decision_log.clinic_id is satisfied by the caller contract.
+  // CR-02 defense-in-depth: skip INSERT when clinicId is not a valid UUID to
+  // prevent silent corruption of ai_decision_log.clinic_id (UUID NOT NULL column).
+  // Primary prevention is in tools.ts (null clinicId → skip withAgentPolicy entirely).
   // LGPD (T-10-14): reason contains only level/sensitivity/enabled — no PII.
-  try {
-    await admin.from('ai_decision_log').insert({
-      clinic_id: ctx.clinicId,
-      agent_key: ctx.agentKey,
-      action: ctx.action,
-      autonomy_level: level,
-      decision,
-      actor_id: ctx.actorId,
-      reason,
-    })
-  } catch (logErr) {
-    // Log failure is observable but non-fatal (WR-05 pattern from audit.ts)
-    console.error('[withAgentPolicy] ai_decision_log INSERT failed:', logErr)
+  const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+  if (UUID_RE.test(ctx.clinicId)) {
+    try {
+      await admin.from('ai_decision_log').insert({
+        clinic_id: ctx.clinicId,
+        agent_key: ctx.agentKey,
+        action: ctx.action,
+        autonomy_level: level,
+        decision,
+        actor_id: ctx.actorId,
+        reason,
+      })
+    } catch (logErr) {
+      // Log failure is observable but non-fatal (WR-05 pattern from audit.ts)
+      console.error('[withAgentPolicy] ai_decision_log INSERT failed:', logErr)
+    }
+  } else {
+    console.warn('[withAgentPolicy] skipping ai_decision_log INSERT — clinicId is not a valid UUID:', ctx.clinicId)
   }
 
   // 4. Act on decision
