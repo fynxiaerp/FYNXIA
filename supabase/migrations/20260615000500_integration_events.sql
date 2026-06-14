@@ -1,7 +1,7 @@
 -- Phase 9 Plan 02: integration_events table + indexes + RLS
 -- Generalizes message_outbox pattern for integration hub event tracking.
 -- Uses TEXT CHECK constraints (NOT new ENUMs) to avoid Postgres ENUM lock complexity (Pitfall 3).
--- Do NOT reference message_status / message_channel ENUMs from message_outbox (naming collision risk).
+-- Do NOT reference outbox ENUMs from message_outbox (naming collision risk).
 -- clinic_id is NULLABLE to handle the WhatsApp unresolved-tenant path (Open Q2) and system events.
 -- connector_id FK ON DELETE SET NULL: event log survives connector deletion.
 

@@ -10,6 +10,7 @@ export const runtime = 'nodejs'
 import { createAdminClient } from '@/lib/supabase/admin'
 import type { AsaasWebhookEvent } from '@/lib/asaas/types'
 import type { SupabaseClient } from '@supabase/supabase-js'
+import { logToHub } from '@/lib/integrations/hub-log'
 
 export async function POST(request: Request): Promise<Response> {
   // Step 1: Validate asaas-access-token BEFORE parsing body (T-3-webhook-S)
@@ -60,6 +61,15 @@ export async function POST(request: Request): Promise<Response> {
   processWebhookEvent(event, admin, upserted.id).catch((err) =>
     console.error('[webhook] processing error', err)
   )
+
+  // INT-02: Log inbound event to hub (additive, fire-and-forget — T-09-09).
+  // clinicId = null: not yet resolved at this point (system-level inbound log).
+  // payloadRef = upserted.id: opaque reference to the webhook_events row (not the payload body).
+  logToHub({
+    admin, connectorType: 'asaas', direction: 'inbound',
+    clinicId: null, externalEventId: event.id,
+    payloadRef: upserted.id, eventType: event.event, status: 'received',
+  }).catch((err) => console.error('[webhook/asaas] hub log error:', err))
 
   return new Response('', { status: 200 })
 }

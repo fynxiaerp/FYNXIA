@@ -29,6 +29,7 @@ import type {
 } from '@/lib/whatsapp/inbound-types'
 import { logBusinessEvent } from '@/lib/audit'
 import { toE164 } from '@/lib/phone'
+import { logToHub } from '@/lib/integrations/hub-log'
 
 // Recency window for matching a free-text reply to a recent confirmation outreach.
 // Outside this window an inbound free-text reply will NOT be auto-resolved (CR-01).
@@ -116,6 +117,14 @@ export async function POST(request: Request): Promise<Response> {
   processInbound(message, wamid, fromPhone, admin).catch((err) =>
     console.error('[webhook/whatsapp] processInbound error:', err),
   )
+
+  // INT-02: Log inbound event to hub (additive, fire-and-forget — T-09-09).
+  // clinicId = null: tenant not yet resolved at this point (system-level inbound log).
+  logToHub({
+    admin, connectorType: 'whatsapp', direction: 'inbound',
+    clinicId: null, externalEventId: wamid,
+    eventType: message?.type, status: 'received',
+  }).catch((err) => console.error('[webhook/whatsapp] hub log error:', err))
 
   return new Response('', { status: 200 })
 }
