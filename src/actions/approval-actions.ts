@@ -228,21 +228,10 @@ export async function approveRequest(
     return { success: false, error: 'Já executado por outro aprovador (corrida de aprovação)' }
   }
 
-  // 6. Dispatch the stored payload
-  // For Wave 1: dispatch records execution to the audit trail (generic).
-  // Concrete per-module reversal is deferred to Plans 04/05 (estorno) and later phases.
-  await logBusinessEvent({
-    tenantId: actor.tenant_id,
-    actorId: actor.id,
-    action: 'approval.payload.dispatched',
-    details: {
-      id,
-      type: request.type,
-      // Payload logged without PII — for audit trail (T-10-14)
-    },
-  })
-
-  // 7. Audit
+  // 6. Audit — single honest event (WR-04)
+  // WR-04: removed phantom 'approval.payload.dispatched' event that fired even when
+  // no concrete executor was wired. Phase 10 records the decision only; actual
+  // estorno reversal is deferred to Phase 14–16 (Plans 04/05).
   await logBusinessEvent({
     tenantId: actor.tenant_id,
     actorId: actor.id,
@@ -251,6 +240,7 @@ export async function approveRequest(
       id,
       type: request.type,
       required_role: request.required_role,
+      payload_dispatched: false, // explicit: no payload executed yet (Phase 14–16)
     },
   })
 
