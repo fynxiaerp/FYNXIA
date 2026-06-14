@@ -42,6 +42,7 @@ export interface TemplateListItem {
   id: string
   name: string
   category: string
+  content: string
   variables: string[]
   is_active: boolean
   created_at: string
@@ -294,7 +295,7 @@ export async function listTemplates(
 
   let query = supabase
     .from('document_templates')
-    .select('id, name, category, variables, is_active, created_at, updated_at')
+    .select('id, name, category, content, variables, is_active, created_at, updated_at')
     .is('deleted_at', null)
     .order('name')
 
