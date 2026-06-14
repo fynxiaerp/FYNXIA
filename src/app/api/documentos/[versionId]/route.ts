@@ -117,7 +117,16 @@ export async function GET(_request: Request, { params }: RouteParams) {
 
     // 6. Redirect to the short-TTL signed URL (client fetches directly from storage CDN)
     // The redirect itself does not expose the raw storage_path — only the time-limited URL.
-    return Response.redirect(signedData.signedUrl, 302)
+    // WR-03: add Cache-Control: no-store so intermediaries (Vercel edge, browser) do NOT
+    // cache the redirect response — the signed URL itself has a 60s TTL and contains PII.
+    return new Response(null, {
+      status: 302,
+      headers: {
+        'Location': signedData.signedUrl,
+        'Cache-Control': 'no-store, no-cache, must-revalidate',
+        'Pragma': 'no-cache',
+      },
+    })
   } catch (error) {
     console.error('[documentos/route] PDF download error:', error)
     return new Response(
