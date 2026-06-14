@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 07-03-PLAN.md
-last_updated: "2026-06-14T01:28:01Z"
+stopped_at: Completed 07-06-PLAN.md (FINAL plan of Phase 07)
+last_updated: "2026-06-14T02:44:09Z"
 last_activity: 2026-06-14
 progress:
   total_phases: 15
   completed_phases: 0
   total_plans: 6
-  completed_plans: 3
-  percent: 50
+  completed_plans: 6
+  percent: 100
 ---
 
 # FYNXIA ERP — Project State
@@ -36,7 +36,7 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 ## Current Position
 
 Phase: 07 (Sistema, Multiunidade & Papéis) — EXECUTING
-Plan: 3 of 6
+Plan: 6 of 6 (COMPLETE)
 **Milestone:** v2.0 — Produto Completo (27 módulos, blocos A–E)
 **Phase:** 7 — Sistema, Multiunidade & Papéis (não iniciada)
 **Plan:** —
@@ -80,6 +80,9 @@ Plan: 3 of 6
 | Phase 07 P01 | 64 | 4 tasks | 7 files |
 | Phase 07 P02 | 35 | 3 tasks | 6 files |
 | Phase 07 P03 | 75 | 3 tasks | 8 files |
+| Phase 07 P04 | — | db push | 0 files |
+| Phase 07 P05 | 45 | 3 tasks | 8 files |
+| Phase 07 P06 | 14 | 3 tasks | 11 files |
 
 ## Accumulated Context
 
@@ -117,6 +120,9 @@ Plan: 3 of 6
 | forge.pki.certificateToAsn1(cert) em vez de cert.toAsn1() | cert objects em node-forge 1.4.0 não possuem método toAsn1() — API pública correta é pki module | 2026-06-14 |
 | Partial unique indexes (WHERE unit_id IS NULL / IS NOT NULL) em ai_agent_config | UNIQUE(clinic_id,agent_key,unit_id) não deduplica rows com unit_id=NULL no PostgreSQL (NULLs são distinct) | 2026-06-14 |
 | __mocks__/server-only.js + setup.ts: pre-register no-op no require.cache | vi.mock() só intercepta ESM imports; CJS require() precisa de patch direto no require.cache | 2026-06-14 |
+| Constantes extraídas de ai-agent-config.ts para ai-agent-config-types.ts | Next.js 'use server' só permite exports async; AUTONOMY_LEVELS/AGENT_KEYS são consts — runtime falha se exportadas de arquivo 'use server' | 2026-06-14 |
+| getCertificate seleciona colunas explicitamente + CertificatePublic = Omit<CertRow, 'cert_password_enc' \| 'storage_path'> | Dupla proteção: omissão em query + garantia de compile-time; secrets nunca chegam ao cliente (T-07-18) | 2026-06-14 |
+| @base-ui Select.Root onValueChange recebe (value: T \| null, eventDetails) | API do base-ui difere de shadcn puro; handler deve guard against null para satisfazer TypeScript | 2026-06-14 |
 
 ### Architecture Constraints Locked
 
@@ -153,10 +159,19 @@ Plan: 3 of 6
 
 ## Session Continuity
 
-**Stopped at:** Completed 07-02-PLAN.md
+**Stopped at:** Completed 07-06-PLAN.md (FINAL plan of Phase 07 — all 6 plans complete)
 
-**Critical path (v2.0):** Phase 7 → Phase 8 → Phase 9 → Phase 10 → Phase 11 → Phase 12 → Phase 13 → Phase 14 → Phase 15 → Phase 16 → Phase 17 → Phase 18 → Phase 19 → Phase 20 → Phase 21
+**Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
+- SYS-01: Empresa + Unidades CRUD (Plan 05)
+- SYS-02: Certificado ICP-Brasil keystore (Plan 06)
+- SYS-03: Perfis de Acesso matrix UI (Plan 06)
+- SYS-04: Autonomia IA L0–L4 config (Plan 06)
+- SYS-05: Multi-unit schema (unit_id on operational tables) (Plans 01–04)
+- ROLE-01: 11-role RBAC matrix in proxy.ts (Plan 03)
+- ROLE-02: assertNotReadOnly + x-read-only header + read-only gates (Plans 01, 03, 05, 06)
+
+**Critical path (v2.0):** Phase 8 → Phase 9 → Phase 10 → Phase 11 → Phase 12 → Phase 13 → Phase 14 → Phase 15 → Phase 16 → Phase 17 → Phase 18 → Phase 19 → Phase 20 → Phase 21
 
 **Parallelism opportunity:** Phase 14 (Financeiro Cadastros) pode iniciar em paralelo com Phase 13 (CME+Lab), pois ambas dependem de Phase 10 e não têm dependência entre si.
 
-**Next action:** `/gsd-plan-phase 7` — Sistema, Multiunidade & Papéis (SYS-01..05, ROLE-01..02)
+**Next action:** `/gsd-plan-phase 8` — Documentos & Assinatura ICP-Brasil (DOC-01..03)
