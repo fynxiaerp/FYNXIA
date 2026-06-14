@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 09-01-PLAN.md
-last_updated: "2026-06-14T17:02:04.668Z"
+stopped_at: Completed 09-02-PLAN.md
+last_updated: "2026-06-14T17:11:21Z"
 last_activity: 2026-06-14
 progress:
   total_phases: 15
@@ -88,6 +88,7 @@ Plan: 1 of 5
 | Phase 08 P04 | 28 | 2 tasks | 5 files |
 | Phase 08 P05 | 30 | 3 tasks | 8 files |
 | Phase 09 P01 | 30 | 3 tasks | 3 files |
+| Phase 09 P02 | 25 | 3 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -139,6 +140,9 @@ Plan: 1 of 5
 | Download route cria signed URL com TTL=60s; raw storage_path nunca na resposta | T-08-19: segurança — path privado não exposto ao cliente | 2026-06-14 |
 | maskCredential em src/lib/integrations/mask.ts (sem 'use server') | Importável por server actions E client components; Omit<> no action garante type-level safety | 2026-06-14 |
 | Dynamic import via absolute path (não @-alias) em RED scaffolds | @-alias causa TS2307 quando módulo alvo ainda não existe; absolute path + existsSync guard mantém tsc clean | 2026-06-14 |
+| integration_events status/direction como TEXT CHECK (não ENUMs) | Evita Postgres ENUM lock complexity; TEXT CHECK suficiente para tabela nova (Pitfall 3 do RESEARCH) | 2026-06-14 |
+| listConnectors usa createAdminClient para ler credential_enc | REVOKE bloqueia cliente authenticated; admin client (service role) decodifica server-side e retorna apenas masked tail | 2026-06-14 |
+| connectorFormSchema sem .default() em status | Mirrors decisão D-133 (documentTemplateSchema); RHF defaultValues fornece 'disabled'; evita resolvers v5 type mismatch | 2026-06-14 |
 
 ### Architecture Constraints Locked
 
