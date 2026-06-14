@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 07-01-PLAN.md
-last_updated: "2026-06-14T01:05:15.563Z"
+stopped_at: Completed 07-02-PLAN.md
+last_updated: "2026-06-14T22:09:39Z"
 last_activity: 2026-06-14
 progress:
   total_phases: 15
   completed_phases: 0
   total_plans: 6
-  completed_plans: 1
-  percent: 17
+  completed_plans: 2
+  percent: 33
 ---
 
 # FYNXIA ERP — Project State
@@ -36,7 +36,7 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 ## Current Position
 
 Phase: 07 (Sistema, Multiunidade & Papéis) — EXECUTING
-Plan: 1 of 6
+Plan: 2 of 6
 **Milestone:** v2.0 — Produto Completo (27 módulos, blocos A–E)
 **Phase:** 7 — Sistema, Multiunidade & Papéis (não iniciada)
 **Plan:** —
@@ -78,6 +78,7 @@ Plan: 1 of 6
 
 ---
 | Phase 07 P01 | 64 | 4 tasks | 7 files |
+| Phase 07 P02 | 35 | 3 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -106,6 +107,10 @@ Plan: 1 of 6
 | Fixed-width sidebar (w-[240px]/w-[56px]) + Zustand — no shadcn sidebar installed | shadcn sidebar has Tailwind-v4 width bug (06-RESEARCH Pitfall 1) | 2026-06-12 |
 | v2.0 Bloco A (SYS+ROLE+DOC+INT+AIG+AUD+OCR) entregue antes de Clínico e Financeiro | Prontuário/receituário/NFS-e precisam de ICP (DOC); faturamento/convênios precisam do hub de integrações (INT); agentes precisam do framework IA L0–L4 | 2026-06-13 |
 | Granularidade standard: 15 fases para 75 requisitos | Cada fase cobre 1–2 módulos acoplados; shippable/plannable independentemente | 2026-06-13 |
+| audit_units_changes() dedicado (não reutiliza audit_table_changes()) | units usa clinic_id, não tenant_id — mesmo padrão do audit_clinics_changes() | 2026-06-14 |
+| get_my_unit_ids() retorna UUID[] (array) | Suporte a usuários em múltiplas filiais (dentistas volantes em redes/franquias) | 2026-06-14 |
+| unit_id em operational tables: NULLABLE→backfill→NOT NULL | Pitfall 2: SET NOT NULL apenas após backfill para não quebrar linhas existentes | 2026-06-14 |
+| Unit-level RLS em linhas operacionais deferido para fase futura | Esta fase apenas adiciona a coluna; enforcement de SYS-05 será construído sobre ela | 2026-06-14 |
 
 ### Architecture Constraints Locked
 
@@ -142,7 +147,7 @@ Plan: 1 of 6
 
 ## Session Continuity
 
-**Stopped at:** Completed 07-01-PLAN.md
+**Stopped at:** Completed 07-02-PLAN.md
 
 **Critical path (v2.0):** Phase 7 → Phase 8 → Phase 9 → Phase 10 → Phase 11 → Phase 12 → Phase 13 → Phase 14 → Phase 15 → Phase 16 → Phase 17 → Phase 18 → Phase 19 → Phase 20 → Phase 21
 
