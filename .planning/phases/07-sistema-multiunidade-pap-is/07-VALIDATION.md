@@ -23,7 +23,17 @@ created: 2026-06-12
 | **Full suite command** | `npx vitest run` |
 | **Estimated runtime** | ~3–5s |
 
-Test style: **source-inspection** (readFileSync + toMatch on migrations/helpers/proxy/config) — the v1 convention (see `src/__tests__/migrations/*.test.ts`). Plus `npx tsc --noEmit`, **`npx next build`**, and a **live `supabase db push`** ([BLOCKING]) followed by `supabase gen types` to prove the schema is real (types from the live DB, not config). Pure-unit tests for the RBAC matrix (`isPathAllowed`/module gating) and the AES round-trip of the cert password.
+Test style: **source-inspection** (readFileSync + toMatch on migrations/helpers/proxy/config) — the v1 convention (see `src/__tests__/migrations/*.test.ts`). Plus `npx tsc --noEmit`, **`npx next build`**, and a **live `supabase db push`** ([BLOCKING], Plan 04 ONLY) followed by `supabase gen types` to prove the schema is real (types from the live DB, not config). Pure-unit tests for the RBAC matrix (`isPathAllowed`/`isReadOnly` module gating) and the AES round-trip of the cert password.
+
+**Actual Phase 7 test files (the plans create EXACTLY these — no per-requirement split files):**
+
+| File | Covers |
+|------|--------|
+| `src/__tests__/migrations/phase7.test.ts` | ALL migration source-inspection: units, clinics.regime_tributario, user_units, get_my_unit_ids, role CHECK (users+invitations), unit_id backfill, certificates + icp-certificates bucket, ai_agent_config (+ partial unique index) |
+| `src/__tests__/rbac/matrix.test.ts` | MODULE_PERMISSIONS (11 roles × 7 modules), isPathAllowed, isReadOnly (incl. auditor/socio on /clinica/financeiro, socio on /bi + /config) |
+| `src/__tests__/icp/pfx-metadata.test.ts` | extractPfxMetadata against the synthetic .pfx fixture |
+| `src/__tests__/config/empresa.test.ts` | empresa/unit zod validation + read-only/admin gate source-inspection |
+| `src/__tests__/config/certificate.test.ts` | cert validation + AI-config gate + getCertificate type-level secret exclusion + MODULE_PERMISSIONS read-only flags |
 
 ---
 
@@ -31,8 +41,8 @@ Test style: **source-inspection** (readFileSync + toMatch on migrations/helpers/
 
 - **After every task commit:** `npx vitest run {file}` + `npx tsc --noEmit`
 - **After every wave:** full suite + `npx next build`
-- **At the migration checkpoint:** `[BLOCKING] supabase db push` (re-auth on org `kczvihafddupruvsrrsc` / project `jqjwyqlbbuqnrffdnlpp` first) → `supabase gen types typescript` → tsc green against regenerated types
-- **Before verify:** full suite GREEN + next build clean + DB checks (units backfilled, role CHECK updated, RLS policies present) + manual RBAC/multiunidade UAT
+- **At the migration checkpoint (Plan 04 ONLY):** `[BLOCKING] supabase db push` (re-auth on org `kczvihafddupruvsrrsc` / project `jqjwyqlbbuqnrffdnlpp` first) → `supabase gen types typescript` → tsc green against regenerated types. No other plan runs a db push.
+- **Before verify:** full suite GREEN + next build clean + DB checks (units backfilled, regime column present, role CHECK updated, RLS policies present) + manual RBAC/multiunidade UAT
 - **Max feedback latency:** ~10s (unit) / build ~30–60s / db push manual
 
 ---
@@ -41,13 +51,13 @@ Test style: **source-inspection** (readFileSync + toMatch on migrations/helpers/
 
 | REQ | Concern | Test Type | Automated Command |
 |-----|---------|-----------|-------------------|
-| SYS-01 | `units` table + `clinics` as rede; empresa fields (CNPJ/regime); v1 clinics migrated to 1 default unit | migration source-inspect + DB check | `npx vitest run src/__tests__/migrations/units.test.ts` + post-push row check |
-| SYS-02 | Cert keystore: private bucket policy, AES password column, metadata table; node-forge reads .pfx metadata; password AES round-trips | source-inspect + unit (crypto) | `npx vitest run src/__tests__/icp/keystore.test.ts` |
-| SYS-03 | role×module matrix exists; module gating server-side | unit (pure fn) | `npx vitest run src/__tests__/rbac/matrix.test.ts` |
-| SYS-04 | `ai_agent_config` table (autonomy L0–L4) + config UI writes it | source-inspect + DB check | `npx vitest run src/__tests__/migrations/ai-config.test.ts` |
-| SYS-05 | operational rows have `unit_id`; `get_my_unit_ids()` SECURITY DEFINER; unit filter helper | migration source-inspect + DB check | `npx vitest run src/__tests__/migrations/unit-scope.test.ts` |
-| ROLE-01 | 6 new roles in role CHECK (users + invitations) | migration source-inspect + DB check | `npx vitest run src/__tests__/migrations/roles.test.ts` |
-| ROLE-02 | role gating per module + unit; `assertNotReadOnly()` on mutations; auditor/dpo/socio read-only | source-inspect + unit | `npx vitest run src/__tests__/rbac/readonly.test.ts` |
+| SYS-01 | `units` table + `clinics` as rede; empresa fields (CNPJ/regime tributário column); v1 clinics migrated to 1 default unit | migration source-inspect + validation + DB check | `npx vitest run src/__tests__/migrations/phase7.test.ts src/__tests__/config/empresa.test.ts` + post-push row check |
+| SYS-02 | Cert keystore: private bucket policy, AES password column, metadata table; node-forge reads .pfx metadata; password AES round-trips | source-inspect + unit (crypto) | `npx vitest run src/__tests__/migrations/phase7.test.ts src/__tests__/icp/pfx-metadata.test.ts src/__tests__/config/certificate.test.ts` |
+| SYS-03 | role×module matrix exists (11 roles × 7 modules); module gating server-side | unit (pure fn) | `npx vitest run src/__tests__/rbac/matrix.test.ts` |
+| SYS-04 | `ai_agent_config` table (autonomy L0–L4, partial unique index) + config UI writes it | source-inspect + DB check | `npx vitest run src/__tests__/migrations/phase7.test.ts src/__tests__/config/certificate.test.ts` |
+| SYS-05 | operational rows have `unit_id`; `get_my_unit_ids()` SECURITY DEFINER; unit filter helper | migration source-inspect + DB check | `npx vitest run src/__tests__/migrations/phase7.test.ts` + post-push NULL-unit_id check |
+| ROLE-01 | 6 new roles in role CHECK (users + invitations) | migration source-inspect + DB check | `npx vitest run src/__tests__/migrations/phase7.test.ts` + post-push constraint check |
+| ROLE-02 | role gating per module + unit; `assertNotReadOnly()` on mutations; auditor/dpo/socio read-only (incl. financeiro/bi) | source-inspect + unit | `npx vitest run src/__tests__/rbac/matrix.test.ts src/__tests__/config/empresa.test.ts src/__tests__/config/certificate.test.ts` |
 
 ---
 
@@ -65,8 +75,8 @@ Test style: **source-inspection** (readFileSync + toMatch on migrations/helpers/
 ## Validation Sign-Off
 
 - [ ] Every SYS-/ROLE- REQ has an automated check or a documented manual-UAT item
-- [ ] [BLOCKING] `supabase db push` task present in plans (schema is real, types regenerated)
-- [ ] next build green after every wave
+- [ ] [BLOCKING] `supabase db push` task present in Plan 04 ONLY (single push; schema real, types regenerated)
+- [ ] next build green after every wave (Plans 05 & 06 serialized — 05 in Wave 3, 06 in Wave 4 — so the two builds don't collide on `.next/`)
 - [ ] `nyquist_compliant: true`
 
 **Approval:** pending
