@@ -15,7 +15,6 @@
 
 import { describe, it, expect } from 'vitest'
 
-// @ts-expect-error not-yet-implemented: src/lib/documents/template-engine.ts created in Plan 02
 import { fillTemplate, detectVariables } from '@/lib/documents/template-engine'
 
 // ─── detectVariables ──────────────────────────────────────────────────────────
