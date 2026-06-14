@@ -910,6 +910,254 @@ export type Database = {
           },
         ]
       }
+      document_templates: {
+        Row: {
+          category: string
+          clinic_id: string
+          content: string
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          id: string
+          is_active: boolean
+          name: string
+          updated_at: string
+          variables: string[]
+        }
+        Insert: {
+          category: string
+          clinic_id: string
+          content: string
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          updated_at?: string
+          variables?: string[]
+        }
+        Update: {
+          category?: string
+          clinic_id?: string
+          content?: string
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          updated_at?: string
+          variables?: string[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_templates_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_templates_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_templates_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users_masked"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      document_versions: {
+        Row: {
+          cert_not_after: string | null
+          cert_pem: string | null
+          cert_thumbprint: string | null
+          clinic_id: string
+          content: string
+          content_hash: string
+          created_at: string
+          document_id: string
+          id: string
+          is_content_encrypted: boolean
+          signature: string | null
+          signed_at: string | null
+          signed_by: string | null
+          signer_cn: string | null
+          storage_path: string | null
+          supersedes_id: string | null
+          version_number: number
+        }
+        Insert: {
+          cert_not_after?: string | null
+          cert_pem?: string | null
+          cert_thumbprint?: string | null
+          clinic_id: string
+          content: string
+          content_hash: string
+          created_at?: string
+          document_id: string
+          id?: string
+          is_content_encrypted?: boolean
+          signature?: string | null
+          signed_at?: string | null
+          signed_by?: string | null
+          signer_cn?: string | null
+          storage_path?: string | null
+          supersedes_id?: string | null
+          version_number: number
+        }
+        Update: {
+          cert_not_after?: string | null
+          cert_pem?: string | null
+          cert_thumbprint?: string | null
+          clinic_id?: string
+          content?: string
+          content_hash?: string
+          created_at?: string
+          document_id?: string
+          id?: string
+          is_content_encrypted?: boolean
+          signature?: string | null
+          signed_at?: string | null
+          signed_by?: string | null
+          signer_cn?: string | null
+          storage_path?: string | null
+          supersedes_id?: string | null
+          version_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_versions_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_versions_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_versions_signed_by_fkey"
+            columns: ["signed_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_versions_signed_by_fkey"
+            columns: ["signed_by"]
+            isOneToOne: false
+            referencedRelation: "users_masked"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_versions_supersedes_id_fkey"
+            columns: ["supersedes_id"]
+            isOneToOne: false
+            referencedRelation: "document_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      documents: {
+        Row: {
+          category: string
+          clinic_id: string
+          created_at: string
+          created_by: string | null
+          current_version: number
+          deleted_at: string | null
+          id: string
+          patient_id: string | null
+          status: string
+          template_id: string | null
+          unit_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          clinic_id: string
+          created_at?: string
+          created_by?: string | null
+          current_version?: number
+          deleted_at?: string | null
+          id?: string
+          patient_id?: string | null
+          status?: string
+          template_id?: string | null
+          unit_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          clinic_id?: string
+          created_at?: string
+          created_by?: string | null
+          current_version?: number
+          deleted_at?: string | null
+          id?: string
+          patient_id?: string | null
+          status?: string
+          template_id?: string | null
+          unit_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documents_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users_masked"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "document_templates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       financial_categories: {
         Row: {
           created_at: string
