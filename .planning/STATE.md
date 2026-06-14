@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
-status: executing
+status: planning
 stopped_at: Completed 08-05-PLAN.md
-last_updated: "2026-06-14T15:55:09Z"
+last_updated: "2026-06-14T16:19:12.985Z"
 last_activity: 2026-06-14
 progress:
   total_phases: 15
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 11
   completed_plans: 11
   percent: 100
@@ -38,9 +38,9 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 Phase: 08 (Documentos & Assinatura ICP-Brasil) — EXECUTING
 Plan: 1 of 5
 **Milestone:** v2.0 — Produto Completo (27 módulos, blocos A–E)
-**Phase:** 8
+**Phase:** 9
 **Plan:** Not started
-**Status:** Executing Phase 08
+**Status:** Ready to plan
 **Last activity:** 2026-06-14
 
 ---
