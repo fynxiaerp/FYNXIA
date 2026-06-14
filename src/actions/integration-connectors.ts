@@ -187,8 +187,9 @@ export async function listConnectors(): Promise<{
   const adminClient = createAdminClient()
   const { data: rows, error } = await adminClient
     .from('integration_connectors')
-    .select('id, clinic_id, type, config, status, created_at, updated_at, credential_enc')
+    .select('id, clinic_id, type, config, status, created_at, updated_at, credential_enc, deleted_at')
     .eq('clinic_id', actor.tenant_id)
+    .is('deleted_at', null)    // WR-02: exclude soft-deleted connectors
     .order('created_at', { ascending: false })
 
   if (error) {
@@ -324,13 +325,17 @@ export async function deleteConnector(
     return { success: false, error: 'Permissão insuficiente' }
   }
 
-  // 3. Delete via admin client, tenant-scoped (T-09-05)
+  // 3. Soft-delete via admin client, tenant-scoped (T-09-05).
+  //    WR-02: LGPD convention requires deleted_at rather than hard DELETE so that
+  //    integration_events.connector_id FK is preserved for audit trail continuity.
+  //    .is('deleted_at', null) makes the operation idempotent (cannot soft-delete twice).
   const adminClient = createAdminClient()
   const { error: deleteError } = await adminClient
     .from('integration_connectors')
-    .delete()
+    .update({ deleted_at: new Date().toISOString() })
     .eq('id', id)
     .eq('clinic_id', actor.tenant_id)
+    .is('deleted_at', null)
 
   if (deleteError) {
     return { success: false, error: deleteError.message }

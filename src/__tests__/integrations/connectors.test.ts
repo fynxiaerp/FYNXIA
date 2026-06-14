@@ -119,6 +119,27 @@ describe('Phase 9 migration — integration_connectors (INT-01)', () => {
   })
 })
 
+// ─── WR-02: soft-delete migration ─────────────────────────────────────────────
+
+describe('Phase 9 migration — connectors_soft_delete (WR-02 LGPD audit trail)', () => {
+  it('soft-delete migration exists for integration_connectors', () => {
+    // M() throws if the migration file is not found — this assertion passes once
+    // 20260615000700_connectors_soft_delete.sql is created (WR-02 fix).
+    const sql = M('_connectors_soft_delete.sql')
+    expect(sql).toMatch(/ALTER TABLE public\.integration_connectors/i)
+  })
+
+  it('adds deleted_at TIMESTAMPTZ column via ALTER TABLE', () => {
+    const sql = M('_connectors_soft_delete.sql')
+    expect(sql).toMatch(/ADD COLUMN deleted_at\s+TIMESTAMPTZ/i)
+  })
+
+  it('updates tenant_read RLS policy to exclude soft-deleted rows', () => {
+    const sql = M('_connectors_soft_delete.sql')
+    expect(sql).toMatch(/deleted_at IS NULL/i)
+  })
+})
+
 // ─── INT-01: integration_revoke migration ─────────────────────────────────────
 
 describe('Phase 9 migration — integration_revoke (INT-01 credential protection)', () => {

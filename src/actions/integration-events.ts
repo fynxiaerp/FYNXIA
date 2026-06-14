@@ -92,11 +92,13 @@ export async function listConnectorHealth(): Promise<{
 
   const adminClient = createAdminClient()
 
-  // Load this tenant's connectors (id, type, status — NO credential_enc).
+  // Load this tenant's active connectors (id, type, status — NO credential_enc).
+  // WR-02: filter deleted_at IS NULL so soft-deleted connectors are excluded from health view.
   const { data: connectors, error: connErr } = await adminClient
     .from('integration_connectors')
     .select('id, type, status')
     .eq('clinic_id', actor.tenant_id)
+    .is('deleted_at', null)
 
   if (connErr) {
     return { success: false, error: connErr.message }

@@ -34,6 +34,7 @@ export interface ConnectorRow {
   status: IntegrationStatus
   created_at: string
   updated_at: string
+  deleted_at: string | null       // LGPD soft-delete (WR-02): NULL = active, ISO string = deleted
 }
 
 // ─── IntegrationEventRow — mirrors integration_events table ──────────────────
