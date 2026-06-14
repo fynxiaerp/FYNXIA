@@ -48,5 +48,5 @@ export function fillTemplate(content: string, ctx: DocumentContext): string {
  */
 export function detectVariables(content: string): string[] {
   const matches = [...content.matchAll(/\{\{(\w+)\}\}/g)]
-  return [...new Set(matches.map((m) => m[1]))]
+  return [...new Set(matches.map((m) => m[1]).filter((v): v is string => v !== undefined))]
 }

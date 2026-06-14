@@ -74,7 +74,8 @@ describe('ICP sign→verify round-trip (DOC-02 algorithm lock)', () => {
     // 3. Verify with FRESH md2 — Pitfall 2: md is consumed after sign; must reconstruct
     const md2 = forge.md.sha256.create()
     md2.update(fakePdf.toString('binary'), 'raw')
-    const verified = cert.publicKey.verify(md2.digest().bytes(), sig)
+    const rsaPublicKey = cert.publicKey as forge.pki.rsa.PublicKey
+    const verified = rsaPublicKey.verify(md2.digest().bytes(), sig)
     expect(verified).toBe(true)
 
     // 4. Cert thumbprint — Pitfall 4: use certificateToAsn1, NOT cert.toAsn1()
