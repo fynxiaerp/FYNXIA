@@ -303,9 +303,11 @@ export async function rejectRequest(
 
   const now = new Date().toISOString()
 
-  // 5. UPDATE status='rejected'
+  // 5. UPDATE status='rejected' — mirror approveRequest's race protection (WR-01)
+  // .eq('status','pending').is('executed_at', null) + affected-row count check
+  // prevents duplicate reject audit events and detects approve-vs-reject races.
   const admin = createAdminClient()
-  const { error: updateError } = await admin
+  const { data: updated, error: updateError } = await admin
     .from('approval_requests')
     .update({
       status: 'rejected',
@@ -315,9 +317,16 @@ export async function rejectRequest(
     })
     .eq('id', id)
     .eq('status', 'pending')
+    .is('executed_at', null)
+    .select('id')
 
   if (updateError) {
     return { success: false, error: updateError.message }
+  }
+
+  if (!updated || updated.length === 0) {
+    // Another actor won the race (approved or rejected first)
+    return { success: false, error: 'Já decidido por outro ator (corrida de aprovação).' }
   }
 
   // 6. Audit

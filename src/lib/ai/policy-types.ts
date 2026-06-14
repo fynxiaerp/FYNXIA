@@ -75,12 +75,27 @@ export const APPROVER_RANK: Record<string, number> = {
  * Returns true if the `role` has sufficient rank to approve a request
  * that requires `requiredRole`.
  *
+ * WR-02: Unknown `requiredRole` (not in APPROVER_RANK) previously used `?? Infinity`,
+ * making it impossible for anyone — including superadmin — to approve the request,
+ * creating permanently stuck rows. Fix: treat unknown requiredRole as requiring
+ * superadmin rank (the highest known rank), making only superadmin the escape hatch
+ * while still blocking lower roles. This is fail-safe-but-usable: a misspelled
+ * required_role is not permanently irrecoverable.
+ *
  * Examples:
- *   canApprove('admin', 'admin')       → true  (equal rank)
- *   canApprove('superadmin', 'admin')  → true  (higher rank)
- *   canApprove('receptionist', 'admin') → false (lower rank)
- *   canApprove('auditor', 'admin')     → false (read-only role)
+ *   canApprove('admin', 'admin')         → true  (equal rank)
+ *   canApprove('superadmin', 'admin')    → true  (higher rank)
+ *   canApprove('receptionist', 'admin')  → false (lower rank)
+ *   canApprove('auditor', 'admin')       → false (read-only role)
+ *   canApprove('superadmin', 'UNKNOWN')  → true  (superadmin escape hatch)
+ *   canApprove('admin', 'UNKNOWN')       → false (unknown → superadmin-only)
  */
 export function canApprove(role: string, requiredRole: string): boolean {
-  return (APPROVER_RANK[role] ?? 0) >= (APPROVER_RANK[requiredRole] ?? Infinity)
+  const actorRank = APPROVER_RANK[role] ?? 0
+  const requiredRank = APPROVER_RANK[requiredRole]
+  // Unknown requiredRole: require superadmin rank (escape hatch — WR-02)
+  if (requiredRank === undefined) {
+    return actorRank >= APPROVER_RANK['superadmin']
+  }
+  return actorRank >= requiredRank
 }
