@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 07-02-PLAN.md
-last_updated: "2026-06-14T22:09:39Z"
+stopped_at: Completed 07-03-PLAN.md
+last_updated: "2026-06-14T01:28:01Z"
 last_activity: 2026-06-14
 progress:
   total_phases: 15
   completed_phases: 0
   total_plans: 6
-  completed_plans: 2
-  percent: 33
+  completed_plans: 3
+  percent: 50
 ---
 
 # FYNXIA ERP — Project State
@@ -36,7 +36,7 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 ## Current Position
 
 Phase: 07 (Sistema, Multiunidade & Papéis) — EXECUTING
-Plan: 2 of 6
+Plan: 3 of 6
 **Milestone:** v2.0 — Produto Completo (27 módulos, blocos A–E)
 **Phase:** 7 — Sistema, Multiunidade & Papéis (não iniciada)
 **Plan:** —
@@ -79,6 +79,7 @@ Plan: 2 of 6
 ---
 | Phase 07 P01 | 64 | 4 tasks | 7 files |
 | Phase 07 P02 | 35 | 3 tasks | 6 files |
+| Phase 07 P03 | 75 | 3 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -111,6 +112,11 @@ Plan: 2 of 6
 | get_my_unit_ids() retorna UUID[] (array) | Suporte a usuários em múltiplas filiais (dentistas volantes em redes/franquias) | 2026-06-14 |
 | unit_id em operational tables: NULLABLE→backfill→NOT NULL | Pitfall 2: SET NOT NULL apenas após backfill para não quebrar linhas existentes | 2026-06-14 |
 | Unit-level RLS em linhas operacionais deferido para fase futura | Esta fase apenas adiciona a coluna; enforcement de SYS-05 será construído sobre ela | 2026-06-14 |
+| routeToModule() usa array ordenado (ROUTE_MODULE_MAP): /clinica/financeiro antes de /clinica | Garante módulo mais específico vence na resolução de rota para isReadOnly() | 2026-06-14 |
+| ROLE_ROUTES derivado de MODULE_PERMISSIONS via deriveRoleRoutes() | Fonte única de verdade; compat com testes rbac.test.ts existentes | 2026-06-14 |
+| forge.pki.certificateToAsn1(cert) em vez de cert.toAsn1() | cert objects em node-forge 1.4.0 não possuem método toAsn1() — API pública correta é pki module | 2026-06-14 |
+| Partial unique indexes (WHERE unit_id IS NULL / IS NOT NULL) em ai_agent_config | UNIQUE(clinic_id,agent_key,unit_id) não deduplica rows com unit_id=NULL no PostgreSQL (NULLs são distinct) | 2026-06-14 |
+| __mocks__/server-only.js + setup.ts: pre-register no-op no require.cache | vi.mock() só intercepta ESM imports; CJS require() precisa de patch direto no require.cache | 2026-06-14 |
 
 ### Architecture Constraints Locked
 

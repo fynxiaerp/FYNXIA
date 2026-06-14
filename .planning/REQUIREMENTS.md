@@ -8,14 +8,14 @@
 
 #### SYS — Configuração do Sistema & Multiunidade
 - [ ] **SYS-01**: Admin cadastra a empresa (CNPJ/CPF com máscara/validação, regime tributário) e múltiplas unidades da rede
-- [ ] **SYS-02**: Admin faz upload do Certificado ICP-Brasil (A1) usado para assinar NFS-e e prontuário
-- [ ] **SYS-03**: Admin define perfis de acesso que controlam permissões por módulo (RBAC granular)
-- [ ] **SYS-04**: Admin define o nível de autonomia da IA (L0–L4) por agente
+- [x] **SYS-02**: Admin faz upload do Certificado ICP-Brasil (A1) usado para assinar NFS-e e prontuário
+- [x] **SYS-03**: Admin define perfis de acesso que controlam permissões por módulo (RBAC granular)
+- [x] **SYS-04**: Admin define o nível de autonomia da IA (L0–L4) por agente
 - [ ] **SYS-05**: Dados e relatórios podem ser filtrados/escopados por unidade (centro de custo por unidade)
 
 #### ROLE — Papéis Estendidos
 - [ ] **ROLE-01**: Sistema suporta papéis adicionais: DPO, Auditor, Sócio, TI, Implantação e Aluno (além dos 4 do v1)
-- [ ] **ROLE-02**: Cada papel vê apenas os módulos/ações permitidos pelo seu perfil (gating server-side por unidade)
+- [x] **ROLE-02**: Cada papel vê apenas os módulos/ações permitidos pelo seu perfil (gating server-side por unidade)
 
 #### DOC — Documentos & Assinatura Eletrônica
 - [ ] **DOC-01**: Usuário cria modelos de documento com variáveis preenchidas automaticamente pelo contexto
@@ -162,12 +162,12 @@
 | REQ-ID | Phase | Status |
 |--------|-------|--------|
 | SYS-01 | Phase 7 | Pending |
-| SYS-02 | Phase 7 | Pending |
-| SYS-03 | Phase 7 | Pending |
-| SYS-04 | Phase 7 | Pending |
+| SYS-02 | Phase 7 | Complete |
+| SYS-03 | Phase 7 | Complete |
+| SYS-04 | Phase 7 | Complete |
 | SYS-05 | Phase 7 | Pending |
 | ROLE-01 | Phase 7 | Pending |
-| ROLE-02 | Phase 7 | Pending |
+| ROLE-02 | Phase 7 | Complete |
 | DOC-01 | Phase 8 | Pending |
 | DOC-02 | Phase 8 | Pending |
 | DOC-03 | Phase 8 | Pending |
