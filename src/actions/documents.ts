@@ -42,6 +42,11 @@ export interface GenerateDocumentInput {
   context: DocumentContext
   patientId?: string
   unitId?: string
+  /**
+   * CR-02: When provided, append a new version under this existing document instead
+   * of creating a new documents row. Preserves the DOC-03 append-only version chain.
+   */
+  existingDocumentId?: string
 }
 
 export interface DocumentVersionSummary {
@@ -105,8 +110,9 @@ export async function generateDocument(
   }
   const { actor } = actorResult
 
-  // Role gate: clinical staff and admin can generate documents
-  if (!['admin', 'superadmin', 'dentist', 'receptionist', 'ti'].includes(actor.role)) {
+  // Role gate: align with MODULE_PERMISSIONS.documentos (admin/superadmin/dentist write)
+  // WR-01/WR-02: 'ti' and 'receptionist' are NOT in the documentos module — removed.
+  if (!['admin', 'superadmin', 'dentist'].includes(actor.role)) {
     return { success: false, error: 'Permissão insuficiente para gerar documentos' }
   }
 
@@ -147,24 +153,59 @@ export async function generateDocument(
   // 4. Fill template variables
   const filledContent = fillTemplate(template.content, ctx)
 
-  // 5. Create document header (clinic_id comes from actor.tenant_id via DB trigger or explicit)
-  const { data: doc, error: docError } = await supabase
-    .from('documents')
-    .insert({
-      template_id: input.templateId,
-      patient_id: input.patientId ?? null,
-      unit_id: input.unitId ?? null,
-      category: template.category,
-      status: 'draft',
-      current_version: 1,
-      created_by: actor.id,
-      clinic_id: actor.tenant_id,
-    })
-    .select('id')
-    .single()
+  // 5. Resolve document header: create new OR append version under existing (CR-02)
+  let docId: string
+  let nextVersionNumber: number
 
-  if (docError || !doc) {
-    return { success: false, error: 'Erro ao criar documento' }
+  if (input.existingDocumentId) {
+    // CR-02: append a new version under an existing document (revision flow)
+    // Tenant guard: verify document belongs to the actor's clinic
+    const { data: existingDoc, error: existingDocError } = await supabase
+      .from('documents')
+      .select('id, clinic_id, current_version')
+      .eq('id', input.existingDocumentId)
+      .is('deleted_at', null)
+      .single()
+
+    if (existingDocError || !existingDoc || existingDoc.clinic_id !== actor.tenant_id) {
+      return { success: false, error: 'Documento não encontrado' }
+    }
+
+    docId = existingDoc.id
+    nextVersionNumber = existingDoc.current_version + 1
+
+    // Reopen document to draft status for the new revision
+    const { error: updateDocError } = await supabase
+      .from('documents')
+      .update({ current_version: nextVersionNumber, status: 'draft', updated_at: now.toISOString() })
+      .eq('id', docId)
+
+    if (updateDocError) {
+      return { success: false, error: 'Erro ao atualizar versão do documento' }
+    }
+  } else {
+    // Create a new document header
+    const { data: doc, error: docError } = await supabase
+      .from('documents')
+      .insert({
+        template_id: input.templateId,
+        patient_id: input.patientId ?? null,
+        unit_id: input.unitId ?? null,
+        category: template.category,
+        status: 'draft',
+        current_version: 1,
+        created_by: actor.id,
+        clinic_id: actor.tenant_id,
+      })
+      .select('id')
+      .single()
+
+    if (docError || !doc) {
+      return { success: false, error: 'Erro ao criar documento' }
+    }
+
+    docId = doc.id
+    nextVersionNumber = 1
   }
 
   // 6. Render PDF for content_hash (draft PDF — not yet signed)
@@ -173,7 +214,7 @@ export async function generateDocument(
     clinicName,
     title: template.name,
     content: filledContent,
-    documentNumber: `${doc.id.substring(0, 8).toUpperCase()}-v1`,
+    documentNumber: `${docId.substring(0, 8).toUpperCase()}-v${nextVersionNumber}`,
     generatedAt: nowIso,
   })
   const pdfBuffer = await renderToBuffer(pdfElement)
@@ -183,13 +224,14 @@ export async function generateDocument(
   // 7. AES-encrypt filled content at rest (T-08-18 — PII in content)
   const encryptedContent = encrypt(filledContent)
 
-  // 8. Insert version 1 (draft — signature = null, content encrypted)
+  // 8. Insert new version (draft — signature = null, content encrypted)
+  // supersedes_id links to the previous signed version when this is a revision (CR-02)
   const { data: version, error: verError } = await supabase
     .from('document_versions')
     .insert({
-      document_id: doc.id,
+      document_id: docId,
       clinic_id: actor.tenant_id,
-      version_number: 1,
+      version_number: nextVersionNumber,
       content: encryptedContent,
       is_content_encrypted: true,
       content_hash: contentHash,
@@ -206,10 +248,10 @@ export async function generateDocument(
     tenantId: actor.tenant_id,
     actorId: actor.id,
     action: 'document.generated',
-    details: { document_id: doc.id, version_id: version.id, template_id: input.templateId },
+    details: { document_id: docId, version_id: version.id, template_id: input.templateId },
   })
 
-  return { success: true, documentId: doc.id, versionId: version.id }
+  return { success: true, documentId: docId, versionId: version.id }
 }
 
 /**
@@ -236,16 +278,18 @@ export async function signDocument(
   }
   const { actor } = actorResult
 
-  if (!['admin', 'superadmin', 'dentist', 'ti'].includes(actor.role)) {
+  // Role gate: align with MODULE_PERMISSIONS.documentos write roles (WR-01: remove 'ti')
+  if (!['admin', 'superadmin', 'dentist'].includes(actor.role)) {
     return { success: false, error: 'Permissão insuficiente para assinar documentos' }
   }
 
   const admin = createAdminClient()
 
   // 1. Fetch document version + document header (admin bypasses column-level REVOKE)
+  // Include created_at for deterministic generatedAt (WR-04: reproducible signed bytes)
   const { data: version, error: verError } = await admin
     .from('document_versions')
-    .select('content, document_id, version_number, is_content_encrypted, signature')
+    .select('content, document_id, version_number, is_content_encrypted, signature, created_at')
     .eq('id', documentVersionId)
     .single()
 
@@ -317,14 +361,16 @@ export async function signDocument(
     : version.content
 
   // 6. Render FINAL PDF (the exact bytes that will be signed — Pitfall 1)
-  const nowIso = new Date().toISOString()
+  // WR-04: use version.created_at (deterministic) instead of new Date() so a retry
+  // after an upload failure produces identical PDF bytes → same SHA-256 → same signature.
+  const generatedAt = version.created_at
   const versionLabel = `${version.document_id.substring(0, 8).toUpperCase()}-v${version.version_number}`
   const pdfElement = createElement(DocumentoPDF, {
     clinicName,
     title: templateName,
     content: rawContent,
     documentNumber: versionLabel,
-    generatedAt: nowIso,
+    generatedAt,
   })
   const pdfBuffer = await renderToBuffer(pdfElement)
 
@@ -347,8 +393,11 @@ export async function signDocument(
     return { success: false, error: `Erro ao armazenar PDF assinado: ${uploadError.message}` }
   }
 
-  // 9. Update version with signature metadata (admin — storage_path is REVOKE-protected)
-  const { error: updateVerError } = await admin
+  // 9. Atomic update: only write signature if row is still unsigned (CR-01 race guard).
+  // .is('signature', null) means: "UPDATE ... WHERE signature IS NULL" — if another
+  // concurrent signDocument call already wrote the signature, this update matches 0 rows
+  // and we abort rather than overwriting an existing valid signature.
+  const { data: updateRows, error: updateVerError } = await admin
     .from('document_versions')
     .update({
       content_hash: sigResult.sha256Hex,
@@ -362,12 +411,22 @@ export async function signDocument(
       signed_by: actor.id,
     })
     .eq('id', documentVersionId)
+    .is('signature', null) // atomic guard: only update if still unsigned
+    .select('id')
 
-  if (updateVerError) {
-    return { success: false, error: 'Erro ao registrar assinatura' }
+  if (updateVerError || !updateRows || updateRows.length === 0) {
+    // Roll back: remove the already-uploaded PDF to avoid orphaned storage objects
+    await admin.storage.from('documents-pdf').remove([storagePath])
+    return {
+      success: false,
+      error: updateVerError
+        ? 'Erro ao registrar assinatura'
+        : 'Esta versão já foi assinada por outra requisição simultânea',
+    }
   }
 
   // 10. Mark document as signed
+  const nowIso = new Date().toISOString()
   await admin
     .from('documents')
     .update({ status: 'signed', updated_at: nowIso })
@@ -452,8 +511,13 @@ export async function verifyDocumentSignature(
 
   const pdfBuffer = Buffer.from(await pdfBlob.arrayBuffer())
 
-  // Verify RSA signature
-  const verified = verifyPdfSignature(pdfBuffer, version.signature, version.cert_pem)
+  // Verify RSA signature — IN-01: result is { valid, error? } not boolean
+  const verifyResult = verifyPdfSignature(pdfBuffer, version.signature, version.cert_pem)
+
+  if (verifyResult.error) {
+    // Unexpected forge error (malformed cert, internal exception) — not a signature mismatch
+    return { success: false, error: verifyResult.error }
+  }
 
   // Also cross-check SHA-256 hash
   const { createHash } = await import('crypto')
@@ -462,7 +526,7 @@ export async function verifyDocumentSignature(
 
   return {
     success: true,
-    verified: verified && hashMatch,
+    verified: verifyResult.valid && hashMatch,
     signerCn: version.signer_cn,
     signedAt: version.signed_at,
     thumbprint: version.cert_thumbprint,
