@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
-status: planning
+status: executing
 stopped_at: Completed 08-05-PLAN.md
-last_updated: "2026-06-14T16:19:12.985Z"
+last_updated: "2026-06-14T16:54:35.213Z"
 last_activity: 2026-06-14
 progress:
   total_phases: 15
   completed_phases: 2
-  total_plans: 11
+  total_plans: 16
   completed_plans: 11
-  percent: 100
+  percent: 69
 ---
 
 # FYNXIA ERP — Project State
@@ -29,18 +29,18 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 
 **Stack:** Next.js 15 + TypeScript (strict) + Supabase (sa-east-1) + Vercel (gru1) + shadcn/ui + Tailwind v4
 
-**Current focus:** Phase 08 — Documentos & Assinatura ICP-Brasil
+**Current focus:** Phase 09 — Hub de Integrações Externas
 
 ---
 
 ## Current Position
 
-Phase: 08 (Documentos & Assinatura ICP-Brasil) — EXECUTING
+Phase: 09 (Hub de Integrações Externas) — EXECUTING
 Plan: 1 of 5
 **Milestone:** v2.0 — Produto Completo (27 módulos, blocos A–E)
 **Phase:** 9
 **Plan:** Not started
-**Status:** Ready to plan
+**Status:** Executing Phase 09
 **Last activity:** 2026-06-14
 
 ---
