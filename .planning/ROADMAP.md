@@ -75,7 +75,13 @@ Full detail archived in [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
   3. Admin cria perfis de acesso custom controlando permissões por módulo com gating server-side
   4. Os seis novos papéis (DPO, Auditor, Sócio, TI, Implantação, Aluno) são reconhecidos pelo RBAC e cada um vê apenas módulos/ações autorizados
   5. Admin configura nível de autonomia L0–L4 por agente de IA e a configuração é respeitada em runtime
-**Plans**: TBD
+**Plans**: 6 plans
+- [ ] 07-01-PLAN.md — Wave 0: node-forge install + assertNotReadOnly guard + RED test scaffolds + .pfx fixture
+- [ ] 07-02-PLAN.md — Wave 1: multiunidade migrations (units, user_units + get_my_unit_ids, role expansion, unit_id backfill)
+- [ ] 07-03-PLAN.md — Wave 1: RBAC module matrix + read-only gating in proxy.ts, node-forge pfx reader, certificates + ai_agent_config migrations
+- [ ] 07-04-PLAN.md — Wave 2: [BLOCKING] supabase db push + regenerate types (human re-auth)
+- [ ] 07-05-PLAN.md — Wave 3: Empresa & Unidades config UI (SYS-01)
+- [ ] 07-06-PLAN.md — Wave 3: Certificado ICP + Autonomia IA + Perfis config UI (SYS-02/03/04)
 **v1 reuse**: Expande `public.clinics` + `public.users` + RBAC matrix do Phase 1; novos papéis adicionam linhas ao ROLE_ROUTES; SYS-02 prepara keystore para DOC (Phase 8)
 
 ---
@@ -297,7 +303,7 @@ Full detail archived in [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
 | 4. Communications & Async | v1.0 | 4/4 | Complete | 2026-06-08 |
 | 5. AI Agents | v1.0 | 5/5 | Complete | 2026-06-11 |
 | 6. UX Polish & App Shell | v1.0 | 8/8 | Complete | 2026-06-12 |
-| 7. Sistema, Multiunidade & Papéis | v2.0 | 0/? | Not started | - |
+| 7. Sistema, Multiunidade & Papéis | v2.0 | 0/6 | Planned | - |
 | 8. Documentos & Assinatura ICP-Brasil | v2.0 | 0/? | Not started | - |
 | 9. Hub de Integrações Externas | v2.0 | 0/? | Not started | - |
 | 10. IA Governada, Auditoria & OCR | v2.0 | 0/? | Not started | - |
