@@ -325,7 +325,7 @@ Plans:
 | 7. Sistema, Multiunidade & Papéis | v2.0 | 0/6 | Planned | - |
 | 8. Documentos & Assinatura ICP-Brasil | v2.0 | 0/5 | Planned | - |
 | 9. Hub de Integrações Externas | v2.0 | 0/? | Not started | - |
-| 10. IA Governada, Auditoria & OCR | v2.0 | 7/8 | In Progress|  |
+| 10. IA Governada, Auditoria & OCR | v2.0 | 8/8 | Complete    | 2026-06-14 |
 | 11. Profissionais & Recursos | v2.0 | 0/? | Not started | - |
 | 12. Receituário & Teleodontologia | v2.0 | 0/? | Not started | - |
 | 13. Esterilização/CME & Laboratório de Prótese | v2.0 | 0/? | Not started | - |
