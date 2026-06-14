@@ -1274,6 +1274,7 @@ export type Database = {
           config: Json
           created_at: string
           credential_enc: string | null
+          deleted_at: string | null
           id: string
           status: string
           type: string
@@ -1284,6 +1285,7 @@ export type Database = {
           config?: Json
           created_at?: string
           credential_enc?: string | null
+          deleted_at?: string | null
           id?: string
           status?: string
           type: string
@@ -1294,6 +1296,7 @@ export type Database = {
           config?: Json
           created_at?: string
           credential_enc?: string | null
+          deleted_at?: string | null
           id?: string
           status?: string
           type?: string
