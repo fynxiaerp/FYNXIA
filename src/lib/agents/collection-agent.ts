@@ -15,6 +15,12 @@
 //   This file MUST reference getInvoiceUrl; must never contain a hardcoded domain
 //   URL pattern or template-literal URL construction. The paymentLink param passed
 //   to buildCollectionComponents is ALWAYS the resolved gateway.getInvoiceUrl value.
+//
+// Phase 10 (AIG-01/03 — B2 fix): governance log is PER-TENANT INSIDE the scan loop.
+//   withAgentPolicy is called with clinicId = receivable.tenant_id (never null).
+//   DO NOT add a run-level gate — ai_decision_log.clinic_id is NOT NULL and a
+//   run-level call would have no resolved tenant. The wrap is ADDITIVE: at the
+//   seeded L0/enabled config, safe actions execute unchanged (existing tests stay green).
 import 'server-only'
 
 import { generateText } from 'ai'
@@ -32,6 +38,7 @@ import {
 } from '@/lib/whatsapp/templates'
 import { format, parseISO } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
+import { withAgentPolicy } from '@/lib/ai/policy'
 
 // ─── LLM message personalization ─────────────────────────────────────────────
 
@@ -112,6 +119,17 @@ REGRAS OBRIGATÓRIAS:
  *   - LGPD: only patients with deleted_at IS NULL + is_anonymized=false (WR-06).
  *   - Idempotency: outbox idempotencyKey 'collection-agent:{receivableId}:{date}'.
  *   - Audit: agent_outreach_log + logBusinessEvent on each successful enqueue.
+ *
+ * Phase 10 governance (B2 fix — per-tenant INSIDE the loop):
+ *   withAgentPolicy is called with clinicId = receivable.tenant_id for each row
+ *   that passes the pre-checks (phone, paymentLink). This ensures ai_decision_log
+ *   rows always carry a real tenant UUID (NOT NULL constraint). The wrap is
+ *   sensitivity='safe' (enqueue-via-outbox is a pre-approved product action at
+ *   any enabled level — Open Question 1 resolution). At seeded L0/enabled config,
+ *   the decision resolves to 'suggest' but withAgentPolicy still executes the
+ *   originalExecute callback for safe read-only/outbox actions.
+ *   Note: if governance returns _policy sentinel (e.g. disabled agent), the enqueue
+ *   is skipped and counted as skipped to preserve { enqueued, skipped } accuracy.
  *
  * @param admin - Admin Supabase client (defaults to createAdminClient()).
  * @returns { enqueued, skipped } counters for observability.
@@ -200,68 +218,92 @@ export async function runCollectionAgent(
     // T-5-collect-dup: idempotency per receivable per calendar day
     const idempotencyKey = `collection-agent:${receivable.id}:${todayISO}`
 
-    // Enqueue via Phase 4 outbox (never direct WhatsApp call)
-    // NOTE: personalizedText rides in the patientName param ({{1}}) as the
-    // leading body text. The paymentLink ({{5}}) is always the verified invoiceUrl.
-    const enqueueResult = await queue.enqueue({
-      tenantId: receivable.tenant_id,
-      channel: 'whatsapp',
-      idempotencyKey,
-      payload: {
-        kind: 'whatsapp_template',
-        to: e164,
-        templateName: TEMPLATE_COLLECTION,
-        languageCode: WHATSAPP_LANGUAGE,
-        components: buildCollectionComponents({
-          patientName: personalizedText,
-          description: charge.description ?? 'cobrança odontológica',
-          amount: formatBRL(receivable.value),
-          dueDate: dueDateFormatted,
-          paymentLink, // REAL Asaas invoiceUrl — never LLM output
-        }),
+    // Phase 10 (AIG-01/03 — B2): governance log PER-TENANT with real clinic_id.
+    // clinicId = receivable.tenant_id (resolved per-row — never null/aggregate).
+    // sensitivity='safe': outbox enqueue is a pre-approved agent action at any level.
+    // The originalExecute closure performs the enqueue + audit writes.
+    const govResult = await withAgentPolicy(
+      {
+        clinicId: receivable.tenant_id,
+        agentKey: 'collection',
+        actorId: null,          // cron — no user session
+        action: 'agent.collection.notify',
+        actionSensitivity: 'safe',
       },
-    })
+      async () => {
+        // Enqueue via Phase 4 outbox (never direct WhatsApp call)
+        // NOTE: personalizedText rides in the patientName param ({{1}}) as the
+        // leading body text. The paymentLink ({{5}}) is always the verified invoiceUrl.
+        const enqueueResult = await queue.enqueue({
+          tenantId: receivable.tenant_id,
+          channel: 'whatsapp',
+          idempotencyKey,
+          payload: {
+            kind: 'whatsapp_template',
+            to: e164,
+            templateName: TEMPLATE_COLLECTION,
+            languageCode: WHATSAPP_LANGUAGE,
+            components: buildCollectionComponents({
+              patientName: personalizedText,
+              description: charge.description ?? 'cobrança odontológica',
+              amount: formatBRL(receivable.value),
+              dueDate: dueDateFormatted,
+              paymentLink, // REAL Asaas invoiceUrl — never LLM output
+            }),
+          },
+        })
 
-    if (!enqueueResult.success) {
-      console.error(
-        `[collection-agent] Failed to enqueue for receivable ${receivable.id}:`,
-        enqueueResult.error,
-      )
+        if (!enqueueResult.success) {
+          console.error(
+            `[collection-agent] Failed to enqueue for receivable ${receivable.id}:`,
+            enqueueResult.error,
+          )
+          return { _enqueueSuccess: false }
+        }
+
+        // Write agent_outreach_log (AI-03 audit trail — insert after successful enqueue)
+        const { error: logError } = await admin.from('agent_outreach_log').insert({
+          tenant_id: receivable.tenant_id,
+          agent_type: 'collection',
+          patient_id: receivable.patient_id ?? null,
+          receivable_id: receivable.id,
+          status: 'sent',
+        })
+
+        if (logError) {
+          // Audit failure must not block the outbound message (same pattern as confirmation-agent)
+          console.error(
+            `[collection-agent] Failed to write agent_outreach_log for receivable ${receivable.id}:`,
+            logError.message,
+          )
+        }
+
+        // Audit event — IDs/amounts only, no PHI beyond first name (T-5-collect-I)
+        await logBusinessEvent({
+          tenantId: receivable.tenant_id,
+          actorId: null,
+          action: 'ai03.collection.sent',
+          details: {
+            receivableId: receivable.id,
+            patientId: receivable.patient_id,
+            value: receivable.value,
+            dueDate: receivable.due_date,
+          },
+        })
+
+        return { _enqueueSuccess: true }
+      },
+    )
+
+    // Tally result — governance _policy sentinel means agent was blocked/disabled
+    if (govResult && typeof govResult === 'object' && '_policy' in govResult) {
+      // Agent disabled or blocked for this tenant — count as skipped
       skipped++
-      continue
+    } else if (govResult && '_enqueueSuccess' in govResult && govResult._enqueueSuccess) {
+      enqueued++
+    } else {
+      skipped++
     }
-
-    // Write agent_outreach_log (AI-03 audit trail — insert after successful enqueue)
-    const { error: logError } = await admin.from('agent_outreach_log').insert({
-      tenant_id: receivable.tenant_id,
-      agent_type: 'collection',
-      patient_id: receivable.patient_id ?? null,
-      receivable_id: receivable.id,
-      status: 'sent',
-    })
-
-    if (logError) {
-      // Audit failure must not block the outbound message (same pattern as confirmation-agent)
-      console.error(
-        `[collection-agent] Failed to write agent_outreach_log for receivable ${receivable.id}:`,
-        logError.message,
-      )
-    }
-
-    // Audit event — IDs/amounts only, no PHI beyond first name (T-5-collect-I)
-    await logBusinessEvent({
-      tenantId: receivable.tenant_id,
-      actorId: null,
-      action: 'ai03.collection.sent',
-      details: {
-        receivableId: receivable.id,
-        patientId: receivable.patient_id,
-        value: receivable.value,
-        dueDate: receivable.due_date,
-      },
-    })
-
-    enqueued++
   }
 
   return { enqueued, skipped }
