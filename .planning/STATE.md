@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 08-05-PLAN.md
-last_updated: "2026-06-14T16:54:35.213Z"
+stopped_at: Completed 09-01-PLAN.md
+last_updated: "2026-06-14T17:02:04.668Z"
 last_activity: 2026-06-14
 progress:
   total_phases: 15
   completed_phases: 2
   total_plans: 16
-  completed_plans: 11
-  percent: 69
+  completed_plans: 12
+  percent: 75
 ---
 
 # FYNXIA ERP — Project State
@@ -87,6 +87,7 @@ Plan: 1 of 5
 | Phase 08 P02 | 7 | 3 tasks | 9 files |
 | Phase 08 P04 | 28 | 2 tasks | 5 files |
 | Phase 08 P05 | 30 | 3 tasks | 8 files |
+| Phase 09 P01 | 30 | 3 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -136,6 +137,8 @@ Plan: 1 of 5
 | generateDocument AES-encripta conteúdo preenchido no draft | T-08-18: conteúdo pode conter CPF/nome do paciente (PII LGPD) — encrypt na criação, não diferir para assinatura | 2026-06-14 |
 | signDocument retorna signerCn/signedAt/thumbprint no resultado da action | Evita round-trip extra ao DB para exibir carimbo de tempo + assinante na UI | 2026-06-14 |
 | Download route cria signed URL com TTL=60s; raw storage_path nunca na resposta | T-08-19: segurança — path privado não exposto ao cliente | 2026-06-14 |
+| maskCredential em src/lib/integrations/mask.ts (sem 'use server') | Importável por server actions E client components; Omit<> no action garante type-level safety | 2026-06-14 |
+| Dynamic import via absolute path (não @-alias) em RED scaffolds | @-alias causa TS2307 quando módulo alvo ainda não existe; absolute path + existsSync guard mantém tsc clean | 2026-06-14 |
 
 ### Architecture Constraints Locked
 
@@ -172,7 +175,7 @@ Plan: 1 of 5
 
 ## Session Continuity
 
-**Stopped at:** Completed 08-05-PLAN.md
+**Stopped at:** Completed 09-01-PLAN.md
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 

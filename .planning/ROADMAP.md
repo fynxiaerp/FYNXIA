@@ -115,7 +115,7 @@ Full detail archived in [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
   3. Painel mostra status (ativo/falha/degradado) de cada integração; integrações com falha são reenviadas automaticamente e o painel reflete a atualização
 **Plans**: 5 plans
 Plans:
-- [ ] 09-01-PLAN.md — Wave 0 RED test scaffolds (connectors/webhooks/health source-inspection + units)
+- [x] 09-01-PLAN.md — Wave 0 RED test scaffolds (connectors/webhooks/health source-inspection + units)
 - [ ] 09-02-PLAN.md — Migrations (integration_connectors + integration_events + REVOKE) + lib (types/mask/health/validators) + connector vault Server Action
 - [ ] 09-03-PLAN.md — logToHub + additive hub-log in Asaas/WhatsApp handlers + drainIntegrationEvents worker/cron + integracoes module in proxy
 - [ ] 09-04-PLAN.md — [BLOCKING] supabase db push + gen types (truncation guard) + post-push DB checks

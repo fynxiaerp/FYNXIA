@@ -23,9 +23,9 @@
 - [x] **DOC-03**: Documento assinado é imutável e versionado (histórico preservado)
 
 #### INT — Integrações Externas
-- [ ] **INT-01**: Admin/TI cadastra conectores (WhatsApp, NFS-e, banco, TISS) com credenciais armazenadas com segurança
-- [ ] **INT-02**: Sistema recebe eventos externos via webhooks por conector
-- [ ] **INT-03**: Painel mostra a saúde de cada integração e reenvia automaticamente em caso de falha
+- [x] **INT-01**: Admin/TI cadastra conectores (WhatsApp, NFS-e, banco, TISS) com credenciais armazenadas com segurança
+- [x] **INT-02**: Sistema recebe eventos externos via webhooks por conector
+- [x] **INT-03**: Painel mostra a saúde de cada integração e reenvia automaticamente em caso de falha
 
 #### AIG — IA Governada (L0–L4)
 - [ ] **AIG-01**: Cada agente opera dentro de limites de ação invioláveis (tetos e travas configuráveis)
@@ -171,9 +171,9 @@
 | DOC-01 | Phase 8 | Complete |
 | DOC-02 | Phase 8 | Complete |
 | DOC-03 | Phase 8 | Complete |
-| INT-01 | Phase 9 | Pending |
-| INT-02 | Phase 9 | Pending |
-| INT-03 | Phase 9 | Pending |
+| INT-01 | Phase 9 | Complete |
+| INT-02 | Phase 9 | Complete |
+| INT-03 | Phase 9 | Complete |
 | AIG-01 | Phase 10 | Pending |
 | AIG-02 | Phase 10 | Pending |
 | AIG-03 | Phase 10 | Pending |
