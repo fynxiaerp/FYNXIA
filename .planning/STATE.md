@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 08-04-PLAN.md
-last_updated: "2026-06-14T15:34:50.122Z"
+stopped_at: Completed 08-05-PLAN.md
+last_updated: "2026-06-14T15:55:09Z"
 last_activity: 2026-06-14
 progress:
   total_phases: 15
   completed_phases: 1
   total_plans: 11
-  completed_plans: 10
-  percent: 91
+  completed_plans: 11
+  percent: 100
 ---
 
 # FYNXIA ERP — Project State
@@ -86,6 +86,7 @@ Plan: 1 of 5
 | Phase 08 P01 | 10 | 2 tasks | 5 files |
 | Phase 08 P02 | 7 | 3 tasks | 9 files |
 | Phase 08 P04 | 28 | 2 tasks | 5 files |
+| Phase 08 P05 | 30 | 3 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -131,6 +132,10 @@ Plan: 1 of 5
 | detectVariables usa .filter((v): v is string) após matchAll | matchAll captures tipados string\|undefined no tsconfig strict; type guard necessário para inferir string[] | 2026-06-14 |
 | documentTemplateSchema sem .default() | RHF v7+resolvers v5 compara input vs output types; .default() cria mismatch rejeitado pelo tsc — form defaultValues fornece os valores | 2026-06-14 |
 | listTemplates inclui coluna content | Permite pré-população no edit sem fetch adicional; limitado pelo schema de 20000 chars | 2026-06-14 |
+| documentos module: /clinica/documentos antes de /clinica em ROUTE_MODULE_MAP | Módulo mais específico vence na resolução (mirrors financeiro pattern) | 2026-06-14 |
+| generateDocument AES-encripta conteúdo preenchido no draft | T-08-18: conteúdo pode conter CPF/nome do paciente (PII LGPD) — encrypt na criação, não diferir para assinatura | 2026-06-14 |
+| signDocument retorna signerCn/signedAt/thumbprint no resultado da action | Evita round-trip extra ao DB para exibir carimbo de tempo + assinante na UI | 2026-06-14 |
+| Download route cria signed URL com TTL=60s; raw storage_path nunca na resposta | T-08-19: segurança — path privado não exposto ao cliente | 2026-06-14 |
 
 ### Architecture Constraints Locked
 
@@ -167,7 +172,7 @@ Plan: 1 of 5
 
 ## Session Continuity
 
-**Stopped at:** Completed 08-04-PLAN.md
+**Stopped at:** Completed 08-05-PLAN.md
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 

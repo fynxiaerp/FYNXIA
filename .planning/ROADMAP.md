@@ -99,7 +99,7 @@ Full detail archived in [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
 - [x] 08-02-PLAN.md — Wave 2: migrations (3 tables + RLS INSERT-only + private bucket) + template engine + ICP signing lib + DocumentoPDF
 - [x] 08-03-PLAN.md — Wave 3: [BLOCKING] supabase db push + regenerate types (human re-auth)
 - [x] 08-04-PLAN.md — Wave 4: template CRUD + editor UI at /config/documentos (DOC-01)
-- [ ] 08-05-PLAN.md — Wave 4: documentos module + generate/sign/verify + immutable versions UI at /clinica/documentos (DOC-02/03)
+- [x] 08-05-PLAN.md — Wave 4: documentos module + generate/sign/verify + immutable versions UI at /clinica/documentos (DOC-02/03)
 **v1 reuse**: Expande assinatura de anamnese (SHA-256 + token Phase 2); reutiliza storage Supabase; base para RX (Phase 12) e OS/NFS-e (Phase 15)
 **UI hint**: yes
 
