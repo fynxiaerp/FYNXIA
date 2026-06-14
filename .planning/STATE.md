@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 10-02-PLAN.md
-last_updated: "2026-06-14T19:38:14.940Z"
+stopped_at: Completed 10-03-PLAN.md
+last_updated: "2026-06-14T20:17:00.000Z"
 last_activity: 2026-06-14
 progress:
   total_phases: 15
@@ -93,6 +93,7 @@ Plan: 1 of 8
 | Phase 09 P05 | 7 | 2 tasks | 4 files |
 | Phase 10 P01 | 15 | 2 tasks | 6 files |
 | Phase 10 P02 | 10 | 3 tasks | 5 files |
+| Phase 10 P03 | 25 | 3 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -137,6 +138,10 @@ Plan: 1 of 8
 | document_versions.content cifrado com is_content_encrypted=true por padrão | Conteúdo preenchido pode conter CPF/nome do paciente (PII LGPD); Open Question 1 do RESEARCH resolvido: criptografar | 2026-06-14 |
 | detectVariables usa .filter((v): v is string) após matchAll | matchAll captures tipados string\|undefined no tsconfig strict; type guard necessário para inferir string[] | 2026-06-14 |
 | documentTemplateSchema sem .default() | RHF v7+resolvers v5 compara input vs output types; .default() cria mismatch rejeitado pelo tsc — form defaultValues fornece os valores | 2026-06-14 |
+| computePolicyDecision re-exported como named const em policy.ts | Source-inspection test regex requer export const/function; re-export nomeado como const satisfaz sem duplicar lógica | 2026-06-14 |
+| canApprove re-exported de approval-actions.ts via export { canApprove } | 'use server' com re-export de função sync aceito pelo compilador Next.js 16.2.7; Vitest importa do caminho primário — tests GREEN | 2026-06-14 |
+| Read-only tools sempre executam mesmo se _policy retorna sentinela | Open Question 1 resolvido: safe reads não causam dano; wrap é additive logging only; sem fallback quebraria copilot em config L0/disabled | 2026-06-14 |
+| withAgentPolicy chamado PER-ROW dentro do loop do agente (B2 fix) | ai_decision_log.clinic_id NOT NULL — call run-level teria clinic_id null/agregado e violaria constraint; loop resolve tenant_id real por row | 2026-06-14 |
 | listTemplates inclui coluna content | Permite pré-população no edit sem fetch adicional; limitado pelo schema de 20000 chars | 2026-06-14 |
 | documentos module: /clinica/documentos antes de /clinica em ROUTE_MODULE_MAP | Módulo mais específico vence na resolução (mirrors financeiro pattern) | 2026-06-14 |
 | generateDocument AES-encripta conteúdo preenchido no draft | T-08-18: conteúdo pode conter CPF/nome do paciente (PII LGPD) — encrypt na criação, não diferir para assinatura | 2026-06-14 |
