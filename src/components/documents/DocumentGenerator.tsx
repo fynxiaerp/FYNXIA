@@ -192,6 +192,9 @@ export function DocumentGenerator({ templates, isReadOnly }: DocumentGeneratorPr
   }
 
   // ── Request revision ─────────────────────────────────────────────────────────
+  // CR-02: pass existingDocumentId so generateDocument appends a new version under
+  // the SAME document instead of creating a new documents row. Keep documentId
+  // unchanged — the version history belongs to the same document chain (DOC-03).
   async function handleRequestRevision() {
     if (!documentId || !selectedTemplateId) return
     setError(null)
@@ -203,16 +206,17 @@ export function DocumentGenerator({ templates, isReadOnly }: DocumentGeneratorPr
       const result = await generateDocument({
         templateId: selectedTemplateId,
         context: {},
+        existingDocumentId: documentId, // append version under the existing document
       })
 
-      if (!result.success || !result.documentId || !result.versionId) {
+      if (!result.success || !result.versionId) {
         setError(result.error ?? 'Erro ao criar nova revisão.')
         return
       }
 
-      setDocumentId(result.documentId)
+      // Do NOT replace documentId — keep the same document chain (DOC-03 append-only)
       setVersionId(result.versionId)
-      await refreshVersions(result.documentId)
+      await refreshVersions(documentId) // refresh versions for the SAME document
     } catch {
       setError('Erro inesperado ao criar revisão.')
     } finally {
