@@ -1,23 +1,122 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { updateSession } from '@/lib/supabase/middleware'
 
-// ─── Role → allowed path prefixes (D-07) ────────────────────────────────────
-export const ROLE_ROUTES: Record<string, string[]> = {
-  admin:        ['/clinica', '/perfil', '/config', '/superadmin'],
-  dentist:      ['/clinica', '/perfil'],
-  receptionist: ['/clinica', '/perfil'],
-  patient:      ['/paciente', '/perfil'],
-  superadmin:   ['/clinica', '/perfil', '/config', '/superadmin', '/paciente'],
+// ─── Role × Module access matrix (Phase 7 / RESEARCH Pattern 3) ─────────────
+
+export const NETWORK_ROLES = ['admin', 'superadmin', 'socio', 'auditor', 'dpo', 'ti'] as const
+export const OPERATIONAL_ROLES = ['dentist', 'receptionist', 'aluno'] as const
+export const READ_ONLY_ROLES = ['auditor', 'dpo', 'socio'] as const
+
+export type AppRole =
+  | 'admin' | 'superadmin' | 'dentist' | 'receptionist' | 'patient'
+  | 'dpo' | 'auditor' | 'socio' | 'ti' | 'implantacao' | 'aluno'
+
+type ModuleKey = 'clinica' | 'config' | 'superadmin' | 'paciente' | 'financeiro' | 'ia' | 'bi'
+
+interface ModuleAccess {
+  allowed: boolean
+  readOnly?: boolean
+}
+
+export const MODULE_PERMISSIONS: Record<AppRole, Partial<Record<ModuleKey, ModuleAccess>>> = {
+  superadmin:   { clinica: {allowed:true}, config: {allowed:true}, superadmin: {allowed:true}, paciente: {allowed:true}, financeiro: {allowed:true}, ia: {allowed:true}, bi: {allowed:true} },
+  admin:        { clinica: {allowed:true}, config: {allowed:true}, superadmin: {allowed:true}, financeiro: {allowed:true}, ia: {allowed:true}, bi: {allowed:true} },
+  dentist:      { clinica: {allowed:true} },
+  receptionist: { clinica: {allowed:true} },
+  patient:      { paciente: {allowed:true} },
+  dpo:          { clinica: {allowed:true, readOnly:true}, config: {allowed:true, readOnly:true}, bi: {allowed:true, readOnly:true} },
+  auditor:      { clinica: {allowed:true, readOnly:true}, financeiro: {allowed:true, readOnly:true}, bi: {allowed:true, readOnly:true} },
+  socio:        { financeiro: {allowed:true, readOnly:true}, bi: {allowed:true, readOnly:true}, config: {allowed:true, readOnly:true} },
+  ti:           { config: {allowed:true}, ia: {allowed:true} },
+  implantacao:  { clinica: {allowed:true}, config: {allowed:true, readOnly:true} },
+  aluno:        { clinica: {allowed:true} },
+}
+
+// Route → module: most-specific prefix checked FIRST (financeiro before clinica).
+// /clinica/financeiro → 'financeiro'; /clinica/... → 'clinica'; etc.
+const ROUTE_MODULE_MAP: Array<{ prefix: string; module: ModuleKey }> = [
+  { prefix: '/clinica/financeiro', module: 'financeiro' },
+  { prefix: '/clinica',            module: 'clinica'    },
+  { prefix: '/config',             module: 'config'     },
+  { prefix: '/superadmin',         module: 'superadmin' },
+  { prefix: '/paciente',           module: 'paciente'   },
+  { prefix: '/bi',                 module: 'bi'         },
+  { prefix: '/ia',                 module: 'ia'         },
+]
+
+function routeToModule(pathname: string): ModuleKey | null {
+  for (const { prefix, module } of ROUTE_MODULE_MAP) {
+    if (pathname === prefix || pathname.startsWith(prefix + '/') || pathname === prefix) {
+      return module
+    }
+  }
+  return null
 }
 
 /**
- * Pure helper — determines whether a role may access a given pathname.
- * Exported so it can be unit-tested without spinning up a full request.
+ * Returns true if the role is permitted to access the given pathname.
+ * /perfil is universally allowed (own profile, every authenticated role).
+ * Unknown roles fall back to patient-level access (/paciente only).
  */
 export function isPathAllowed(role: string, pathname: string): boolean {
-  const allowedPrefixes = ROLE_ROUTES[role] ?? ['/paciente']
-  return allowedPrefixes.some(prefix => pathname.startsWith(prefix))
+  if (pathname.startsWith('/perfil')) return true
+  const module = routeToModule(pathname)
+  if (!module) return false
+  const permissions = MODULE_PERMISSIONS[role as AppRole]
+  // Unknown role defaults to patient-level: only /paciente is accessible
+  if (!permissions) return module === 'paciente'
+  return permissions[module]?.allowed === true
 }
+
+/**
+ * Returns true if the role is read-only for the module resolved from pathname.
+ * Most-specific module wins (e.g. /clinica/financeiro → financeiro module).
+ */
+export function isReadOnly(role: string, pathname: string): boolean {
+  const module = routeToModule(pathname)
+  if (!module) return false
+  const permissions = MODULE_PERMISSIONS[role as AppRole]
+  if (!permissions) return false
+  return permissions[module]?.readOnly === true
+}
+
+// ─── ROLE_ROUTES — derived from MODULE_PERMISSIONS for backward compat ────────
+// Old tests assert on ROLE_ROUTES shape: patient → ['/paciente', '/perfil'],
+// superadmin → contains '/clinica','/perfil','/config','/superadmin','/paciente', etc.
+// We derive it from the matrix so there is a single source of truth.
+
+function deriveRoleRoutes(): Record<string, string[]> {
+  const result: Record<string, string[]> = {}
+  for (const [role, modules] of Object.entries(MODULE_PERMISSIONS)) {
+    const paths: string[] = []
+    for (const [mod, access] of Object.entries(modules)) {
+      if (access?.allowed) {
+        // Map module key back to its primary route prefix
+        // Note: 'financeiro' module is a sub-route of /clinica; we expose /clinica here
+        // because the ROLE_ROUTES compat layer is path-prefix-based, not module-based.
+        // The actual sub-route /clinica/financeiro is handled by routeToModule().
+        if (mod === 'financeiro') {
+          // financeiro lives at /clinica/financeiro — expose both /clinica and financeiro sub-path
+          if (!paths.includes('/clinica')) paths.push('/clinica')
+        } else {
+          paths.push(`/${mod}`)
+        }
+      }
+    }
+    // /perfil is universal for all roles except roles with no modules at all
+    if (paths.length > 0) {
+      paths.push('/perfil')
+    }
+    result[role] = paths
+  }
+  return result
+}
+
+const _derivedRoleRoutes = deriveRoleRoutes()
+
+// The old rbac.test.ts checks exact equality of patient routes: ['/paciente', '/perfil']
+// and containment for others. The derived routes match these contracts.
+export const ROLE_ROUTES: Record<string, string[]> = _derivedRoleRoutes
 
 export async function proxy(request: NextRequest) {
   try { // TEMP-DEBUG
@@ -81,13 +180,16 @@ export async function proxy(request: NextRequest) {
       return NextResponse.redirect(new URL(home, request.url))
     }
 
-    // Forward role + user ID into REQUEST headers so Server Components can read
-    // them via headers().get('x-user-role') without making another DB call.
+    // Forward role + user ID + read-only flag into REQUEST headers so Server Components
+    // can read them via headers().get('x-user-role') without making another DB call.
+    // x-read-only: 'true' when the role is read-only on this specific module (ROLE-02).
     // CRITICAL: Use request headers (not supabaseResponse.headers) — response
     // headers are NOT readable by Server Components via next/headers.
+    const readOnly = isReadOnly(role, pathname)
     const requestHeaders = new Headers(request.headers)
     requestHeaders.set('x-user-role', role)
     requestHeaders.set('x-user-id', user.id)
+    requestHeaders.set('x-read-only', readOnly ? 'true' : 'false')
     return NextResponse.next({ request: { headers: requestHeaders } })
   }
 
