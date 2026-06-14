@@ -4,6 +4,7 @@
     { "path": "/api/cron/collection-ruler", "schedule": "0 8 * * *" },
     { "path": "/api/cron/reminder-dispatch", "schedule": "0 11 * * *" },
     { "path": "/api/cron/confirmation-agent", "schedule": "0 12 * * *" },
-    { "path": "/api/cron/collection-agent", "schedule": "0 13 * * *" }
+    { "path": "/api/cron/collection-agent", "schedule": "0 13 * * *" },
+    { "path": "/api/cron/integration-retry", "schedule": "*/15 * * * *" }
   ]
 }
