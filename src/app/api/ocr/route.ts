@@ -102,57 +102,11 @@ export async function POST(request: Request): Promise<Response> {
     )
   }
 
-  // Encode to base64 for FilePart
-  const arrayBuffer = await file.arrayBuffer()
-  const base64 = Buffer.from(arrayBuffer).toString('base64')
-  const mimeType = file.type
-
-  // ─── AI Gateway — generateObject + FilePart + ZDR (OCR-01) ────────────────
-  // T-10-20: zeroDataRetention:true on every Gateway call (Pitfall 4 — LGPD)
-  const { object } = await generateObject({
-    model: 'anthropic/claude-sonnet-4.6', // vision-capable model in GatewayModelId
-    schema: PatientDocumentSchema,
-    messages: [
-      {
-        role: 'user',
-        content: [
-          // FilePart: base64-encoded document image/PDF (AI SDK v6 FilePart)
-          // Note: AI SDK v6 FilePart uses 'mediaType' (not 'mimeType') — @ai-sdk/provider-utils
-          { type: 'file', data: base64, mediaType: mimeType } as const,
-          {
-            type: 'text',
-            text: [
-              'Analise o documento e extraia os campos a seguir em português do Brasil.',
-              'Para cada campo, forneça:',
-              '  - value: o valor extraído do documento (string vazia se não encontrado)',
-              '  - confidence: score de confiança de 0.0 (baixo) a 1.0 (alto)',
-              '',
-              'Campos a extrair:',
-              '  - full_name: nome completo do titular',
-              '  - cpf: CPF no formato 000.000.000-00',
-              '  - birth_date: data de nascimento no formato YYYY-MM-DD',
-              '  - address: endereço completo (logradouro, número, bairro, cidade, estado)',
-            ].join('\n'),
-          },
-        ],
-      },
-    ],
-    providerOptions: {
-      gateway: {
-        zeroDataRetention: true, // T-10-20: LGPD — Gateway retains no prompt/response PII
-      } satisfies GatewayProviderOptions,
-    },
-  })
-
-  // ─── Confidence gating (OCR-02) ───────────────────────────────────────────
-  const review = needsReview(object)
-  const minConf = minConfidence(object)
-  const status = review ? 'pending_review' : 'approved'
-
-  // ─── Persist to ocr_extractions ──────────────────────────────────────────
-  // Use admin client to resolve clinic_id (service-role; RLS would block cross-table join)
+  // ─── CR-03: Tenant guard BEFORE AI call ─────────────────────────────────────
+  // Resolve clinic_id early — fail fast before sending the document to the AI
+  // provider. If the user has no tenant_id, return 403 (not 500 from INSERT).
+  // LGPD: prevents sending PII documents to AI Gateway for users with no clinic.
   const admin = createAdminClient()
-
   const { data: userRow } = await admin
     .from('users')
     .select('tenant_id')
@@ -160,7 +114,71 @@ export async function POST(request: Request): Promise<Response> {
     .single()
 
   const clinicId = (userRow as { tenant_id: string } | null)?.tenant_id
+  if (!clinicId) {
+    console.error('[ocr] User has no tenant_id — rejecting before AI call', { userId: user.id })
+    return Response.json({ error: 'Usuário sem clínica associada.' }, { status: 403 })
+  }
 
+  // Encode to base64 for FilePart
+  const arrayBuffer = await file.arrayBuffer()
+  const base64 = Buffer.from(arrayBuffer).toString('base64')
+  const mimeType = file.type
+
+  // ─── AI Gateway — generateObject + FilePart + ZDR (OCR-01) ────────────────
+  // T-10-20: zeroDataRetention:true on every Gateway call (Pitfall 4 — LGPD)
+  // CR-01: wrapped in try/catch — AI Gateway errors (rate limit, network, schema
+  // validation) must return a clean JSON 502, never a raw stack trace.
+  // LGPD: error body is NOT logged — it may echo prompt content or PII.
+  let object: z.infer<typeof PatientDocumentSchema>
+  try {
+    const aiResult = await generateObject({
+      model: 'anthropic/claude-sonnet-4.6', // vision-capable model in GatewayModelId
+      schema: PatientDocumentSchema,
+      messages: [
+        {
+          role: 'user',
+          content: [
+            // FilePart: base64-encoded document image/PDF (AI SDK v6 FilePart)
+            // Note: AI SDK v6 FilePart uses 'mediaType' (not 'mimeType') — @ai-sdk/provider-utils
+            { type: 'file', data: base64, mediaType: mimeType } as const,
+            {
+              type: 'text',
+              text: [
+                'Analise o documento e extraia os campos a seguir em português do Brasil.',
+                'Para cada campo, forneça:',
+                '  - value: o valor extraído do documento (string vazia se não encontrado)',
+                '  - confidence: score de confiança de 0.0 (baixo) a 1.0 (alto)',
+                '',
+                'Campos a extrair:',
+                '  - full_name: nome completo do titular',
+                '  - cpf: CPF no formato 000.000.000-00',
+                '  - birth_date: data de nascimento no formato YYYY-MM-DD',
+                '  - address: endereço completo (logradouro, número, bairro, cidade, estado)',
+              ].join('\n'),
+            },
+          ],
+        },
+      ],
+      providerOptions: {
+        gateway: {
+          zeroDataRetention: true, // T-10-20: LGPD — Gateway retains no prompt/response PII
+        } satisfies GatewayProviderOptions,
+      },
+    })
+    object = aiResult.object
+  } catch (aiErr) {
+    // Do NOT log the full error — it may echo prompt content (LGPD / T-10-21)
+    console.error('[ocr] AI Gateway error:', (aiErr as Error).message)
+    return Response.json({ error: 'Falha no serviço de IA. Tente novamente.' }, { status: 502 })
+  }
+
+  // ─── Confidence gating (OCR-02) ───────────────────────────────────────────
+  const review = needsReview(object)
+  const minConf = minConfidence(object)
+  const status = review ? 'pending_review' : 'approved'
+
+  // ─── Persist to ocr_extractions ──────────────────────────────────────────
+  // admin + clinicId already resolved above (CR-03: tenant guard before AI call)
   const { data: extraction, error: insertError } = await admin
     .from('ocr_extractions')
     .insert({
