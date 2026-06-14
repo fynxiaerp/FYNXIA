@@ -96,7 +96,7 @@ Full detail archived in [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
   3. Documento assinado não pode ser editado; qualquer alteração cria uma nova versão preservando o histórico completo
 **Plans**: 5 plans
 - [x] 08-01-PLAN.md — Wave 1: RED test scaffolds (sign→verify vs .pfx fixture, template engine, migration/action/PDF source-inspection)
-- [ ] 08-02-PLAN.md — Wave 2: migrations (3 tables + RLS INSERT-only + private bucket) + template engine + ICP signing lib + DocumentoPDF
+- [x] 08-02-PLAN.md — Wave 2: migrations (3 tables + RLS INSERT-only + private bucket) + template engine + ICP signing lib + DocumentoPDF
 - [ ] 08-03-PLAN.md — Wave 3: [BLOCKING] supabase db push + regenerate types (human re-auth)
 - [ ] 08-04-PLAN.md — Wave 4: template CRUD + editor UI at /config/documentos (DOC-01)
 - [ ] 08-05-PLAN.md — Wave 4: documentos module + generate/sign/verify + immutable versions UI at /clinica/documentos (DOC-02/03)

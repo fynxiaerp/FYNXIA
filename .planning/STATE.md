@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 08-01-PLAN.md
-last_updated: "2026-06-14T14:36:09.413Z"
+stopped_at: Completed 08-02-PLAN.md
+last_updated: "2026-06-14T14:44:21Z"
 last_activity: 2026-06-14
 progress:
   total_phases: 15
   completed_phases: 1
   total_plans: 11
-  completed_plans: 7
-  percent: 64
+  completed_plans: 8
+  percent: 73
 ---
 
 # FYNXIA ERP — Project State
@@ -84,6 +84,7 @@ Plan: 1 of 5
 | Phase 07 P05 | 45 | 3 tasks | 8 files |
 | Phase 07 P06 | 14 | 3 tasks | 11 files |
 | Phase 08 P01 | 10 | 2 tasks | 5 files |
+| Phase 08 P02 | 7 | 3 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -124,6 +125,9 @@ Plan: 1 of 5
 | Constantes extraídas de ai-agent-config.ts para ai-agent-config-types.ts | Next.js 'use server' só permite exports async; AUTONOMY_LEVELS/AGENT_KEYS são consts — runtime falha se exportadas de arquivo 'use server' | 2026-06-14 |
 | getCertificate seleciona colunas explicitamente + CertificatePublic = Omit<CertRow, 'cert_password_enc' \| 'storage_path'> | Dupla proteção: omissão em query + garantia de compile-time; secrets nunca chegam ao cliente (T-07-18) | 2026-06-14 |
 | @base-ui Select.Root onValueChange recebe (value: T \| null, eventDetails) | API do base-ui difere de shadcn puro; handler deve guard against null para satisfazer TypeScript | 2026-06-14 |
+| signPdfBuffer retorna certPem em SignatureResult | Evita segundo DB read em documents.ts para obter o PEM antes de armazenar em document_versions | 2026-06-14 |
+| document_versions.content cifrado com is_content_encrypted=true por padrão | Conteúdo preenchido pode conter CPF/nome do paciente (PII LGPD); Open Question 1 do RESEARCH resolvido: criptografar | 2026-06-14 |
+| detectVariables usa .filter((v): v is string) após matchAll | matchAll captures tipados string\|undefined no tsconfig strict; type guard necessário para inferir string[] | 2026-06-14 |
 
 ### Architecture Constraints Locked
 
@@ -160,7 +164,7 @@ Plan: 1 of 5
 
 ## Session Continuity
 
-**Stopped at:** Completed 08-01-PLAN.md
+**Stopped at:** Completed 08-02-PLAN.md
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 
