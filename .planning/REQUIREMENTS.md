@@ -18,9 +18,9 @@
 - [x] **ROLE-02**: Cada papel vê apenas os módulos/ações permitidos pelo seu perfil (gating server-side por unidade)
 
 #### DOC — Documentos & Assinatura Eletrônica
-- [ ] **DOC-01**: Usuário cria modelos de documento com variáveis preenchidas automaticamente pelo contexto
-- [ ] **DOC-02**: Documento é assinado com ICP-Brasil (carimbo de tempo, validade jurídica)
-- [ ] **DOC-03**: Documento assinado é imutável e versionado (histórico preservado)
+- [x] **DOC-01**: Usuário cria modelos de documento com variáveis preenchidas automaticamente pelo contexto
+- [x] **DOC-02**: Documento é assinado com ICP-Brasil (carimbo de tempo, validade jurídica)
+- [x] **DOC-03**: Documento assinado é imutável e versionado (histórico preservado)
 
 #### INT — Integrações Externas
 - [ ] **INT-01**: Admin/TI cadastra conectores (WhatsApp, NFS-e, banco, TISS) com credenciais armazenadas com segurança
@@ -168,9 +168,9 @@
 | SYS-05 | Phase 7 | Pending |
 | ROLE-01 | Phase 7 | Pending |
 | ROLE-02 | Phase 7 | Complete |
-| DOC-01 | Phase 8 | Pending |
-| DOC-02 | Phase 8 | Pending |
-| DOC-03 | Phase 8 | Pending |
+| DOC-01 | Phase 8 | Complete |
+| DOC-02 | Phase 8 | Complete |
+| DOC-03 | Phase 8 | Complete |
 | INT-01 | Phase 9 | Pending |
 | INT-02 | Phase 9 | Pending |
 | INT-03 | Phase 9 | Pending |
