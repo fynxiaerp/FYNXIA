@@ -66,12 +66,12 @@ describe('createEstorno in src/actions/audit-actions.ts (AUD-02)', () => {
 })
 
 // ─── AUD-02: canApprove alçada PURE unit (estorno scenario) ──────────────────
-// Reuses the canApprove helper from approval-actions (same alçada logic).
-// RED until Plan 03 exports canApprove.
+// canApprove is a pure sync function in policy-types.ts (NOT exported from
+// approval-actions.ts — 'use server' files may only export async functions).
 
 describe('canApprove alçada — estorno scenario (AUD-02)', () => {
   async function importCanApprove() {
-    const p = resolve(process.cwd(), 'src/actions/approval-actions.ts')
+    const p = resolve(process.cwd(), 'src/lib/ai/policy-types.ts')
     if (!existsSync(p)) {
       return null
     }
