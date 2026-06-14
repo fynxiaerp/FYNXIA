@@ -11,7 +11,7 @@ export type AppRole =
   | 'admin' | 'superadmin' | 'dentist' | 'receptionist' | 'patient'
   | 'dpo' | 'auditor' | 'socio' | 'ti' | 'implantacao' | 'aluno'
 
-type ModuleKey = 'clinica' | 'config' | 'superadmin' | 'paciente' | 'financeiro' | 'ia' | 'bi'
+type ModuleKey = 'clinica' | 'config' | 'superadmin' | 'paciente' | 'financeiro' | 'ia' | 'bi' | 'documentos'
 
 interface ModuleAccess {
   allowed: boolean
@@ -19,22 +19,23 @@ interface ModuleAccess {
 }
 
 export const MODULE_PERMISSIONS: Record<AppRole, Partial<Record<ModuleKey, ModuleAccess>>> = {
-  superadmin:   { clinica: {allowed:true}, config: {allowed:true}, superadmin: {allowed:true}, paciente: {allowed:true}, financeiro: {allowed:true}, ia: {allowed:true}, bi: {allowed:true} },
-  admin:        { clinica: {allowed:true}, config: {allowed:true}, superadmin: {allowed:true}, financeiro: {allowed:true}, ia: {allowed:true}, bi: {allowed:true} },
-  dentist:      { clinica: {allowed:true} },
+  superadmin:   { clinica: {allowed:true}, config: {allowed:true}, superadmin: {allowed:true}, paciente: {allowed:true}, financeiro: {allowed:true}, ia: {allowed:true}, bi: {allowed:true}, documentos: {allowed:true} },
+  admin:        { clinica: {allowed:true}, config: {allowed:true}, superadmin: {allowed:true}, financeiro: {allowed:true}, ia: {allowed:true}, bi: {allowed:true}, documentos: {allowed:true} },
+  dentist:      { clinica: {allowed:true}, documentos: {allowed:true} },
   receptionist: { clinica: {allowed:true} },
   patient:      { paciente: {allowed:true} },
-  dpo:          { clinica: {allowed:true, readOnly:true}, config: {allowed:true, readOnly:true}, bi: {allowed:true, readOnly:true} },
-  auditor:      { clinica: {allowed:true, readOnly:true}, financeiro: {allowed:true, readOnly:true}, bi: {allowed:true, readOnly:true} },
-  socio:        { financeiro: {allowed:true, readOnly:true}, bi: {allowed:true, readOnly:true}, config: {allowed:true, readOnly:true} },
+  dpo:          { clinica: {allowed:true, readOnly:true}, config: {allowed:true, readOnly:true}, bi: {allowed:true, readOnly:true}, documentos: {allowed:true, readOnly:true} },
+  auditor:      { clinica: {allowed:true, readOnly:true}, financeiro: {allowed:true, readOnly:true}, bi: {allowed:true, readOnly:true}, documentos: {allowed:true, readOnly:true} },
+  socio:        { financeiro: {allowed:true, readOnly:true}, bi: {allowed:true, readOnly:true}, config: {allowed:true, readOnly:true}, documentos: {allowed:true, readOnly:true} },
   ti:           { config: {allowed:true}, ia: {allowed:true} },
   implantacao:  { clinica: {allowed:true}, config: {allowed:true, readOnly:true} },
   aluno:        { clinica: {allowed:true} },
 }
 
-// Route → module: most-specific prefix checked FIRST (financeiro before clinica).
-// /clinica/financeiro → 'financeiro'; /clinica/... → 'clinica'; etc.
+// Route → module: most-specific prefix checked FIRST (documentos/financeiro before clinica).
+// /clinica/documentos → 'documentos'; /clinica/financeiro → 'financeiro'; /clinica/... → 'clinica'; etc.
 const ROUTE_MODULE_MAP: Array<{ prefix: string; module: ModuleKey }> = [
+  { prefix: '/clinica/documentos', module: 'documentos' },
   { prefix: '/clinica/financeiro', module: 'financeiro' },
   { prefix: '/clinica',            module: 'clinica'    },
   { prefix: '/config',             module: 'config'     },
@@ -95,8 +96,9 @@ function deriveRoleRoutes(): Record<string, string[]> {
         // Note: 'financeiro' module is a sub-route of /clinica; we expose /clinica here
         // because the ROLE_ROUTES compat layer is path-prefix-based, not module-based.
         // The actual sub-route /clinica/financeiro is handled by routeToModule().
-        if (mod === 'financeiro') {
-          // financeiro lives at /clinica/financeiro — expose both /clinica and financeiro sub-path
+        if (mod === 'financeiro' || mod === 'documentos') {
+          // financeiro/documentos live under /clinica — expose /clinica for ROLE_ROUTES compat
+          // (actual sub-route gating is handled by routeToModule via ROUTE_MODULE_MAP)
           if (!paths.includes('/clinica')) paths.push('/clinica')
         } else {
           paths.push(`/${mod}`)
