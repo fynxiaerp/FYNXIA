@@ -32,10 +32,8 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { assertNotReadOnly } from '@/lib/auth/guards'
 import { logBusinessEvent } from '@/lib/audit'
 import { canApprove as _canApprove } from '@/lib/ai/policy-types'
-
-// Re-export canApprove for test discoverability (approvals.test.ts imports from here)
-// canApprove is a pure sync helper — not a Server Action
-export { canApprove } from '@/lib/ai/policy-types'
+// NOTE: do NOT re-export canApprove here — a 'use server' file may only export
+// async functions (Turbopack build error). canApprove lives in policy-types.ts.
 
 // ─── Internal types ───────────────────────────────────────────────────────────
 

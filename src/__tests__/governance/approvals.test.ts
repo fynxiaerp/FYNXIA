@@ -81,8 +81,9 @@ describe('src/actions/approval-actions.ts source-inspection (AIG-02, AUD-02)', (
 
 describe('canApprove alçada check — PURE unit (AIG-02, AUD-02)', () => {
   async function importCanApprove() {
-    // Check approval-actions first, then a shared types/helpers file
-    const primaryPath = resolve(process.cwd(), 'src/actions/approval-actions.ts')
+    // canApprove is a pure sync helper in policy-types.ts (NOT re-exported from the
+    // 'use server' approval-actions.ts — that would break the Turbopack build).
+    const primaryPath = resolve(process.cwd(), 'src/lib/ai/policy-types.ts')
     const fallbackPath = resolve(process.cwd(), 'src/lib/ai/policy.ts')
     const targetPath = existsSync(primaryPath) ? primaryPath : fallbackPath
 
