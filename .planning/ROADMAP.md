@@ -76,7 +76,7 @@ Full detail archived in [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
   4. Os seis novos papéis (DPO, Auditor, Sócio, TI, Implantação, Aluno) são reconhecidos pelo RBAC e cada um vê apenas módulos/ações autorizados
   5. Admin configura nível de autonomia L0–L4 por agente de IA e a configuração é respeitada em runtime
 **Plans**: 6 plans
-- [ ] 07-01-PLAN.md — Wave 0: node-forge install + assertNotReadOnly guard + RED test scaffolds + .pfx fixture
+- [x] 07-01-PLAN.md — Wave 0: node-forge install + assertNotReadOnly guard + RED test scaffolds + .pfx fixture
 - [ ] 07-02-PLAN.md — Wave 1: multiunidade migrations (units, user_units + get_my_unit_ids, role expansion, unit_id backfill)
 - [ ] 07-03-PLAN.md — Wave 1: RBAC module matrix + read-only gating in proxy.ts, node-forge pfx reader, certificates + ai_agent_config migrations
 - [ ] 07-04-PLAN.md — Wave 2: [BLOCKING] supabase db push + regenerate types (human re-auth)
