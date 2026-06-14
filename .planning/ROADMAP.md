@@ -94,7 +94,12 @@ Full detail archived in [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
   1. Usuário cria um modelo com variáveis (ex: {{nome_paciente}}, {{data}}) e o sistema preenche automaticamente ao gerar o documento
   2. Documento gerado é assinado com o certificado ICP-Brasil; o carimbo de tempo é gravado e exibido ao abrir o documento
   3. Documento assinado não pode ser editado; qualquer alteração cria uma nova versão preservando o histórico completo
-**Plans**: TBD
+**Plans**: 5 plans
+- [ ] 08-01-PLAN.md — Wave 1: RED test scaffolds (sign→verify vs .pfx fixture, template engine, migration/action/PDF source-inspection)
+- [ ] 08-02-PLAN.md — Wave 2: migrations (3 tables + RLS INSERT-only + private bucket) + template engine + ICP signing lib + DocumentoPDF
+- [ ] 08-03-PLAN.md — Wave 3: [BLOCKING] supabase db push + regenerate types (human re-auth)
+- [ ] 08-04-PLAN.md — Wave 4: template CRUD + editor UI at /config/documentos (DOC-01)
+- [ ] 08-05-PLAN.md — Wave 4: documentos module + generate/sign/verify + immutable versions UI at /clinica/documentos (DOC-02/03)
 **v1 reuse**: Expande assinatura de anamnese (SHA-256 + token Phase 2); reutiliza storage Supabase; base para RX (Phase 12) e OS/NFS-e (Phase 15)
 **UI hint**: yes
 
@@ -304,7 +309,7 @@ Full detail archived in [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
 | 5. AI Agents | v1.0 | 5/5 | Complete | 2026-06-11 |
 | 6. UX Polish & App Shell | v1.0 | 8/8 | Complete | 2026-06-12 |
 | 7. Sistema, Multiunidade & Papéis | v2.0 | 0/6 | Planned | - |
-| 8. Documentos & Assinatura ICP-Brasil | v2.0 | 0/? | Not started | - |
+| 8. Documentos & Assinatura ICP-Brasil | v2.0 | 0/5 | Planned | - |
 | 9. Hub de Integrações Externas | v2.0 | 0/? | Not started | - |
 | 10. IA Governada, Auditoria & OCR | v2.0 | 0/? | Not started | - |
 | 11. Profissionais & Recursos | v2.0 | 0/? | Not started | - |
