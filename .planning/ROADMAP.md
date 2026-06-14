@@ -35,7 +35,7 @@ Full detail archived in [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
 - [ ] **Phase 7: Sistema, Multiunidade & Papéis** — Configuração da empresa, rede de unidades, RBAC granular e nível de autonomia de IA por agente
 - [ ] **Phase 8: Documentos & Assinatura ICP-Brasil** — Motor de modelos de documentos com variáveis, assinatura ICP-Brasil e versionamento imutável
 - [ ] **Phase 9: Hub de Integrações Externas** — Hub central de credenciais, webhooks e saúde de conectores (WhatsApp, NFS-e, banco, TISS)
-- [ ] **Phase 10: IA Governada (L0–L4), Auditoria & OCR** — Framework de agentes governados com autonomia graduada, trilha de auditoria com estornos e OCR de documentos
+- [x] **Phase 10: IA Governada (L0–L4), Auditoria & OCR** — Framework de agentes governados com autonomia graduada, trilha de auditoria com estornos e OCR de documentos
 
 **Bloco B — Clínico**
 
@@ -143,7 +143,7 @@ Plans:
 - [x] 10-05-PLAN.md — Wave 2: OCR extract route (Gateway multimodal + ZDR + FilePart) + confidence gating + review/commit actions (OCR-01/02)
 - [x] 10-06-PLAN.md — Wave 3: [BLOCKING] supabase db push + gen types (truncation guard)
 - [x] 10-07-PLAN.md — Wave 4: conformidade UI — audit screen + approval inbox (AUD-01/03, AIG-02, AUD-02)
-- [ ] 10-08-PLAN.md — Wave 4: conformidade UI — OCR upload + confidence-flagged review (OCR-01/02)
+- [x] 10-08-PLAN.md — Wave 4: conformidade UI — OCR upload + confidence-flagged review (OCR-01/02)
 **v1 reuse**: Expande `audit_logs` (Phase 0, imutável por RLS); expande copiloto/agentes (Phase 5) com framework L0–L4; AUD-03 adiciona UI sobre dados existentes
 **UI hint**: yes
 

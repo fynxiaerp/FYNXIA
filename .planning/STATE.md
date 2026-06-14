@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 10-07-PLAN.md
-last_updated: "2026-06-14T20:27:03.229Z"
+stopped_at: Completed 10-08-PLAN.md
+last_updated: "2026-06-14T17:40:00Z"
 last_activity: 2026-06-14
 progress:
   total_phases: 15
   completed_phases: 3
   total_plans: 24
-  completed_plans: 23
+  completed_plans: 24
   percent: 96
 ---
 
@@ -97,6 +97,7 @@ Plan: 1 of 8
 | Phase 10 P04 | 7 | 2 tasks | 3 files |
 | Phase 10 P05 | 3 | 2 tasks | 3 files |
 | Phase 10-ia-governada-l0-l4-auditoria-ocr P07 | ~5 minutes | 2 tasks | 4 files |
+| Phase 10-ia-governada-l0-l4-auditoria-ocr P08 | ~8 minutes | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -164,6 +165,8 @@ Plan: 1 of 8
 | approval_requests UPDATE policy tenant-scoped apenas | required_role é por-linha (dinâmico); alçada enforced no Server Action, não em policy estática | 2026-06-14 |
 | ocr_extractions com deleted_at para soft-delete LGPD | extracted_fields pode conter CPF/RG (PII) — LGPD exige soft-delete auditável | 2026-06-14 |
 | conformidade module: auditor+dpo readOnly, admin+superadmin write | Módulo de compliance: auditores só lêem; admin/superadmin gerenciam aprovações e estornos | 2026-06-14 |
+| OCR page gated to admin/superadmin only (not auditor/dpo); receptionist deferred | OCR pilot creates patient records — write access restricted; receptionist extension is future work | 2026-06-14 |
+| OcrExtractionQueueRow exported from RSC page (not separate types file) | Avoids extra file; client component imports type from its RSC parent — single source of truth for the serializable shape | 2026-06-14 |
 
 ### Architecture Constraints Locked
 
@@ -200,7 +203,7 @@ Plan: 1 of 8
 
 ## Session Continuity
 
-**Stopped at:** Completed 10-07-PLAN.md
+**Stopped at:** Completed 10-08-PLAN.md
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 
