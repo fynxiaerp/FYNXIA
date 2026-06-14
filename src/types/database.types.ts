@@ -1268,6 +1268,113 @@ export type Database = {
           },
         ]
       }
+      integration_connectors: {
+        Row: {
+          clinic_id: string | null
+          config: Json
+          created_at: string
+          credential_enc: string | null
+          id: string
+          status: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          clinic_id?: string | null
+          config?: Json
+          created_at?: string
+          credential_enc?: string | null
+          id?: string
+          status?: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          clinic_id?: string | null
+          config?: Json
+          created_at?: string
+          credential_enc?: string | null
+          id?: string
+          status?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "integration_connectors_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      integration_events: {
+        Row: {
+          attempts: number
+          clinic_id: string | null
+          connector_id: string | null
+          created_at: string
+          direction: string
+          event_type: string | null
+          external_event_id: string | null
+          id: string
+          last_error: string | null
+          max_attempts: number
+          payload_ref: string | null
+          processed_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          attempts?: number
+          clinic_id?: string | null
+          connector_id?: string | null
+          created_at?: string
+          direction: string
+          event_type?: string | null
+          external_event_id?: string | null
+          id?: string
+          last_error?: string | null
+          max_attempts?: number
+          payload_ref?: string | null
+          processed_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          attempts?: number
+          clinic_id?: string | null
+          connector_id?: string | null
+          created_at?: string
+          direction?: string
+          event_type?: string | null
+          external_event_id?: string | null
+          id?: string
+          last_error?: string | null
+          max_attempts?: number
+          payload_ref?: string | null
+          processed_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "integration_events_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "integration_events_connector_id_fkey"
+            columns: ["connector_id"]
+            isOneToOne: false
+            referencedRelation: "integration_connectors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invitations: {
         Row: {
           accepted_at: string | null
