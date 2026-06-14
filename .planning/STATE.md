@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 10-01-PLAN.md
-last_updated: "2026-06-14T19:28:15Z"
+stopped_at: Completed 10-02-PLAN.md
+last_updated: "2026-06-14T19:38:14.940Z"
 last_activity: 2026-06-14
 progress:
   total_phases: 15
   completed_phases: 3
   total_plans: 24
-  completed_plans: 16
-  percent: 67
+  completed_plans: 18
+  percent: 75
 ---
 
 # FYNXIA ERP — Project State
@@ -92,6 +92,7 @@ Plan: 1 of 8
 | Phase 09 P03 | 22 | 3 tasks | 8 files |
 | Phase 09 P05 | 7 | 2 tasks | 4 files |
 | Phase 10 P01 | 15 | 2 tasks | 6 files |
+| Phase 10 P02 | 10 | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -151,6 +152,10 @@ Plan: 1 of 8
 | /config/integracoes inserido ANTES de /config em ROUTE_MODULE_MAP | Most-specific-first mirrors /clinica/documentos pattern; garante que routeToModule retorna 'integracoes' para /config/integracoes (T-09-13) | 2026-06-14 |
 | Dynamic import via absolute path (não @-alias) em RED scaffolds (D-144) | @-alias causa TS2307 quando módulo alvo ainda não existe; absolute path + existsSync guard mantém tsc exit 0 em todos os Wave 0 scaffolds | 2026-06-14 |
 | Regex /is (dotAll) não suportada em tsconfig target ES2017 | TS1501 no approvals.test.ts; substituído por assertions separadas — cobertura equivalente sem cross-line dot match | 2026-06-14 |
+| ai_decision_log sem FK em clinic_id | Log imutável deve sobreviver a delete do tenant — mirrors design de audit_logs | 2026-06-14 |
+| approval_requests UPDATE policy tenant-scoped apenas | required_role é por-linha (dinâmico); alçada enforced no Server Action, não em policy estática | 2026-06-14 |
+| ocr_extractions com deleted_at para soft-delete LGPD | extracted_fields pode conter CPF/RG (PII) — LGPD exige soft-delete auditável | 2026-06-14 |
+| conformidade module: auditor+dpo readOnly, admin+superadmin write | Módulo de compliance: auditores só lêem; admin/superadmin gerenciam aprovações e estornos | 2026-06-14 |
 
 ### Architecture Constraints Locked
 
@@ -187,7 +192,7 @@ Plan: 1 of 8
 
 ## Session Continuity
 
-**Stopped at:** Completed 09-05-PLAN.md
+**Stopped at:** Completed 10-02-PLAN.md
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 
