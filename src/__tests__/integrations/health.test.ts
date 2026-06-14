@@ -269,3 +269,82 @@ describe('vercel.json — integration-retry cron schedule (INT-03)', () => {
     expect(typeof retryEntry?.schedule).toBe('string')
   })
 })
+
+// ─── UI source-inspection assertions (Plan 05) ───────────────────────────────
+
+describe('integration-events.ts — listConnectorHealth + reprocessConnector (Plan 05)', () => {
+  const src = SRC('src/actions/integration-events.ts')
+
+  it('exports async function listConnectorHealth', () => {
+    expect(src).toMatch(/export async function listConnectorHealth/)
+  })
+
+  it('exports async function reprocessConnector', () => {
+    expect(src).toMatch(/export async function reprocessConnector/)
+  })
+
+  it('calls assertNotReadOnly() in reprocessConnector', () => {
+    expect(src).toMatch(/assertNotReadOnly\(\)/)
+  })
+
+  it('calls deriveHealth() for health derivation', () => {
+    expect(src).toMatch(/deriveHealth\(/)
+  })
+
+  it("re-queues failed→pending by setting status: 'pending'", () => {
+    expect(src).toMatch(/status: 'pending'/)
+  })
+
+  it('does NOT leak payload_ref bodies in listConnectorHealth', () => {
+    // The select must not include a payload body field — only status/created_at/last_error
+    // payload_ref is a reference pointer (safe) but 'body' fields must never be returned
+    expect(src).not.toMatch(/payload_ref:.*body/)
+  })
+})
+
+describe('IntegrationsManager.tsx — masked credential + reprocess (Plan 05)', () => {
+  const src = SRC('src/components/config/IntegrationsManager.tsx')
+
+  it('renders credential_masked (never plaintext)', () => {
+    expect(src).toMatch(/credential_masked/)
+  })
+
+  it('calls reprocessConnector server action', () => {
+    expect(src).toMatch(/reprocessConnector/)
+  })
+
+  it('does NOT reference credential_enc (ciphertext must never reach the client)', () => {
+    expect(src).not.toMatch(/credential_enc/)
+  })
+
+  it('does NOT use asChild (uses render-prop per @base-ui convention)', () => {
+    expect(src).not.toMatch(/asChild/)
+  })
+})
+
+describe('/config/integracoes RSC page — auth + data loading (Plan 05)', () => {
+  const src = SRC('src/app/(dashboard)/config/integracoes/page.tsx')
+
+  it('calls listConnectors to load connectors server-side', () => {
+    expect(src).toMatch(/listConnectors/)
+  })
+
+  it('calls listConnectorHealth to load health server-side', () => {
+    expect(src).toMatch(/listConnectorHealth/)
+  })
+
+  it('renders IntegrationsManager', () => {
+    expect(src).toMatch(/IntegrationsManager/)
+  })
+
+  it('gates access to admin/superadmin/ti (and read-only trio)', () => {
+    // The role gate must include admin, superadmin, and ti — either in a combined includes check
+    // or separate conditions. The auditor/dpo/socio are allowed (read-only) so the gate
+    // must list the 6 permitted roles or block everything else.
+    const hasRoleGate =
+      /['"]admin['"]/.test(src) &&
+      /['"]superadmin['"]/.test(src) &&
+      /['"]ti['"]/.test(src)
+    expect(hasRoleGate).toBe(true)
+  })
+})
