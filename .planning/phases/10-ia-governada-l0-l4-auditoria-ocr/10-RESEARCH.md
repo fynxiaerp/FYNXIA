@@ -831,27 +831,31 @@ Pattern: all Phase 10 tests follow the source-inspection convention established 
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Does the existing copilot's tools (read-only) need governance at L0?**
    - What we know: Current tools are all read-only (SELECT only). L0 = suggest-only per the spec.
    - What's unclear: Should read-only tools skip governance entirely (they can't cause harm) or still log every call for AIG-03 completeness?
    - Recommendation: Log all calls (AIG-03 says "every decision"), but always return `execute` for read-only tools regardless of level. Sensitivity = 'safe'. L0 on read-only still logs 'execute' decision.
+   - RESOLVED: Plan 03 Task 3 wraps the 4 read-only tools with `withAgentPolicy` at sensitivity='safe' (agentKey 'copilot') — every call logs an ai_decision_log row and resolves to 'execute' at any enabled level (L0 logs but executes). The confirmation/collection agents also use sensitivity='safe' per-tenant inside their scan loops, so seeded-L0 product behavior is unchanged.
 
 2. **Which patient form is the OCR pilot (D-03)?**
    - What we know: CONTEXT.md says "provável: paciente — RG/comprovante".
    - What's unclear: Confirmed pilot form is not locked.
    - Recommendation: Patient cadastro (`/clinica/pacientes/novo`). Fields: full_name, cpf, birth_date, address from RG. This is Claude's Discretion per CONTEXT.md.
+   - RESOLVED: Plan 05 locks the OCR pilot to the patient document (target_table 'patients'; fields full_name, cpf, birth_date, address) extracted via generateObject + FilePart with per-field confidence, gated to the ocr_extractions review queue below threshold.
 
 3. **Audit screen: does `audit_logs` have a `record_id` index for entity lookup?**
    - What we know: `idx_audit_logs_tenant_created (tenant_id, created_at DESC)` and `idx_audit_logs_actor (actor_id)` exist. [VERIFIED]
    - What's unclear: Entity filtering by `record_id` (a specific patient's audit trail) has no index.
    - Recommendation: Add `idx_audit_logs_record_id (tenant_id, table_name, record_id)` in Phase 10 migration alongside the table_name index.
+   - RESOLVED: Plan 02 Task 2 (`20260616000400_audit_logs_indexes.sql`) adds both `idx_audit_logs_table_name (tenant_id, table_name)` and `idx_audit_logs_record_id (tenant_id, table_name, record_id)`.
 
 4. **Should `approval_requests` have a soft delete or expiry mechanism?**
    - What we know: `status IN ('pending','approved','rejected','expired')` covers expiry states.
    - What's unclear: What expires pending requests? Cron? Manual?
    - Recommendation: Add `expires_at timestamptz` column. Phase 10 creates rows with 7-day expiry. Expiry cron is deferred (Phase 10 can query `WHERE status='pending' AND expires_at > now()`).
+   - RESOLVED: Plan 02 Task 1 (`20260616000200_approval_requests.sql`) includes the `expires_at TIMESTAMPTZ` column; createApprovalRequest (Plan 03) accepts an `expiresAt` arg (7-day default). The expiry cron remains deferred as noted.
 
 ---
 
