@@ -118,8 +118,8 @@ Plans:
 - [x] 09-01-PLAN.md — Wave 0 RED test scaffolds (connectors/webhooks/health source-inspection + units)
 - [x] 09-02-PLAN.md — Migrations (integration_connectors + integration_events + REVOKE) + lib (types/mask/health/validators) + connector vault Server Action
 - [x] 09-03-PLAN.md — logToHub + additive hub-log in Asaas/WhatsApp handlers + drainIntegrationEvents worker/cron + integracoes module in proxy
-- [ ] 09-04-PLAN.md — [BLOCKING] supabase db push + gen types (truncation guard) + post-push DB checks
-- [ ] 09-05-PLAN.md — /config/integracoes UI: connectors registry + masked register/edit form + health panel + reprocess action
+- [x] 09-04-PLAN.md — [BLOCKING] supabase db push + gen types (truncation guard) + post-push DB checks
+- [x] 09-05-PLAN.md — /config/integracoes UI: connectors registry + masked register/edit form + health panel + reprocess action
 **v1 reuse**: Expande outbox + webhook_events (Phase 4); reutiliza WhatsApp Cloud API e Resend já integrados; padrão idempotent webhook handler do Phase 3
 **UI hint**: yes
 
