@@ -72,6 +72,44 @@ interface AuditTrailProps {
   isReadOnly: boolean
 }
 
+// ─── WR-03: PII masking for audit diff display ───────────────────────────────
+// Masks known PII field keys in old_values/new_values before rendering.
+// Auditors see structure and non-sensitive values; PII fields are redacted.
+// This is a client-side display mask only — the server stores unmasked audit data
+// for compliance purposes (LGPD Art. 37: DPO must be able to access full records
+// via server-side export, not via this UI component).
+// Note: masking.ts uses 'server-only' so we define the display mask inline here.
+
+const PII_DISPLAY_FIELDS = new Set([
+  'cpf',
+  'phone',
+  'telefone',
+  'email',
+  'rg',
+  'date_of_birth',
+  'data_nascimento',
+  'medical_history',
+  'historico_medico',
+  'allergies',
+  'alergias',
+  'medications',
+  'medicamentos',
+  'health_notes',
+  'observacoes_saude',
+  'password',
+  'senha',
+])
+
+function maskPiiFields(obj: unknown): unknown {
+  if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return obj
+  return Object.fromEntries(
+    Object.entries(obj as Record<string, unknown>).map(([k, v]) => [
+      k,
+      PII_DISPLAY_FIELDS.has(k.toLowerCase()) ? '***' : v,
+    ])
+  )
+}
+
 // ─── DiffBlock — renders before/after JSON side by side ──────────────────────
 
 function DiffBlock({ label, value }: { label: string; value: unknown }) {
@@ -87,7 +125,7 @@ function DiffBlock({ label, value }: { label: string; value: unknown }) {
     <div className="flex flex-col gap-1">
       <span className="text-xs font-medium text-muted-foreground">{label}</span>
       <pre className="text-xs bg-muted/50 rounded p-2 overflow-auto max-h-40 whitespace-pre-wrap break-all border border-border">
-        {JSON.stringify(value, null, 2)}
+        {JSON.stringify(maskPiiFields(value), null, 2)}
       </pre>
     </div>
   )
