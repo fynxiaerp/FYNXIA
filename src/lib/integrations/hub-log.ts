@@ -39,13 +39,22 @@ export async function logToHub(opts: {
   // Null-safe connector resolution (T-09-14 / Pitfall 4):
   // Prefer the tenant's own connector row; fall back to the system sentinel (clinic_id IS NULL).
   // If none found, insert with connector_id = NULL — NEVER throw "connector not found".
+  //
+  // WR-03: validate clinicId is a well-formed UUID before interpolating into the PostgREST
+  // .or() filter string. A non-UUID value would corrupt the filter syntax and cause a runtime
+  // query error (swallowed by catch{}) — logging the event with connector_id = null instead
+  // of the real connector row (silent degradation). Validation prevents this by falling back
+  // to the system-sentinel branch when clinicId is not a valid UUID. No SQL injection risk
+  // (PostgREST parses its own filter syntax), but this is a robustness guard for future callers.
+  const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+  const safeClinicId = clinicId && UUID_RE.test(clinicId) ? clinicId : null
   let connectorId: string | null = null
   try {
     const { data } = await admin
       .from('integration_connectors')
       .select('id, clinic_id')
       .eq('type', connectorType)
-      .or(clinicId ? `clinic_id.eq.${clinicId},clinic_id.is.null` : 'clinic_id.is.null')
+      .or(safeClinicId ? `clinic_id.eq.${safeClinicId},clinic_id.is.null` : 'clinic_id.is.null')
       .order('clinic_id', { ascending: false, nullsFirst: false }) // prefer non-null clinic row
       .limit(1)
       .maybeSingle()
