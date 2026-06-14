@@ -257,6 +257,32 @@ describe('Phase 7 migrations — ai_agent_config table (20260614000600)', () => 
   })
 })
 
+// ─── Fix WR-02: certificates column-level REVOKE (20260614000900) ───────────
+
+describe('Phase 7 fix — certificates REVOKE secret columns (20260614000900)', () => {
+  it('migration file exists', () => {
+    expect(() => M('20260614000900_certificates_revoke_secrets.sql')).not.toThrow()
+  })
+
+  it('REVOKEs SELECT on cert_password_enc from authenticated and anon', () => {
+    const sql = M('20260614000900_certificates_revoke_secrets.sql')
+    expect(sql).toMatch(/REVOKE SELECT/i)
+    expect(sql).toMatch(/cert_password_enc/i)
+    expect(sql).toMatch(/authenticated/i)
+  })
+
+  it('REVOKEs SELECT on storage_path from authenticated and anon', () => {
+    const sql = M('20260614000900_certificates_revoke_secrets.sql')
+    expect(sql).toMatch(/storage_path/i)
+    expect(sql).toMatch(/anon/i)
+  })
+
+  it('targets public.certificates table', () => {
+    const sql = M('20260614000900_certificates_revoke_secrets.sql')
+    expect(sql).toMatch(/ON public\.certificates/i)
+  })
+})
+
 // ─── Plan 03: operational unit_id backfill ───────────────────────────────────
 
 describe('Phase 7 migrations — operational unit_id backfill (20260614000700)', () => {
