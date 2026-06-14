@@ -94,9 +94,11 @@ describe('extractPfxMetadata — shape assertions (runtime, RED until Plan 03)',
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function getExtractFn(): ((buf: Buffer, password: string) => any) | undefined {
     try {
-      // Node.js require (available in vitest/Node runtime)
+      // Use full .ts path — Vitest's Node runtime transforms .ts files directly.
+      // Stripping .ts causes "Cannot find module" in Node's CJS resolver.
+      // [Rule 1 - Bug] Fixed: require() needs explicit .ts extension in Vitest/Node.
       // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const mod = require(PFX_MODULE_PATH.replace(/\.ts$/, ''))
+      const mod = require(PFX_MODULE_PATH)
       return mod.extractPfxMetadata
     } catch {
       return undefined
