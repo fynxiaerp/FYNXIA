@@ -135,7 +135,15 @@ Plans:
   3. Auditor/DPO acessa tela dedicada e filtra a trilha por entidade, usuário e período; cada entrada mostra antes/depois
   4. Estorno requer motivo e aprovação por alçada configurada; o fluxo é registrado na trilha de auditoria
   5. Usuário faz upload/foto de documento e a IA extrai campos; extrações abaixo do threshold de confiança ficam em fila de revisão antes de gravar
-**Plans**: TBD
+**Plans**: 8 plans
+- [ ] 10-01-PLAN.md — Wave 0: RED test scaffolds (migrations + policy + approvals + audit + ocr)
+- [ ] 10-02-PLAN.md — Wave 1: 3 migrations (ai_decision_log/approval_requests/ocr_extractions) + audit_logs indexes + conformidade RBAC module
+- [ ] 10-03-PLAN.md — Wave 1: withAgentPolicy + approval actions + additive governance wrap of tools/agents (AIG-01/02/03)
+- [ ] 10-04-PLAN.md — Wave 2: audit query lib + generic estorno via approval-by-alçada (AUD-01/02)
+- [ ] 10-05-PLAN.md — Wave 2: OCR extract route (Gateway multimodal + ZDR + FilePart) + confidence gating + review/commit actions (OCR-01/02)
+- [ ] 10-06-PLAN.md — Wave 3: [BLOCKING] supabase db push + gen types (truncation guard)
+- [ ] 10-07-PLAN.md — Wave 4: conformidade UI — audit screen + approval inbox (AUD-01/03, AIG-02, AUD-02)
+- [ ] 10-08-PLAN.md — Wave 4: conformidade UI — OCR upload + confidence-flagged review (OCR-01/02)
 **v1 reuse**: Expande `audit_logs` (Phase 0, imutável por RLS); expande copiloto/agentes (Phase 5) com framework L0–L4; AUD-03 adiciona UI sobre dados existentes
 **UI hint**: yes
 
@@ -317,7 +325,7 @@ Plans:
 | 7. Sistema, Multiunidade & Papéis | v2.0 | 0/6 | Planned | - |
 | 8. Documentos & Assinatura ICP-Brasil | v2.0 | 0/5 | Planned | - |
 | 9. Hub de Integrações Externas | v2.0 | 0/? | Not started | - |
-| 10. IA Governada, Auditoria & OCR | v2.0 | 0/? | Not started | - |
+| 10. IA Governada, Auditoria & OCR | v2.0 | 0/8 | Planned | - |
 | 11. Profissionais & Recursos | v2.0 | 0/? | Not started | - |
 | 12. Receituário & Teleodontologia | v2.0 | 0/? | Not started | - |
 | 13. Esterilização/CME & Laboratório de Prótese | v2.0 | 0/? | Not started | - |
