@@ -113,7 +113,13 @@ Full detail archived in [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
   1. Admin cadastra conector (WhatsApp, NFS-e, banco, TISS) com credenciais armazenadas criptografadas; credenciais nunca aparecem em texto plano na UI
   2. Sistema recebe payload de webhook por conector e o roteia ao módulo correto com log do evento
   3. Painel mostra status (ativo/falha/degradado) de cada integração; integrações com falha são reenviadas automaticamente e o painel reflete a atualização
-**Plans**: TBD
+**Plans**: 5 plans
+Plans:
+- [ ] 09-01-PLAN.md — Wave 0 RED test scaffolds (connectors/webhooks/health source-inspection + units)
+- [ ] 09-02-PLAN.md — Migrations (integration_connectors + integration_events + REVOKE) + lib (types/mask/health/validators) + connector vault Server Action
+- [ ] 09-03-PLAN.md — logToHub + additive hub-log in Asaas/WhatsApp handlers + drainIntegrationEvents worker/cron + integracoes module in proxy
+- [ ] 09-04-PLAN.md — [BLOCKING] supabase db push + gen types (truncation guard) + post-push DB checks
+- [ ] 09-05-PLAN.md — /config/integracoes UI: connectors registry + masked register/edit form + health panel + reprocess action
 **v1 reuse**: Expande outbox + webhook_events (Phase 4); reutiliza WhatsApp Cloud API e Resend já integrados; padrão idempotent webhook handler do Phase 3
 **UI hint**: yes
 
