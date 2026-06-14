@@ -217,10 +217,13 @@ export async function reprocessConnector(
 
   // 5. Flip eligible failed rows back to pending (reset last_error).
   //    The cron worker's CAS guard ensures exactly-once drain even if re-queued twice.
+  //    Defense-in-depth: redundant clinic_id guard on UPDATE so future refactors cannot
+  //    accidentally promote rows from other tenants even if the SELECT scope changes (WR-01).
   const { error: updateErr } = await adminClient
     .from('integration_events')
     .update({ status: 'pending', last_error: null })
     .in('id', ids)
+    .eq('clinic_id', actor.tenant_id)
 
   if (updateErr) {
     return { success: false, error: updateErr.message }
