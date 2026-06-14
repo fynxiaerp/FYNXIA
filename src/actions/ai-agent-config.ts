@@ -138,27 +138,52 @@ export async function saveAiAgentConfig(
     return { success: false, error: 'Permissão insuficiente' }
   }
 
-  // 4. Upsert network-level row (unit_id IS NULL)
-  // onConflict targets the partial unique index: (clinic_id, agent_key) WHERE unit_id IS NULL
+  // 4. Save network-level row (unit_id IS NULL) using explicit UPDATE → INSERT pattern.
+  // Rationale: PostgREST's .upsert(onConflict:) requires a plain UNIQUE constraint to act
+  // as the conflict arbiter. The ai_agent_config table uses only a PARTIAL unique index
+  // (uq_ai_agent_config_network: WHERE unit_id IS NULL) — no plain UNIQUE constraint exists.
+  // PostgREST cannot resolve a partial index as an arbiter, so repeated .upsert() calls
+  // INSERT duplicates instead of updating the existing row (WR-03 / 07-REVIEW).
+  // The explicit UPDATE + conditional INSERT below targets the partial index predicate correctly.
   const supabase = await createClient()
 
-  const { error: upsertError } = await supabase
+  const now = new Date().toISOString()
+
+  // Try UPDATE first — targets the exact row matched by the partial unique index
+  const { data: updateData, error: updateError } = await supabase
     .from('ai_agent_config')
-    .upsert(
-      {
+    .update({
+      autonomy_level: data.autonomyLevel,
+      enabled: data.enabled,
+      updated_by: actor.id,
+      updated_at: now,
+    })
+    .eq('clinic_id', actor.tenant_id)
+    .eq('agent_key', data.agentKey)
+    .is('unit_id', null) // matches uq_ai_agent_config_network predicate
+    .select('id')
+
+  if (updateError) {
+    return { success: false, error: updateError.message }
+  }
+
+  // If no row was updated, INSERT the first-time network-level row
+  if (!updateData || updateData.length === 0) {
+    const { error: insertError } = await supabase
+      .from('ai_agent_config')
+      .insert({
         clinic_id: actor.tenant_id,
         unit_id: null, // network-level row
         agent_key: data.agentKey,
         autonomy_level: data.autonomyLevel,
         enabled: data.enabled,
         updated_by: actor.id,
-        updated_at: new Date().toISOString(),
-      },
-      { onConflict: 'clinic_id,agent_key' }
-    )
+        updated_at: now,
+      })
 
-  if (upsertError) {
-    return { success: false, error: upsertError.message }
+    if (insertError) {
+      return { success: false, error: insertError.message }
+    }
   }
 
   // 5. Audit log
