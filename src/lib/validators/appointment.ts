@@ -26,6 +26,10 @@ export const appointmentSchema = z
       .default('agendado'),
 
     notes: z.string().optional(),
+
+    // RES-02: optional resource reservation (resource_id FK → public.resources).
+    // Added by Phase 11 Plan 04 — no default() to stay Zod v3 compatible.
+    resource_id: z.string().uuid().optional(),
   })
   .refine((data) => new Date(data.end_time) > new Date(data.start_time), {
     message: 'Horário de fim deve ser posterior ao horário de início',

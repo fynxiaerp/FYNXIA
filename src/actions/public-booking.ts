@@ -2,6 +2,7 @@
 import { z } from 'zod'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { logBusinessEvent } from '@/lib/audit'
+import { isSlotWithinAvailability, type AvailabilityWindow, type AvailabilityException } from '@/lib/scheduling/availability'
 
 // ─── getBookedSlots ───────────────────────────────────────────────────────────
 // CLINIC-09: Returns the list of occupied start_time ISO strings for a given
@@ -155,6 +156,40 @@ export async function createPublicAppointment(
     return { success: false, error: 'Dentista inválido para esta clínica' }
   }
 
+  // ── PRO-02: Availability pre-flight guard (public booking path) ─────────────
+  // Resolve professional via user_id = dentist_id (no professional_id FK — Phase 11 intentional).
+  // Keep returning vague error on any failure — never leak internal details to public callers.
+  const { data: professional } = await admin
+    .from('professionals')
+    .select('id')
+    .eq('user_id', data.dentist_id)
+    .eq('clinic_id', clinic.id)
+    .is('deleted_at', null)
+    .maybeSingle()
+
+  if (professional) {
+    const { data: grade } = await admin
+      .from('professional_availability')
+      .select('weekday, start_time, end_time')
+      .eq('professional_id', professional.id)
+
+    const slotDate = data.start_time.slice(0, 10)
+    const { data: exceptions } = await admin
+      .from('professional_availability_exceptions')
+      .select('exception_date, exception_type, start_time, end_time')
+      .eq('professional_id', professional.id)
+      .eq('exception_date', slotDate)
+
+    const within = isSlotWithinAvailability(
+      (grade ?? []) as AvailabilityWindow[],
+      (exceptions ?? []) as AvailabilityException[],
+      { start: data.start_time, end: data.end_time },
+    )
+    if (!within) {
+      return { success: false, error: 'Horário fora da disponibilidade do profissional.' }
+    }
+  }
+
   // Build notes with requester contact info (staff links patient later)
   const notesLines = [
     `Solicitante: ${data.requester_name}`,
@@ -203,4 +238,94 @@ export async function createPublicAppointment(
   })
 
   return { success: true, id: appointment!.id }
+}
+
+// ─── getAvailableSlots ────────────────────────────────────────────────────────
+// PRO-02 / Pitfall 5: Returns 30-min slot start_times that fall within the
+// professional's availability windows for the given date, so the public form
+// only offers slots the professional is actually available for.
+//
+// Uses admin client — no auth session in public flow.
+// Returns [] on any error — never leaks details to public callers.
+
+const availableSlotsInputSchema = z.object({
+  clinicSlug: z.string().min(1),
+  dentistId: z.string().uuid(),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+})
+
+export async function getAvailableSlots(
+  clinicSlug: string,
+  dentistId: string,
+  date: string
+): Promise<string[]> {
+  const parsed = availableSlotsInputSchema.safeParse({ clinicSlug, dentistId, date })
+  if (!parsed.success) return []
+
+  const admin = createAdminClient()
+
+  // Resolve clinic
+  const { data: clinic } = await admin
+    .from('clinics')
+    .select('id')
+    .eq('slug', parsed.data.clinicSlug)
+    .is('deleted_at', null)
+    .single()
+  if (!clinic) return []
+
+  // Verify dentist belongs to this clinic
+  const { data: dentist } = await admin
+    .from('users')
+    .select('id')
+    .eq('id', parsed.data.dentistId)
+    .eq('tenant_id', clinic.id)
+    .eq('role', 'dentist')
+    .is('deleted_at', null)
+    .single()
+  if (!dentist) return []
+
+  // Resolve professional row for availability check (user_id lookup — PRO-02)
+  const { data: professional } = await admin
+    .from('professionals')
+    .select('id')
+    .eq('user_id', parsed.data.dentistId)
+    .eq('clinic_id', clinic.id)
+    .is('deleted_at', null)
+    .maybeSingle()
+
+  // If no professional row exists, no availability windows are configured → no slots
+  if (!professional) return []
+
+  const { data: grade } = await admin
+    .from('professional_availability')
+    .select('weekday, start_time, end_time')
+    .eq('professional_id', professional.id)
+  if (!grade || grade.length === 0) return []
+
+  const { data: exceptions } = await admin
+    .from('professional_availability_exceptions')
+    .select('exception_date, exception_type, start_time, end_time')
+    .eq('professional_id', professional.id)
+    .eq('exception_date', parsed.data.date)
+
+  // Generate all 30-min slots for the date (00:00 to 23:30 UTC) and filter by availability
+  const slots: string[] = []
+  const baseDate = `${parsed.data.date}T`
+  for (let h = 0; h < 24; h++) {
+    for (const m of [0, 30]) {
+      const hh = String(h).padStart(2, '0')
+      const mm = String(m).padStart(2, '0')
+      const slotStart = `${baseDate}${hh}:${mm}:00Z`
+      const slotEnd = new Date(new Date(slotStart).getTime() + 30 * 60 * 1000).toISOString()
+
+      const within = isSlotWithinAvailability(
+        (grade ?? []) as AvailabilityWindow[],
+        (exceptions ?? []) as AvailabilityException[],
+        { start: slotStart, end: slotEnd },
+      )
+      if (within) slots.push(slotStart)
+    }
+  }
+
+  return slots
 }
