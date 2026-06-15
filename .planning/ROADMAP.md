@@ -160,7 +160,7 @@ Plans:
   4. Painel de sala de espera (display TV) mostra chamadas em tempo real e exibe o tempo de espera de cada paciente
 **Plans**: 8 plans
 Plans:
-- [ ] 11-01-PLAN.md — Wave 0: RED test scaffolds (migrations/professionals/resources/waiting-room + GIST-regression guard)
+- [x] 11-01-PLAN.md — Wave 0: RED test scaffolds (migrations/professionals/resources/waiting-room + GIST-regression guard)
 - [ ] 11-02-PLAN.md — Wave 1: professionals + availability(+exceptions) migrations + RLS + dentist backfill + isSlotWithinAvailability pure + commission Zod
 - [ ] 11-03-PLAN.md — Wave 1: resources + appointment extension (resource_id/presence_status/timestamps) + realtime publication + isResourceAvailable/waitingMinutes pure + resource Zod
 - [ ] 11-04-PLAN.md — Wave 2: booking integration (availability + resource guards in internal/public actions) + /painel public route + profissionais/recursos nav
@@ -335,7 +335,7 @@ Plans:
 | 8. Documentos & Assinatura ICP-Brasil | v2.0 | 0/5 | Planned | - |
 | 9. Hub de Integrações Externas | v2.0 | 0/? | Not started | - |
 | 10. IA Governada, Auditoria & OCR | v2.0 | 8/8 | Complete    | 2026-06-14 |
-| 11. Profissionais & Recursos | v2.0 | 0/8 | Planned | - |
+| 11. Profissionais & Recursos | v2.0 | 1/8 | In Progress|  |
 | 12. Receituário & Teleodontologia | v2.0 | 0/? | Not started | - |
 | 13. Esterilização/CME & Laboratório de Prótese | v2.0 | 0/? | Not started | - |
 | 14. Financeiro — Cadastros Base | v2.0 | 0/? | Not started | - |

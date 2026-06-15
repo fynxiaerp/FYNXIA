@@ -44,14 +44,14 @@
 ### Bloco B — Clínico
 
 #### PRO — Profissionais
-- [ ] **PRO-01**: Admin cadastra profissional com CRO+UF, especialidades, vínculo e grade de disponibilidade
-- [ ] **PRO-02**: A disponibilidade do profissional gera os horários da agenda
-- [ ] **PRO-03**: Regras de % de comissão por profissional/serviço alimentam o repasse
+- [x] **PRO-01**: Admin cadastra profissional com CRO+UF, especialidades, vínculo e grade de disponibilidade
+- [x] **PRO-02**: A disponibilidade do profissional gera os horários da agenda
+- [x] **PRO-03**: Regras de % de comissão por profissional/serviço alimentam o repasse
 
 #### RES — Recursos & Sala de Espera
-- [ ] **RES-01**: Admin cadastra recursos físicos (sala, cadeira, equipamento) com patrimônio/série e status
-- [ ] **RES-02**: Recurso em manutenção/indisponível bloqueia o horário na agenda
-- [ ] **RES-03**: Painel de chamada em tempo real (TV) e medição do tempo de espera por paciente
+- [x] **RES-01**: Admin cadastra recursos físicos (sala, cadeira, equipamento) com patrimônio/série e status
+- [x] **RES-02**: Recurso em manutenção/indisponível bloqueia o horário na agenda
+- [x] **RES-03**: Painel de chamada em tempo real (TV) e medição do tempo de espera por paciente
 
 #### RX — Receituário, Atestados & Exames
 - [ ] **RX-01**: Dentista emite receita (simples/controle especial) com medicamento (base DCB/DCI) e posologia
@@ -182,12 +182,12 @@
 | AUD-03 | Phase 10 | Complete |
 | OCR-01 | Phase 10 | Complete |
 | OCR-02 | Phase 10 | Complete |
-| PRO-01 | Phase 11 | Pending |
-| PRO-02 | Phase 11 | Pending |
-| PRO-03 | Phase 11 | Pending |
-| RES-01 | Phase 11 | Pending |
-| RES-02 | Phase 11 | Pending |
-| RES-03 | Phase 11 | Pending |
+| PRO-01 | Phase 11 | Complete |
+| PRO-02 | Phase 11 | Complete |
+| PRO-03 | Phase 11 | Complete |
+| RES-01 | Phase 11 | Complete |
+| RES-02 | Phase 11 | Complete |
+| RES-03 | Phase 11 | Complete |
 | RX-01 | Phase 12 | Pending |
 | RX-02 | Phase 12 | Pending |
 | RX-03 | Phase 12 | Pending |
