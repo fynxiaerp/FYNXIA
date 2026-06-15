@@ -61,10 +61,18 @@ function WaitingPanelInner({
   const queryClient = useQueryClient()
 
   // TanStack Query — server action as fetcher (CLAUDE.md Realtime → invalidateQueries pattern)
+  //
+  // WR-01: /painel is a public, sessionless route. Supabase Realtime postgres_changes
+  // enforces the appointments RLS against the anon connection (tenant_id = get_my_tenant_id()
+  // is NULL), so NO change events are delivered to this client and the Realtime channel below
+  // never auto-refreshes the public TV. The polling fallback (refetchInterval) drives updates
+  // via getPanelRows (admin client, tenant-isolated by slug) regardless of anon RLS. The
+  // Realtime channel is KEPT (harmless; works for authenticated reception views).
   const { data: rows } = useQuery<PanelRow[]>({
     queryKey: ['painel', clinicSlug, unitId],
     queryFn: () => getPanelRows(clinicSlug, unitId),
     initialData: initialRows,
+    refetchInterval: 15_000, // public panel: poll every 15s (Realtime is blocked under anon RLS)
   })
 
   // 30s tick — forces re-render so waitingMinutes() counters stay live
