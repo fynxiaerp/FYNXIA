@@ -652,22 +652,22 @@ All test files for Phase 11 need to be created:
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **GIST on resource conflicts**
    - What we know: The application-level resource conflict check has a small race window
    - What's unclear: Whether the dental clinic workflow ever has concurrent booking attempts frequent enough to hit the race (unlikely: one receptionist, one patient at a time)
-   - Recommendation: Start with application-level check; add GIST later if monitoring shows conflicts
+   - RESOLVED: Start with the application-level check (`isResourceAvailable` + app-level overlap SELECT in Plan 04); add a resource GIST later only if monitoring shows real conflicts. No resource GIST in Phase 11.
 
 2. **professionals_id on GIST — migration timeline**
    - What we know: `appointments.dentist_id` FK references `users.id` and is in the GIST
    - What's unclear: When to migrate the GIST to use `professional_id` (Phase 11 or defer to Phase 12+)
-   - Recommendation: Defer GIST migration to a future phase; Phase 11 adds `professional_id` as a plain nullable FK only
+   - RESOLVED: Phase 11 does NOT add an `appointments.professional_id` FK column at all. The professional↔appointment link is resolved at QUERY TIME via `professionals WHERE user_id = dentist_id` (Plan 04). `dentist_id` stays the single GIST column; any FK migration is deferred to a future phase. GIST untouched.
 
 3. **TV Panel auth model for multi-unit clinics**
    - What we know: `/painel/[clinic-slug]` needs to show the right unit's waiting room
    - What's unclear: Whether to parameterize by unit_slug too (`/painel/[clinic-slug]/[unit-slug]`) or default to the clinic's default unit
-   - Recommendation: `/painel/[clinic-slug]?unit=<unit_id>` via query param (no slug needed for units in TV context)
+   - RESOLVED: `/painel/[clinic-slug]?unit=<unit_id>` via optional query param (no unit slug in the TV context); absent → show the whole clinic. Implemented in Plan 08.
 
 ---
 
