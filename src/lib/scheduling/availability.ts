@@ -15,11 +15,19 @@
  *   3. If any extra exception on the slot's date covers [slot.start, slot.end] → true.
  *   4. Otherwise → false.
  *
- * Callers are responsible for passing Dates that reflect Brazil time (e.g.,
- * via date-fns-tz toZonedTime before constructing Dates) so that getDay()
- * returns the correct local weekday. The function itself uses getDay() (local
- * wall-clock day of the object passed in) without any timezone conversion.
+ * TIMEZONE CONVENTION (WR-03): availability windows are entered/stored as Brazil
+ * local wall-clock (America/Sao_Paulo). Slot instants arrive as absolute time
+ * (ISO strings or Dates). This function converts the slot instant to the
+ * America/Sao_Paulo zone before extracting the weekday + HH:MM used for the
+ * window comparison. This matches the rest of the booking code, which anchors
+ * day ranges in the -03:00 offset (e.g. getBookedSlots in public-booking.ts).
+ * The previous implementation read getUTC* directly, producing a ~3h skew that
+ * offered/accepted the wrong slots whenever a professional row existed.
  */
+import { formatInTimeZone } from 'date-fns-tz'
+
+/** Clinic timezone — Brazil has no DST since 2019, fixed -03:00. */
+const CLINIC_TZ = 'America/Sao_Paulo'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -51,23 +59,21 @@ function toDate(v: string | Date): Date {
   return v instanceof Date ? v : new Date(v)
 }
 
-/**
- * Extract YYYY-MM-DD from a Date using UTC methods.
- * Note: the test cases pass UTC dates (e.g. 2026-06-15T09:00:00Z) and expect
- * the UTC date string. We use UTC here to be consistent with ISO strings.
- */
+/** Extract YYYY-MM-DD of the instant as seen in the clinic timezone (-03:00). */
 function toDateStr(d: Date): string {
-  const yyyy = d.getUTCFullYear()
-  const mm = String(d.getUTCMonth() + 1).padStart(2, '0')
-  const dd = String(d.getUTCDate()).padStart(2, '0')
-  return `${yyyy}-${mm}-${dd}`
+  return formatInTimeZone(d, CLINIC_TZ, 'yyyy-MM-dd')
 }
 
-/** Extract HH:MM from a Date using UTC hours/minutes. */
+/** Extract HH:MM of the instant as seen in the clinic timezone (-03:00). */
 function toTimeStr(d: Date): string {
-  const hh = String(d.getUTCHours()).padStart(2, '0')
-  const min = String(d.getUTCMinutes()).padStart(2, '0')
-  return `${hh}:${min}`
+  return formatInTimeZone(d, CLINIC_TZ, 'HH:mm')
+}
+
+/** Day of week (0=Sun … 6=Sat) of the instant as seen in the clinic timezone. */
+function toWeekday(d: Date): number {
+  // 'i' = ISO day (1=Mon … 7=Sun); convert to JS getDay() convention (0=Sun … 6=Sat).
+  const iso = Number(formatInTimeZone(d, CLINIC_TZ, 'i'))
+  return iso % 7
 }
 
 /**
@@ -111,11 +117,10 @@ export function isSlotWithinAvailability(
   const startDate = toDate(slot.start)
   const endDate = toDate(slot.end)
 
-  // Use UTC-based helpers to get the date string and weekday.
-  // Callers using Date objects constructed from UTC ISO strings (e.g. '2026-06-15T09:00:00Z')
-  // will get consistent results via getUTCDay().
+  // WR-03: derive date / weekday / HH:MM from the clinic-local wall-clock (-03:00),
+  // matching how windows are entered and how getBookedSlots anchors the day range.
   const dateStr = toDateStr(startDate)
-  const weekday = startDate.getUTCDay() // 0=Sun … 6=Sat
+  const weekday = toWeekday(startDate) // 0=Sun … 6=Sat in clinic tz
   const slotStartStr = toTimeStr(startDate)
   const slotEndStr = toTimeStr(endDate)
 

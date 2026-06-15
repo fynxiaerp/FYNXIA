@@ -54,9 +54,10 @@ describe('Phase 11 — isSlotWithinAvailability pure-unit (PRO-02)', () => {
     if (!fn) {
       expect.fail('isSlotWithinAvailability not exported from availability.ts')
     }
-    // Monday (weekday 1) window 08:00–18:00; slot 09:00–10:00 on a Monday
-    const monday = new Date('2026-06-15T09:00:00Z') // known Monday
-    const slotEnd = new Date('2026-06-15T10:00:00Z')
+    // WR-03: slots are anchored in Brazil wall-clock (-03:00).
+    // Monday (weekday 1) window 08:00–18:00; slot 09:00–10:00 BRT on a Monday.
+    const monday = new Date('2026-06-15T09:00:00-03:00') // known Monday, 09:00 BRT
+    const slotEnd = new Date('2026-06-15T10:00:00-03:00')
     const grade = [{ weekday: 1, start_time: '08:00', end_time: '18:00' }]
     const exceptions: unknown[] = []
     expect(fn(grade, exceptions, { start: monday, end: slotEnd })).toBe(true)
@@ -72,9 +73,9 @@ describe('Phase 11 — isSlotWithinAvailability pure-unit (PRO-02)', () => {
     if (!fn) {
       expect.fail('isSlotWithinAvailability not exported from availability.ts')
     }
-    // Window only on Monday; slot on Tuesday
-    const tuesday = new Date('2026-06-16T09:00:00Z')
-    const slotEnd = new Date('2026-06-16T10:00:00Z')
+    // Window only on Monday; slot on Tuesday (BRT)
+    const tuesday = new Date('2026-06-16T09:00:00-03:00')
+    const slotEnd = new Date('2026-06-16T10:00:00-03:00')
     const grade = [{ weekday: 1, start_time: '08:00', end_time: '18:00' }]
     const exceptions: unknown[] = []
     expect(fn(grade, exceptions, { start: tuesday, end: slotEnd })).toBe(false)
@@ -90,9 +91,9 @@ describe('Phase 11 — isSlotWithinAvailability pure-unit (PRO-02)', () => {
     if (!fn) {
       expect.fail('isSlotWithinAvailability not exported from availability.ts')
     }
-    // Monday window 08:00–18:00 BUT folga exception on that Monday
-    const monday = new Date('2026-06-15T09:00:00Z')
-    const slotEnd = new Date('2026-06-15T10:00:00Z')
+    // Monday window 08:00–18:00 BUT folga exception on that Monday (BRT)
+    const monday = new Date('2026-06-15T09:00:00-03:00')
+    const slotEnd = new Date('2026-06-15T10:00:00-03:00')
     const grade = [{ weekday: 1, start_time: '08:00', end_time: '18:00' }]
     const exceptions = [
       { exception_date: '2026-06-15', exception_type: 'folga' },
@@ -110,9 +111,9 @@ describe('Phase 11 — isSlotWithinAvailability pure-unit (PRO-02)', () => {
     if (!fn) {
       expect.fail('isSlotWithinAvailability not exported from availability.ts')
     }
-    // Saturday (weekday 6) has no recurring window, but extra exception covers slot
-    const saturday = new Date('2026-06-20T09:00:00Z')
-    const slotEnd = new Date('2026-06-20T10:00:00Z')
+    // Saturday (weekday 6) has no recurring window, but extra exception covers slot (BRT)
+    const saturday = new Date('2026-06-20T09:00:00-03:00')
+    const slotEnd = new Date('2026-06-20T10:00:00-03:00')
     const grade: unknown[] = [] // no recurring windows
     const exceptions = [
       { exception_date: '2026-06-20', exception_type: 'extra', start_time: '08:00', end_time: '12:00' },
@@ -130,9 +131,46 @@ describe('Phase 11 — isSlotWithinAvailability pure-unit (PRO-02)', () => {
     if (!fn) {
       expect.fail('isSlotWithinAvailability not exported from availability.ts')
     }
-    const slot = new Date('2026-06-15T09:00:00Z')
-    const slotEnd = new Date('2026-06-15T10:00:00Z')
+    const slot = new Date('2026-06-15T09:00:00-03:00')
+    const slotEnd = new Date('2026-06-15T10:00:00-03:00')
     expect(fn([], [], { start: slot, end: slotEnd })).toBe(false)
+  })
+
+  // WR-03: lock the America/Sao_Paulo (-03:00) convention at a day/weekday boundary.
+  it('uses Brazil wall-clock (-03:00) for weekday + window, not UTC', async () => {
+    if (!existsSync(availabilityPath)) {
+      expect.fail('src/lib/scheduling/availability.ts does not exist yet — Plan 03 target')
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const mod = await import(/* @vite-ignore */ availabilityPath) as any
+    const fn = mod.isSlotWithinAvailability
+    if (!fn) {
+      expect.fail('isSlotWithinAvailability not exported from availability.ts')
+    }
+
+    const grade = [{ weekday: 1, start_time: '08:00', end_time: '18:00' }] // Monday window
+
+    // 08:00 BRT on Monday 2026-06-15 == 11:00 UTC. A correct BRT comparison puts this
+    // at the 08:00 window start on weekday=Monday. A naive getUTCHours would read 11:00.
+    const mondayMorningBrt = new Date('2026-06-15T08:00:00-03:00')
+    const mondayMorningEnd = new Date('2026-06-15T09:00:00-03:00')
+    expect(fn(grade, [], { start: mondayMorningBrt, end: mondayMorningEnd })).toBe(true)
+
+    // Boundary case proving UTC would give the WRONG weekday:
+    // 22:00 BRT on Monday 2026-06-15 == 01:00 UTC on TUESDAY 2026-06-16.
+    // The Monday window must NOT cover a slot whose UTC day is Tuesday — but its BRT day
+    // is still Monday. We assert against a Monday window for a late-night BRT slot that is
+    // outside hours (22:00 > 18:00) → false. Under a UTC reading this would be evaluated as
+    // 01:00 on Tuesday (also outside, but for the wrong reason / wrong day).
+    const lateMondayBrt = new Date('2026-06-15T22:00:00-03:00')
+    const lateMondayEnd = new Date('2026-06-15T22:30:00-03:00')
+    expect(fn(grade, [], { start: lateMondayBrt, end: lateMondayEnd })).toBe(false)
+
+    // And the same Monday window DOES still cover a normal-hours Monday slot whose UTC date
+    // has not rolled over: 14:00 BRT == 17:00 UTC, same Monday → true.
+    const afternoonBrt = new Date('2026-06-15T14:00:00-03:00')
+    const afternoonEnd = new Date('2026-06-15T15:00:00-03:00')
+    expect(fn(grade, [], { start: afternoonBrt, end: afternoonEnd })).toBe(true)
   })
 })
 

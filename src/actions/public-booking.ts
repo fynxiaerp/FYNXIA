@@ -311,14 +311,17 @@ export async function getAvailableSlots(
     .eq('professional_id', professional.id)
     .eq('exception_date', parsed.data.date)
 
-  // Generate all 30-min slots for the date (00:00 to 23:30 UTC) and filter by availability
+  // WR-03: generate 30-min candidate slots in the clinic's Brazil offset (-03:00),
+  // mirroring getBookedSlots. Availability windows are entered as Brazil wall-clock, so the
+  // slot instants must be anchored at -03:00 (not 'Z') for isSlotWithinAvailability — which
+  // now reads clinic-local components — to compare against the right window.
   const slots: string[] = []
   const baseDate = `${parsed.data.date}T`
   for (let h = 0; h < 24; h++) {
     for (const m of [0, 30]) {
       const hh = String(h).padStart(2, '0')
       const mm = String(m).padStart(2, '0')
-      const slotStart = `${baseDate}${hh}:${mm}:00Z`
+      const slotStart = `${baseDate}${hh}:${mm}:00-03:00`
       const slotEnd = new Date(new Date(slotStart).getTime() + 30 * 60 * 1000).toISOString()
 
       const within = isSlotWithinAvailability(
