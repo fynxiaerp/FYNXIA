@@ -229,10 +229,13 @@ export async function createPublicAppointment(
     return { success: false, error: insertError.message }
   }
 
-  // Audit — only IDs; no PII (T-2-08); actorId=null (public system action)
+  // Audit — only IDs; no PII (T-2-08); actorId=null (public/sessionless action).
+  // WR-02: audit_logs.actor_id is UUID + nullable for system events. Passing the literal
+  // string 'system' triggers Postgres 22P02 (invalid uuid) which logBusinessEvent swallows,
+  // so every public booking previously wrote NO audit row (LGPD traceability gap).
   await logBusinessEvent({
     tenantId: clinic.id,
-    actorId: 'system',
+    actorId: null,
     action: 'appointment.public_created',
     details: { appointment_id: appointment!.id, clinic_id: clinic.id },
   })

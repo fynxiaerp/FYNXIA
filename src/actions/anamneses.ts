@@ -173,9 +173,11 @@ export async function submitAnamnesisPublic(
   const row = rows[0]!
 
   // Audit: only IDs logged — no IP/UA in audit details (T-2-08)
+  // WR-02: actor_id is UUID + nullable for system events. The literal 'system' caused a
+  // swallowed 22P02, dropping the audit row for every public anamnesis signature.
   await logBusinessEvent({
     tenantId: row.tenant_id,
-    actorId: 'system',
+    actorId: null,
     action: 'anamnesis.signed',
     details: { anamnesis_id: row.id, patient_id: patientId },
   })
