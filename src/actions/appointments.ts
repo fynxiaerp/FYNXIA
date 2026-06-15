@@ -205,15 +205,39 @@ export async function updateAppointment(
 
   const supabase = await createClient()
 
-  // ── PRO-02: Availability pre-flight guard (update path) ──────────────────────
-  // Only check when start_time, end_time, or dentist_id are being changed.
-  if (input.start_time !== undefined || input.end_time !== undefined || input.dentist_id !== undefined) {
-    // Resolve effective dentist: the new dentist_id if changing, else we need to look up
-    // the existing appointment's dentist_id. For simplicity we only gate when the caller
-    // provides a dentist_id in the update (drag-reschedule always provides start+end).
-    const effectiveDentistId = input.dentist_id
+  // ── WR-04: Reschedule/resource guards (mirror createAppointment) ─────────────
+  // The drag-to-reschedule path usually sends only start_time/end_time (no dentist_id),
+  // and resource_id is mutable here. We must therefore resolve the effective dentist and
+  // resource from the EXISTING row when the payload omits them, then re-run the same
+  // availability + resource guards createAppointment runs. The GIST still backstops dentist
+  // double-booking; resources have no GIST this phase, so the app check is the only guard.
+  const timesChanged = input.start_time !== undefined || input.end_time !== undefined
+  const dentistChanged = input.dentist_id !== undefined
+  const resourceChanged = input.resource_id !== undefined
 
-    if (effectiveDentistId && input.start_time && input.end_time) {
+  if (timesChanged || dentistChanged || resourceChanged) {
+    // Fetch the current row so we can resolve effective values + the [start,end) window.
+    const { data: existing } = await supabase
+      .from('appointments')
+      .select('dentist_id, resource_id, start_time, end_time')
+      .eq('id', id)
+      .eq('tenant_id', actor.tenant_id)
+      .maybeSingle()
+
+    if (!existing) {
+      return { success: false, error: 'Agendamento não encontrado' }
+    }
+
+    // Effective slot window: new values if provided, else the existing ones.
+    const effectiveStart = input.start_time ?? existing.start_time
+    const effectiveEnd = input.end_time ?? existing.end_time
+    const effectiveDentistId = input.dentist_id ?? existing.dentist_id
+    const effectiveResourceId =
+      input.resource_id !== undefined ? (input.resource_id ?? null) : existing.resource_id
+
+    // ── PRO-02: Availability pre-flight guard ──────────────────────────────────
+    // Re-check whenever the time window or the dentist changes.
+    if ((timesChanged || dentistChanged) && effectiveDentistId && effectiveStart && effectiveEnd) {
       const { data: professional } = await supabase
         .from('professionals')
         .select('id')
@@ -228,7 +252,7 @@ export async function updateAppointment(
           .select('weekday, start_time, end_time')
           .eq('professional_id', professional.id)
 
-        const slotDate = input.start_time.slice(0, 10)
+        const slotDate = effectiveStart.slice(0, 10)
         const { data: exceptions } = await supabase
           .from('professional_availability_exceptions')
           .select('exception_date, exception_type, start_time, end_time')
@@ -238,11 +262,45 @@ export async function updateAppointment(
         const within = isSlotWithinAvailability(
           (grade ?? []) as AvailabilityWindow[],
           (exceptions ?? []) as AvailabilityException[],
-          { start: input.start_time, end: input.end_time },
+          { start: effectiveStart, end: effectiveEnd },
         )
         if (!within) {
           return { success: false, error: 'Horário fora da disponibilidade do profissional.' }
         }
+      }
+    }
+
+    // ── RES-02: Resource pre-flight guard ──────────────────────────────────────
+    // Re-check whenever the resource changes OR the time window moves (a moved slot can
+    // collide with another appointment on the same resource).
+    if (effectiveResourceId && (resourceChanged || timesChanged) && effectiveStart && effectiveEnd) {
+      const { data: resource } = await supabase
+        .from('resources')
+        .select('status')
+        .eq('id', effectiveResourceId)
+        .eq('clinic_id', actor.tenant_id)
+        .is('deleted_at', null)
+        .maybeSingle()
+
+      if (!isResourceAvailable(resource?.status)) {
+        return { success: false, error: 'Recurso em manutenção ou indisponível.' }
+      }
+
+      // App-level overlap check, excluding THIS appointment (.neq('id', id)) so it
+      // doesn't conflict with itself.
+      const { data: overlap } = await supabase
+        .from('appointments')
+        .select('id')
+        .eq('resource_id', effectiveResourceId)
+        .eq('tenant_id', actor.tenant_id)
+        .neq('id', id)
+        .neq('status', 'cancelado')
+        .lt('start_time', effectiveEnd)
+        .gt('end_time', effectiveStart)
+        .limit(1)
+
+      if (overlap && overlap.length > 0) {
+        return { success: false, error: 'Recurso já reservado neste horário.' }
       }
     }
   }
