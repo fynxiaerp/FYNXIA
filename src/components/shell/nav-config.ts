@@ -14,6 +14,8 @@ export type NavIconKey =
   | 'financeiro'
   | 'documentos'
   | 'equipe'
+  | 'profissionais'
+  | 'recursos'
   | 'ia'
   | 'prototipos'
 
@@ -31,8 +33,10 @@ export const ALL_NAV_ITEMS: NavItemConfig[] = [
   { href: '/clinica/pacientes',   label: 'Pacientes',    icon: 'pacientes' },
   { href: '/clinica/financeiro',  label: 'Financeiro',   icon: 'financeiro' },
   { href: '/clinica/documentos',  label: 'Documentos',   icon: 'documentos' },
-  { href: '/clinica/equipe',      label: 'Equipe',       icon: 'equipe', adminOnly: true },
-  { href: '/clinica/ia/agentes',  label: 'IA / Agentes', icon: 'ia' },
+  { href: '/clinica/equipe',         label: 'Equipe',         icon: 'equipe',         adminOnly: true },
+  { href: '/clinica/profissionais',  label: 'Profissionais',  icon: 'profissionais',  adminOnly: true },
+  { href: '/clinica/recursos',       label: 'Recursos',       icon: 'recursos',       adminOnly: true },
+  { href: '/clinica/ia/agentes',     label: 'IA / Agentes',   icon: 'ia' },
   { href: '/clinica/prototipos',  label: 'Protótipos',   icon: 'prototipos', adminOnly: true },
 ]
 

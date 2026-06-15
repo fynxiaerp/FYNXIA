@@ -9,6 +9,8 @@ import {
   UserCog,
   BrainCircuit,
   FlaskConical,
+  Stethoscope,
+  Armchair,
   type LucideIcon,
 } from 'lucide-react'
 import type { NavIconKey } from './nav-config'
@@ -19,6 +21,8 @@ export const NAV_ICONS: Record<NavIconKey, LucideIcon> = {
   financeiro: DollarSign,
   documentos: FileText,
   equipe: UserCog,
+  profissionais: Stethoscope,
+  recursos: Armchair,
   ia: BrainCircuit,
   prototipos: FlaskConical,
 }
