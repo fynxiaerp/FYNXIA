@@ -167,7 +167,7 @@ Plans:
 - [ ] 11-05-PLAN.md — Wave 3: [BLOCKING] supabase db push (6 migrations) + gen types (truncation guard)
 - [x] 11-06-PLAN.md — Wave 4: professionais cadastro UI (tabbed ProfessionalForm + AvailabilityGrid + commission JSONB) (PRO-01/03)
 - [x] 11-07-PLAN.md — Wave 4: recursos cadastro UI (ResourceForm + list/edit, status manutenção) (RES-01)
-- [ ] 11-08-PLAN.md — Wave 4: check-in actions + /painel TV (Supabase Realtime, initials-only LGPD) (RES-03)
+- [x] 11-08-PLAN.md — Wave 4: check-in actions + /painel TV (Supabase Realtime, initials-only LGPD) (RES-03)
 **v1 reuse**: Expande agenda FullCalendar multi-dentista (Phase 2); anti-double-booking GIST existente cobre RES-02; módulo "Equipe" parcial do v1 evolui para PRO
 **UI hint**: yes
 
@@ -335,7 +335,7 @@ Plans:
 | 8. Documentos & Assinatura ICP-Brasil | v2.0 | 0/5 | Planned | - |
 | 9. Hub de Integrações Externas | v2.0 | 0/? | Not started | - |
 | 10. IA Governada, Auditoria & OCR | v2.0 | 8/8 | Complete    | 2026-06-14 |
-| 11. Profissionais & Recursos | v2.0 | 6/8 | In Progress|  |
+| 11. Profissionais & Recursos | v2.0 | 7/8 | In Progress|  |
 | 12. Receituário & Teleodontologia | v2.0 | 0/? | Not started | - |
 | 13. Esterilização/CME & Laboratório de Prótese | v2.0 | 0/? | Not started | - |
 | 14. Financeiro — Cadastros Base | v2.0 | 0/? | Not started | - |
