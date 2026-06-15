@@ -39,7 +39,7 @@ Full detail archived in [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
 
 **Bloco B — Clínico**
 
-- [ ] **Phase 11: Profissionais & Recursos** — Cadastro de profissionais (CRO, comissão, disponibilidade) e recursos físicos com painel de sala de espera
+- [x] **Phase 11: Profissionais & Recursos** — Cadastro de profissionais (CRO, comissão, disponibilidade) e recursos físicos com painel de sala de espera (completed 2026-06-15)
 - [ ] **Phase 12: Receituário & Teleodontologia** — Documentos clínicos assinados (receita/atestado/exame) e teleconsultas registradas no prontuário
 - [ ] **Phase 13: Esterilização/CME & Laboratório de Prótese** — Controle de ciclos de esterilização com rastreabilidade e gestão de ordens de serviço protéticas
 
@@ -335,7 +335,7 @@ Plans:
 | 8. Documentos & Assinatura ICP-Brasil | v2.0 | 0/5 | Planned | - |
 | 9. Hub de Integrações Externas | v2.0 | 0/? | Not started | - |
 | 10. IA Governada, Auditoria & OCR | v2.0 | 8/8 | Complete    | 2026-06-14 |
-| 11. Profissionais & Recursos | v2.0 | 7/8 | In Progress|  |
+| 11. Profissionais & Recursos | v2.0 | 7/8 | Complete    | 2026-06-15 |
 | 12. Receituário & Teleodontologia | v2.0 | 0/? | Not started | - |
 | 13. Esterilização/CME & Laboratório de Prótese | v2.0 | 0/? | Not started | - |
 | 14. Financeiro — Cadastros Base | v2.0 | 0/? | Not started | - |

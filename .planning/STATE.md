@@ -2,9 +2,9 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
-status: executing
+status: planning
 stopped_at: Completed 11-08-PLAN.md
-last_updated: "2026-06-15T01:07:53.079Z"
+last_updated: "2026-06-15T01:30:29.939Z"
 last_activity: 2026-06-15
 progress:
   total_phases: 15
@@ -38,9 +38,9 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 Phase: null — EXECUTING
 Plan: 1 of ?
 **Milestone:** v2.0 — Produto Completo (27 módulos, blocos A–E)
-**Phase:** 11
-**Plan:** 04 complete (Wave 2 — booking guards + nav)
-**Status:** Executing Phase 11
+**Phase:** 12
+**Plan:** Not started
+**Status:** Ready to plan
 **Last activity:** 2026-06-15
 
 ---
