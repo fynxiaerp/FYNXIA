@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 11-02-PLAN.md
-last_updated: "2026-06-15T00:34:10.708Z"
+stopped_at: Completed 11-04-PLAN.md
+last_updated: "2026-06-15T00:42:00Z"
 last_activity: 2026-06-15
 progress:
   total_phases: 15
   completed_phases: 4
   total_plans: 32
-  completed_plans: 27
-  percent: 84
+  completed_plans: 28
+  percent: 85
 ---
 
 # FYNXIA ERP — Project State
@@ -39,8 +39,8 @@ Phase: null — EXECUTING
 Plan: 1 of ?
 **Milestone:** v2.0 — Produto Completo (27 módulos, blocos A–E)
 **Phase:** 11
-**Plan:** Not started
-**Status:** Executing Phase null
+**Plan:** 04 complete (Wave 2 — booking guards + nav)
+**Status:** Executing Phase 11
 **Last activity:** 2026-06-15
 
 ---
@@ -100,6 +100,7 @@ Plan: 1 of ?
 | Phase 10-ia-governada-l0-l4-auditoria-ocr P08 | ~8 minutes | 2 tasks | 2 files |
 | Phase 11-profissionais-recursos P01 | 8 | 2 tasks | 5 files |
 | Phase 11 P03 | 4 | 2 tasks | 7 files |
+| Phase 11 P04 | 8 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -169,6 +170,10 @@ Plan: 1 of ?
 | conformidade module: auditor+dpo readOnly, admin+superadmin write | Módulo de compliance: auditores só lêem; admin/superadmin gerenciam aprovações e estornos | 2026-06-14 |
 | OCR page gated to admin/superadmin only (not auditor/dpo); receptionist deferred | OCR pilot creates patient records — write access restricted; receptionist extension is future work | 2026-06-14 |
 | OcrExtractionQueueRow exported from RSC page (not separate types file) | Avoids extra file; client component imports type from its RSC parent — single source of truth for the serializable shape | 2026-06-14 |
+| Professional resolved at query-time via user_id (no professional_id FK on appointments) | dentist_id stays the single GIST column; professional↔appointment link is query-time via professionals WHERE user_id=dentist_id (Phase 11 intentional — RESEARCH Open Question 2) | 2026-06-15 |
+| Availability guard is soft pre-flight; GIST 23P01 is the atomic backstop | Race between pre-flight check and insert is acceptable — GIST fires 23P01 (already handled); soft guard prevents UI from offering unavailable slots | 2026-06-15 |
+| resource_id uuid() with empty parens in Zod schema | Test regex /resource_id.*uuid\(\)/ requires empty-paren form; error message arg removed from .uuid() call | 2026-06-15 |
+| /painel added to isPublicRoute only — not ROUTE_MODULE_MAP | Public TV panel needs no module resolution; routeToModule returning null is correct for fully public routes | 2026-06-15 |
 
 ### Architecture Constraints Locked
 
@@ -205,7 +210,7 @@ Plan: 1 of ?
 
 ## Session Continuity
 
-**Stopped at:** Completed 11-02-PLAN.md
+**Stopped at:** Completed 11-04-PLAN.md
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 
