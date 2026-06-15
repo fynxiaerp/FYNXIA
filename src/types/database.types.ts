@@ -291,42 +291,60 @@ export type Database = {
       }
       appointments: {
         Row: {
+          arrived_at: string | null
+          called_at: string | null
           created_at: string
           dentist_id: string
           end_time: string
+          finished_at: string | null
           id: string
           notes: string | null
           patient_id: string | null
+          presence_status: string | null
+          resource_id: string | null
           source: string
           start_time: string
+          started_at: string | null
           status: string
           tenant_id: string
           unit_id: string
           updated_at: string
         }
         Insert: {
+          arrived_at?: string | null
+          called_at?: string | null
           created_at?: string
           dentist_id: string
           end_time: string
+          finished_at?: string | null
           id?: string
           notes?: string | null
           patient_id?: string | null
+          presence_status?: string | null
+          resource_id?: string | null
           source?: string
           start_time: string
+          started_at?: string | null
           status?: string
           tenant_id: string
           unit_id: string
           updated_at?: string
         }
         Update: {
+          arrived_at?: string | null
+          called_at?: string | null
           created_at?: string
           dentist_id?: string
           end_time?: string
+          finished_at?: string | null
           id?: string
           notes?: string | null
           patient_id?: string | null
+          presence_status?: string | null
+          resource_id?: string | null
           source?: string
           start_time?: string
+          started_at?: string | null
           status?: string
           tenant_id?: string
           unit_id?: string
@@ -352,6 +370,13 @@ export type Database = {
             columns: ["patient_id"]
             isOneToOne: false
             referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_resource_id_fkey"
+            columns: ["resource_id"]
+            isOneToOne: false
+            referencedRelation: "resources"
             referencedColumns: ["id"]
           },
           {
@@ -2054,6 +2079,168 @@ export type Database = {
           },
         ]
       }
+      professional_availability: {
+        Row: {
+          clinic_id: string
+          created_at: string
+          end_time: string
+          id: string
+          professional_id: string
+          start_time: string
+          weekday: number
+        }
+        Insert: {
+          clinic_id: string
+          created_at?: string
+          end_time: string
+          id?: string
+          professional_id: string
+          start_time: string
+          weekday: number
+        }
+        Update: {
+          clinic_id?: string
+          created_at?: string
+          end_time?: string
+          id?: string
+          professional_id?: string
+          start_time?: string
+          weekday?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "professional_availability_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "professionals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      professional_availability_exceptions: {
+        Row: {
+          clinic_id: string
+          created_at: string
+          end_time: string | null
+          exception_date: string
+          exception_type: string
+          id: string
+          professional_id: string
+          reason: string | null
+          start_time: string | null
+        }
+        Insert: {
+          clinic_id: string
+          created_at?: string
+          end_time?: string | null
+          exception_date: string
+          exception_type: string
+          id?: string
+          professional_id: string
+          reason?: string | null
+          start_time?: string | null
+        }
+        Update: {
+          clinic_id?: string
+          created_at?: string
+          end_time?: string | null
+          exception_date?: string
+          exception_type?: string
+          id?: string
+          professional_id?: string
+          reason?: string | null
+          start_time?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "professional_availability_exceptions_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "professionals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      professionals: {
+        Row: {
+          ativo: boolean
+          clinic_id: string
+          commission_rules: Json
+          created_at: string
+          cro: string
+          cro_uf: string
+          deleted_at: string | null
+          especialidades: string[]
+          full_name: string
+          id: string
+          unit_id: string | null
+          updated_at: string
+          user_id: string | null
+          vinculo: string
+        }
+        Insert: {
+          ativo?: boolean
+          clinic_id: string
+          commission_rules?: Json
+          created_at?: string
+          cro: string
+          cro_uf: string
+          deleted_at?: string | null
+          especialidades?: string[]
+          full_name: string
+          id?: string
+          unit_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+          vinculo?: string
+        }
+        Update: {
+          ativo?: boolean
+          clinic_id?: string
+          commission_rules?: Json
+          created_at?: string
+          cro?: string
+          cro_uf?: string
+          deleted_at?: string | null
+          especialidades?: string[]
+          full_name?: string
+          id?: string
+          unit_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+          vinculo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "professionals_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "professionals_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "professionals_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "professionals_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users_masked"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       receivables: {
         Row: {
           charge_id: string
@@ -2124,6 +2311,66 @@ export type Database = {
           },
           {
             foreignKeyName: "receivables_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      resources: {
+        Row: {
+          clinic_id: string
+          created_at: string
+          deleted_at: string | null
+          id: string
+          manutencao_prevista: string | null
+          nome: string
+          numero_serie: string | null
+          patrimonio: string | null
+          status: string
+          tipo: string
+          unit_id: string
+          updated_at: string
+        }
+        Insert: {
+          clinic_id: string
+          created_at?: string
+          deleted_at?: string | null
+          id?: string
+          manutencao_prevista?: string | null
+          nome: string
+          numero_serie?: string | null
+          patrimonio?: string | null
+          status?: string
+          tipo: string
+          unit_id: string
+          updated_at?: string
+        }
+        Update: {
+          clinic_id?: string
+          created_at?: string
+          deleted_at?: string | null
+          id?: string
+          manutencao_prevista?: string | null
+          nome?: string
+          numero_serie?: string | null
+          patrimonio?: string | null
+          status?: string
+          tipo?: string
+          unit_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resources_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resources_unit_id_fkey"
             columns: ["unit_id"]
             isOneToOne: false
             referencedRelation: "units"
