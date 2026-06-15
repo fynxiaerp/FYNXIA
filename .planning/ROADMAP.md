@@ -158,7 +158,16 @@ Plans:
   2. Regra de comissão (% por profissional/serviço) está configurada e alimenta o módulo de repasse
   3. Recurso (sala, cadeira, equipamento) com status "manutenção" bloqueia aquele horário na agenda e impede agendamento
   4. Painel de sala de espera (display TV) mostra chamadas em tempo real e exibe o tempo de espera de cada paciente
-**Plans**: TBD
+**Plans**: 8 plans
+Plans:
+- [ ] 11-01-PLAN.md — Wave 0: RED test scaffolds (migrations/professionals/resources/waiting-room + GIST-regression guard)
+- [ ] 11-02-PLAN.md — Wave 1: professionals + availability(+exceptions) migrations + RLS + dentist backfill + isSlotWithinAvailability pure + commission Zod
+- [ ] 11-03-PLAN.md — Wave 1: resources + appointment extension (resource_id/presence_status/timestamps) + realtime publication + isResourceAvailable/waitingMinutes pure + resource Zod
+- [ ] 11-04-PLAN.md — Wave 2: booking integration (availability + resource guards in internal/public actions) + /painel public route + profissionais/recursos nav
+- [ ] 11-05-PLAN.md — Wave 3: [BLOCKING] supabase db push (6 migrations) + gen types (truncation guard)
+- [ ] 11-06-PLAN.md — Wave 4: professionais cadastro UI (tabbed ProfessionalForm + AvailabilityGrid + commission JSONB) (PRO-01/03)
+- [ ] 11-07-PLAN.md — Wave 4: recursos cadastro UI (ResourceForm + list/edit, status manutenção) (RES-01)
+- [ ] 11-08-PLAN.md — Wave 4: check-in actions + /painel TV (Supabase Realtime, initials-only LGPD) (RES-03)
 **v1 reuse**: Expande agenda FullCalendar multi-dentista (Phase 2); anti-double-booking GIST existente cobre RES-02; módulo "Equipe" parcial do v1 evolui para PRO
 **UI hint**: yes
 
@@ -326,7 +335,7 @@ Plans:
 | 8. Documentos & Assinatura ICP-Brasil | v2.0 | 0/5 | Planned | - |
 | 9. Hub de Integrações Externas | v2.0 | 0/? | Not started | - |
 | 10. IA Governada, Auditoria & OCR | v2.0 | 8/8 | Complete    | 2026-06-14 |
-| 11. Profissionais & Recursos | v2.0 | 0/? | Not started | - |
+| 11. Profissionais & Recursos | v2.0 | 0/8 | Planned | - |
 | 12. Receituário & Teleodontologia | v2.0 | 0/? | Not started | - |
 | 13. Esterilização/CME & Laboratório de Prótese | v2.0 | 0/? | Not started | - |
 | 14. Financeiro — Cadastros Base | v2.0 | 0/? | Not started | - |
