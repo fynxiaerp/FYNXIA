@@ -639,27 +639,27 @@ export function AllergyAlert({ reasons }: AllergyAlertProps) {
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **SOAP storage: new `soap_records` table vs ADD COLUMN to `medical_records`?**
    - What we know: `medical_records` has `diagnosis`, `treatment_plan`, `prescription` TEXT fields; SOAP is structured (S/O/A/P)
    - What's unclear: Whether SOAP in-person (not teleconsultation) is desired in future phases
-   - Recommendation: New `soap_records` table preferred for separation of concerns; simpler to extend later
+   - RESOLVED: New `soap_records` table (separation of concerns; simpler to extend later) — adopted in Plans 12-03/12-07.
 
 2. **CFO regulatory consent for teleconsultation — what exactly is required?**
    - What we know: D-03 says "registrar consentimento CFO" — a boolean + timestamp + IP is the planned approach
    - What's unclear: Whether CFO Resolution 226/2022 requires a signed consent PDF or just a logged consent event
-   - Recommendation: [ASSUMED] Log `consent_given=true`, `consent_given_at`, `consent_ip` — this satisfies audit trail requirement. No signed consent PDF needed at MVP. Flag as LOW confidence — planner should confirm.
+   - RESOLVED: MVP loga `consent_given=true` + `consent_given_at` + `consent_ip` server-side (satisfaz a trilha de auditoria); SEM PDF de consentimento assinado nesta fase. Adotado em Plans 12-03/12-04. Um PDF de consentimento assinado fica como evolução futura se a regulação exigir.
 
 3. **`clinical_documents.content_json` — encrypt or plaintext JSONB?**
    - What we know: Phase 8 encrypts `document_versions.content` (contains PII). `content_json` may contain prescription data (medication + dosage) but not patient CPF/name
    - What's unclear: Whether prescription details constitute LGPD "dados de saúde" requiring encryption
-   - Recommendation: Encrypt `content_json` (serialize to TEXT via `encrypt(JSON.stringify(...))`) for safety, consistent with D-07. Accept performance cost.
+   - RESOLVED: Cifrar `content_json` (TEXT via `encrypt(JSON.stringify(...))`) — dados de saúde. Adotado em Plans 12-02/12-04.
 
 4. **`receituario` and `teleodontologia` as separate nav items or nested under `documentos`?**
    - What we know: `documentos` module exists; clinical docs are a different concern
    - What's unclear: UX preference
-   - Recommendation: Separate top-level nav items for discoverability; `documentos` remains the generic template engine
+   - RESOLVED: Itens de nav separados de topo (descoberta); `documentos` continua sendo o motor genérico de templates. Adotado em Plan 12-06.
 
 ---
 
