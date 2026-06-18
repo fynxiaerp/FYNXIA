@@ -181,7 +181,15 @@ Plans:
   1. Dentista emite receita (simples ou controle especial) com medicamento da base DCB/DCI e posologia; o sistema alerta se o medicamento conflita com uma alergia cadastrada do paciente
   2. Receita/atestado é assinado com ICP-Brasil, recebe número sequencial e fica disponível no Portal do Paciente
   3. Dentista inicia teleconsulta com consentimento da sessão registrado (CFO); a sessão produz registro SOAP no prontuário e eventuais documentos emitidos ficam vinculados ao atendimento
-**Plans**: TBD
+**Plans**: 7 plans
+Plans:
+- [ ] 12-01-PLAN.md — Wave 0: RED test scaffolds (allergy-check + clinical-documents + RX/TEL migrations) + GIST/Phase-8-signing regression guard
+- [ ] 12-02-PLAN.md — Wave 1: receituário migrations (medications+seed, clinical_documents, document_seq_counters+next_doc_number, bucket, RLS) + checkMedicationAllergy + formatDocNumber + Zod
+- [ ] 12-03-PLAN.md — Wave 1: teleodontologia migrations (teleconsultations + soap_records + RLS) + teleconsultation/SOAP Zod
+- [ ] 12-04-PLAN.md — Wave 2: Server Actions (issue/sign clinical docs reusing Phase 8 signPdfBuffer; teleconsultation + SOAP) + ReceituarioPDF/AtestadoPDF/ExamePDF
+- [ ] 12-05-PLAN.md — Wave 3: [BLOCKING] supabase db push (5 migrations) + gen types (truncation guard)
+- [ ] 12-06-PLAN.md — Wave 4: receituário UI (emissão + alerta de alergia + assinatura ICP) + módulos receituario/teleodonto no proxy+nav (RX-01/02/03)
+- [ ] 12-07-PLAN.md — Wave 4: teleodontologia UI (consentimento CFO + link externo + iniciar/encerrar) + editor SOAP (TEL-01/02)
 **v1 reuse**: Expande prontuário/anamnese (Phase 2); assinatura ICP de DOC (Phase 8); base de medicamentos é nova tabela
 **UI hint**: yes
 
@@ -336,7 +344,7 @@ Plans:
 | 9. Hub de Integrações Externas | v2.0 | 0/? | Not started | - |
 | 10. IA Governada, Auditoria & OCR | v2.0 | 8/8 | Complete    | 2026-06-14 |
 | 11. Profissionais & Recursos | v2.0 | 7/8 | Complete    | 2026-06-15 |
-| 12. Receituário & Teleodontologia | v2.0 | 0/? | Not started | - |
+| 12. Receituário & Teleodontologia | v2.0 | 0/7 | Planned | - |
 | 13. Esterilização/CME & Laboratório de Prótese | v2.0 | 0/? | Not started | - |
 | 14. Financeiro — Cadastros Base | v2.0 | 0/? | Not started | - |
 | 15. Faturamento/NFS-e & Convênios/TISS | v2.0 | 0/? | Not started | - |
