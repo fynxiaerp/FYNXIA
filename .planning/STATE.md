@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 12-03-PLAN.md — teleconsultations + soap_records migrations + RLS + Zod schemas
-last_updated: "2026-06-18T19:25:00.000Z"
+stopped_at: Completed 12-02-PLAN.md — receituário foundations (medications+seed, clinical_documents, next_doc_number, allergy-check, formatDocNumber, Zod schema)
+last_updated: "2026-06-18T19:26:18.616Z"
 last_activity: 2026-06-18
 progress:
   total_phases: 15
   completed_phases: 5
   total_plans: 39
-  completed_plans: 34
-  percent: 87
+  completed_plans: 35
+  percent: 90
 ---
 
 # FYNXIA ERP — Project State
@@ -105,6 +105,7 @@ Plan: 1 of ?
 | Phase 11-profissionais-recursos P06 | 7 | 2 tasks | 6 files |
 | Phase 11-profissionais-recursos P08 | 10 | 2 tasks | 5 files |
 | Phase 12 P01 | 9 | 2 tasks | 5 files |
+| Phase 12 P02 | 9 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -214,7 +215,7 @@ Plan: 1 of ?
 
 ## Session Continuity
 
-**Stopped at:** Completed 12-01-PLAN.md — Wave 0 RED scaffolds + regression guard
+**Stopped at:** Completed 12-02-PLAN.md — receituário foundations (medications+seed, clinical_documents, next_doc_number, allergy-check, formatDocNumber, Zod schema)
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 
