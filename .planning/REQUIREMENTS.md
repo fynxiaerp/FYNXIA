@@ -54,13 +54,13 @@
 - [x] **RES-03**: Painel de chamada em tempo real (TV) e medição do tempo de espera por paciente
 
 #### RX — Receituário, Atestados & Exames
-- [ ] **RX-01**: Dentista emite receita (simples/controle especial) com medicamento (base DCB/DCI) e posologia
-- [ ] **RX-02**: A receita valida as alergias do paciente antes de emitir
-- [ ] **RX-03**: Documento clínico é assinado com ICP-Brasil e numerado, disponível no Portal do Paciente
+- [x] **RX-01**: Dentista emite receita (simples/controle especial) com medicamento (base DCB/DCI) e posologia
+- [x] **RX-02**: A receita valida as alergias do paciente antes de emitir
+- [x] **RX-03**: Documento clínico é assinado com ICP-Brasil e numerado, disponível no Portal do Paciente
 
 #### TEL — Teleodontologia
-- [ ] **TEL-01**: Dentista realiza teleconsulta/teleorientação com vídeo, registrando consentimento da sessão (CFO)
-- [ ] **TEL-02**: A sessão gera registro clínico (SOAP) no prontuário e documentos emitidos na hora
+- [x] **TEL-01**: Dentista realiza teleconsulta/teleorientação com vídeo, registrando consentimento da sessão (CFO)
+- [x] **TEL-02**: A sessão gera registro clínico (SOAP) no prontuário e documentos emitidos na hora
 
 #### CME — Esterilização & CME
 - [ ] **CME-01**: Equipe registra ciclo de esterilização (autoclave, parâmetros, indicador biológico, validade)
@@ -188,11 +188,11 @@
 | RES-01 | Phase 11 | Complete |
 | RES-02 | Phase 11 | Complete |
 | RES-03 | Phase 11 | Complete |
-| RX-01 | Phase 12 | Pending |
-| RX-02 | Phase 12 | Pending |
-| RX-03 | Phase 12 | Pending |
-| TEL-01 | Phase 12 | Pending |
-| TEL-02 | Phase 12 | Pending |
+| RX-01 | Phase 12 | Complete |
+| RX-02 | Phase 12 | Complete |
+| RX-03 | Phase 12 | Complete |
+| TEL-01 | Phase 12 | Complete |
+| TEL-02 | Phase 12 | Complete |
 | CME-01 | Phase 13 | Pending |
 | CME-02 | Phase 13 | Pending |
 | CME-03 | Phase 13 | Pending |
