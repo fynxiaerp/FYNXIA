@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 12-01-PLAN.md — Wave 0 RED scaffolds + regression guard
-last_updated: "2026-06-18T19:10:30.988Z"
+stopped_at: Completed 12-03-PLAN.md — teleconsultations + soap_records migrations + RLS + Zod schemas
+last_updated: "2026-06-18T19:25:00.000Z"
 last_activity: 2026-06-18
 progress:
   total_phases: 15
   completed_phases: 5
   total_plans: 39
-  completed_plans: 33
-  percent: 85
+  completed_plans: 34
+  percent: 87
 ---
 
 # FYNXIA ERP — Project State
