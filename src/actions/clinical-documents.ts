@@ -23,8 +23,8 @@
  * Phase: 12-receitu-rio-teleodontologia
  */
 
-import { createElement } from 'react'
-import { renderToBuffer } from '@react-pdf/renderer'
+import { createElement, type ReactElement } from 'react'
+import { renderToBuffer, type DocumentProps } from '@react-pdf/renderer'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { assertNotReadOnly } from '@/lib/auth/guards'
@@ -439,60 +439,49 @@ export async function signClinicDocument(documentId: string): Promise<{
   const docNumber = typedRow.doc_number
 
   // 8. Pick PDF component by doc_type and render the FINAL bytes
-  type SignatureBlockProps = {
-    signerCn: string
-    signedAt: string
-    thumbprintSha1: string
-    sha256Hex: string
-  }
-
+  // Cast via ReactElement<DocumentProps> — renderToBuffer requires this type;
+  // our components all return <Document> which satisfies DocumentProps at runtime.
   let pdfBuffer: Buffer
 
   if (
     typedRow.doc_type === 'receita_simples' ||
     typedRow.doc_type === 'receita_controle_especial'
   ) {
-    pdfBuffer = await renderToBuffer(
-      createElement(ReceituarioPDF, {
-        clinicName,
-        professionalName,
-        professionalCro,
-        patientName,
-        isControleEspecial: typedRow.doc_type === 'receita_controle_especial',
-        medications: contentJson.medications ?? [],
-        observacoes: contentJson.observacoes,
-        documentNumber: docNumber,
-        generatedAt,
-        signatureBlock: undefined as SignatureBlockProps | undefined,
-      })
-    )
+    const el = createElement(ReceituarioPDF, {
+      clinicName,
+      professionalName,
+      professionalCro,
+      patientName,
+      isControleEspecial: typedRow.doc_type === 'receita_controle_especial',
+      medications: contentJson.medications ?? [],
+      observacoes: contentJson.observacoes,
+      documentNumber: docNumber,
+      generatedAt,
+    }) as unknown as ReactElement<DocumentProps>
+    pdfBuffer = await renderToBuffer(el)
   } else if (typedRow.doc_type === 'atestado') {
-    pdfBuffer = await renderToBuffer(
-      createElement(AtestadoPDF, {
-        clinicName,
-        professionalName,
-        professionalCro,
-        patientName,
-        motivo: contentJson.atestado_motivo ?? '',
-        dias: contentJson.atestado_dias,
-        documentNumber: docNumber,
-        generatedAt,
-        signatureBlock: undefined as SignatureBlockProps | undefined,
-      })
-    )
+    const el = createElement(AtestadoPDF, {
+      clinicName,
+      professionalName,
+      professionalCro,
+      patientName,
+      motivo: contentJson.atestado_motivo ?? '',
+      dias: contentJson.atestado_dias,
+      documentNumber: docNumber,
+      generatedAt,
+    }) as unknown as ReactElement<DocumentProps>
+    pdfBuffer = await renderToBuffer(el)
   } else if (typedRow.doc_type === 'solicitacao_exame') {
-    pdfBuffer = await renderToBuffer(
-      createElement(ExamePDF, {
-        clinicName,
-        professionalName,
-        professionalCro,
-        patientName,
-        solicitacao: contentJson.exame_solicitacao ?? '',
-        documentNumber: docNumber,
-        generatedAt,
-        signatureBlock: undefined as SignatureBlockProps | undefined,
-      })
-    )
+    const el = createElement(ExamePDF, {
+      clinicName,
+      professionalName,
+      professionalCro,
+      patientName,
+      solicitacao: contentJson.exame_solicitacao ?? '',
+      documentNumber: docNumber,
+      generatedAt,
+    }) as unknown as ReactElement<DocumentProps>
+    pdfBuffer = await renderToBuffer(el)
   } else {
     return { success: false, error: 'Tipo de documento clínico desconhecido' }
   }

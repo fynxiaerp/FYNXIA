@@ -101,7 +101,7 @@ export async function createTeleconsultation(input: TeleconsultationInput): Prom
   const h = await headers()
   const fwd = h.get('x-forwarded-for')
   const consentIp = fwd
-    ? fwd.split(',')[0].trim()
+    ? (fwd.split(',')[0] ?? fwd).trim()
     : (h.get('x-real-ip') ?? null)
 
   const supabase = await createClient()
