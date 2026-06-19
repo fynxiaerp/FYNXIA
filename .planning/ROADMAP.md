@@ -186,10 +186,10 @@ Plans:
 - [x] 12-01-PLAN.md — Wave 0: RED test scaffolds (allergy-check + clinical-documents + RX/TEL migrations) + GIST/Phase-8-signing regression guard
 - [x] 12-02-PLAN.md — Wave 1: receituário migrations (medications+seed, clinical_documents, document_seq_counters+next_doc_number, bucket, RLS) + checkMedicationAllergy + formatDocNumber + Zod
 - [x] 12-03-PLAN.md — Wave 1: teleodontologia migrations (teleconsultations + soap_records + RLS) + teleconsultation/SOAP Zod
-- [ ] 12-04-PLAN.md — Wave 2: Server Actions (issue/sign clinical docs reusing Phase 8 signPdfBuffer; teleconsultation + SOAP) + ReceituarioPDF/AtestadoPDF/ExamePDF
+- [x] 12-04-PLAN.md — Wave 2: Server Actions (issue/sign clinical docs reusing Phase 8 signPdfBuffer; teleconsultation + SOAP) + ReceituarioPDF/AtestadoPDF/ExamePDF
 - [ ] 12-05-PLAN.md — Wave 3: [BLOCKING] supabase db push (5 migrations) + gen types (truncation guard)
 - [ ] 12-06-PLAN.md — Wave 4: receituário UI (emissão + alerta de alergia + assinatura ICP) + módulos receituario/teleodonto no proxy+nav (RX-01/02/03)
-- [ ] 12-07-PLAN.md — Wave 4: teleodontologia UI (consentimento CFO + link externo + iniciar/encerrar) + editor SOAP (TEL-01/02)
+- [x] 12-07-PLAN.md — Wave 4: teleodontologia UI (consentimento CFO + link externo + iniciar/encerrar) + editor SOAP (TEL-01/02)
 **v1 reuse**: Expande prontuário/anamnese (Phase 2); assinatura ICP de DOC (Phase 8); base de medicamentos é nova tabela
 **UI hint**: yes
 
@@ -344,7 +344,7 @@ Plans:
 | 9. Hub de Integrações Externas | v2.0 | 0/? | Not started | - |
 | 10. IA Governada, Auditoria & OCR | v2.0 | 8/8 | Complete    | 2026-06-14 |
 | 11. Profissionais & Recursos | v2.0 | 7/8 | Complete    | 2026-06-15 |
-| 12. Receituário & Teleodontologia | v2.0 | 3/7 | In Progress|  |
+| 12. Receituário & Teleodontologia | v2.0 | 5/7 | In Progress|  |
 | 13. Esterilização/CME & Laboratório de Prótese | v2.0 | 0/? | Not started | - |
 | 14. Financeiro — Cadastros Base | v2.0 | 0/? | Not started | - |
 | 15. Faturamento/NFS-e & Convênios/TISS | v2.0 | 0/? | Not started | - |
