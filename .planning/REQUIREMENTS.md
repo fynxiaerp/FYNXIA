@@ -63,13 +63,13 @@
 - [x] **TEL-02**: A sessão gera registro clínico (SOAP) no prontuário e documentos emitidos na hora
 
 #### CME — Esterilização & CME
-- [ ] **CME-01**: Equipe registra ciclo de esterilização (autoclave, parâmetros, indicador biológico, validade)
-- [ ] **CME-02**: Kit reprovado ou vencido é bloqueado para uso
-- [ ] **CME-03**: Kit esterilizado é vinculado ao paciente atendido (rastreabilidade por lote)
+- [x] **CME-01**: Equipe registra ciclo de esterilização (autoclave, parâmetros, indicador biológico, validade)
+- [x] **CME-02**: Kit reprovado ou vencido é bloqueado para uso
+- [x] **CME-03**: Kit esterilizado é vinculado ao paciente atendido (rastreabilidade por lote)
 
 #### LAB — Laboratório de Prótese
-- [ ] **LAB-01**: Usuário abre ordem de serviço protética (tipo, laboratório, prazo, etapas de prova) com status
-- [ ] **LAB-02**: O custo do laboratório gera conta a pagar e entra no faturamento
+- [x] **LAB-01**: Usuário abre ordem de serviço protética (tipo, laboratório, prazo, etapas de prova) com status
+- [x] **LAB-02**: O custo do laboratório gera conta a pagar e entra no faturamento
 
 ### Bloco C — Financeiro
 
@@ -193,11 +193,11 @@
 | RX-03 | Phase 12 | Complete |
 | TEL-01 | Phase 12 | Complete |
 | TEL-02 | Phase 12 | Complete |
-| CME-01 | Phase 13 | Pending |
-| CME-02 | Phase 13 | Pending |
-| CME-03 | Phase 13 | Pending |
-| LAB-01 | Phase 13 | Pending |
-| LAB-02 | Phase 13 | Pending |
+| CME-01 | Phase 13 | Complete |
+| CME-02 | Phase 13 | Complete |
+| CME-03 | Phase 13 | Complete |
+| LAB-01 | Phase 13 | Complete |
+| LAB-02 | Phase 13 | Complete |
 | FCAD-01 | Phase 14 | Pending |
 | FCAD-02 | Phase 14 | Pending |
 | OS-01 | Phase 15 | Pending |
