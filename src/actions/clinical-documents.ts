@@ -159,6 +159,7 @@ export async function issueClinicDocument(input: ClinicalDocumentInput): Promise
       .from('anamneses')
       .select('responses')
       .eq('patient_id', validated.patient_id)
+      .eq('tenant_id', actor.tenant_id) // explicit tenant scope on admin-client read (RLS bypassed)
       .order('created_at', { ascending: false })
       .limit(1)
       .maybeSingle()
