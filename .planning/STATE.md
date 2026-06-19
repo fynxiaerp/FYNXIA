@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 13-03-lab-migrations-libs-PLAN.md
-last_updated: "2026-06-19T18:57:00.000Z"
+stopped_at: Completed 13-04-server-actions-PLAN.md
+last_updated: "2026-06-19T19:07:02.031Z"
 last_activity: 2026-06-19
 progress:
   total_phases: 15
   completed_phases: 6
   total_plans: 46
-  completed_plans: 42
-  percent: 91
+  completed_plans: 43
+  percent: 93
 ---
 
 # FYNXIA ERP — Project State
@@ -110,6 +110,7 @@ Plan: 1 of 7
 | Phase 12 P06 | 25m | 2 tasks | 7 files |
 | Phase 13 P01 | 5 | 2 tasks | 6 files |
 | Phase 13 P02 | 4 | 2 tasks | 4 files |
+| Phase 13 P04 | 6 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -117,6 +118,9 @@ Plan: 1 of 7
 
 | Decision | Rationale | Date |
 |----------|-----------|------|
+| COST_ROLES=['admin','superadmin'] only for setLabOrderCost | Matches financial_transactions write RLS; dentists can create orders but cannot post financials | 2026-06-19 |
+| Kit-usage block guard (CME-02) in Server Action (not only UI) | Re-fetches cycle at use-time server-side — TOCTOU-proof; cannot be bypassed by client, stale UI, or direct API call | 2026-06-19 |
+| Double-post idempotency guard in setLabOrderCost | Re-fetches financial_transaction_id before inserting despesa; rejects 'já lançado' if already set (T-13-15) | 2026-06-19 |
 | Upgrade to Next.js 15 (not 14 as in PROJECT.md) | Opt-in caching model better for ERP freshness; Turbopack dev; use cache directive | 2026-06-02 |
 | Use @supabase/ssr (not deprecated auth-helpers-nextjs) | Current official package; required for Server Components auth | 2026-06-02 |
 | Pin Zod to v3 | hookform/resolvers v5.x has active edge-case issues with Zod v4; migrate after resolvers stabilizes | 2026-06-02 |
@@ -221,7 +225,7 @@ Plan: 1 of 7
 
 ## Session Continuity
 
-**Stopped at:** Completed 13-03-lab-migrations-libs-PLAN.md
+**Stopped at:** Completed 13-04-server-actions-PLAN.md
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 
