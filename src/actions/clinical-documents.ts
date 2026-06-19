@@ -209,20 +209,7 @@ export async function issueClinicDocument(input: ClinicalDocumentInput): Promise
     }
   }
 
-  // ── RX-01: Atomic sequential numbering via Postgres RPC ──────────────────
   const supabase = await createClient()
-  const { data: seqData, error: rpcError } = await supabase.rpc('next_doc_number', {
-    p_clinic_id: actor.tenant_id,
-    p_doc_type: validated.doc_type,
-  })
-
-  if (rpcError || seqData === null || seqData === undefined) {
-    return { success: false, error: 'Erro ao gerar número do documento' }
-  }
-
-  const seq = Number(seqData)
-  const year = new Date().getFullYear()
-  const docNumber = formatDocNumber(validated.doc_type, seq, year)
 
   // ── Resolve professional_id ───────────────────────────────────────────────
   let professionalId = validated.professional_id ?? null
@@ -274,6 +261,27 @@ export async function issueClinicDocument(input: ClinicalDocumentInput): Promise
 
   // Pitfall 7: encrypt content_json at rest (T-12-19)
   const encryptedContent = encrypt(JSON.stringify(contentJson))
+
+  // ── RX-01: Atomic sequential numbering via Postgres RPC ──────────────────
+  // WR-04: next_doc_number() bumps document_seq_counters.last_seq irreversibly. We allocate the
+  // number as late as possible — immediately before the insert, after ALL fallible pre-insert work
+  // (validation, allergy check, professional lookup, content build/encrypt) has succeeded — so a
+  // failure in that earlier work never consumes a number. The numbering is gap-TOLERANT by design:
+  // a rare insert failure (constraint/network) can still skip one number, which is acceptable for
+  // prescription/atestado sequences. Gapless numbering would require moving counter+insert into a
+  // single SECURITY DEFINER transaction; not done here to avoid over-engineering.
+  const { data: seqData, error: rpcError } = await supabase.rpc('next_doc_number', {
+    p_clinic_id: actor.tenant_id,
+    p_doc_type: validated.doc_type,
+  })
+
+  if (rpcError || seqData === null || seqData === undefined) {
+    return { success: false, error: 'Erro ao gerar número do documento' }
+  }
+
+  const seq = Number(seqData)
+  const year = new Date().getFullYear()
+  const docNumber = formatDocNumber(validated.doc_type, seq, year)
 
   // ── Insert draft clinical_documents row ───────────────────────────────────
   const { data: docRow, error: insertError } = await supabase
