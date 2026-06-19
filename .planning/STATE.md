@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 13-04-server-actions-PLAN.md
-last_updated: "2026-06-19T19:07:02.031Z"
+stopped_at: Completed 13-06-cme-ui-PLAN.md
+last_updated: "2026-06-19T22:35:18.009Z"
 last_activity: 2026-06-19
 progress:
   total_phases: 15
   completed_phases: 6
   total_plans: 46
-  completed_plans: 43
-  percent: 93
+  completed_plans: 45
+  percent: 98
 ---
 
 # FYNXIA ERP — Project State
@@ -118,6 +118,8 @@ Plan: 1 of 7
 
 | Decision | Rationale | Date |
 |----------|-----------|------|
+| CycleFormDialog extracted as 'use client' wrapper | RSC page stays pure Server Component; open/close state lives in client wrapper | 2026-06-19 |
+| appointments passed as empty array to KitUsageForm | appointments table has no patient_id FK; CME-03 traceability works via kit_usages.patient_id directly | 2026-06-19 |
 | COST_ROLES=['admin','superadmin'] only for setLabOrderCost | Matches financial_transactions write RLS; dentists can create orders but cannot post financials | 2026-06-19 |
 | Kit-usage block guard (CME-02) in Server Action (not only UI) | Re-fetches cycle at use-time server-side — TOCTOU-proof; cannot be bypassed by client, stale UI, or direct API call | 2026-06-19 |
 | Double-post idempotency guard in setLabOrderCost | Re-fetches financial_transaction_id before inserting despesa; rejects 'já lançado' if already set (T-13-15) | 2026-06-19 |
@@ -225,7 +227,7 @@ Plan: 1 of 7
 
 ## Session Continuity
 
-**Stopped at:** Completed 13-04-server-actions-PLAN.md
+**Stopped at:** Completed 13-06-cme-ui-PLAN.md
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 
