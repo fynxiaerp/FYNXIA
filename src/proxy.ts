@@ -11,7 +11,7 @@ export type AppRole =
   | 'admin' | 'superadmin' | 'dentist' | 'receptionist' | 'patient'
   | 'dpo' | 'auditor' | 'socio' | 'ti' | 'implantacao' | 'aluno'
 
-type ModuleKey = 'clinica' | 'config' | 'superadmin' | 'paciente' | 'financeiro' | 'ia' | 'bi' | 'documentos' | 'integracoes' | 'conformidade'
+type ModuleKey = 'clinica' | 'config' | 'superadmin' | 'paciente' | 'financeiro' | 'ia' | 'bi' | 'documentos' | 'integracoes' | 'conformidade' | 'receituario' | 'teleodontologia'
 
 interface ModuleAccess {
   allowed: boolean
@@ -19,14 +19,14 @@ interface ModuleAccess {
 }
 
 export const MODULE_PERMISSIONS: Record<AppRole, Partial<Record<ModuleKey, ModuleAccess>>> = {
-  superadmin:   { clinica: {allowed:true}, config: {allowed:true}, superadmin: {allowed:true}, paciente: {allowed:true}, financeiro: {allowed:true}, ia: {allowed:true}, bi: {allowed:true}, documentos: {allowed:true}, integracoes: {allowed:true}, conformidade: {allowed:true} },
-  admin:        { clinica: {allowed:true}, config: {allowed:true}, superadmin: {allowed:true}, financeiro: {allowed:true}, ia: {allowed:true}, bi: {allowed:true}, documentos: {allowed:true}, integracoes: {allowed:true}, conformidade: {allowed:true} },
-  dentist:      { clinica: {allowed:true}, documentos: {allowed:true} },
+  superadmin:   { clinica: {allowed:true}, config: {allowed:true}, superadmin: {allowed:true}, paciente: {allowed:true}, financeiro: {allowed:true}, ia: {allowed:true}, bi: {allowed:true}, documentos: {allowed:true}, integracoes: {allowed:true}, conformidade: {allowed:true}, receituario: {allowed:true}, teleodontologia: {allowed:true} },
+  admin:        { clinica: {allowed:true}, config: {allowed:true}, superadmin: {allowed:true}, financeiro: {allowed:true}, ia: {allowed:true}, bi: {allowed:true}, documentos: {allowed:true}, integracoes: {allowed:true}, conformidade: {allowed:true}, receituario: {allowed:true}, teleodontologia: {allowed:true} },
+  dentist:      { clinica: {allowed:true}, documentos: {allowed:true}, receituario: {allowed:true}, teleodontologia: {allowed:true} },
   receptionist: { clinica: {allowed:true} },
   patient:      { paciente: {allowed:true} },
-  dpo:          { clinica: {allowed:true, readOnly:true}, config: {allowed:true, readOnly:true}, bi: {allowed:true, readOnly:true}, documentos: {allowed:true, readOnly:true}, integracoes: {allowed:true, readOnly:true}, conformidade: {allowed:true, readOnly:true} },
-  auditor:      { clinica: {allowed:true, readOnly:true}, financeiro: {allowed:true, readOnly:true}, bi: {allowed:true, readOnly:true}, documentos: {allowed:true, readOnly:true}, integracoes: {allowed:true, readOnly:true}, conformidade: {allowed:true, readOnly:true} },
-  socio:        { financeiro: {allowed:true, readOnly:true}, bi: {allowed:true, readOnly:true}, config: {allowed:true, readOnly:true}, documentos: {allowed:true, readOnly:true}, integracoes: {allowed:true, readOnly:true} },
+  dpo:          { clinica: {allowed:true, readOnly:true}, config: {allowed:true, readOnly:true}, bi: {allowed:true, readOnly:true}, documentos: {allowed:true, readOnly:true}, integracoes: {allowed:true, readOnly:true}, conformidade: {allowed:true, readOnly:true}, receituario: {allowed:true, readOnly:true}, teleodontologia: {allowed:true, readOnly:true} },
+  auditor:      { clinica: {allowed:true, readOnly:true}, financeiro: {allowed:true, readOnly:true}, bi: {allowed:true, readOnly:true}, documentos: {allowed:true, readOnly:true}, integracoes: {allowed:true, readOnly:true}, conformidade: {allowed:true, readOnly:true}, receituario: {allowed:true, readOnly:true}, teleodontologia: {allowed:true, readOnly:true} },
+  socio:        { financeiro: {allowed:true, readOnly:true}, bi: {allowed:true, readOnly:true}, config: {allowed:true, readOnly:true}, documentos: {allowed:true, readOnly:true}, integracoes: {allowed:true, readOnly:true}, receituario: {allowed:true, readOnly:true}, teleodontologia: {allowed:true, readOnly:true} },
   ti:           { config: {allowed:true}, ia: {allowed:true}, integracoes: {allowed:true} },
   implantacao:  { clinica: {allowed:true}, config: {allowed:true, readOnly:true} },
   aluno:        { clinica: {allowed:true} },
@@ -35,9 +35,11 @@ export const MODULE_PERMISSIONS: Record<AppRole, Partial<Record<ModuleKey, Modul
 // Route → module: most-specific prefix checked FIRST (documentos/financeiro before clinica).
 // /clinica/documentos → 'documentos'; /clinica/financeiro → 'financeiro'; /clinica/... → 'clinica'; etc.
 const ROUTE_MODULE_MAP: Array<{ prefix: string; module: ModuleKey }> = [
-  { prefix: '/clinica/documentos', module: 'documentos' },
-  { prefix: '/clinica/financeiro', module: 'financeiro' },
-  { prefix: '/clinica',            module: 'clinica'    },
+  { prefix: '/clinica/documentos',     module: 'documentos'     },
+  { prefix: '/clinica/financeiro',     module: 'financeiro'     },
+  { prefix: '/clinica/receituario',    module: 'receituario'    }, // most-specific-first (Pitfall 6)
+  { prefix: '/clinica/teleodontologia', module: 'teleodontologia' }, // most-specific-first (Pitfall 6)
+  { prefix: '/clinica',                module: 'clinica'        },
   { prefix: '/config/integracoes', module: 'integracoes' },
   { prefix: '/config',             module: 'config'     },
   { prefix: '/superadmin',         module: 'superadmin' },
@@ -98,8 +100,9 @@ function deriveRoleRoutes(): Record<string, string[]> {
         // Note: 'financeiro' module is a sub-route of /clinica; we expose /clinica here
         // because the ROLE_ROUTES compat layer is path-prefix-based, not module-based.
         // The actual sub-route /clinica/financeiro is handled by routeToModule().
-        if (mod === 'financeiro' || mod === 'documentos') {
-          // financeiro/documentos live under /clinica — expose /clinica for ROLE_ROUTES compat
+        if (mod === 'financeiro' || mod === 'documentos' || mod === 'receituario' || mod === 'teleodontologia') {
+          // financeiro/documentos/receituario/teleodontologia live under /clinica —
+          // expose /clinica for ROLE_ROUTES compat
           // (actual sub-route gating is handled by routeToModule via ROUTE_MODULE_MAP)
           if (!paths.includes('/clinica')) paths.push('/clinica')
         } else {

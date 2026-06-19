@@ -11,6 +11,8 @@ import {
   FlaskConical,
   Stethoscope,
   Armchair,
+  FileHeart,
+  Video,
   type LucideIcon,
 } from 'lucide-react'
 import type { NavIconKey } from './nav-config'
@@ -25,4 +27,6 @@ export const NAV_ICONS: Record<NavIconKey, LucideIcon> = {
   recursos: Armchair,
   ia: BrainCircuit,
   prototipos: FlaskConical,
+  receituario: FileHeart,
+  teleodontologia: Video,
 }
