@@ -39,8 +39,10 @@ Full detail archived in [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
 
 **Bloco B — Clínico**
 
-- [x] **Phase 11: Profissionais & Recursos** — Cadastro de profissionais (CRO, comissão, disponibilidade) e recursos físicos com painel de sala de espera (completed 2026-06-15)
-- [x] **Phase 12: Receituário & Teleodontologia** — Documentos clínicos assinados (receita/atestado/exame) e teleconsultas registradas no prontuário (completed 2026-06-19)
+- [x] **Phase 11: Profissionais & Recursos** — Cadastro de profissionais (CRO, comissão, disponibilidade) e recursos físicos com painel de sala de espera
+ (completed 2026-06-15)
+- [x] **Phase 12: Receituário & Teleodontologia** — Documentos clínicos assinados (receita/atestado/exame) e teleconsultas registradas no prontuário
+ (completed 2026-06-19)
 - [ ] **Phase 13: Esterilização/CME & Laboratório de Prótese** — Controle de ciclos de esterilização com rastreabilidade e gestão de ordens de serviço protéticas
 
 **Bloco C — Financeiro**
@@ -204,7 +206,15 @@ Plans:
   2. Kit esterilizado é vinculado ao paciente atendido e o vínculo aparece na rastreabilidade por lote
   3. Dentista abre ordem de serviço protética com tipo, laboratório, prazo e etapas; a OS tem status Enviado→prova→concluído
   4. Custo do laboratório gera conta a pagar automaticamente e está visível no módulo financeiro
-**Plans**: TBD
+**Plans**: 7 plans
+Plans:
+- [ ] 13-01-PLAN.md — Wave 0: RED test scaffolds (cycle-status + kit-block-guard + lab-cost + CME/LAB migrations + GIST/financial regression guard)
+- [ ] 13-02-PLAN.md — Wave 1: CME migrations (sterilization_cycles + kit_usages, autoclave→resources) + RLS + cycle-status pure block-guard lib + Zod (CME-01/02/03)
+- [ ] 13-03-PLAN.md — Wave 1: LAB migrations (prosthetic_labs + lab_orders +financial_transaction_id link) + RLS + lab-cost pure helpers + Zod (LAB-01/02)
+- [ ] 13-04-PLAN.md — Wave 2: Server Actions (registerKitUsage server-side block guard CME-02 + setLabOrderCost posting despesa to financial_transactions LAB-02)
+- [ ] 13-05-PLAN.md — Wave 3: [BLOCKING] supabase db push (4 migrations) + gen types (truncation guard)
+- [ ] 13-06-PLAN.md — Wave 4: CME UI (CycleForm + KitUsageForm + block surfaced) + esterilizacao/protese module registration in proxy+nav (CME-01/02/03)
+- [ ] 13-07-PLAN.md — Wave 4: LAB UI (LabForm + LabOrderForm stages editor + status enviado→prova→concluído + cost→financeiro) (LAB-01/02)
 **v1 reuse**: Reutiliza audit trail (Phase 0/10) para rastreabilidade; LAB-02 conecta com contas a pagar que existirá após Phase 16
 
 ---
