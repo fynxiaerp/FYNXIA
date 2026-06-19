@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 12-07-PLAN.md — teleodontologia UI (TeleconsultationForm + SoapEditor + list/session pages; 62 tests GREEN)
-last_updated: "2026-06-19T14:04:21.023Z"
+stopped_at: Completed 12-06-PLAN.md — receituário UI + module registration (148 tests GREEN; tsc + build clean)
+last_updated: "2026-06-19T14:36:51.068Z"
 last_activity: 2026-06-18
 progress:
   total_phases: 15
   completed_phases: 5
   total_plans: 39
-  completed_plans: 37
-  percent: 95
+  completed_plans: 38
+  percent: 97
 ---
 
 # FYNXIA ERP — Project State
@@ -35,13 +35,13 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 
 ## Current Position
 
-Phase: null — EXECUTING
-Plan: 1 of ?
+Phase: 12 — EXECUTING
+Plan: 6 of 7 complete
 **Milestone:** v2.0 — Produto Completo (27 módulos, blocos A–E)
-**Phase:** 12
-**Plan:** Not started
-**Status:** Executing Phase null
-**Last activity:** 2026-06-18
+**Phase:** 12 — Receituário & Teleodontologia
+**Plan:** 12-06 complete (receituário UI + module registration); 12-05 remains incomplete
+**Status:** Executing Phase 12
+**Last activity:** 2026-06-19
 
 ---
 
@@ -107,6 +107,7 @@ Plan: 1 of ?
 | Phase 12 P01 | 9 | 2 tasks | 5 files |
 | Phase 12 P02 | 9 | 2 tasks | 6 files |
 | Phase 12 P07 | 8 | 2 tasks | 4 files |
+| Phase 12 P06 | 25m | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -216,7 +217,7 @@ Plan: 1 of ?
 
 ## Session Continuity
 
-**Stopped at:** Completed 12-07-PLAN.md — teleodontologia UI (TeleconsultationForm + SoapEditor + list/session pages; 62 tests GREEN)
+**Stopped at:** Completed 12-06-PLAN.md — receituário UI + module registration (148 tests GREEN; tsc + build clean)
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 
