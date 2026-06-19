@@ -540,7 +540,7 @@ export async function signClinicDocument(documentId: string): Promise<{
       signed_at: sigResult.signedAt,
       signed_by: actor.id,
       status: 'signed',
-    } as never)
+    })
     .eq('id', documentId)
     .is('signature', null) // atomic guard: only update if still unsigned
     .select('id')
