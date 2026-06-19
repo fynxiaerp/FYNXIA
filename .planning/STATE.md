@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
-status: executing
+status: planning
 stopped_at: Completed 12-06-PLAN.md — receituário UI + module registration (148 tests GREEN; tsc + build clean)
-last_updated: "2026-06-19T14:36:51.068Z"
-last_activity: 2026-06-18
+last_updated: "2026-06-19T17:10:37.018Z"
+last_activity: 2026-06-19
 progress:
   total_phases: 15
-  completed_phases: 5
+  completed_phases: 6
   total_plans: 39
-  completed_plans: 38
-  percent: 97
+  completed_plans: 39
+  percent: 100
 ---
 
 # FYNXIA ERP — Project State
@@ -38,9 +38,9 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 Phase: 12 — EXECUTING
 Plan: 6 of 7 complete
 **Milestone:** v2.0 — Produto Completo (27 módulos, blocos A–E)
-**Phase:** 12 — Receituário & Teleodontologia
-**Plan:** 12-06 complete (receituário UI + module registration); 12-05 remains incomplete
-**Status:** Executing Phase 12
+**Phase:** 13
+**Plan:** Not started
+**Status:** Ready to plan
 **Last activity:** 2026-06-19
 
 ---

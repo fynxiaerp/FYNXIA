@@ -40,7 +40,7 @@ Full detail archived in [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
 **Bloco B — Clínico**
 
 - [x] **Phase 11: Profissionais & Recursos** — Cadastro de profissionais (CRO, comissão, disponibilidade) e recursos físicos com painel de sala de espera (completed 2026-06-15)
-- [ ] **Phase 12: Receituário & Teleodontologia** — Documentos clínicos assinados (receita/atestado/exame) e teleconsultas registradas no prontuário
+- [x] **Phase 12: Receituário & Teleodontologia** — Documentos clínicos assinados (receita/atestado/exame) e teleconsultas registradas no prontuário (completed 2026-06-19)
 - [ ] **Phase 13: Esterilização/CME & Laboratório de Prótese** — Controle de ciclos de esterilização com rastreabilidade e gestão de ordens de serviço protéticas
 
 **Bloco C — Financeiro**
@@ -187,7 +187,7 @@ Plans:
 - [x] 12-02-PLAN.md — Wave 1: receituário migrations (medications+seed, clinical_documents, document_seq_counters+next_doc_number, bucket, RLS) + checkMedicationAllergy + formatDocNumber + Zod
 - [x] 12-03-PLAN.md — Wave 1: teleodontologia migrations (teleconsultations + soap_records + RLS) + teleconsultation/SOAP Zod
 - [x] 12-04-PLAN.md — Wave 2: Server Actions (issue/sign clinical docs reusing Phase 8 signPdfBuffer; teleconsultation + SOAP) + ReceituarioPDF/AtestadoPDF/ExamePDF
-- [ ] 12-05-PLAN.md — Wave 3: [BLOCKING] supabase db push (5 migrations) + gen types (truncation guard)
+- [x] 12-05-PLAN.md — Wave 3: [BLOCKING] supabase db push (5 migrations) + gen types (truncation guard)
 - [x] 12-06-PLAN.md — Wave 4: receituário UI (emissão + alerta de alergia + assinatura ICP) + módulos receituario/teleodonto no proxy+nav (RX-01/02/03)
 - [x] 12-07-PLAN.md — Wave 4: teleodontologia UI (consentimento CFO + link externo + iniciar/encerrar) + editor SOAP (TEL-01/02)
 **v1 reuse**: Expande prontuário/anamnese (Phase 2); assinatura ICP de DOC (Phase 8); base de medicamentos é nova tabela
@@ -344,7 +344,7 @@ Plans:
 | 9. Hub de Integrações Externas | v2.0 | 0/? | Not started | - |
 | 10. IA Governada, Auditoria & OCR | v2.0 | 8/8 | Complete    | 2026-06-14 |
 | 11. Profissionais & Recursos | v2.0 | 7/8 | Complete    | 2026-06-15 |
-| 12. Receituário & Teleodontologia | v2.0 | 6/7 | In Progress|  |
+| 12. Receituário & Teleodontologia | v2.0 | 7/7 | Complete    | 2026-06-19 |
 | 13. Esterilização/CME & Laboratório de Prótese | v2.0 | 0/? | Not started | - |
 | 14. Financeiro — Cadastros Base | v2.0 | 0/? | Not started | - |
 | 15. Faturamento/NFS-e & Convênios/TISS | v2.0 | 0/? | Not started | - |
