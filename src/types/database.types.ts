@@ -12,31 +12,6 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.5"
   }
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
       agent_outreach_log: {
@@ -1854,6 +1829,218 @@ export type Database = {
           },
         ]
       }
+      kit_usages: {
+        Row: {
+          appointment_id: string | null
+          clinic_id: string
+          created_at: string
+          deleted_at: string | null
+          id: string
+          kit_label: string | null
+          patient_id: string
+          sterilization_cycle_id: string
+          unit_id: string | null
+          used_at: string
+          used_by: string | null
+        }
+        Insert: {
+          appointment_id?: string | null
+          clinic_id: string
+          created_at?: string
+          deleted_at?: string | null
+          id?: string
+          kit_label?: string | null
+          patient_id: string
+          sterilization_cycle_id: string
+          unit_id?: string | null
+          used_at?: string
+          used_by?: string | null
+        }
+        Update: {
+          appointment_id?: string | null
+          clinic_id?: string
+          created_at?: string
+          deleted_at?: string | null
+          id?: string
+          kit_label?: string | null
+          patient_id?: string
+          sterilization_cycle_id?: string
+          unit_id?: string | null
+          used_at?: string
+          used_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kit_usages_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "kit_usages_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "kit_usages_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "kit_usages_sterilization_cycle_id_fkey"
+            columns: ["sterilization_cycle_id"]
+            isOneToOne: false
+            referencedRelation: "sterilization_cycles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "kit_usages_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "kit_usages_used_by_fkey"
+            columns: ["used_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "kit_usages_used_by_fkey"
+            columns: ["used_by"]
+            isOneToOne: false
+            referencedRelation: "users_masked"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lab_orders: {
+        Row: {
+          appointment_id: string | null
+          clinic_id: string
+          cost: number | null
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          due_date: string | null
+          financial_transaction_id: string | null
+          id: string
+          lab_id: string
+          notes: string | null
+          order_number: string | null
+          patient_id: string
+          prosthesis_type: string
+          stages: Json
+          status: string
+          unit_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          appointment_id?: string | null
+          clinic_id: string
+          cost?: number | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          due_date?: string | null
+          financial_transaction_id?: string | null
+          id?: string
+          lab_id: string
+          notes?: string | null
+          order_number?: string | null
+          patient_id: string
+          prosthesis_type: string
+          stages?: Json
+          status?: string
+          unit_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          appointment_id?: string | null
+          clinic_id?: string
+          cost?: number | null
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          due_date?: string | null
+          financial_transaction_id?: string | null
+          id?: string
+          lab_id?: string
+          notes?: string | null
+          order_number?: string | null
+          patient_id?: string
+          prosthesis_type?: string
+          stages?: Json
+          status?: string
+          unit_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lab_orders_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lab_orders_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lab_orders_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lab_orders_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users_masked"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lab_orders_financial_transaction_id_fkey"
+            columns: ["financial_transaction_id"]
+            isOneToOne: false
+            referencedRelation: "financial_transactions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lab_orders_lab_id_fkey"
+            columns: ["lab_id"]
+            isOneToOne: false
+            referencedRelation: "prosthetic_labs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lab_orders_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lab_orders_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       medical_records: {
         Row: {
           appointment_id: string | null
@@ -2451,6 +2638,56 @@ export type Database = {
           },
         ]
       }
+      prosthetic_labs: {
+        Row: {
+          clinic_id: string
+          cnpj: string | null
+          contato_nome: string | null
+          created_at: string
+          deleted_at: string | null
+          email: string | null
+          id: string
+          nome: string
+          notes: string | null
+          telefone: string | null
+          updated_at: string
+        }
+        Insert: {
+          clinic_id: string
+          cnpj?: string | null
+          contato_nome?: string | null
+          created_at?: string
+          deleted_at?: string | null
+          email?: string | null
+          id?: string
+          nome: string
+          notes?: string | null
+          telefone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          clinic_id?: string
+          cnpj?: string | null
+          contato_nome?: string | null
+          created_at?: string
+          deleted_at?: string | null
+          email?: string | null
+          id?: string
+          nome?: string
+          notes?: string | null
+          telefone?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prosthetic_labs_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       receivables: {
         Row: {
           charge_id: string
@@ -2675,6 +2912,119 @@ export type Database = {
             columns: ["teleconsultation_id"]
             isOneToOne: false
             referencedRelation: "teleconsultations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sterilization_cycles: {
+        Row: {
+          autoclave_id: string
+          biological_result: string
+          clinic_id: string
+          created_at: string
+          created_by: string | null
+          cycle_date: string
+          cycle_number: string | null
+          deleted_at: string | null
+          id: string
+          notes: string | null
+          operator_id: string | null
+          pressao: number | null
+          status: string
+          temperatura: number | null
+          tempo_minutos: number | null
+          unit_id: string | null
+          updated_at: string
+          validade: string | null
+        }
+        Insert: {
+          autoclave_id: string
+          biological_result?: string
+          clinic_id: string
+          created_at?: string
+          created_by?: string | null
+          cycle_date?: string
+          cycle_number?: string | null
+          deleted_at?: string | null
+          id?: string
+          notes?: string | null
+          operator_id?: string | null
+          pressao?: number | null
+          status?: string
+          temperatura?: number | null
+          tempo_minutos?: number | null
+          unit_id?: string | null
+          updated_at?: string
+          validade?: string | null
+        }
+        Update: {
+          autoclave_id?: string
+          biological_result?: string
+          clinic_id?: string
+          created_at?: string
+          created_by?: string | null
+          cycle_date?: string
+          cycle_number?: string | null
+          deleted_at?: string | null
+          id?: string
+          notes?: string | null
+          operator_id?: string | null
+          pressao?: number | null
+          status?: string
+          temperatura?: number | null
+          tempo_minutos?: number | null
+          unit_id?: string | null
+          updated_at?: string
+          validade?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sterilization_cycles_autoclave_id_fkey"
+            columns: ["autoclave_id"]
+            isOneToOne: false
+            referencedRelation: "resources"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sterilization_cycles_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sterilization_cycles_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sterilization_cycles_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users_masked"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sterilization_cycles_operator_id_fkey"
+            columns: ["operator_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sterilization_cycles_operator_id_fkey"
+            columns: ["operator_id"]
+            isOneToOne: false
+            referencedRelation: "users_masked"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sterilization_cycles_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "units"
             referencedColumns: ["id"]
           },
         ]
@@ -3177,9 +3527,6 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {
       message_channel: ["whatsapp", "email"],
