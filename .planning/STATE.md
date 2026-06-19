@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 12-02-PLAN.md — receituário foundations (medications+seed, clinical_documents, next_doc_number, allergy-check, formatDocNumber, Zod schema)
-last_updated: "2026-06-18T19:26:18.616Z"
+stopped_at: Completed 12-04-PLAN.md — receituário+teleodontologia Server Actions + PDFs (issue/sign/list clinical docs, teleconsultation create/start/end/SOAP); next build CLEAN
+last_updated: "2026-06-19T12:01:08.737Z"
 last_activity: 2026-06-18
 progress:
   total_phases: 15
   completed_phases: 5
   total_plans: 39
-  completed_plans: 35
-  percent: 90
+  completed_plans: 36
+  percent: 92
 ---
 
 # FYNXIA ERP — Project State
@@ -215,7 +215,7 @@ Plan: 1 of ?
 
 ## Session Continuity
 
-**Stopped at:** Completed 12-02-PLAN.md — receituário foundations (medications+seed, clinical_documents, next_doc_number, allergy-check, formatDocNumber, Zod schema)
+**Stopped at:** Completed 12-04-PLAN.md — receituário+teleodontologia Server Actions + PDFs (issue/sign/list clinical docs, teleconsultation create/start/end/SOAP); next build CLEAN
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 
