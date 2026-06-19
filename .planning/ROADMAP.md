@@ -43,7 +43,7 @@ Full detail archived in [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
  (completed 2026-06-15)
 - [x] **Phase 12: Receituário & Teleodontologia** — Documentos clínicos assinados (receita/atestado/exame) e teleconsultas registradas no prontuário
  (completed 2026-06-19)
-- [ ] **Phase 13: Esterilização/CME & Laboratório de Prótese** — Controle de ciclos de esterilização com rastreabilidade e gestão de ordens de serviço protéticas
+- [x] **Phase 13: Esterilização/CME & Laboratório de Prótese** — Controle de ciclos de esterilização com rastreabilidade e gestão de ordens de serviço protéticas (completed 2026-06-19)
 
 **Bloco C — Financeiro**
 
@@ -214,7 +214,7 @@ Plans:
 - [x] 13-04-PLAN.md — Wave 2: Server Actions (registerKitUsage server-side block guard CME-02 + setLabOrderCost posting despesa to financial_transactions LAB-02)
 - [x] 13-05-PLAN.md — Wave 3: [BLOCKING] supabase db push (4 migrations) + gen types (truncation guard)
 - [x] 13-06-PLAN.md — Wave 4: CME UI (CycleForm + KitUsageForm + block surfaced) + esterilizacao/protese module registration in proxy+nav (CME-01/02/03)
-- [ ] 13-07-PLAN.md — Wave 4: LAB UI (LabForm + LabOrderForm stages editor + status enviado→prova→concluído + cost→financeiro) (LAB-01/02)
+- [x] 13-07-PLAN.md — Wave 4: LAB UI (LabForm + LabOrderForm stages editor + status enviado→prova→concluído + cost→financeiro) (LAB-01/02)
 **v1 reuse**: Reutiliza audit trail (Phase 0/10) para rastreabilidade; LAB-02 conecta com contas a pagar que existirá após Phase 16
 
 ---
@@ -355,7 +355,7 @@ Plans:
 | 10. IA Governada, Auditoria & OCR | v2.0 | 8/8 | Complete    | 2026-06-14 |
 | 11. Profissionais & Recursos | v2.0 | 7/8 | Complete    | 2026-06-15 |
 | 12. Receituário & Teleodontologia | v2.0 | 7/7 | Complete    | 2026-06-19 |
-| 13. Esterilização/CME & Laboratório de Prótese | v2.0 | 6/7 | In Progress|  |
+| 13. Esterilização/CME & Laboratório de Prótese | v2.0 | 7/7 | Complete    | 2026-06-19 |
 | 14. Financeiro — Cadastros Base | v2.0 | 0/? | Not started | - |
 | 15. Faturamento/NFS-e & Convênios/TISS | v2.0 | 0/? | Not started | - |
 | 16. Contas a Pagar, Conciliação & Tributos | v2.0 | 0/? | Not started | - |
