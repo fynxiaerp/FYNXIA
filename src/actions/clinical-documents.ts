@@ -176,17 +176,24 @@ export async function issueClinicDocument(input: ClinicalDocumentInput): Promise
     // Check each medication line
     const allReasons: string[] = []
     for (const med of validated.medications ?? []) {
-      // Fetch medication metadata (therapeutic_class + allergen_tags) from medications table
-      const { data: medRow } = await admin
+      // Fetch medication metadata (therapeutic_class + allergen_tags) from medications table.
+      // A tampered/foreign medication_id must NOT silently fall through to empty allergen tags —
+      // that would neuter the tag match (WR-03). Treat a lookup miss as a hard error.
+      const { data: medRow, error: medErr } = await admin
         .from('medications')
         .select('therapeutic_class, allergen_tags')
         .eq('id', med.medication_id)
+        .eq('active', true)
         .single()
+
+      if (medErr || !medRow) {
+        return { success: false, error: 'Medicamento inválido ou inativo' }
+      }
 
       const result = checkMedicationAllergy({
         medicationName: med.medication_name,
-        therapeuticClass: medRow?.therapeutic_class ?? '',
-        allergenTags: (medRow?.allergen_tags as string[] | null) ?? [],
+        therapeuticClass: medRow.therapeutic_class ?? '',
+        allergenTags: (medRow.allergen_tags as string[] | null) ?? [],
         patientAllergiesPlaintext: allergiesPlain,
         anamnesisFlags,
       })
