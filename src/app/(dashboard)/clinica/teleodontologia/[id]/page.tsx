@@ -89,7 +89,7 @@ export default async function TeleodontologiaSessionPage({ params }: PageProps) 
     ? await supabase
         .from('appointments')
         .select('id, start_time, patient_id')
-        .eq('clinic_id', tenantId)
+        .eq('tenant_id', tenantId) // appointments uses tenant_id, not clinic_id
         .order('start_time', { ascending: false })
         .limit(200)
     : { data: [] }
