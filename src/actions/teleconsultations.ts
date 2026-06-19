@@ -107,7 +107,7 @@ export async function createTeleconsultation(input: TeleconsultationInput): Prom
   const supabase = await createClient()
 
   const { data: session, error: insertError } = await supabase
-    .from('teleconsultations' as never)
+    .from('teleconsultations')
     .insert({
       clinic_id: actor.tenant_id,
       patient_id: validated.patient_id,
@@ -121,7 +121,7 @@ export async function createTeleconsultation(input: TeleconsultationInput): Prom
       status: 'agendada',
       notes: validated.notes ?? null,
       created_by: actor.id,
-    } as never)
+    })
     .select('id')
     .single()
 
@@ -172,7 +172,7 @@ export async function startTeleconsultation(id: string): Promise<{
 
   // Verify consent before starting (CFO regulatory requirement)
   const { data: existing } = await supabase
-    .from('teleconsultations' as never)
+    .from('teleconsultations')
     .select('consent_given, clinic_id')
     .eq('id', id)
     .eq('clinic_id', actor.tenant_id)
@@ -189,11 +189,11 @@ export async function startTeleconsultation(id: string): Promise<{
   }
 
   const { error: updateError } = await supabase
-    .from('teleconsultations' as never)
+    .from('teleconsultations')
     .update({
       status: 'em_andamento',
       started_at: new Date().toISOString(),
-    } as never)
+    })
     .eq('id', id)
     .eq('clinic_id', actor.tenant_id)
 
@@ -235,11 +235,11 @@ export async function endTeleconsultation(id: string): Promise<{
   const supabase = await createClient()
 
   const { error: updateError } = await supabase
-    .from('teleconsultations' as never)
+    .from('teleconsultations')
     .update({
       status: 'concluida',
       ended_at: new Date().toISOString(),
-    } as never)
+    })
     .eq('id', id)
     .eq('clinic_id', actor.tenant_id)
 
@@ -295,7 +295,7 @@ export async function createSoapRecord(input: SoapInput): Promise<{
   const supabase = await createClient()
 
   const { data: soapRow, error: insertError } = await supabase
-    .from('soap_records' as never)
+    .from('soap_records')
     .insert({
       clinic_id: actor.tenant_id,
       patient_id: validated.patient_id,
@@ -306,7 +306,7 @@ export async function createSoapRecord(input: SoapInput): Promise<{
       soap_objective: validated.soap_objective ?? null,
       soap_assessment: validated.soap_assessment ?? null,
       soap_plan: validated.soap_plan ?? null,
-    } as never)
+    })
     .select('id')
     .single()
 
@@ -361,7 +361,7 @@ export async function listTeleconsultations(patientId?: string): Promise<{
   const supabase = await createClient()
 
   let query = supabase
-    .from('teleconsultations' as never)
+    .from('teleconsultations')
     .select(
       'id, patient_id, professional_id, appointment_id, external_link, consent_given, status, started_at, ended_at, created_at'
     )

@@ -269,7 +269,7 @@ export async function issueClinicDocument(input: ClinicalDocumentInput): Promise
 
   // ── Insert draft clinical_documents row ───────────────────────────────────
   const { data: docRow, error: insertError } = await supabase
-    .from('clinical_documents' as never)
+    .from('clinical_documents')
     .insert({
       clinic_id: actor.tenant_id,
       patient_id: validated.patient_id,
@@ -281,7 +281,7 @@ export async function issueClinicDocument(input: ClinicalDocumentInput): Promise
       status: 'draft',
       portal_visible: validated.portal_visible ?? false,
       created_by: actor.id,
-    } as never)
+    })
     .select('id')
     .single()
 
@@ -339,7 +339,7 @@ export async function signClinicDocument(documentId: string): Promise<{
 
   // 1. Fetch the clinical_documents row via admin (bypasses REVOKE on storage_path/cert_pem)
   const { data: row, error: rowError } = await admin
-    .from('clinical_documents' as never)
+    .from('clinical_documents')
     .select(
       'id, content_json, doc_type, professional_id, patient_id, status, signature, created_at, clinic_id, doc_number'
     )
@@ -512,7 +512,7 @@ export async function signClinicDocument(documentId: string): Promise<{
   // 11. Atomic update: .is('signature', null) — if another concurrent request already signed,
   //     this matches 0 rows → roll back uploaded PDF and abort (T-12-17)
   const { data: updateRows, error: updateError } = await admin
-    .from('clinical_documents' as never)
+    .from('clinical_documents')
     .update({
       content_hash: sigResult.sha256Hex,
       signature: sigResult.signatureB64,
@@ -590,7 +590,7 @@ export async function listClinicDocuments(patientId?: string): Promise<{
 
   // RLS enforces tenant isolation; explicit clinic_id filter as defence-in-depth
   let query = supabase
-    .from('clinical_documents' as never)
+    .from('clinical_documents')
     .select(
       'id, doc_type, doc_number, status, portal_visible, patient_id, professional_id, created_at, signed_at, signer_cn'
     )

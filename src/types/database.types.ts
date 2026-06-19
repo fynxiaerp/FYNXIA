@@ -948,6 +948,151 @@ export type Database = {
           },
         ]
       }
+      clinical_documents: {
+        Row: {
+          appointment_id: string | null
+          cert_not_after: string | null
+          cert_pem: string | null
+          cert_thumbprint: string | null
+          clinic_id: string
+          content_hash: string | null
+          content_json: string
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          doc_number: string
+          doc_type: string
+          id: string
+          patient_id: string
+          portal_visible: boolean
+          professional_id: string | null
+          signature: string | null
+          signed_at: string | null
+          signed_by: string | null
+          signer_cn: string | null
+          status: string
+          storage_path: string | null
+          unit_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          appointment_id?: string | null
+          cert_not_after?: string | null
+          cert_pem?: string | null
+          cert_thumbprint?: string | null
+          clinic_id: string
+          content_hash?: string | null
+          content_json?: string
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          doc_number: string
+          doc_type: string
+          id?: string
+          patient_id: string
+          portal_visible?: boolean
+          professional_id?: string | null
+          signature?: string | null
+          signed_at?: string | null
+          signed_by?: string | null
+          signer_cn?: string | null
+          status?: string
+          storage_path?: string | null
+          unit_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          appointment_id?: string | null
+          cert_not_after?: string | null
+          cert_pem?: string | null
+          cert_thumbprint?: string | null
+          clinic_id?: string
+          content_hash?: string | null
+          content_json?: string
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          doc_number?: string
+          doc_type?: string
+          id?: string
+          patient_id?: string
+          portal_visible?: boolean
+          professional_id?: string | null
+          signature?: string | null
+          signed_at?: string | null
+          signed_by?: string | null
+          signer_cn?: string | null
+          status?: string
+          storage_path?: string | null
+          unit_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clinical_documents_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinical_documents_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinical_documents_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinical_documents_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users_masked"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinical_documents_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinical_documents_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "professionals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinical_documents_signed_by_fkey"
+            columns: ["signed_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinical_documents_signed_by_fkey"
+            columns: ["signed_by"]
+            isOneToOne: false
+            referencedRelation: "users_masked"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinical_documents_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       clinics: {
         Row: {
           address: string | null
@@ -1145,6 +1290,35 @@ export type Database = {
           {
             foreignKeyName: "dental_records_tenant_id_fkey"
             columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      document_seq_counters: {
+        Row: {
+          clinic_id: string
+          doc_type: string
+          id: string
+          last_seq: number
+        }
+        Insert: {
+          clinic_id: string
+          doc_type: string
+          id?: string
+          last_seq?: number
+        }
+        Update: {
+          clinic_id?: string
+          doc_type?: string
+          id?: string
+          last_seq?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_seq_counters_clinic_id_fkey"
+            columns: ["clinic_id"]
             isOneToOne: false
             referencedRelation: "clinics"
             referencedColumns: ["id"]
@@ -1754,6 +1928,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      medications: {
+        Row: {
+          active: boolean
+          allergen_tags: string[]
+          common_dosages: string[]
+          created_at: string
+          generic_name: string | null
+          id: string
+          name: string
+          requires_special_control: boolean
+          therapeutic_class: string
+        }
+        Insert: {
+          active?: boolean
+          allergen_tags?: string[]
+          common_dosages?: string[]
+          created_at?: string
+          generic_name?: string | null
+          id?: string
+          name: string
+          requires_special_control?: boolean
+          therapeutic_class: string
+        }
+        Update: {
+          active?: boolean
+          allergen_tags?: string[]
+          common_dosages?: string[]
+          created_at?: string
+          generic_name?: string | null
+          id?: string
+          name?: string
+          requires_special_control?: boolean
+          therapeutic_class?: string
+        }
+        Relationships: []
       }
       message_log: {
         Row: {
@@ -2378,6 +2588,210 @@ export type Database = {
           },
         ]
       }
+      soap_records: {
+        Row: {
+          appointment_id: string | null
+          clinic_id: string
+          created_at: string
+          deleted_at: string | null
+          dentist_id: string
+          id: string
+          patient_id: string
+          soap_assessment: string | null
+          soap_objective: string | null
+          soap_plan: string | null
+          soap_subjective: string | null
+          teleconsultation_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          appointment_id?: string | null
+          clinic_id: string
+          created_at?: string
+          deleted_at?: string | null
+          dentist_id: string
+          id?: string
+          patient_id: string
+          soap_assessment?: string | null
+          soap_objective?: string | null
+          soap_plan?: string | null
+          soap_subjective?: string | null
+          teleconsultation_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          appointment_id?: string | null
+          clinic_id?: string
+          created_at?: string
+          deleted_at?: string | null
+          dentist_id?: string
+          id?: string
+          patient_id?: string
+          soap_assessment?: string | null
+          soap_objective?: string | null
+          soap_plan?: string | null
+          soap_subjective?: string | null
+          teleconsultation_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "soap_records_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "soap_records_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "soap_records_dentist_id_fkey"
+            columns: ["dentist_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "soap_records_dentist_id_fkey"
+            columns: ["dentist_id"]
+            isOneToOne: false
+            referencedRelation: "users_masked"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "soap_records_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "soap_records_teleconsultation_id_fkey"
+            columns: ["teleconsultation_id"]
+            isOneToOne: false
+            referencedRelation: "teleconsultations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      teleconsultations: {
+        Row: {
+          appointment_id: string | null
+          clinic_id: string
+          consent_given: boolean
+          consent_given_at: string | null
+          consent_ip: unknown
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          ended_at: string | null
+          external_link: string | null
+          id: string
+          notes: string | null
+          patient_id: string
+          professional_id: string | null
+          started_at: string | null
+          status: string
+          unit_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          appointment_id?: string | null
+          clinic_id: string
+          consent_given?: boolean
+          consent_given_at?: string | null
+          consent_ip?: unknown
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          ended_at?: string | null
+          external_link?: string | null
+          id?: string
+          notes?: string | null
+          patient_id: string
+          professional_id?: string | null
+          started_at?: string | null
+          status?: string
+          unit_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          appointment_id?: string | null
+          clinic_id?: string
+          consent_given?: boolean
+          consent_given_at?: string | null
+          consent_ip?: unknown
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          ended_at?: string | null
+          external_link?: string | null
+          id?: string
+          notes?: string | null
+          patient_id?: string
+          professional_id?: string | null
+          started_at?: string | null
+          status?: string
+          unit_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teleconsultations_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teleconsultations_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teleconsultations_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teleconsultations_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users_masked"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teleconsultations_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teleconsultations_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "professionals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teleconsultations_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       units: {
         Row: {
           address: string | null
@@ -2630,6 +3044,10 @@ export type Database = {
       get_my_role: { Args: never; Returns: string }
       get_my_tenant_id: { Args: never; Returns: string }
       get_my_unit_ids: { Args: never; Returns: string[] }
+      next_doc_number: {
+        Args: { p_clinic_id: string; p_doc_type: string }
+        Returns: string
+      }
     }
     Enums: {
       message_channel: "whatsapp" | "email"
