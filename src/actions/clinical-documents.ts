@@ -144,7 +144,7 @@ export async function issueClinicDocument(input: ClinicalDocumentInput): Promise
       .from('patients')
       .select('allergies')
       .eq('id', validated.patient_id)
-      .eq('clinic_id', actor.tenant_id)
+      .eq('tenant_id', actor.tenant_id) // patients uses tenant_id, not clinic_id
       .is('deleted_at', null)
       .single()
 
