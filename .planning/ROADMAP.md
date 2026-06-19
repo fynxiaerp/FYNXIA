@@ -210,7 +210,7 @@ Plans:
 Plans:
 - [x] 13-01-PLAN.md — Wave 0: RED test scaffolds (cycle-status + kit-block-guard + lab-cost + CME/LAB migrations + GIST/financial regression guard)
 - [x] 13-02-PLAN.md — Wave 1: CME migrations (sterilization_cycles + kit_usages, autoclave→resources) + RLS + cycle-status pure block-guard lib + Zod (CME-01/02/03)
-- [ ] 13-03-PLAN.md — Wave 1: LAB migrations (prosthetic_labs + lab_orders +financial_transaction_id link) + RLS + lab-cost pure helpers + Zod (LAB-01/02)
+- [x] 13-03-PLAN.md — Wave 1: LAB migrations (prosthetic_labs + lab_orders +financial_transaction_id link) + RLS + lab-cost pure helpers + Zod (LAB-01/02)
 - [ ] 13-04-PLAN.md — Wave 2: Server Actions (registerKitUsage server-side block guard CME-02 + setLabOrderCost posting despesa to financial_transactions LAB-02)
 - [ ] 13-05-PLAN.md — Wave 3: [BLOCKING] supabase db push (4 migrations) + gen types (truncation guard)
 - [ ] 13-06-PLAN.md — Wave 4: CME UI (CycleForm + KitUsageForm + block surfaced) + esterilizacao/protese module registration in proxy+nav (CME-01/02/03)
@@ -355,7 +355,7 @@ Plans:
 | 10. IA Governada, Auditoria & OCR | v2.0 | 8/8 | Complete    | 2026-06-14 |
 | 11. Profissionais & Recursos | v2.0 | 7/8 | Complete    | 2026-06-15 |
 | 12. Receituário & Teleodontologia | v2.0 | 7/7 | Complete    | 2026-06-19 |
-| 13. Esterilização/CME & Laboratório de Prótese | v2.0 | 2/7 | In Progress|  |
+| 13. Esterilização/CME & Laboratório de Prótese | v2.0 | 3/7 | In Progress|  |
 | 14. Financeiro — Cadastros Base | v2.0 | 0/? | Not started | - |
 | 15. Faturamento/NFS-e & Convênios/TISS | v2.0 | 0/? | Not started | - |
 | 16. Contas a Pagar, Conciliação & Tributos | v2.0 | 0/? | Not started | - |

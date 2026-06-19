@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 13-02-cme-migrations-libs-PLAN.md
-last_updated: "2026-06-19T18:51:33.729Z"
+stopped_at: Completed 13-03-lab-migrations-libs-PLAN.md
+last_updated: "2026-06-19T18:57:00.000Z"
 last_activity: 2026-06-19
 progress:
   total_phases: 15
   completed_phases: 6
   total_plans: 46
-  completed_plans: 41
-  percent: 89
+  completed_plans: 42
+  percent: 91
 ---
 
 # FYNXIA ERP — Project State
@@ -183,6 +183,8 @@ Plan: 1 of 7
 | Availability guard is soft pre-flight; GIST 23P01 is the atomic backstop | Race between pre-flight check and insert is acceptable — GIST fires 23P01 (already handled); soft guard prevents UI from offering unavailable slots | 2026-06-15 |
 | resource_id uuid() with empty parens in Zod schema | Test regex /resource_id.*uuid\(\)/ requires empty-paren form; error message arg removed from .uuid() call | 2026-06-15 |
 | /painel added to isPublicRoute only — not ROUTE_MODULE_MAP | Public TV panel needs no module resolution; routeToModule returning null is correct for fully public routes | 2026-06-15 |
+| financial_transaction_id is FK column ON lab_orders pointing AT financial_transactions(id) — financial_transactions NOT altered | Plan 04 inserts the despesa row; this plan only wires the back-reference column (T-13-11 accepted) | 2026-06-19 |
+| labOrderSchema stages optional array (not required) — forms use RHF defaultValues not Zod .default() | D-133: no .default() in Zod schemas to avoid RHF v7 resolver type mismatch | 2026-06-19 |
 
 ### Architecture Constraints Locked
 
@@ -219,7 +221,7 @@ Plan: 1 of 7
 
 ## Session Continuity
 
-**Stopped at:** Completed 13-02-cme-migrations-libs-PLAN.md
+**Stopped at:** Completed 13-03-lab-migrations-libs-PLAN.md
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 
