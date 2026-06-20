@@ -264,6 +264,83 @@ export type Database = {
           },
         ]
       }
+      appointment_procedures: {
+        Row: {
+          appointment_id: string
+          clinic_id: string
+          created_at: string
+          dente: string | null
+          desconto: number
+          face: string | null
+          id: string
+          nota: string | null
+          professional_id: string | null
+          quantity: number
+          service_id: string
+          updated_at: string
+          valor_unitario: number
+        }
+        Insert: {
+          appointment_id: string
+          clinic_id: string
+          created_at?: string
+          dente?: string | null
+          desconto?: number
+          face?: string | null
+          id?: string
+          nota?: string | null
+          professional_id?: string | null
+          quantity?: number
+          service_id: string
+          updated_at?: string
+          valor_unitario: number
+        }
+        Update: {
+          appointment_id?: string
+          clinic_id?: string
+          created_at?: string
+          dente?: string | null
+          desconto?: number
+          face?: string | null
+          id?: string
+          nota?: string | null
+          professional_id?: string | null
+          quantity?: number
+          service_id?: string
+          updated_at?: string
+          valor_unitario?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appointment_procedures_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointment_procedures_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointment_procedures_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "professionals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointment_procedures_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       appointments: {
         Row: {
           arrived_at: string | null
@@ -892,6 +969,7 @@ export type Database = {
           provider: string
           provider_charge_id: string | null
           provider_installment_id: string | null
+          service_order_id: string | null
           status: string
           tenant_id: string
           total_value: number
@@ -909,6 +987,7 @@ export type Database = {
           provider?: string
           provider_charge_id?: string | null
           provider_installment_id?: string | null
+          service_order_id?: string | null
           status?: string
           tenant_id: string
           total_value: number
@@ -926,6 +1005,7 @@ export type Database = {
           provider?: string
           provider_charge_id?: string | null
           provider_installment_id?: string | null
+          service_order_id?: string | null
           status?: string
           tenant_id?: string
           total_value?: number
@@ -952,6 +1032,13 @@ export type Database = {
             columns: ["patient_id"]
             isOneToOne: false
             referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "charges_service_order_id_fkey"
+            columns: ["service_order_id"]
+            isOneToOne: false
+            referencedRelation: "service_orders"
             referencedColumns: ["id"]
           },
           {
@@ -1844,6 +1931,159 @@ export type Database = {
           },
         ]
       }
+      glosa_motivos: {
+        Row: {
+          ativo: boolean
+          clinic_id: string | null
+          codigo_ans: string
+          created_at: string
+          descricao: string
+          id: string
+        }
+        Insert: {
+          ativo?: boolean
+          clinic_id?: string | null
+          codigo_ans: string
+          created_at?: string
+          descricao: string
+          id?: string
+        }
+        Update: {
+          ativo?: boolean
+          clinic_id?: string | null
+          codigo_ans?: string
+          created_at?: string
+          descricao?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "glosa_motivos_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      insurer_prices: {
+        Row: {
+          clinic_id: string
+          created_at: string
+          id: string
+          insurer_id: string
+          service_id: string
+          updated_at: string
+          valor: number
+        }
+        Insert: {
+          clinic_id: string
+          created_at?: string
+          id?: string
+          insurer_id: string
+          service_id: string
+          updated_at?: string
+          valor: number
+        }
+        Update: {
+          clinic_id?: string
+          created_at?: string
+          id?: string
+          insurer_id?: string
+          service_id?: string
+          updated_at?: string
+          valor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_insurer_prices_insurer"
+            columns: ["insurer_id"]
+            isOneToOne: false
+            referencedRelation: "insurers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "insurer_prices_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "insurer_prices_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      insurers: {
+        Row: {
+          ativo: boolean
+          clinic_id: string
+          cnpj: string | null
+          connector_id: string | null
+          contato_email: string | null
+          contato_phone: string | null
+          created_at: string
+          id: string
+          name: string
+          prazo_pagamento_dias: number
+          registro_ans: string | null
+          status: string
+          tiss_version: string
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          clinic_id: string
+          cnpj?: string | null
+          connector_id?: string | null
+          contato_email?: string | null
+          contato_phone?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          prazo_pagamento_dias?: number
+          registro_ans?: string | null
+          status?: string
+          tiss_version?: string
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          clinic_id?: string
+          cnpj?: string | null
+          connector_id?: string | null
+          contato_email?: string | null
+          contato_phone?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          prazo_pagamento_dias?: number
+          registro_ans?: string | null
+          status?: string
+          tiss_version?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "insurers_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "insurers_connector_id_fkey"
+            columns: ["connector_id"]
+            isOneToOne: false
+            referencedRelation: "integration_connectors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       integration_connectors: {
         Row: {
           clinic_id: string | null
@@ -2442,6 +2682,100 @@ export type Database = {
           },
         ]
       }
+      nfse_records: {
+        Row: {
+          aliquota_iss: number
+          cancelada_at: string | null
+          clinic_id: string
+          created_at: string
+          emitida_at: string | null
+          error_message: string | null
+          id: string
+          iss_retido: boolean
+          numero: string | null
+          pdf_storage_path: string | null
+          provider_ref: string | null
+          serie: string | null
+          service_order_id: string | null
+          status: string
+          tomador_nome: string | null
+          unit_id: string | null
+          updated_at: string
+          valor_iss: number
+          valor_liquido: number
+          valor_servicos: number
+          xml_storage_path: string | null
+        }
+        Insert: {
+          aliquota_iss: number
+          cancelada_at?: string | null
+          clinic_id: string
+          created_at?: string
+          emitida_at?: string | null
+          error_message?: string | null
+          id?: string
+          iss_retido?: boolean
+          numero?: string | null
+          pdf_storage_path?: string | null
+          provider_ref?: string | null
+          serie?: string | null
+          service_order_id?: string | null
+          status?: string
+          tomador_nome?: string | null
+          unit_id?: string | null
+          updated_at?: string
+          valor_iss: number
+          valor_liquido: number
+          valor_servicos: number
+          xml_storage_path?: string | null
+        }
+        Update: {
+          aliquota_iss?: number
+          cancelada_at?: string | null
+          clinic_id?: string
+          created_at?: string
+          emitida_at?: string | null
+          error_message?: string | null
+          id?: string
+          iss_retido?: boolean
+          numero?: string | null
+          pdf_storage_path?: string | null
+          provider_ref?: string | null
+          serie?: string | null
+          service_order_id?: string | null
+          status?: string
+          tomador_nome?: string | null
+          unit_id?: string | null
+          updated_at?: string
+          valor_iss?: number
+          valor_liquido?: number
+          valor_servicos?: number
+          xml_storage_path?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nfse_records_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "nfse_records_service_order_id_fkey"
+            columns: ["service_order_id"]
+            isOneToOne: false
+            referencedRelation: "service_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "nfse_records_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ocr_extractions: {
         Row: {
           clinic_id: string
@@ -3011,6 +3345,298 @@ export type Database = {
           },
         ]
       }
+      service_order_items: {
+        Row: {
+          account_id: string | null
+          clinic_id: string
+          cost_center_id: string | null
+          created_at: string
+          dente: string | null
+          desconto: number
+          description: string
+          face: string | null
+          id: string
+          professional_id: string | null
+          quantity: number
+          service_id: string | null
+          service_order_id: string
+          tuss_code: string | null
+          valor_total: number
+          valor_unitario: number
+        }
+        Insert: {
+          account_id?: string | null
+          clinic_id: string
+          cost_center_id?: string | null
+          created_at?: string
+          dente?: string | null
+          desconto?: number
+          description: string
+          face?: string | null
+          id?: string
+          professional_id?: string | null
+          quantity?: number
+          service_id?: string | null
+          service_order_id: string
+          tuss_code?: string | null
+          valor_total: number
+          valor_unitario: number
+        }
+        Update: {
+          account_id?: string | null
+          clinic_id?: string
+          cost_center_id?: string | null
+          created_at?: string
+          dente?: string | null
+          desconto?: number
+          description?: string
+          face?: string | null
+          id?: string
+          professional_id?: string | null
+          quantity?: number
+          service_id?: string | null
+          service_order_id?: string
+          tuss_code?: string | null
+          valor_total?: number
+          valor_unitario?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_order_items_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "chart_of_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_order_items_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_order_items_cost_center_id_fkey"
+            columns: ["cost_center_id"]
+            isOneToOne: false
+            referencedRelation: "cost_centers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_order_items_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "professionals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_order_items_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_order_items_service_order_id_fkey"
+            columns: ["service_order_id"]
+            isOneToOne: false
+            referencedRelation: "service_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_orders: {
+        Row: {
+          acrescimo_total: number
+          appointment_id: string | null
+          cancel_reason: string | null
+          cancelada_at: string | null
+          clinic_id: string
+          created_at: string
+          created_by: string | null
+          desconto_total: number
+          faturada_at: string | null
+          id: string
+          idempotency_key: string | null
+          insurer_id: string | null
+          notes: string | null
+          numero: string
+          pagador: string
+          patient_id: string | null
+          professional_id: string | null
+          status: string
+          total: number
+          unit_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          acrescimo_total?: number
+          appointment_id?: string | null
+          cancel_reason?: string | null
+          cancelada_at?: string | null
+          clinic_id: string
+          created_at?: string
+          created_by?: string | null
+          desconto_total?: number
+          faturada_at?: string | null
+          id?: string
+          idempotency_key?: string | null
+          insurer_id?: string | null
+          notes?: string | null
+          numero: string
+          pagador?: string
+          patient_id?: string | null
+          professional_id?: string | null
+          status?: string
+          total?: number
+          unit_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          acrescimo_total?: number
+          appointment_id?: string | null
+          cancel_reason?: string | null
+          cancelada_at?: string | null
+          clinic_id?: string
+          created_at?: string
+          created_by?: string | null
+          desconto_total?: number
+          faturada_at?: string | null
+          id?: string
+          idempotency_key?: string | null
+          insurer_id?: string | null
+          notes?: string | null
+          numero?: string
+          pagador?: string
+          patient_id?: string | null
+          professional_id?: string | null
+          status?: string
+          total?: number
+          unit_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_orders_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_orders_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_orders_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_orders_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users_masked"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_orders_insurer_id_fkey"
+            columns: ["insurer_id"]
+            isOneToOne: false
+            referencedRelation: "insurers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_orders_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_orders_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "professionals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_orders_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      services: {
+        Row: {
+          account_id: string | null
+          aliquota_iss_override: number | null
+          ativo: boolean
+          clinic_id: string
+          code: string | null
+          created_at: string
+          description: string | null
+          id: string
+          item_lista_servico_override: string | null
+          name: string
+          tuss_code: string | null
+          updated_at: string
+          valor_particular: number
+        }
+        Insert: {
+          account_id?: string | null
+          aliquota_iss_override?: number | null
+          ativo?: boolean
+          clinic_id: string
+          code?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          item_lista_servico_override?: string | null
+          name: string
+          tuss_code?: string | null
+          updated_at?: string
+          valor_particular?: number
+        }
+        Update: {
+          account_id?: string | null
+          aliquota_iss_override?: number | null
+          ativo?: boolean
+          clinic_id?: string
+          code?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          item_lista_servico_override?: string | null
+          name?: string
+          tuss_code?: string | null
+          updated_at?: string
+          valor_particular?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "services_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "chart_of_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "services_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       soap_records: {
         Row: {
           appointment_id: string | null
@@ -3328,6 +3954,362 @@ export type Database = {
           },
         ]
       }
+      tiss_guide_items: {
+        Row: {
+          clinic_id: string
+          created_at: string
+          dente: string | null
+          description: string
+          face: string | null
+          glosa_status: string | null
+          guide_id: string
+          id: string
+          motivo_glosa_id: string | null
+          quantity: number
+          recurso_at: string | null
+          recurso_texto: string | null
+          service_order_item_id: string | null
+          tuss_code: string | null
+          updated_at: string
+          valor_glosado: number
+          valor_total: number
+          valor_unitario: number
+        }
+        Insert: {
+          clinic_id: string
+          created_at?: string
+          dente?: string | null
+          description: string
+          face?: string | null
+          glosa_status?: string | null
+          guide_id: string
+          id?: string
+          motivo_glosa_id?: string | null
+          quantity?: number
+          recurso_at?: string | null
+          recurso_texto?: string | null
+          service_order_item_id?: string | null
+          tuss_code?: string | null
+          updated_at?: string
+          valor_glosado?: number
+          valor_total: number
+          valor_unitario: number
+        }
+        Update: {
+          clinic_id?: string
+          created_at?: string
+          dente?: string | null
+          description?: string
+          face?: string | null
+          glosa_status?: string | null
+          guide_id?: string
+          id?: string
+          motivo_glosa_id?: string | null
+          quantity?: number
+          recurso_at?: string | null
+          recurso_texto?: string | null
+          service_order_item_id?: string | null
+          tuss_code?: string | null
+          updated_at?: string
+          valor_glosado?: number
+          valor_total?: number
+          valor_unitario?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tiss_guide_items_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tiss_guide_items_guide_id_fkey"
+            columns: ["guide_id"]
+            isOneToOne: false
+            referencedRelation: "tiss_guides"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tiss_guide_items_motivo_glosa_id_fkey"
+            columns: ["motivo_glosa_id"]
+            isOneToOne: false
+            referencedRelation: "glosa_motivos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tiss_guide_items_service_order_item_id_fkey"
+            columns: ["service_order_item_id"]
+            isOneToOne: false
+            referencedRelation: "service_order_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tiss_guides: {
+        Row: {
+          clinic_id: string
+          created_at: string
+          id: string
+          insurer_id: string
+          lote_id: string | null
+          numero_carteira: string | null
+          numero_guia: string
+          patient_id: string | null
+          protocolo: string | null
+          provider_ref: string | null
+          registro_ans: string | null
+          service_order_id: string
+          status: string
+          updated_at: string
+          valor_autorizado: number | null
+          valor_glosado: number
+          valor_pago: number | null
+          valor_total: number
+          xml_storage_path: string | null
+        }
+        Insert: {
+          clinic_id: string
+          created_at?: string
+          id?: string
+          insurer_id: string
+          lote_id?: string | null
+          numero_carteira?: string | null
+          numero_guia: string
+          patient_id?: string | null
+          protocolo?: string | null
+          provider_ref?: string | null
+          registro_ans?: string | null
+          service_order_id: string
+          status?: string
+          updated_at?: string
+          valor_autorizado?: number | null
+          valor_glosado?: number
+          valor_pago?: number | null
+          valor_total?: number
+          xml_storage_path?: string | null
+        }
+        Update: {
+          clinic_id?: string
+          created_at?: string
+          id?: string
+          insurer_id?: string
+          lote_id?: string | null
+          numero_carteira?: string | null
+          numero_guia?: string
+          patient_id?: string | null
+          protocolo?: string | null
+          provider_ref?: string | null
+          registro_ans?: string | null
+          service_order_id?: string
+          status?: string
+          updated_at?: string
+          valor_autorizado?: number | null
+          valor_glosado?: number
+          valor_pago?: number | null
+          valor_total?: number
+          xml_storage_path?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tiss_guides_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tiss_guides_insurer_id_fkey"
+            columns: ["insurer_id"]
+            isOneToOne: false
+            referencedRelation: "insurers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tiss_guides_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "tiss_lotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tiss_guides_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tiss_guides_service_order_id_fkey"
+            columns: ["service_order_id"]
+            isOneToOne: false
+            referencedRelation: "service_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tiss_lotes: {
+        Row: {
+          clinic_id: string
+          competencia: string
+          created_at: string
+          data_envio: string | null
+          id: string
+          insurer_id: string
+          numero: string
+          protocolo: string | null
+          provider_ref: string | null
+          status: string
+          updated_at: string
+          valor_total: number
+          xml_storage_path: string | null
+        }
+        Insert: {
+          clinic_id: string
+          competencia: string
+          created_at?: string
+          data_envio?: string | null
+          id?: string
+          insurer_id: string
+          numero: string
+          protocolo?: string | null
+          provider_ref?: string | null
+          status?: string
+          updated_at?: string
+          valor_total?: number
+          xml_storage_path?: string | null
+        }
+        Update: {
+          clinic_id?: string
+          competencia?: string
+          created_at?: string
+          data_envio?: string | null
+          id?: string
+          insurer_id?: string
+          numero?: string
+          protocolo?: string | null
+          provider_ref?: string | null
+          status?: string
+          updated_at?: string
+          valor_total?: number
+          xml_storage_path?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tiss_lotes_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tiss_lotes_insurer_id_fkey"
+            columns: ["insurer_id"]
+            isOneToOne: false
+            referencedRelation: "insurers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      unit_fiscal_config: {
+        Row: {
+          aliquota_iss_padrao: number
+          ativo: boolean
+          clinic_id: string
+          created_at: string
+          emitente_cnpj: string
+          emitente_inscricao_mun: string | null
+          id: string
+          item_lista_servico: string
+          municipio_codigo_ibge: string
+          proximo_numero_rps: number
+          regime_emissao: string
+          serie_rps: string
+          unit_id: string
+          updated_at: string
+        }
+        Insert: {
+          aliquota_iss_padrao?: number
+          ativo?: boolean
+          clinic_id: string
+          created_at?: string
+          emitente_cnpj: string
+          emitente_inscricao_mun?: string | null
+          id?: string
+          item_lista_servico?: string
+          municipio_codigo_ibge: string
+          proximo_numero_rps?: number
+          regime_emissao?: string
+          serie_rps?: string
+          unit_id: string
+          updated_at?: string
+        }
+        Update: {
+          aliquota_iss_padrao?: number
+          ativo?: boolean
+          clinic_id?: string
+          created_at?: string
+          emitente_cnpj?: string
+          emitente_inscricao_mun?: string | null
+          id?: string
+          item_lista_servico?: string
+          municipio_codigo_ibge?: string
+          proximo_numero_rps?: number
+          regime_emissao?: string
+          serie_rps?: string
+          unit_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "unit_fiscal_config_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "unit_fiscal_config_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: true
+            referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      unit_os_counters: {
+        Row: {
+          clinic_id: string
+          last_os_number: number
+          unit_id: string
+        }
+        Insert: {
+          clinic_id: string
+          last_os_number?: number
+          unit_id: string
+        }
+        Update: {
+          clinic_id?: string
+          last_os_number?: number
+          unit_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "unit_os_counters_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "unit_os_counters_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: true
+            referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       units: {
         Row: {
           address: string | null
@@ -3584,6 +4566,7 @@ export type Database = {
         Args: { p_clinic_id: string; p_doc_type: string }
         Returns: string
       }
+      next_os_number: { Args: { p_unit_id: string }; Returns: string }
     }
     Enums: {
       message_channel: "whatsapp" | "email"
