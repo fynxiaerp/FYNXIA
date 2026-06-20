@@ -48,7 +48,7 @@ Full detail archived in [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
 
 **Bloco C — Financeiro**
 
-- [ ] **Phase 14: Financeiro — Cadastros Base** — Plano de contas em árvore, centros de custo, contas correntes e categorias de lançamento
+- [x] **Phase 14: Financeiro — Cadastros Base** — Plano de contas em árvore, centros de custo, contas correntes e categorias de lançamento (completed 2026-06-20)
 - [ ] **Phase 15: Faturamento/NFS-e & Convênios/TISS** — OS automática pós-atendimento, emissão de NFS-e e faturamento de convênios com guia TISS e glosas
 - [ ] **Phase 16: Contas a Pagar, Conciliação & Tributos** — Contas a pagar, conciliação bancária OFX/Open Finance, fluxo de caixa atualizado, repasses e RPA com retenções
 - [ ] **UI hint**: yes
@@ -235,7 +235,7 @@ Plans:
 - [x] 14-04-PLAN.md — Wave 3: Server Actions (chart/cost-centers/bank-accounts/categories) + buildTree lib + required classification on createTransaction + non-blocking Asaas webhook resolver (FCAD-01/02)
 - [x] 14-05-PLAN.md — Wave 4: Plano de Contas UI (Accordion tree + AccountFormDialog) + financeiro hub cards (FCAD-01)
 - [x] 14-06-PLAN.md — Wave 4: Centros de Custo + Contas Correntes UI (tabular cadastros) (FCAD-01)
-- [ ] 14-07-PLAN.md — Wave 4: Classificação no TransactionModal + Categorias→conta mapping + filtro unidade/CC no fluxo de caixa (FCAD-02)
+- [x] 14-07-PLAN.md — Wave 4: Classificação no TransactionModal + Categorias→conta mapping + filtro unidade/CC no fluxo de caixa (FCAD-02)
 **v1 reuse**: Expande schema `financial_categories` (Phase 3); reutiliza estrutura de `financial_transactions`; adiciona `chart_of_accounts` e `cost_centers`
 **UI hint**: yes
 
@@ -365,7 +365,7 @@ Plans:
 | 11. Profissionais & Recursos | v2.0 | 7/8 | Complete    | 2026-06-15 |
 | 12. Receituário & Teleodontologia | v2.0 | 7/7 | Complete    | 2026-06-19 |
 | 13. Esterilização/CME & Laboratório de Prótese | v2.0 | 7/7 | Complete    | 2026-06-19 |
-| 14. Financeiro — Cadastros Base | v2.0 | 5/7 | In Progress|  |
+| 14. Financeiro — Cadastros Base | v2.0 | 7/7 | Complete   | 2026-06-20 |
 | 15. Faturamento/NFS-e & Convênios/TISS | v2.0 | 0/? | Not started | - |
 | 16. Contas a Pagar, Conciliação & Tributos | v2.0 | 0/? | Not started | - |
 | 17. Estoque & Materiais | v2.0 | 0/? | Not started | - |
