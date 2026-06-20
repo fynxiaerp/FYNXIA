@@ -102,6 +102,10 @@ export async function signOut() {
 }
 
 // ─── sendPasswordReset ───────────────────────────────────────────────────────
+// IN-03: Phase 1 deliberately uses Supabase's built-in recovery email here.
+// The branded `src/emails/PasswordResetEmail.tsx` template is intentionally NOT
+// wired yet — migrating to Resend (via admin `generateLink` + `resend.emails.send`)
+// is deferred to a later phase. See that file's header for the reactivation path.
 export async function sendPasswordReset(email: string) {
   const supabase = await createClient()
   const { error } = await supabase.auth.resetPasswordForEmail(email, {

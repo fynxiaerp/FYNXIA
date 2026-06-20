@@ -1,3 +1,8 @@
+// IN-03: DEFERRED — branded password-reset template, not yet wired into any action.
+// Phase 1 uses Supabase's built-in recovery email (see `sendPasswordReset` in
+// `src/actions/auth.ts`). To activate this template in a future phase: generate the
+// recovery link with the admin client (`admin.auth.admin.generateLink({ type: 'recovery' })`)
+// and send it via Resend (`resend.emails.send`), mirroring the invite email flow.
 import {
   Html,
   Head,
