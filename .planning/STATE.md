@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 15-06-PLAN.md
-last_updated: "2026-06-20T15:19:12.167Z"
+stopped_at: Completed 15-07-PLAN.md
+last_updated: "2026-06-20T15:29:00Z"
 last_activity: 2026-06-20
 progress:
   total_phases: 15
   completed_phases: 8
   total_plans: 62
-  completed_plans: 59
-  percent: 95
+  completed_plans: 60
+  percent: 97
 ---
 
 # FYNXIA ERP — Project State
@@ -120,6 +120,7 @@ Plan: 3 of 9
 | Phase 15 P02 | 4 | 2 tasks | 4 files |
 | Phase 15 P03 | 324 | 3 tasks | 4 files |
 | Phase 15 P06 | 21 | 3 tasks | 7 files |
+| Phase 15 P07 | 7 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -214,6 +215,10 @@ Plan: 3 of 9
 | insurer_prices.insurer_id deferred FK to 000200 | insurers table created in 000200 (Plan 03); 000100 runs first by timestamp; ALTER TABLE ADD CONSTRAINT emitted at end of 000200 to resolve forward reference | 2026-06-20 |
 | glosa_motivos.clinic_id nullable (NULL = ANS system-wide) | clinic_id NULL = ANS shared reference data (public, no PII — T-15-05 accepted); per-clinic custom motivos use non-NULL clinic_id | 2026-06-20 |
 | seed_services_on_clinic trigger named alphabetically after seed_accounts_on_clinic | PostgreSQL fires AFTER triggers in alphabetical order per event; guarantees chart_of_accounts seeded before services on same clinic INSERT | 2026-06-20 |
+| StubTissProvider for clinics without tiss integration_connectors credential_enc | Zero external setup for dev/test; credential-gated factory mirrors getFiscalProvider (D-01/D-03/D-13) | 2026-06-20 |
+| getTissProvider real XML adapter deferred; factory shape present | D-13: gated until operadora credentials confirmed; callers need no change when real adapter slots in | 2026-06-20 |
+| criarGuia exported with insertGuia dep injection + criarGuiaForOs as public faturarOs contract | Allows unit test to verify status=em_analise without Supabase; production path always uses real DB | 2026-06-20 |
+| guide status DERIVED via deriveGuideStatus after every glosa/recurso mutation | Pitfall 5: per-item glosa_status is source of truth; guide status never set directly (T-15-27) | 2026-06-20 |
 
 ### Architecture Constraints Locked
 
@@ -250,7 +255,7 @@ Plan: 3 of 9
 
 ## Session Continuity
 
-**Stopped at:** Completed 15-06-PLAN.md
+**Stopped at:** Completed 15-07-PLAN.md
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 
