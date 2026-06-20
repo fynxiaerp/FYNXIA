@@ -254,7 +254,7 @@ Plans:
 **Plans**: 9 plans
 Plans:
 - [x] 15-01-PLAN.md — Wave 0: RED test scaffolds (migrations source-inspection + service-orders/nfse/tiss behavior + regression guard)
-- [ ] 15-02-PLAN.md — Wave 1: catalog/fiscal migrations (services, insurer_prices, unit_fiscal_config, glosa_motivos) + seed + service/insurer Zod
+- [x] 15-02-PLAN.md — Wave 1: catalog/fiscal migrations (services, insurer_prices, unit_fiscal_config, glosa_motivos) + seed + service/insurer Zod
 - [ ] 15-03-PLAN.md — Wave 1: OS+TISS migrations (service_orders, items, nfse_records, tiss_lotes/guides/items, next_os_number, charges link) + unified RLS + service-order Zod
 - [ ] 15-04-PLAN.md — Wave 2: [BLOCKING] supabase db push (5 migrations) + gen types (truncation guard)
 - [ ] 15-05-PLAN.md — Wave 3: OS domain (os-math, createOs, faturarOs CAS+idempotency, cancelar via alçada, auto-OS on concluido) (OS-01/03)
@@ -377,7 +377,7 @@ Plans:
 | 12. Receituário & Teleodontologia | v2.0 | 7/7 | Complete    | 2026-06-19 |
 | 13. Esterilização/CME & Laboratório de Prótese | v2.0 | 7/7 | Complete    | 2026-06-19 |
 | 14. Financeiro — Cadastros Base | v2.0 | 7/7 | Complete    | 2026-06-20 |
-| 15. Faturamento/NFS-e & Convênios/TISS | v2.0 | 1/9 | In Progress|  |
+| 15. Faturamento/NFS-e & Convênios/TISS | v2.0 | 2/9 | In Progress|  |
 | 16. Contas a Pagar, Conciliação & Tributos | v2.0 | 0/? | Not started | - |
 | 17. Estoque & Materiais | v2.0 | 0/? | Not started | - |
 | 18. CRC & Marketing | v2.0 | 0/? | Not started | - |

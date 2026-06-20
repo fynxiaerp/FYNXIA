@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 15-01-PLAN.md
-last_updated: "2026-06-20T14:05:42.023Z"
+stopped_at: Completed 15-02-PLAN.md
+last_updated: "2026-06-20T14:12:00.000Z"
 last_activity: 2026-06-20
 progress:
   total_phases: 15
   completed_phases: 8
   total_plans: 62
-  completed_plans: 54
-  percent: 87
+  completed_plans: 55
+  percent: 89
 ---
 
 # FYNXIA ERP — Project State
@@ -36,10 +36,10 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 ## Current Position
 
 Phase: 15 (faturamento-nfs-e-conv-nios-tiss) — EXECUTING
-Plan: 1 of 9
+Plan: 2 of 9
 **Milestone:** v2.0 — Produto Completo (27 módulos, blocos A–E)
 **Phase:** 15
-**Plan:** Not started
+**Plan:** 02 — Catalog & Fiscal-Config Layer (COMPLETE)
 **Status:** Executing Phase 15
 **Last activity:** 2026-06-20
 
@@ -117,6 +117,7 @@ Plan: 1 of 9
 | Phase 14 P05 | 25 | 2 tasks | 6 files |
 | Phase 14 P06 | 11 | 2 tasks | 10 files |
 | Phase 15 P01 | 5 | 2 tasks | 5 files |
+| Phase 15 P02 | 4 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -202,6 +203,9 @@ Plan: 1 of 9
 | listTransactions gets opts.costCenterId/unitId filter params for FCAD-02 SC2 | fluxo-de-caixa page needs unit/CC-scoped totals; unitId resolves to CC ids via cost_centers WHERE unit_id | 2026-06-20 |
 | unitId immutable in CostCenterFormDialog edit mode | Changing unit affiliation would orphan transaction references; matches AccountFormDialog type/parentId immutability (D-14-05-02) | 2026-06-20 |
 | BRL mask uses saldoInicialStr string field in RHF; parsed to number on submit | RHF inputs are string-typed; NUMERIC(12,2) DB column needs number — same pattern as TransactionModal amountStr; no .default() in Zod (D-133) | 2026-06-20 |
+| insurer_prices.insurer_id deferred FK to 000200 | insurers table created in 000200 (Plan 03); 000100 runs first by timestamp; ALTER TABLE ADD CONSTRAINT emitted at end of 000200 to resolve forward reference | 2026-06-20 |
+| glosa_motivos.clinic_id nullable (NULL = ANS system-wide) | clinic_id NULL = ANS shared reference data (public, no PII — T-15-05 accepted); per-clinic custom motivos use non-NULL clinic_id | 2026-06-20 |
+| seed_services_on_clinic trigger named alphabetically after seed_accounts_on_clinic | PostgreSQL fires AFTER triggers in alphabetical order per event; guarantees chart_of_accounts seeded before services on same clinic INSERT | 2026-06-20 |
 
 ### Architecture Constraints Locked
 
