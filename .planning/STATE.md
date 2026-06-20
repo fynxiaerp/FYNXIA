@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 15-02-PLAN.md
-last_updated: "2026-06-20T14:12:00.000Z"
+stopped_at: Completed 15-03-PLAN.md
+last_updated: "2026-06-20T14:21:58.545Z"
 last_activity: 2026-06-20
 progress:
   total_phases: 15
   completed_phases: 8
   total_plans: 62
-  completed_plans: 55
-  percent: 89
+  completed_plans: 56
+  percent: 90
 ---
 
 # FYNXIA ERP — Project State
@@ -36,10 +36,10 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 ## Current Position
 
 Phase: 15 (faturamento-nfs-e-conv-nios-tiss) — EXECUTING
-Plan: 2 of 9
+Plan: 3 of 9
 **Milestone:** v2.0 — Produto Completo (27 módulos, blocos A–E)
 **Phase:** 15
-**Plan:** 02 — Catalog & Fiscal-Config Layer (COMPLETE)
+**Plan:** 03 — OS Domain + TISS Tables + Unified RLS (COMPLETE)
 **Status:** Executing Phase 15
 **Last activity:** 2026-06-20
 
@@ -118,6 +118,7 @@ Plan: 2 of 9
 | Phase 14 P06 | 11 | 2 tasks | 10 files |
 | Phase 15 P01 | 5 | 2 tasks | 5 files |
 | Phase 15 P02 | 4 | 2 tasks | 4 files |
+| Phase 15 P03 | 324 | 3 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -125,6 +126,9 @@ Plan: 2 of 9
 
 | Decision | Rationale | Date |
 |----------|-----------|------|
+| OS write roles include dentist (creates rascunho on conclude); finer faturar gate in Server Action not RLS | RLS cannot express rascunho→faturada state machine; Server Action enforces transition | 2026-06-20 |
+| unit_os_counters separate from unit_fiscal_config.proximo_numero_rps | RPS != OS numbering; dedicated counter table avoids semantic collision (D-25/A1) | 2026-06-20 |
+| glosa_motivos WITH CHECK = get_my_tenant_id() prevents NULL-clinic ANS seed mutation | NULL-clinic rows are shared ANS reference data; tenants must not edit them (T-15-08) | 2026-06-20 |
 | CycleFormDialog extracted as 'use client' wrapper | RSC page stays pure Server Component; open/close state lives in client wrapper | 2026-06-19 |
 | appointments passed as empty array to KitUsageForm | appointments table has no patient_id FK; CME-03 traceability works via kit_usages.patient_id directly | 2026-06-19 |
 | COST_ROLES=['admin','superadmin'] only for setLabOrderCost | Matches financial_transactions write RLS; dentists can create orders but cannot post financials | 2026-06-19 |
@@ -242,7 +246,7 @@ Plan: 2 of 9
 
 ## Session Continuity
 
-**Stopped at:** Completed 15-01-PLAN.md
+**Stopped at:** Completed 15-03-PLAN.md
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 
