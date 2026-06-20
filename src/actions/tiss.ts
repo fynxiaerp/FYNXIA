@@ -519,8 +519,8 @@ export async function getGuias(filters?: {
   if (error) return { success: false, error: error.message }
 
   const guides = (data ?? []).map((row) => {
-    const insurer = row.insurers as { name: string } | null
-    const patient = row.patients as { full_name: string } | null
+    const insurer = row.insurers as unknown as { name: string } | null
+    const patient = row.patients as unknown as { full_name: string } | null
     return {
       id: row.id,
       numero_guia: row.numero_guia,
@@ -580,8 +580,8 @@ export async function getGlosas(filters?: {
   if (error) return { success: false, error: error.message }
 
   const glosas = (data ?? []).map((row) => {
-    const motivo = row.glosa_motivos as { codigo_ans: string; descricao: string } | null
-    const guide = row.tiss_guides as {
+    const motivo = row.glosa_motivos as unknown as { codigo_ans: string; descricao: string } | null
+    const guide = row.tiss_guides as unknown as {
       patients?: { full_name: string } | null
       insurers?: { name: string } | null
     } | null
