@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 14-05-PLAN.md — plano-de-contas UI tree + AccountFormDialog + hub cards; awaiting human-verify checkpoint
-last_updated: "2026-06-20T01:26:08.410Z"
+stopped_at: Completed 14-06-PLAN.md — CostCentersTable + BankAccountsTable + centros-de-custo + contas-correntes routes; awaiting consolidated visual verify
+last_updated: "2026-06-20T01:42:45Z"
 last_activity: 2026-06-20
 progress:
   total_phases: 15
   completed_phases: 7
   total_plans: 53
-  completed_plans: 51
-  percent: 96
+  completed_plans: 52
+  percent: 98
 ---
 
 # FYNXIA ERP — Project State
@@ -115,6 +115,7 @@ Plan: 1 of 7
 | Phase 14 P02 | 9 | 3 tasks | 3 files |
 | Phase 14 P04 | 35 | 3 tasks | 9 files |
 | Phase 14 P05 | 25 | 2 tasks | 6 files |
+| Phase 14 P06 | 11 | 2 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -198,6 +199,8 @@ Plan: 1 of 7
 | Zod required_error on z.string() needed for missing-field custom messages in Zod v3 | z.string().uuid({ message }) fires only on invalid-format, not missing/undefined; required_error + invalid_type_error needed to fire custom message when field absent | 2026-06-20 |
 | TransactionInput typed optional accountId/costCenterId for pre-Plans-05-07 modal compat | TransactionModal calls createTransaction without new fields; Zod schema enforces required at runtime; Plans 05-07 add selectors | 2026-06-20 |
 | listTransactions gets opts.costCenterId/unitId filter params for FCAD-02 SC2 | fluxo-de-caixa page needs unit/CC-scoped totals; unitId resolves to CC ids via cost_centers WHERE unit_id | 2026-06-20 |
+| unitId immutable in CostCenterFormDialog edit mode | Changing unit affiliation would orphan transaction references; matches AccountFormDialog type/parentId immutability (D-14-05-02) | 2026-06-20 |
+| BRL mask uses saldoInicialStr string field in RHF; parsed to number on submit | RHF inputs are string-typed; NUMERIC(12,2) DB column needs number — same pattern as TransactionModal amountStr; no .default() in Zod (D-133) | 2026-06-20 |
 
 ### Architecture Constraints Locked
 

@@ -234,7 +234,7 @@ Plans:
 - [x] 14-03-PLAN.md — Wave 2: [BLOCKING] supabase db push (3 migrations, project jqjwyqlbbuqnrffdnlpp) + gen types
 - [x] 14-04-PLAN.md — Wave 3: Server Actions (chart/cost-centers/bank-accounts/categories) + buildTree lib + required classification on createTransaction + non-blocking Asaas webhook resolver (FCAD-01/02)
 - [x] 14-05-PLAN.md — Wave 4: Plano de Contas UI (Accordion tree + AccountFormDialog) + financeiro hub cards (FCAD-01)
-- [ ] 14-06-PLAN.md — Wave 4: Centros de Custo + Contas Correntes UI (tabular cadastros) (FCAD-01)
+- [x] 14-06-PLAN.md — Wave 4: Centros de Custo + Contas Correntes UI (tabular cadastros) (FCAD-01)
 - [ ] 14-07-PLAN.md — Wave 4: Classificação no TransactionModal + Categorias→conta mapping + filtro unidade/CC no fluxo de caixa (FCAD-02)
 **v1 reuse**: Expande schema `financial_categories` (Phase 3); reutiliza estrutura de `financial_transactions`; adiciona `chart_of_accounts` e `cost_centers`
 **UI hint**: yes
