@@ -48,7 +48,8 @@ Full detail archived in [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
 
 **Bloco C — Financeiro**
 
-- [x] **Phase 14: Financeiro — Cadastros Base** — Plano de contas em árvore, centros de custo, contas correntes e categorias de lançamento (completed 2026-06-20)
+- [x] **Phase 14: Financeiro — Cadastros Base** — Plano de contas em árvore, centros de custo, contas correntes e categorias de lançamento
+ (completed 2026-06-20)
 - [ ] **Phase 15: Faturamento/NFS-e & Convênios/TISS** — OS automática pós-atendimento, emissão de NFS-e e faturamento de convênios com guia TISS e glosas
 - [ ] **Phase 16: Contas a Pagar, Conciliação & Tributos** — Contas a pagar, conciliação bancária OFX/Open Finance, fluxo de caixa atualizado, repasses e RPA com retenções
 - [ ] **UI hint**: yes
@@ -250,7 +251,17 @@ Plans:
   2. A partir da OS, usuário emite NFS-e na prefeitura do município; o documento fiscal retorna com número e fica arquivado
   3. Usuário cadastra operadora de convênio com tabela de preços própria e gera guia TISS; o lote é enviado com protocolo por operadora
   4. Glosas recebidas são classificadas por motivo e o usuário registra recurso, com o status atualizado na tela de convênios
-**Plans**: TBD
+**Plans**: 9 plans
+Plans:
+- [ ] 15-01-PLAN.md — Wave 0: RED test scaffolds (migrations source-inspection + service-orders/nfse/tiss behavior + regression guard)
+- [ ] 15-02-PLAN.md — Wave 1: catalog/fiscal migrations (services, insurer_prices, unit_fiscal_config, glosa_motivos) + seed + service/insurer Zod
+- [ ] 15-03-PLAN.md — Wave 1: OS+TISS migrations (service_orders, items, nfse_records, tiss_lotes/guides/items, next_os_number, charges link) + unified RLS + service-order Zod
+- [ ] 15-04-PLAN.md — Wave 2: [BLOCKING] supabase db push (5 migrations) + gen types (truncation guard)
+- [ ] 15-05-PLAN.md — Wave 3: OS domain (os-math, createOs, faturarOs CAS+idempotency, cancelar via alçada, auto-OS on concluido) (OS-01/03)
+- [ ] 15-06-PLAN.md — Wave 3: FiscalProvider abstraction + Stub/FocusNFe + ISS + emitirNfse (regime split) + NFS-e webhook (OS-02)
+- [ ] 15-07-PLAN.md — Wave 3: TissProvider abstraction + Stub + glosa-math + criarGuia/fecharLote/registrarGlosa/registrarRecurso + insurers CRUD (CONV-01/02/03)
+- [ ] 15-08-PLAN.md — Wave 4: OS + NFS-e + Faturamento hub UI + financeiro nav cards (OS-01/02/03)
+- [ ] 15-09-PLAN.md — Wave 4: Convênios + Operadoras + price table + Glosas UI (CONV-01/02/03)
 **v1 reuse**: Expande receivables/charges (Phase 3); reusa protótipo navegável de Convênios (`/clinica/prototipos`); conector NFS-e via INT (Phase 9)
 **UI hint**: yes
 
