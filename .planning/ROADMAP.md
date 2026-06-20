@@ -229,7 +229,7 @@ Plans:
   2. Lançamento financeiro classifica conta contábil e centro de custo obrigatoriamente; o filtro por unidade/centro de custo funciona nas telas de fluxo de caixa e relatórios
 **Plans**: 7 plans
 Plans:
-- [ ] 14-01-PLAN.md — Wave 0: RED test scaffolds (migrations source-inspection + buildTree + Zod classification + Phase 3 regression guard)
+- [x] 14-01-PLAN.md — Wave 0: RED test scaffolds (migrations source-inspection + buildTree + Zod classification + Phase 3 regression guard)
 - [ ] 14-02-PLAN.md — Wave 1: Migrations (chart_of_accounts + cost_centers + bank_accounts + ALTERs + RLS + seed/backfill) (FCAD-01/02)
 - [ ] 14-03-PLAN.md — Wave 2: [BLOCKING] supabase db push (3 migrations, project jqjwyqlbbuqnrffdnlpp) + gen types
 - [ ] 14-04-PLAN.md — Wave 3: Server Actions (chart/cost-centers/bank-accounts/categories) + buildTree lib + required classification on createTransaction + non-blocking Asaas webhook resolver (FCAD-01/02)
@@ -365,7 +365,7 @@ Plans:
 | 11. Profissionais & Recursos | v2.0 | 7/8 | Complete    | 2026-06-15 |
 | 12. Receituário & Teleodontologia | v2.0 | 7/7 | Complete    | 2026-06-19 |
 | 13. Esterilização/CME & Laboratório de Prótese | v2.0 | 7/7 | Complete    | 2026-06-19 |
-| 14. Financeiro — Cadastros Base | v2.0 | 0/? | Not started | - |
+| 14. Financeiro — Cadastros Base | v2.0 | 1/7 | In Progress|  |
 | 15. Faturamento/NFS-e & Convênios/TISS | v2.0 | 0/? | Not started | - |
 | 16. Contas a Pagar, Conciliação & Tributos | v2.0 | 0/? | Not started | - |
 | 17. Estoque & Materiais | v2.0 | 0/? | Not started | - |

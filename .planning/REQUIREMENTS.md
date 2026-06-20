@@ -74,8 +74,8 @@
 ### Bloco C — Financeiro
 
 #### FCAD — Financeiro: Cadastros
-- [ ] **FCAD-01**: Financeiro estrutura plano de contas (árvore), centros de custo, contas correntes e categorias
-- [ ] **FCAD-02**: Lançamentos são classificados por conta contábil e centro de custo (rateio por unidade/área)
+- [x] **FCAD-01**: Financeiro estrutura plano de contas (árvore), centros de custo, contas correntes e categorias
+- [x] **FCAD-02**: Lançamentos são classificados por conta contábil e centro de custo (rateio por unidade/área)
 
 #### OS — Serviços, OS & Faturamento (NFS-e)
 - [ ] **OS-01**: Atendimento concluído vira ordem de serviço automática com os procedimentos executados
@@ -198,8 +198,8 @@
 | CME-03 | Phase 13 | Complete |
 | LAB-01 | Phase 13 | Complete |
 | LAB-02 | Phase 13 | Complete |
-| FCAD-01 | Phase 14 | Pending |
-| FCAD-02 | Phase 14 | Pending |
+| FCAD-01 | Phase 14 | Complete |
+| FCAD-02 | Phase 14 | Complete |
 | OS-01 | Phase 15 | Pending |
 | OS-02 | Phase 15 | Pending |
 | OS-03 | Phase 15 | Pending |

@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
-status: planning
-stopped_at: Phase 14 context gathered
-last_updated: "2026-06-19T23:22:05.847Z"
-last_activity: 2026-06-19
+status: executing
+stopped_at: Completed 14-01-PLAN.md — Wave 0 RED scaffolds
+last_updated: "2026-06-20T00:27:13.452Z"
+last_activity: 2026-06-20
 progress:
   total_phases: 15
   completed_phases: 7
-  total_plans: 46
-  completed_plans: 46
-  percent: 100
+  total_plans: 53
+  completed_plans: 47
+  percent: 89
 ---
 
 # FYNXIA ERP — Project State
@@ -29,19 +29,19 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 
 **Stack:** Next.js 15 + TypeScript (strict) + Supabase (sa-east-1) + Vercel (gru1) + shadcn/ui + Tailwind v4
 
-**Current focus:** Phase 13 — esteriliza-o-cme-laborat-rio-de-pr-tese
+**Current focus:** Phase 14 — financeiro-cadastros-base
 
 ---
 
 ## Current Position
 
-Phase: 13 (esteriliza-o-cme-laborat-rio-de-pr-tese) — EXECUTING
+Phase: 14 (financeiro-cadastros-base) — EXECUTING
 Plan: 1 of 7
 **Milestone:** v2.0 — Produto Completo (27 módulos, blocos A–E)
 **Phase:** 14
 **Plan:** Not started
-**Status:** Ready to plan
-**Last activity:** 2026-06-19
+**Status:** Executing Phase 14
+**Last activity:** 2026-06-20
 
 ---
 
@@ -111,6 +111,7 @@ Plan: 1 of 7
 | Phase 13 P01 | 5 | 2 tasks | 6 files |
 | Phase 13 P02 | 4 | 2 tasks | 4 files |
 | Phase 13 P04 | 6 | 2 tasks | 4 files |
+| Phase 14-financeiro-cadastros-base P01 | 8 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -227,7 +228,7 @@ Plan: 1 of 7
 
 ## Session Continuity
 
-**Stopped at:** Phase 14 context gathered
+**Stopped at:** Completed 14-01-PLAN.md — Wave 0 RED scaffolds
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 
