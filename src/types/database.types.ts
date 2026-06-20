@@ -757,6 +757,53 @@ export type Database = {
         }
         Relationships: []
       }
+      bank_accounts: {
+        Row: {
+          agencia: string | null
+          ativo: boolean
+          banco: string | null
+          clinic_id: string
+          conta: string | null
+          created_at: string
+          id: string
+          name: string
+          saldo_inicial: number
+          updated_at: string
+        }
+        Insert: {
+          agencia?: string | null
+          ativo?: boolean
+          banco?: string | null
+          clinic_id: string
+          conta?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          saldo_inicial?: number
+          updated_at?: string
+        }
+        Update: {
+          agencia?: string | null
+          ativo?: boolean
+          banco?: string | null
+          clinic_id?: string
+          conta?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          saldo_inicial?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bank_accounts_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       certificates: {
         Row: {
           cert_password_enc: string
@@ -919,6 +966,57 @@ export type Database = {
             columns: ["unit_id"]
             isOneToOne: false
             referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chart_of_accounts: {
+        Row: {
+          ativo: boolean
+          clinic_id: string
+          code: string
+          created_at: string
+          id: string
+          name: string
+          parent_id: string | null
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          clinic_id: string
+          code: string
+          created_at?: string
+          id?: string
+          name: string
+          parent_id?: string | null
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          clinic_id?: string
+          code?: string
+          created_at?: string
+          id?: string
+          name?: string
+          parent_id?: string | null
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chart_of_accounts_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chart_of_accounts_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "chart_of_accounts"
             referencedColumns: ["id"]
           },
         ]
@@ -1195,6 +1293,54 @@ export type Database = {
             columns: ["tenant_id"]
             isOneToOne: true
             referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cost_centers: {
+        Row: {
+          ativo: boolean
+          clinic_id: string
+          created_at: string
+          id: string
+          is_default: boolean
+          name: string
+          unit_id: string
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          clinic_id: string
+          created_at?: string
+          id?: string
+          is_default?: boolean
+          name: string
+          unit_id: string
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          clinic_id?: string
+          created_at?: string
+          id?: string
+          is_default?: boolean
+          name?: string
+          unit_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cost_centers_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cost_centers_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "units"
             referencedColumns: ["id"]
           },
         ]
@@ -1550,6 +1696,7 @@ export type Database = {
       }
       financial_categories: {
         Row: {
+          account_id: string | null
           created_at: string
           id: string
           is_default: boolean
@@ -1558,6 +1705,7 @@ export type Database = {
           type: string
         }
         Insert: {
+          account_id?: string | null
           created_at?: string
           id?: string
           is_default?: boolean
@@ -1566,6 +1714,7 @@ export type Database = {
           type: string
         }
         Update: {
+          account_id?: string | null
           created_at?: string
           id?: string
           is_default?: boolean
@@ -1574,6 +1723,13 @@ export type Database = {
           type?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "financial_categories_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "chart_of_accounts"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "financial_categories_tenant_id_fkey"
             columns: ["tenant_id"]
@@ -1585,8 +1741,11 @@ export type Database = {
       }
       financial_transactions: {
         Row: {
+          account_id: string | null
           amount: number
+          bank_account_id: string | null
           category_id: string | null
+          cost_center_id: string | null
           created_at: string
           description: string | null
           id: string
@@ -1597,8 +1756,11 @@ export type Database = {
           type: string
         }
         Insert: {
+          account_id?: string | null
           amount: number
+          bank_account_id?: string | null
           category_id?: string | null
+          cost_center_id?: string | null
           created_at?: string
           description?: string | null
           id?: string
@@ -1609,8 +1771,11 @@ export type Database = {
           type: string
         }
         Update: {
+          account_id?: string | null
           amount?: number
+          bank_account_id?: string | null
           category_id?: string | null
+          cost_center_id?: string | null
           created_at?: string
           description?: string | null
           id?: string
@@ -1622,10 +1787,31 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "financial_transactions_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "chart_of_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "financial_transactions_bank_account_id_fkey"
+            columns: ["bank_account_id"]
+            isOneToOne: false
+            referencedRelation: "bank_accounts"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "financial_transactions_category_id_fkey"
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "financial_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "financial_transactions_cost_center_id_fkey"
+            columns: ["cost_center_id"]
+            isOneToOne: false
+            referencedRelation: "cost_centers"
             referencedColumns: ["id"]
           },
           {
