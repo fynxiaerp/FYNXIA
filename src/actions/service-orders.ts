@@ -33,7 +33,11 @@ import { revalidatePath } from 'next/cache'
 
 // ─── Re-export for test discoverability ─────────────────────────────────────
 // Tests import isValidOsTransition from this module path (service-orders.ts).
-export { isValidOsTransition } from '@/lib/faturamento/os-math'
+// Wrapped as async to satisfy Turbopack 'use server' constraint (only async
+// exports allowed). The sync implementation lives in os-math.ts.
+export async function isValidOsTransition(from: string, to: string): Promise<boolean> {
+  return _isValidOsTransition(from, to)
+}
 
 // ─── Actor helper ─────────────────────────────────────────────────────────────
 
@@ -356,13 +360,12 @@ export async function faturarOs(
       return { success: true, osId, error: `Cobrança não emitida: ${chargeResult.error}` }
     }
 
-    // Delegate NFS-e emission to Plan 06 (dynamic import, try/catch so test path works)
+    // Delegate NFS-e emission to Plan 06
     try {
-      const nfsePath = require.resolve('@/actions/nfse')
-      const { emitirNfseForOs } = await import(nfsePath)
+      const { emitirNfseForOs } = await import('./nfse')
       await emitirNfseForOs(osId)
     } catch {
-      // Plan 06 not yet landed or emission deferred — not a fatal error
+      // Emission deferred — not a fatal error
     }
 
   } else if (os.pagador === 'convenio') {
@@ -408,13 +411,12 @@ export async function faturarOs(
       return { success: true, osId, error: `Recebível de convênio não criado: ${receivableResult.error}` }
     }
 
-    // Delegate TISS guide creation to Plan 07 (dynamic import, try/catch)
+    // Delegate TISS guide creation to Plan 07
     try {
-      const tissPath = require.resolve('@/actions/tiss')
-      const { criarGuiaForOs } = await import(tissPath)
+      const { criarGuiaForOs } = await import('./tiss')
       await criarGuiaForOs(osId)
     } catch {
-      // Plan 07 not yet landed — not a fatal error
+      // Deferred — not a fatal error
     }
   }
 
@@ -458,12 +460,9 @@ export async function cancelarOs(
   if (os.status === 'faturada') {
     // Route through Phase 10 alçada — requires admin approval (D-19, T-15-17)
     const approvalResult = await createApprovalRequest({
-      action_type: 'cancelar_os',
-      target_id: osId,
-      target_table: 'service_orders',
-      required_role: 'admin',
-      motivo,
-      payload: { os_numero: os.numero, cancel_reason: motivo },
+      type: 'cancelar_os',
+      requiredRole: 'admin',
+      payload: { os_id: osId, os_numero: os.numero, cancel_reason: motivo },
     })
 
     if (!approvalResult.success) {
@@ -554,7 +553,7 @@ export async function getOs(id: string): Promise<{
     return { success: false, error: 'OS não encontrada' }
   }
 
-  const patientRaw = os.patients as { id: string; full_name: string; cpf: string } | null
+  const patientRaw = os.patients as unknown as { id: string; full_name: string; cpf: string } | null
 
   return {
     success: true,
@@ -642,7 +641,7 @@ export async function listOs(filters?: {
   if (error) return { success: false, error: error.message }
 
   const orders = (data ?? []).map((row) => {
-    const p = row.patients as { full_name: string } | null
+    const p = row.patients as unknown as { full_name: string } | null
     return {
       id: row.id,
       numero: row.numero,

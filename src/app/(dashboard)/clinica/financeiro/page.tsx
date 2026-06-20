@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { TrendingUp, Receipt, FilePlus, Settings2, GitBranch, Building2, Landmark } from 'lucide-react'
+import { TrendingUp, Receipt, FilePlus, Settings2, GitBranch, Building2, Landmark, ClipboardList, FileText, ShieldPlus } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { PageHeader } from '@/components/shell/PageHeader'
 import { Button } from '@/components/ui/button'
@@ -66,6 +66,27 @@ export default async function FinanceiroPage() {
       title: 'Contas Correntes',
       description: 'Contas bancárias vinculadas aos lançamentos para conciliação.',
       icon: Landmark,
+      show: true,
+    },
+    {
+      href: '/clinica/financeiro/faturamento/os',
+      title: 'Ordens de Serviço',
+      description: 'OS automáticas pós-atendimento e OS avulsas.',
+      icon: ClipboardList,
+      show: true,
+    },
+    {
+      href: '/clinica/financeiro/faturamento/nfse',
+      title: 'NFS-e Fiscal',
+      description: 'Emissão de nota fiscal de serviço odontológica.',
+      icon: FileText,
+      show: true,
+    },
+    {
+      href: '/clinica/financeiro/faturamento/convenios',
+      title: 'Convênios / TISS',
+      description: 'Guias TISS, lotes e tratamento de glosas por operadora.',
+      icon: ShieldPlus,
       show: true,
     },
   ].filter((item) => item.show)
