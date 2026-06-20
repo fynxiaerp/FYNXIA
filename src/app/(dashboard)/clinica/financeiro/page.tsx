@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { TrendingUp, Receipt, FilePlus, Settings2 } from 'lucide-react'
+import { TrendingUp, Receipt, FilePlus, Settings2, GitBranch, Building2, Landmark } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { PageHeader } from '@/components/shell/PageHeader'
 import { Button } from '@/components/ui/button'
@@ -46,6 +46,27 @@ export default async function FinanceiroPage() {
       description: 'Configure lembretes automáticos por e-mail para recebíveis vencidos.',
       icon: Settings2,
       show: isAdmin,
+    },
+    {
+      href: '/clinica/financeiro/plano-de-contas',
+      title: 'Plano de Contas',
+      description: 'Estrutura hierárquica de contas contábeis da clínica.',
+      icon: GitBranch,
+      show: true,
+    },
+    {
+      href: '/clinica/financeiro/centros-de-custo',
+      title: 'Centros de Custo',
+      description: 'Agrupamentos de lançamentos por unidade ou área.',
+      icon: Building2,
+      show: true,
+    },
+    {
+      href: '/clinica/financeiro/contas-correntes',
+      title: 'Contas Correntes',
+      description: 'Contas bancárias vinculadas aos lançamentos para conciliação.',
+      icon: Landmark,
+      show: true,
     },
   ].filter((item) => item.show)
 
