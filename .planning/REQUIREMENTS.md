@@ -78,9 +78,9 @@
 - [x] **FCAD-02**: Lançamentos são classificados por conta contábil e centro de custo (rateio por unidade/área)
 
 #### OS — Serviços, OS & Faturamento (NFS-e)
-- [ ] **OS-01**: Atendimento concluído vira ordem de serviço automática com os procedimentos executados
-- [ ] **OS-02**: Usuário emite NFS-e na prefeitura do município a partir da OS
-- [ ] **OS-03**: A forma de pagamento gera as parcelas a receber (base do contas a receber e do repasse)
+- [x] **OS-01**: Atendimento concluído vira ordem de serviço automática com os procedimentos executados
+- [x] **OS-02**: Usuário emite NFS-e na prefeitura do município a partir da OS
+- [x] **OS-03**: A forma de pagamento gera as parcelas a receber (base do contas a receber e do repasse)
 
 #### FOP — Financeiro: Operação
 - [ ] **FOP-01**: Financeiro opera contas a pagar (vencimentos, baixa) integradas a fornecedores/laboratório
@@ -88,9 +88,9 @@
 - [ ] **FOP-03**: Fluxo de caixa é atualizado automaticamente a partir das baixas conciliadas
 
 #### CONV — Convênios / TISS
-- [ ] **CONV-01**: Usuário cadastra operadoras com tabelas e regras próprias
-- [ ] **CONV-02**: Sistema gera guia TISS e lote de envio/protocolo por operadora
-- [ ] **CONV-03**: Glosas são classificadas por motivo e tratadas (recurso)
+- [x] **CONV-01**: Usuário cadastra operadoras com tabelas e regras próprias
+- [x] **CONV-02**: Sistema gera guia TISS e lote de envio/protocolo por operadora
+- [x] **CONV-03**: Glosas são classificadas por motivo e tratadas (recurso)
 
 #### TRIB — Tributos, Repasses & RPA
 - [ ] **TRIB-01**: Sistema calcula o repasse do profissional sobre o valor recebido (regra por profissional/serviço)
@@ -200,12 +200,12 @@
 | LAB-02 | Phase 13 | Complete |
 | FCAD-01 | Phase 14 | Complete |
 | FCAD-02 | Phase 14 | Complete |
-| OS-01 | Phase 15 | Pending |
-| OS-02 | Phase 15 | Pending |
-| OS-03 | Phase 15 | Pending |
-| CONV-01 | Phase 15 | Pending |
-| CONV-02 | Phase 15 | Pending |
-| CONV-03 | Phase 15 | Pending |
+| OS-01 | Phase 15 | Complete |
+| OS-02 | Phase 15 | Complete |
+| OS-03 | Phase 15 | Complete |
+| CONV-01 | Phase 15 | Complete |
+| CONV-02 | Phase 15 | Complete |
+| CONV-03 | Phase 15 | Complete |
 | FOP-01 | Phase 16 | Pending |
 | FOP-02 | Phase 16 | Pending |
 | FOP-03 | Phase 16 | Pending |
