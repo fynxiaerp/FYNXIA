@@ -28,11 +28,25 @@ function isMoney2dp(n: number): boolean {
   return Number.isFinite(n) && Math.round(n * 100) === n * 100
 }
 
+// Rule 1 fix (Plan 04): z.string().uuid({ message }) only fires on invalid-format;
+// for missing/undefined fields Zod v3 fires "Required". Use required_error to match
+// the actual module's behavior (both must fire the same message for the mirror tests
+// to be self-consistent "always GREEN").
 const mirrorTransactionClassificationSchema = z.object({
   type: z.enum(['receita', 'despesa']),
   categoryId: z.string().uuid().optional().nullable(),
-  accountId: z.string().uuid({ message: 'Conta contábil obrigatória' }),
-  costCenterId: z.string().uuid({ message: 'Centro de custo obrigatório' }),
+  accountId: z
+    .string({
+      required_error: 'Conta contábil obrigatória',
+      invalid_type_error: 'Conta contábil obrigatória',
+    })
+    .uuid({ message: 'Conta contábil obrigatória' }),
+  costCenterId: z
+    .string({
+      required_error: 'Centro de custo obrigatório',
+      invalid_type_error: 'Centro de custo obrigatório',
+    })
+    .uuid({ message: 'Centro de custo obrigatório' }),
   bankAccountId: z.string().uuid().optional().nullable(),
   amount: z.number().positive().refine(isMoney2dp),
   transactionDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
