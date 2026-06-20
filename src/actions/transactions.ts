@@ -1,8 +1,7 @@
 'use server'
-import { z } from 'zod'
 import { createClient } from '@/lib/supabase/server'
 import { logBusinessEvent } from '@/lib/audit'
-import { isMoney2dp } from '@/lib/validators/charge'
+import { transactionClassificationSchema } from '@/lib/financeiro/transaction-schema'
 
 // ─── Helper: get authenticated actor ────────────────────────────────────────
 // Reuses the getActor pattern from src/actions/appointments.ts
@@ -37,38 +36,39 @@ async function getActor(): Promise<{ actor: Actor } | { error: string }> {
   return { actor }
 }
 
-// ─── Zod schema ──────────────────────────────────────────────────────────────
-// FIN-02: manual transaction entry — receita/despesa, category, value, date
+// ─── TransactionInput ─────────────────────────────────────────────────────────
+// FCAD-02: manual transaction entry now requires accountId + costCenterId (D-03a).
+// transactionClassificationSchema replaces the old transactionSchema.
+// bankAccountId optional per D-04.
 
-const transactionSchema = z.object({
-  type: z.enum(['receita', 'despesa'], {
-    errorMap: () => ({ message: 'Tipo inválido (receita ou despesa)' }),
-  }),
-  categoryId: z.string().uuid('Categoria inválida').optional().nullable(),
-  amount: z
-    .number()
-    .positive('Valor deve ser maior que zero')
-    .refine(isMoney2dp, { message: 'Valor deve ter no máximo 2 casas decimais' }),
-  transactionDate: z
-    .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Data inválida (YYYY-MM-DD)'),
-  description: z.string().max(500).optional().nullable(),
-})
-
-type TransactionInput = z.infer<typeof transactionSchema>
+// TransactionInput: accountId + costCenterId are REQUIRED by the Zod schema (D-03a) but
+// typed as optional here so the existing TransactionModal (pre-Plans 05-07) still compiles.
+// At runtime, the Zod schema rejects missing fields with the friendly UI messages.
+// Plans 05-07 will add account/CC selects to the modal and make these required in the form.
+type TransactionInput = {
+  type: 'receita' | 'despesa'
+  categoryId?: string | null
+  accountId?: string | null
+  costCenterId?: string | null
+  bankAccountId?: string | null
+  amount: number
+  transactionDate: string
+  description?: string | null
+}
 
 // ─── createTransaction ────────────────────────────────────────────────────────
-// FIN-02: manual cash entry — INSERT into financial_transactions scoped to tenant.
+// FIN-02 + FCAD-02: manual cash entry — INSERT into financial_transactions scoped to tenant.
 // T-3-ui-E: role gate (admin/dentist/receptionist/superadmin)
-// T-3-ui-V: Zod validation + amount parsed as number (not string)
+// T-3-ui-V: transactionClassificationSchema validation (accountId + costCenterId REQUIRED — D-03a)
+// T-14-09: account_id/cost_center_id are RLS-isolated FK refs; cross-tenant ids invisible to client
 
 export async function createTransaction(input: TransactionInput): Promise<{
   success: boolean
   id?: string
   error?: string
 }> {
-  // 1. Validate input
-  const parsed = transactionSchema.safeParse(input)
+  // 1. Validate input — transactionClassificationSchema enforces required accountId + costCenterId
+  const parsed = transactionClassificationSchema.safeParse(input)
   if (!parsed.success) {
     const firstError = parsed.error.errors[0]
     return { success: false, error: firstError?.message ?? 'Dados inválidos' }
@@ -89,13 +89,18 @@ export async function createTransaction(input: TransactionInput): Promise<{
 
   const supabase = await createClient()
 
-  // 3. INSERT into financial_transactions (tenant_id from actor — RLS handles isolation)
+  // 3. INSERT into financial_transactions
+  // tenant_id from actor (never from input — T-14-09)
+  // account_id + cost_center_id required for manual entries (FCAD-02 / D-03a)
   const { data: tx, error: insertError } = await supabase
     .from('financial_transactions')
     .insert({
       tenant_id: actor.tenant_id,
       type: data.type,
       category_id: data.categoryId ?? null,
+      account_id: data.accountId,
+      cost_center_id: data.costCenterId,
+      bank_account_id: data.bankAccountId ?? null,
       amount: data.amount,
       transaction_date: data.transactionDate,
       description: data.description ?? null,
@@ -117,6 +122,8 @@ export async function createTransaction(input: TransactionInput): Promise<{
       transaction_id: tx.id,
       type: data.type,
       amount: data.amount,
+      account_id: data.accountId,
+      cost_center_id: data.costCenterId,
     },
   })
 
@@ -127,6 +134,10 @@ export async function createTransaction(input: TransactionInput): Promise<{
 // FIN-01: cash flow — SELECT financial_transactions scoped to a given month.
 // RLS enforces tenant isolation automatically via createClient (authenticated session).
 
+// ─── TransactionRow ───────────────────────────────────────────────────────────
+// Extended with FCAD-02 classification columns (cost_center_id, account_id).
+// These are NULLABLE — legacy rows and webhook auto-posts may have null values.
+
 export interface TransactionRow {
   id: string
   type: string
@@ -136,9 +147,19 @@ export interface TransactionRow {
   category_id: string | null
   category_name: string | null
   posted_by: string | null
+  cost_center_id: string | null
+  account_id: string | null
 }
 
-export async function listTransactions(month: string): Promise<{
+// ─── listTransactions ─────────────────────────────────────────────────────────
+// FIN-01: cash flow — SELECT financial_transactions scoped to a given month.
+// FCAD-02 SC2: optional costCenterId / unitId filter for fluxo de caixa by unit/area.
+// RLS enforces tenant isolation automatically via createClient (authenticated session).
+
+export async function listTransactions(
+  month: string,
+  opts?: { costCenterId?: string; unitId?: string }
+): Promise<{
   success: boolean
   transactions?: TransactionRow[]
   totals?: { entradas: number; saidas: number; saldo: number }
@@ -166,15 +187,39 @@ export async function listTransactions(month: string): Promise<{
 
   const supabase = await createClient()
 
-  const { data: rows, error } = await supabase
+  // FCAD-02 SC2: resolve unitId → cost_center_ids for unit-level filter
+  let costCenterIds: string[] | null = null
+  if (opts?.unitId) {
+    const { data: ccs } = await supabase
+      .from('cost_centers')
+      .select('id')
+      .eq('unit_id', opts.unitId)
+    costCenterIds = (ccs ?? []).map((cc: { id: string }) => cc.id)
+  }
+
+  let query = supabase
     .from('financial_transactions')
     .select(
       `id, type, amount, transaction_date, description, category_id, posted_by,
+       cost_center_id, account_id,
        financial_categories(name)`
     )
     .gte('transaction_date', from)
     .lte('transaction_date', to)
     .order('transaction_date', { ascending: false })
+
+  // Apply costCenterId filter (FCAD-02 SC2)
+  if (opts?.costCenterId) {
+    query = query.eq('cost_center_id', opts.costCenterId)
+  } else if (costCenterIds !== null) {
+    if (costCenterIds.length === 0) {
+      // Unit exists but has no cost centers → return empty result
+      return { success: true, transactions: [], totals: { entradas: 0, saidas: 0, saldo: 0 } }
+    }
+    query = query.in('cost_center_id', costCenterIds)
+  }
+
+  const { data: rows, error } = await query
 
   if (error) {
     return { success: false, error: error.message }
@@ -188,6 +233,8 @@ export async function listTransactions(month: string): Promise<{
     description: string | null
     category_id: string | null
     posted_by: string | null
+    cost_center_id: string | null
+    account_id: string | null
     financial_categories: { name: string } | { name: string }[] | null
   }) => {
     const catJoin = row.financial_categories
@@ -203,6 +250,8 @@ export async function listTransactions(month: string): Promise<{
       category_id: row.category_id,
       category_name: categoryName,
       posted_by: row.posted_by,
+      cost_center_id: row.cost_center_id,
+      account_id: row.account_id,
     }
   })
 

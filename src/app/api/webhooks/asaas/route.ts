@@ -159,12 +159,34 @@ async function processWebhookEvent(
         )
       }
 
+      // D-03b + Pitfall 6: resolve default CC before insert — best-effort, never blocking.
+      // account_id cannot be resolved from receivable (receivables has no category_id) — leave null.
+      // T-14-13: any failure in CC lookup leaves cost_center_id null; handler still returns 200.
+      let defaultCostCenterId: string | null = null
+      try {
+        const { data: defaultCC } = await admin
+          .from('cost_centers')
+          .select('id')
+          .eq('clinic_id', receivable.tenant_id)
+          .eq('is_default', true)
+          .order('created_at')
+          .limit(1)
+          .maybeSingle()
+        defaultCostCenterId = defaultCC?.id ?? null
+      } catch {
+        // best-effort — failure is non-blocking (D-03b / T-14-13)
+        defaultCostCenterId = null
+      }
+
       // Auto-post income row (D-08: regime de caixa)
       await admin.from('financial_transactions').insert({
         tenant_id: receivable.tenant_id,
         receivable_id: receivable.id,
         type: 'receita',
         amount: receivable.value, // trusted local amount (CR-02)
+        account_id: null,                         // Pitfall 6: no category_id on receivable — leave null
+        cost_center_id: defaultCostCenterId,      // D-03b: default CC resolved above, null if unavailable
+        bank_account_id: null,                    // optional — not determinable via webhook
         transaction_date: new Date().toISOString().split('T')[0], // YYYY-MM-DD
         description: `Pagamento confirmado via Asaas (${event.event})`,
         posted_by: null, // auto-posted by webhook
@@ -216,12 +238,34 @@ async function processWebhookEvent(
       .update({ status: 'estornado', updated_at: new Date().toISOString() })
       .eq('id', receivable.id)
 
+    // D-03b + Pitfall 6: resolve default CC for reversal insert — best-effort, never blocking.
+    // account_id cannot be resolved from receivable — leave null (same as income insert above).
+    // T-14-13: any failure in CC lookup leaves cost_center_id null; handler still returns 200.
+    let reversalDefaultCostCenterId: string | null = null
+    try {
+      const { data: reversalCC } = await admin
+        .from('cost_centers')
+        .select('id')
+        .eq('clinic_id', receivable.tenant_id)
+        .eq('is_default', true)
+        .order('created_at')
+        .limit(1)
+        .maybeSingle()
+      reversalDefaultCostCenterId = reversalCC?.id ?? null
+    } catch {
+      // best-effort — failure is non-blocking (D-03b / T-14-13)
+      reversalDefaultCostCenterId = null
+    }
+
     // Insert negative income row (reversal) — CR-02: reverse the trusted local amount.
     await admin.from('financial_transactions').insert({
       tenant_id: receivable.tenant_id,
       receivable_id: receivable.id,
       type: 'receita',
       amount: -Math.abs(receivable.value),
+      account_id: null,                              // Pitfall 6: no category_id on receivable — leave null
+      cost_center_id: reversalDefaultCostCenterId,   // D-03b: default CC, null if unavailable
+      bank_account_id: null,                         // optional — not determinable via webhook
       transaction_date: new Date().toISOString().split('T')[0],
       description: `Estorno via Asaas (${event.event})`,
       posted_by: null,
