@@ -13,9 +13,19 @@ interface InviteAcceptFormProps {
   role: string
 }
 
+const ROLE_LABELS: Record<string, string> = {
+  admin: 'Administrador',
+  dentist: 'Dentista',
+  receptionist: 'Recepcionista',
+  patient: 'Paciente',
+  superadmin: 'Superadmin',
+}
+
 export default function InviteAcceptForm({
   token,
   email,
+  clinicName,
+  role,
 }: InviteAcceptFormProps) {
   const [isPending, startTransition] = useTransition()
   const [serverError, setServerError] = useState<string | null>(null)
@@ -41,6 +51,12 @@ export default function InviteAcceptForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      {/* IN-01: confirm the clinic and role the invite grants before activation */}
+      <p className="rounded-md bg-muted px-4 py-3 text-sm text-muted-foreground border border-border">
+        Ativando acesso a <span className="font-semibold text-foreground">{clinicName}</span> como{' '}
+        <span className="font-semibold text-foreground">{ROLE_LABELS[role] ?? role}</span>.
+      </p>
+
       {serverError && (
         <p className="rounded-md bg-destructive/10 px-4 py-3 text-sm text-destructive border border-destructive/20">
           {serverError}
