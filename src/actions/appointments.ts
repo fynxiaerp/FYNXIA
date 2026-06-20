@@ -4,6 +4,7 @@ import { logBusinessEvent } from '@/lib/audit'
 import { appointmentSchema, type AppointmentInput } from '@/lib/validators/appointment'
 import { isSlotWithinAvailability, type AvailabilityWindow, type AvailabilityException } from '@/lib/scheduling/availability'
 import { isResourceAvailable } from '@/lib/scheduling/resources'
+import { revalidatePath } from 'next/cache'
 
 // ─── Helper: get authenticated actor ────────────────────────────────────────
 
@@ -330,6 +331,37 @@ export async function updateAppointment(
     details: { appointment_id: id },
   })
 
+  // ── OS-01: Auto-create OS rascunho on transition INTO 'concluido' ─────────────
+  // Only fires when the new status is 'concluido' AND prior status was not 'concluido'.
+  // Wrapped in try/catch — OS creation failure must never block the appointment update.
+  if (input.status === 'concluido') {
+    try {
+      // Re-fetch to get the status BEFORE this update (needed for guard).
+      // We re-use the supabase client already in scope but fetch status only.
+      const { data: fresh } = await supabase
+        .from('appointments')
+        .select('status, dentist_id, patient_id, unit_id')
+        .eq('id', id)
+        .eq('tenant_id', actor.tenant_id)
+        .maybeSingle()
+
+      // fresh.status is already 'concluido' (just updated), so we can't check prior
+      // status this way. Instead, we always attempt createOsDraftFromAppointment —
+      // the partial UNIQUE index on appointment_id makes it idempotent (OS-01 Pitfall 6).
+      if (fresh) {
+        await createOsDraftFromAppointment(id, actor.tenant_id, {
+          dentistId: fresh.dentist_id,
+          patientId: fresh.patient_id,
+          unitId: fresh.unit_id ?? null,
+          createdBy: actor.id,
+        })
+      }
+    } catch (err) {
+      // Do not fail the appointment update — OS can be created manually
+      console.error('[updateAppointment] createOsDraftFromAppointment failed:', err)
+    }
+  }
+
   return { success: true }
 }
 
@@ -371,4 +403,118 @@ export async function cancelAppointment(
   })
 
   return { success: true }
+}
+
+// ─── createOsDraftFromAppointment ─────────────────────────────────────────────
+// OS-01: auto-creates an OS rascunho when an appointment is concluded.
+// Idempotent at DB level via partial UNIQUE index on appointment_id (Plan 03 T-15-18).
+// Called internally by updateAppointment — not exported as a Server Action.
+
+async function createOsDraftFromAppointment(
+  appointmentId: string,
+  tenantId: string,
+  appt: {
+    dentistId: string | null
+    patientId: string | null
+    unitId: string | null
+    createdBy: string
+  },
+): Promise<void> {
+  const supabase = await createClient()
+
+  // Resolve professional_id from professionals WHERE user_id = dentist_id
+  // (Phase 11 decision: no FK on appointments; query-time link)
+  let professionalId: string | null = null
+  if (appt.dentistId) {
+    const { data: prof } = await supabase
+      .from('professionals')
+      .select('id')
+      .eq('user_id', appt.dentistId)
+      .eq('clinic_id', tenantId)
+      .is('deleted_at', null)
+      .maybeSingle()
+    professionalId = prof?.id ?? null
+  }
+
+  // Get next OS number
+  const { data: numero, error: rpcError } = await supabase.rpc('next_os_number', {
+    p_unit_id: appt.unitId,
+  })
+  if (rpcError || !numero) {
+    throw new Error(`next_os_number RPC failed: ${rpcError?.message ?? 'no data'}`)
+  }
+
+  // Insert OS rascunho — partial UNIQUE index on appointment_id makes this idempotent:
+  // a duplicate insert raises 23505 (unique_violation) which we swallow below (Pitfall 6)
+  const { error: insertError } = await supabase
+    .from('service_orders')
+    .insert({
+      clinic_id: tenantId,
+      unit_id: appt.unitId,
+      numero: numero as string,
+      patient_id: appt.patientId,
+      appointment_id: appointmentId,
+      professional_id: professionalId,
+      pagador: 'particular', // default — user changes in OS sheet
+      status: 'rascunho',
+      total: 0,
+      desconto_total: 0,
+      acrescimo_total: 0,
+      created_by: appt.createdBy,
+    })
+
+  if (insertError) {
+    // 23505 = unique_violation — OS already exists for this appointment (idempotent, OS-01)
+    if (insertError.code === '23505') return
+    throw new Error(insertError.message)
+  }
+
+  // Optionally seed items from appointment_procedures (if any exist)
+  const { data: procedures } = await supabase
+    .from('appointment_procedures')
+    .select('service_id, description, quantity, valor_unitario, professional_id, tuss_code, dente, face, account_id, cost_center_id')
+    .eq('appointment_id', appointmentId)
+
+  if (procedures && procedures.length > 0) {
+    // Fetch the newly inserted OS id for item linking
+    const { data: newOs } = await supabase
+      .from('service_orders')
+      .select('id')
+      .eq('appointment_id', appointmentId)
+      .eq('clinic_id', tenantId)
+      .maybeSingle()
+
+    if (newOs) {
+      const itemRows = procedures.map((p) => ({
+        service_order_id: newOs.id,
+        service_id: p.service_id ?? null,
+        professional_id: p.professional_id ?? professionalId,
+        description: p.description ?? '',
+        tuss_code: p.tuss_code ?? null,
+        quantity: p.quantity ?? 1,
+        valor_unitario: p.valor_unitario ?? 0,
+        desconto: 0,
+        valor_total: (p.valor_unitario ?? 0) * (p.quantity ?? 1),
+        dente: p.dente ?? null,
+        face: p.face ?? null,
+        account_id: p.account_id ?? null,
+        cost_center_id: p.cost_center_id ?? null,
+      }))
+
+      const { error: itemsError } = await supabase
+        .from('service_order_items')
+        .insert(itemRows)
+
+      if (!itemsError && itemRows.length > 0) {
+        // Recompute OS total from seeded items
+        const total = itemRows.reduce((s, i) => s + i.valor_total, 0)
+        await supabase
+          .from('service_orders')
+          .update({ total })
+          .eq('id', newOs.id)
+      }
+    }
+  }
+
+  try { revalidatePath('/clinica/financeiro/faturamento/os') } catch { /* non-Next env */ }
 }
