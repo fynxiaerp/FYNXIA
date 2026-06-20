@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 15-05-PLAN.md
-last_updated: "2026-06-20T14:54:23.285Z"
+stopped_at: Completed 15-06-PLAN.md
+last_updated: "2026-06-20T15:19:12.167Z"
 last_activity: 2026-06-20
 progress:
   total_phases: 15
   completed_phases: 8
   total_plans: 62
-  completed_plans: 58
-  percent: 94
+  completed_plans: 59
+  percent: 95
 ---
 
 # FYNXIA ERP — Project State
@@ -119,6 +119,7 @@ Plan: 3 of 9
 | Phase 15 P01 | 5 | 2 tasks | 5 files |
 | Phase 15 P02 | 4 | 2 tasks | 4 files |
 | Phase 15 P03 | 324 | 3 tasks | 4 files |
+| Phase 15 P06 | 21 | 3 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -126,6 +127,9 @@ Plan: 3 of 9
 
 | Decision | Rationale | Date |
 |----------|-----------|------|
+| StubFiscalProvider used when no integration_connectors nfse credentials | Zero external setup for dev/test (OS-02); credential-gated factory mirrors PaymentGateway pattern | 2026-06-20 |
+| cancelarNfse routes through createApprovalRequest alçada before provider.cancel | Authorization required before touching fiscal aggregator; Phase 10 approval ensures audit trail (D-19) | 2026-06-20 |
+| getNfseDocumentUrl returns 60s signed URL only; getNfses never selects storage_path | Double protection T-15-23: type-level (never selected) + runtime (signed URL TTL); mirrors Phase 8 document pattern | 2026-06-20 |
 | OS write roles include dentist (creates rascunho on conclude); finer faturar gate in Server Action not RLS | RLS cannot express rascunho→faturada state machine; Server Action enforces transition | 2026-06-20 |
 | unit_os_counters separate from unit_fiscal_config.proximo_numero_rps | RPS != OS numbering; dedicated counter table avoids semantic collision (D-25/A1) | 2026-06-20 |
 | glosa_motivos WITH CHECK = get_my_tenant_id() prevents NULL-clinic ANS seed mutation | NULL-clinic rows are shared ANS reference data; tenants must not edit them (T-15-08) | 2026-06-20 |
@@ -246,7 +250,7 @@ Plan: 3 of 9
 
 ## Session Continuity
 
-**Stopped at:** Completed 15-05-PLAN.md
+**Stopped at:** Completed 15-06-PLAN.md
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 
