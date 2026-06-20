@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
-status: executing
-stopped_at: Completed 14-06-PLAN.md — CostCentersTable + BankAccountsTable + centros-de-custo + contas-correntes routes; awaiting consolidated visual verify
-last_updated: "2026-06-20T01:42:45Z"
+status: planning
+stopped_at: Completed 14-05-PLAN.md — plano-de-contas UI tree + AccountFormDialog + hub cards; awaiting human-verify checkpoint
+last_updated: "2026-06-20T02:14:05.197Z"
 last_activity: 2026-06-20
 progress:
   total_phases: 15
-  completed_phases: 7
+  completed_phases: 8
   total_plans: 53
-  completed_plans: 52
-  percent: 98
+  completed_plans: 53
+  percent: 100
 ---
 
 # FYNXIA ERP — Project State
@@ -38,9 +38,9 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 Phase: 14 (financeiro-cadastros-base) — EXECUTING
 Plan: 1 of 7
 **Milestone:** v2.0 — Produto Completo (27 módulos, blocos A–E)
-**Phase:** 14
+**Phase:** 15
 **Plan:** Not started
-**Status:** Executing Phase 14
+**Status:** Ready to plan
 **Last activity:** 2026-06-20
 
 ---
