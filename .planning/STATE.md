@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 14-02-PLAN.md — migrations + seed files
-last_updated: "2026-06-20T00:41:41.132Z"
+stopped_at: Completed 14-04-PLAN.md — pure libs + cadastro server actions + classification enforcement
+last_updated: "2026-06-20T01:08:04.313Z"
 last_activity: 2026-06-20
 progress:
   total_phases: 15
   completed_phases: 7
   total_plans: 53
-  completed_plans: 48
-  percent: 91
+  completed_plans: 50
+  percent: 94
 ---
 
 # FYNXIA ERP — Project State
@@ -113,6 +113,7 @@ Plan: 1 of 7
 | Phase 13 P04 | 6 | 2 tasks | 4 files |
 | Phase 14-financeiro-cadastros-base P01 | 8 | 2 tasks | 4 files |
 | Phase 14 P02 | 9 | 3 tasks | 3 files |
+| Phase 14 P04 | 35 | 3 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -193,6 +194,9 @@ Plan: 1 of 7
 | /painel added to isPublicRoute only — not ROUTE_MODULE_MAP | Public TV panel needs no module resolution; routeToModule returning null is correct for fully public routes | 2026-06-15 |
 | financial_transaction_id is FK column ON lab_orders pointing AT financial_transactions(id) — financial_transactions NOT altered | Plan 04 inserts the despesa row; this plan only wires the back-reference column (T-13-11 accepted) | 2026-06-19 |
 | labOrderSchema stages optional array (not required) — forms use RHF defaultValues not Zod .default() | D-133: no .default() in Zod schemas to avoid RHF v7 resolver type mismatch | 2026-06-19 |
+| Zod required_error on z.string() needed for missing-field custom messages in Zod v3 | z.string().uuid({ message }) fires only on invalid-format, not missing/undefined; required_error + invalid_type_error needed to fire custom message when field absent | 2026-06-20 |
+| TransactionInput typed optional accountId/costCenterId for pre-Plans-05-07 modal compat | TransactionModal calls createTransaction without new fields; Zod schema enforces required at runtime; Plans 05-07 add selectors | 2026-06-20 |
+| listTransactions gets opts.costCenterId/unitId filter params for FCAD-02 SC2 | fluxo-de-caixa page needs unit/CC-scoped totals; unitId resolves to CC ids via cost_centers WHERE unit_id | 2026-06-20 |
 
 ### Architecture Constraints Locked
 
@@ -229,7 +233,7 @@ Plan: 1 of 7
 
 ## Session Continuity
 
-**Stopped at:** Completed 14-02-PLAN.md — migrations + seed files
+**Stopped at:** Completed 14-04-PLAN.md — pure libs + cadastro server actions + classification enforcement
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 
