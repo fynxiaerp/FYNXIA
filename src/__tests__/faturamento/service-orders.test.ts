@@ -74,28 +74,28 @@ describe('service-orders.ts — isValidOsTransition (OS-01 state machine)', () =
   })
 
   it('rascunho → faturada is allowed', async () => {
-    const { isValidOsTransition } = await import(OS_ACTION_MOD) as {
+    const { isValidOsTransition } = await import(OS_MATH_MOD) as {
       isValidOsTransition: (from: string, to: string) => boolean
     }
     expect(isValidOsTransition('rascunho', 'faturada')).toBe(true)
   })
 
   it('rascunho → cancelada is allowed', async () => {
-    const { isValidOsTransition } = await import(OS_ACTION_MOD) as {
+    const { isValidOsTransition } = await import(OS_MATH_MOD) as {
       isValidOsTransition: (from: string, to: string) => boolean
     }
     expect(isValidOsTransition('rascunho', 'cancelada')).toBe(true)
   })
 
   it('faturada → rascunho is REJECTED', async () => {
-    const { isValidOsTransition } = await import(OS_ACTION_MOD) as {
+    const { isValidOsTransition } = await import(OS_MATH_MOD) as {
       isValidOsTransition: (from: string, to: string) => boolean
     }
     expect(isValidOsTransition('faturada', 'rascunho')).toBe(false)
   })
 
   it('cancelada → anything is REJECTED', async () => {
-    const { isValidOsTransition } = await import(OS_ACTION_MOD) as {
+    const { isValidOsTransition } = await import(OS_MATH_MOD) as {
       isValidOsTransition: (from: string, to: string) => boolean
     }
     expect(isValidOsTransition('cancelada', 'rascunho')).toBe(false)

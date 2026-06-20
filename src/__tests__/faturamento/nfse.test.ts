@@ -103,8 +103,11 @@ describe('src/lib/fiscal/iss.ts — computeIss (D-25)', () => {
       computeIss: (valorServicos: number, aliquota: number) => number
     }
     const result = computeIss(333.33, 0.05)
-    // Must not produce more than 2 decimal places (integer-cent)
-    expect(Math.round(result * 100)).toBe(result * 100)
+    // Must not produce more than 2 decimal places (integer-cent).
+    // Compare against the 2dp-rounded value rather than `result * 100`,
+    // because multiplying a clean 2dp float by 100 reintroduces IEEE-754
+    // drift (e.g. 16.67 * 100 === 1667.0000000000002).
+    expect(result).toBe(Number(result.toFixed(2)))
   })
 
   it('computeIss(1000, 0.02) === 20', async () => {
