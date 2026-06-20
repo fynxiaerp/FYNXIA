@@ -233,7 +233,7 @@ Plans:
 - [x] 14-02-PLAN.md — Wave 1: Migrations (chart_of_accounts + cost_centers + bank_accounts + ALTERs + RLS + seed/backfill) (FCAD-01/02)
 - [x] 14-03-PLAN.md — Wave 2: [BLOCKING] supabase db push (3 migrations, project jqjwyqlbbuqnrffdnlpp) + gen types
 - [x] 14-04-PLAN.md — Wave 3: Server Actions (chart/cost-centers/bank-accounts/categories) + buildTree lib + required classification on createTransaction + non-blocking Asaas webhook resolver (FCAD-01/02)
-- [ ] 14-05-PLAN.md — Wave 4: Plano de Contas UI (Accordion tree + AccountFormDialog) + financeiro hub cards (FCAD-01)
+- [x] 14-05-PLAN.md — Wave 4: Plano de Contas UI (Accordion tree + AccountFormDialog) + financeiro hub cards (FCAD-01)
 - [ ] 14-06-PLAN.md — Wave 4: Centros de Custo + Contas Correntes UI (tabular cadastros) (FCAD-01)
 - [ ] 14-07-PLAN.md — Wave 4: Classificação no TransactionModal + Categorias→conta mapping + filtro unidade/CC no fluxo de caixa (FCAD-02)
 **v1 reuse**: Expande schema `financial_categories` (Phase 3); reutiliza estrutura de `financial_transactions`; adiciona `chart_of_accounts` e `cost_centers`
@@ -365,7 +365,7 @@ Plans:
 | 11. Profissionais & Recursos | v2.0 | 7/8 | Complete    | 2026-06-15 |
 | 12. Receituário & Teleodontologia | v2.0 | 7/7 | Complete    | 2026-06-19 |
 | 13. Esterilização/CME & Laboratório de Prótese | v2.0 | 7/7 | Complete    | 2026-06-19 |
-| 14. Financeiro — Cadastros Base | v2.0 | 4/7 | In Progress|  |
+| 14. Financeiro — Cadastros Base | v2.0 | 5/7 | In Progress|  |
 | 15. Faturamento/NFS-e & Convênios/TISS | v2.0 | 0/? | Not started | - |
 | 16. Contas a Pagar, Conciliação & Tributos | v2.0 | 0/? | Not started | - |
 | 17. Estoque & Materiais | v2.0 | 0/? | Not started | - |
