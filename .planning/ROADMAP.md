@@ -43,7 +43,8 @@ Full detail archived in [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
  (completed 2026-06-15)
 - [x] **Phase 12: Receituário & Teleodontologia** — Documentos clínicos assinados (receita/atestado/exame) e teleconsultas registradas no prontuário
  (completed 2026-06-19)
-- [x] **Phase 13: Esterilização/CME & Laboratório de Prótese** — Controle de ciclos de esterilização com rastreabilidade e gestão de ordens de serviço protéticas (completed 2026-06-19)
+- [x] **Phase 13: Esterilização/CME & Laboratório de Prótese** — Controle de ciclos de esterilização com rastreabilidade e gestão de ordens de serviço protéticas
+ (completed 2026-06-19)
 
 **Bloco C — Financeiro**
 
@@ -226,7 +227,15 @@ Plans:
 **Success Criteria** (what must be TRUE):
   1. Financeiro cria e edita o plano de contas em estrutura hierárquica (receitas/despesas/grupos); a árvore é visualizada na tela de cadastro
   2. Lançamento financeiro classifica conta contábil e centro de custo obrigatoriamente; o filtro por unidade/centro de custo funciona nas telas de fluxo de caixa e relatórios
-**Plans**: TBD
+**Plans**: 7 plans
+Plans:
+- [ ] 14-01-PLAN.md — Wave 0: RED test scaffolds (migrations source-inspection + buildTree + Zod classification + Phase 3 regression guard)
+- [ ] 14-02-PLAN.md — Wave 1: Migrations (chart_of_accounts + cost_centers + bank_accounts + ALTERs + RLS + seed/backfill) (FCAD-01/02)
+- [ ] 14-03-PLAN.md — Wave 2: [BLOCKING] supabase db push (3 migrations, project jqjwyqlbbuqnrffdnlpp) + gen types
+- [ ] 14-04-PLAN.md — Wave 3: Server Actions (chart/cost-centers/bank-accounts/categories) + buildTree lib + required classification on createTransaction + non-blocking Asaas webhook resolver (FCAD-01/02)
+- [ ] 14-05-PLAN.md — Wave 4: Plano de Contas UI (Accordion tree + AccountFormDialog) + financeiro hub cards (FCAD-01)
+- [ ] 14-06-PLAN.md — Wave 4: Centros de Custo + Contas Correntes UI (tabular cadastros) (FCAD-01)
+- [ ] 14-07-PLAN.md — Wave 4: Classificação no TransactionModal + Categorias→conta mapping + filtro unidade/CC no fluxo de caixa (FCAD-02)
 **v1 reuse**: Expande schema `financial_categories` (Phase 3); reutiliza estrutura de `financial_transactions`; adiciona `chart_of_accounts` e `cost_centers`
 **UI hint**: yes
 
