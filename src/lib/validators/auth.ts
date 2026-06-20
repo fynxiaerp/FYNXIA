@@ -23,11 +23,6 @@ export const signupSchema = z.object({
     .regex(/^\(\d{2}\)\s9?\d{4}-\d{4}$/, 'Telefone inválido — use (11) 99999-9999'),
 })
 
-export const inviteSchema = z.object({
-  email: z.string().email('E-mail inválido'),
-  role: z.enum(['admin', 'dentist', 'receptionist', 'patient']),
-})
-
 export const resetPasswordSchema = z.object({
   password: z.string().min(8, 'Senha deve ter pelo menos 8 caracteres'),
 })
@@ -38,6 +33,5 @@ export const forgotPasswordSchema = z.object({
 
 export type LoginInput = z.infer<typeof loginSchema>
 export type SignupInput = z.infer<typeof signupSchema>
-export type InviteInput = z.infer<typeof inviteSchema>
 export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>
 export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>
