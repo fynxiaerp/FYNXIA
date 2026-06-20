@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 14-01-PLAN.md — Wave 0 RED scaffolds
-last_updated: "2026-06-20T00:27:13.452Z"
+stopped_at: Completed 14-02-PLAN.md — migrations + seed files
+last_updated: "2026-06-20T00:41:41.132Z"
 last_activity: 2026-06-20
 progress:
   total_phases: 15
   completed_phases: 7
   total_plans: 53
-  completed_plans: 47
-  percent: 89
+  completed_plans: 48
+  percent: 91
 ---
 
 # FYNXIA ERP — Project State
@@ -112,6 +112,7 @@ Plan: 1 of 7
 | Phase 13 P02 | 4 | 2 tasks | 4 files |
 | Phase 13 P04 | 6 | 2 tasks | 4 files |
 | Phase 14-financeiro-cadastros-base P01 | 8 | 2 tasks | 4 files |
+| Phase 14 P02 | 9 | 3 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -228,7 +229,7 @@ Plan: 1 of 7
 
 ## Session Continuity
 
-**Stopped at:** Completed 14-01-PLAN.md — Wave 0 RED scaffolds
+**Stopped at:** Completed 14-02-PLAN.md — migrations + seed files
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 
