@@ -98,3 +98,9 @@ CREATE TABLE public.audit_logs_2026_07 PARTITION OF public.audit_logs
   FOR VALUES FROM ('2026-07-01') TO ('2026-08-01');
 CREATE TABLE public.audit_logs_2026_08 PARTITION OF public.audit_logs
   FOR VALUES FROM ('2026-08-01') TO ('2026-09-01');
+-- IN-04: DEFAULT partition as a safety net so inserts past the explicit ranges
+-- (e.g. from September 2026 onward) never fail before a month partition is added.
+-- Month partitions should still be provisioned ahead of each boundary via a
+-- recurring migration or pg_cron job; this DEFAULT prevents audit-log data loss
+-- if one is missed.
+CREATE TABLE public.audit_logs_default PARTITION OF public.audit_logs DEFAULT;
