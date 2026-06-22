@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: "Completed 16-04-PLAN.md (Wave 1 pure libs: tax-tables, payout-math, reconciliation, ofx-parser, ReinfProvider, validators)"
-last_updated: "2026-06-22T12:55:22.578Z"
+stopped_at: "Completed 16-05-PLAN.md (Wave 2 BLOCKING: 7 migrations applied to jqjwyqlbbuqnrffdnlpp + database.types.ts regenerated)"
+last_updated: "2026-06-22T14:33:17.144Z"
 last_activity: 2026-06-22
 progress:
   total_phases: 15
   completed_phases: 9
   total_plans: 72
-  completed_plans: 66
-  percent: 92
+  completed_plans: 67
+  percent: 93
 ---
 
 # FYNXIA ERP — Project State
@@ -29,13 +29,13 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 
 **Stack:** Next.js 15 + TypeScript (strict) + Supabase (sa-east-1) + Vercel (gru1) + shadcn/ui + Tailwind v4
 
-**Current focus:** Phase 16 — Contas a Pagar, Conciliação & Tributos
+**Current focus:** Phase 16 — contas-a-pagar-concilia-o-tributos
 
 ---
 
 ## Current Position
 
-Phase: 16 (Contas a Pagar, Conciliação & Tributos) — EXECUTING
+Phase: 16 (contas-a-pagar-concilia-o-tributos) — EXECUTING
 Plan: 1 of 10
 **Milestone:** v2.0 — Produto Completo (27 módulos, blocos A–E)
 **Phase:** 15
@@ -123,6 +123,7 @@ Plan: 1 of 10
 | Phase 15 P07 | 7 | 2 tasks | 6 files |
 | Phase 16 P01 | 11 | 4 tasks | 13 files |
 | Phase 16 P03 | 4 | 3 tasks | 3 files |
+| Phase 16 P05 | 8 | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -257,7 +258,7 @@ Plan: 1 of 10
 
 ## Session Continuity
 
-**Stopped at:** Completed 16-04-PLAN.md (Wave 1 pure libs: tax-tables, payout-math, reconciliation, ofx-parser, ReinfProvider, validators)
+**Stopped at:** Completed 16-05-PLAN.md (Wave 2 BLOCKING: 7 migrations applied to jqjwyqlbbuqnrffdnlpp + database.types.ts regenerated)
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 
