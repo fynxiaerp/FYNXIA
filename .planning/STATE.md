@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: "Completed 16-05-PLAN.md (Wave 2 BLOCKING: 7 migrations applied to jqjwyqlbbuqnrffdnlpp + database.types.ts regenerated)"
-last_updated: "2026-06-22T14:33:17.144Z"
+stopped_at: "Completed 16-06-PLAN.md (Wave 3: suppliers + payables + recorrente Cron)"
+last_updated: "2026-06-22T14:48:01.321Z"
 last_activity: 2026-06-22
 progress:
   total_phases: 15
   completed_phases: 9
   total_plans: 72
-  completed_plans: 67
-  percent: 93
+  completed_plans: 68
+  percent: 94
 ---
 
 # FYNXIA ERP — Project State
@@ -124,6 +124,7 @@ Plan: 1 of 10
 | Phase 16 P01 | 11 | 4 tasks | 13 files |
 | Phase 16 P03 | 4 | 3 tasks | 3 files |
 | Phase 16 P05 | 8 | 2 tasks | 1 files |
+| Phase 16 P06 | 20 | 3 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -258,7 +259,7 @@ Plan: 1 of 10
 
 ## Session Continuity
 
-**Stopped at:** Completed 16-05-PLAN.md (Wave 2 BLOCKING: 7 migrations applied to jqjwyqlbbuqnrffdnlpp + database.types.ts regenerated)
+**Stopped at:** Completed 16-06-PLAN.md (Wave 3: suppliers + payables + recorrente Cron)
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 
