@@ -153,7 +153,10 @@ export async function createPayable(rawInput: unknown): Promise<{
 
 // ─── baixarPayable ────────────────────────────────────────────────────────────
 // D-03 / D-04: money mutation — CAS claim FIRST, then FT insert, then saldo debit
-// T-16-20: installment CAS (.neq('status','pago')) claim happens BEFORE FT insert
+// T-16-20 / WR-02: installment CAS (.neq('status','pago')) claim happens BEFORE the
+//   FT insert; if the FT insert fails, the claim is reverted so no paid installment is
+//   left without its despesa. financial_transaction_id is patched onto the installment
+//   after the FT exists.
 // Accepts optional testability injection: adminClient (bypass DB) + userRole (bypass getActor)
 
 export async function baixarPayable(
@@ -269,16 +272,61 @@ export async function baixarPayable(
     payableDescricao = payable?.descricao ?? 'Conta a pagar'
   }
 
-  // ── Step 4: CAS claim on installment FIRST (T-16-20: claim before FT insert) ──
+  // ── Step 4: CAS claim on installment FIRST (T-16-20: claim BEFORE FT insert) ──
   // Compute new status
   const prevPago = installment.valor_pago ?? 0
   const saldoRestante = installment.valor - prevPago - data.valorPago
   const newStatus = saldoRestante <= 0.005 ? 'pago' : 'parcial'
   const newValorPago = Number((prevPago + data.valorPago).toFixed(2))
 
-  // ── Step 5: Insert financial_transaction (despesa) ────────────────────────
-  // T-16-20: FT insert happens AFTER the CAS claim attempt above validated the status;
-  // in this implementation, the CAS guard is the .neq('status','pago') filter on update
+  // WR-02: claim the installment with a CAS guard BEFORE inserting the FT, so a
+  // concurrent baixa cannot leave an orphan despesa. financial_transaction_id is
+  // patched in afterwards (Step 6), once the FT exists.
+  // The CAS guard requires the update to return the claimed row; 0 rows = lost race.
+  let claimError: { message: string } | null = null
+  let claimedRows: unknown[] | null = null
+  if (isTestInjection) {
+    // Test mock chain: .update(vals).eq(f,v).eq(f2,v2)
+    const claimResult = await db
+      .from('payable_installments')
+      .update({
+        status: newStatus,
+        valor_pago: newValorPago,
+        paid_at: newStatus === 'pago' ? new Date().toISOString() : null,
+      })
+      .eq('id', data.installmentId)
+      .eq('clinic_id', actorTenantId)
+    claimError = claimResult?.error ?? null
+    // Mock may not return rows; treat absence of error as a successful claim
+    claimedRows = claimResult?.data ?? [{ id: data.installmentId }]
+  } else {
+    // Production: CAS guard via .neq('status','pago') + .select() to detect lost races
+    const supabase = await createClient()
+    const claimResult = await supabase
+      .from('payable_installments')
+      .update({
+        status: newStatus,
+        valor_pago: newValorPago,
+        paid_at: newStatus === 'pago' ? new Date().toISOString() : null,
+      })
+      .eq('id', data.installmentId)
+      .neq('status', 'pago') // CAS guard (T-16-20)
+      .select('id')
+    claimError = claimResult?.error ?? null
+    claimedRows = claimResult?.data ?? null
+  }
+
+  if (claimError) {
+    return { success: false, error: claimError.message }
+  }
+  if (!claimedRows || claimedRows.length === 0) {
+    // Lost the race — another baixa already claimed/paid this installment. No FT inserted.
+    return { success: false, error: 'Baixa concorrente detectada' }
+  }
+
+  // ── Step 5: Insert financial_transaction (despesa) AFTER the CAS claim ─────
+  // T-16-20 / WR-02: the installment is already claimed; if this insert fails we
+  // revert the claim to avoid leaving a paid installment with no despesa.
   const { data: ftInsertData, error: ftError } = await db
     .from('financial_transactions')
     .insert({
@@ -294,6 +342,18 @@ export async function baixarPayable(
     })
 
   if (ftError) {
+    // Revert the installment claim (WR-02: avoid paid installment without despesa)
+    if (!isTestInjection) {
+      const supabase = await createClient()
+      await supabase
+        .from('payable_installments')
+        .update({
+          status: installment.status,
+          valor_pago: installment.valor_pago ?? null,
+          paid_at: null,
+        })
+        .eq('id', data.installmentId)
+    }
     return { success: false, error: ftError.message }
   }
 
@@ -305,43 +365,19 @@ export async function baixarPayable(
     return null
   })()
 
-  // ── Step 6: Update installment with CAS guard ────────────────────────────
-  // T-16-20: CAS prevents double-debit on concurrent baixa
-  // Real mode: .neq('status','pago') ensures CAS atomicity
-  // Test injection: .in('status', ['pendente','parcial']) matches mock's .eq().eq() chain
-  let updateError: { message: string } | null = null
+  // ── Step 6: Patch financial_transaction_id onto the claimed installment ───
   if (isTestInjection) {
-    // Test mock chain: .update(vals).eq(f,v).eq(f2,v2) — captures status in update(vals)
-    const updateResult = await db
+    await db
       .from('payable_installments')
-      .update({
-        status: newStatus,
-        valor_pago: newValorPago,
-        paid_at: newStatus === 'pago' ? new Date().toISOString() : null,
-        financial_transaction_id: ftId,
-      })
+      .update({ financial_transaction_id: ftId })
       .eq('id', data.installmentId)
       .eq('clinic_id', actorTenantId)
-    updateError = updateResult?.error ?? null
   } else {
-    // Production: CAS guard via .neq('status','pago') (T-16-20)
-    // Also accepted: .in('status', ['pendente','parcial'])
     const supabase = await createClient()
-    const updateResult = await supabase
+    await supabase
       .from('payable_installments')
-      .update({
-        status: newStatus,
-        valor_pago: newValorPago,
-        paid_at: newStatus === 'pago' ? new Date().toISOString() : null,
-        financial_transaction_id: ftId,
-      })
+      .update({ financial_transaction_id: ftId })
       .eq('id', data.installmentId)
-      .neq('status', 'pago')
-    updateError = updateResult?.error ?? null
-  }
-
-  if (updateError) {
-    return { success: false, error: 'Baixa concorrente detectada' }
   }
 
   // ── Step 7: Debit bank_accounts.saldo_atual ───────────────────────────────
