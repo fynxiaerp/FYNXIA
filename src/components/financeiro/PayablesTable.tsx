@@ -152,13 +152,15 @@ function CancelPayableDialog({ payableId, canWrite }: { payableId: string; canWr
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <DropdownMenuItem
-          className="text-destructive focus:text-destructive"
-          onSelect={(e) => e.preventDefault()}
-        >
-          Cancelar
-        </DropdownMenuItem>
+      <AlertDialogTrigger
+        render={
+          <DropdownMenuItem
+            className="text-destructive focus:text-destructive"
+            onSelect={(e) => e.preventDefault()}
+          />
+        }
+      >
+        Cancelar
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
@@ -308,10 +310,10 @@ export function PayablesTable({
         if (!canWrite) {
           return (
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="size-8 p-0">
+              <DropdownMenuTrigger
+          render={<button type="button" className="flex size-8 items-center justify-center rounded-md hover:bg-accent" aria-label="Ações" />}
+        >
                   <MoreHorizontal className="size-4" />
-                </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem>Ver Detalhes</DropdownMenuItem>
@@ -322,10 +324,10 @@ export function PayablesTable({
 
         return (
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="size-8 p-0">
+            <DropdownMenuTrigger
+          render={<button type="button" className="flex size-8 items-center justify-center rounded-md hover:bg-accent" aria-label="Ações" />}
+        >
                 <MoreHorizontal className="size-4" />
-              </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               {firstPendingInst && (

@@ -63,8 +63,11 @@ function splitInstallments(
 // ─── Helper: advance due date by months, day-clamped to ≤28 ─────────────────
 
 function addMonthsClamped(dateStr: string, months: number): string {
-  const [y, m, d] = dateStr.split('-').map(Number)
-  let newYear = y + Math.floor((m - 1 + months) / 12)
+  const parts = dateStr.split('-').map(Number)
+  const y = parts[0] ?? 2026
+  const m = parts[1] ?? 1
+  const d = parts[2] ?? 1
+  const newYear = y + Math.floor((m - 1 + months) / 12)
   const newMonth = ((m - 1 + months) % 12) + 1
   const dayInMonth = Math.min(d, 28) // day-clamped ≤28 per plan spec
   return `${newYear}-${String(newMonth).padStart(2, '0')}-${String(dayInMonth).padStart(2, '0')}`

@@ -156,7 +156,7 @@ export async function runAutoReconciliation(bankAccountId: string): Promise<{
     if (!match) continue
 
     // CAS UPDATE on statement_line (only if still 'pendente')
-    const { count: lineUpdated } = await supabase
+    const { data: lineUpdated } = await supabase
       .from('statement_lines')
       .update({
         reconciliation_status: 'conciliado',
@@ -164,12 +164,12 @@ export async function runAutoReconciliation(bankAccountId: string): Promise<{
       })
       .eq('id', line.id)
       .eq('reconciliation_status', 'pendente') // CAS guard (T-16-34)
-      .select('id', { count: 'exact', head: true })
+      .select('id')
 
-    if (!lineUpdated || lineUpdated === 0) continue // concorrently updated — skip
+    if (!lineUpdated || lineUpdated.length === 0) continue // concorrently updated — skip
 
     // CAS UPDATE on financial_transaction (only if still 'pendente')
-    const { count: txUpdated } = await supabase
+    const { data: txUpdated } = await supabase
       .from('financial_transactions')
       .update({
         reconciliation_status: 'conciliado',
@@ -177,9 +177,9 @@ export async function runAutoReconciliation(bankAccountId: string): Promise<{
       })
       .eq('id', match.transaction_id)
       .eq('reconciliation_status', 'pendente') // CAS guard (T-16-34)
-      .select('id', { count: 'exact', head: true })
+      .select('id')
 
-    if (!txUpdated || txUpdated === 0) {
+    if (!txUpdated || txUpdated.length === 0) {
       // TX was concurrently matched — rollback the line update
       await supabase
         .from('statement_lines')
@@ -281,7 +281,7 @@ export async function confirmMatch(
   const supabase = await createClient()
 
   // CAS UPDATE on statement_line (T-16-34)
-  const { count: lineUpdated } = await supabase
+  const { data: lineUpdated } = await supabase
     .from('statement_lines')
     .update({
       reconciliation_status: 'conciliado',
@@ -289,14 +289,14 @@ export async function confirmMatch(
     })
     .eq('id', statementLineId)
     .eq('reconciliation_status', 'pendente') // CAS guard
-    .select('id', { count: 'exact', head: true })
+    .select('id')
 
-  if (!lineUpdated || lineUpdated === 0) {
+  if (!lineUpdated || lineUpdated.length === 0) {
     return { success: false, error: 'Conciliação concorrente detectada' }
   }
 
   // CAS UPDATE on financial_transaction (T-16-34)
-  const { count: txUpdated } = await supabase
+  const { data: txUpdated } = await supabase
     .from('financial_transactions')
     .update({
       reconciliation_status: 'conciliado',
@@ -304,9 +304,9 @@ export async function confirmMatch(
     })
     .eq('id', transactionId)
     .eq('reconciliation_status', 'pendente') // CAS guard
-    .select('id', { count: 'exact', head: true })
+    .select('id')
 
-  if (!txUpdated || txUpdated === 0) {
+  if (!txUpdated || txUpdated.length === 0) {
     // TX was concurrently matched — rollback the line update
     await supabase
       .from('statement_lines')
@@ -393,7 +393,7 @@ export async function createReconciledTransaction(input: {
   }
 
   // Update statement_line — CAS guard (only if still 'pendente')
-  const { count: lineUpdated } = await supabase
+  const { data: lineUpdated } = await supabase
     .from('statement_lines')
     .update({
       reconciliation_status: 'conciliado',
@@ -401,9 +401,9 @@ export async function createReconciledTransaction(input: {
     })
     .eq('id', input.statementLineId)
     .eq('reconciliation_status', 'pendente') // CAS guard (T-16-34)
-    .select('id', { count: 'exact', head: true })
+    .select('id')
 
-  if (!lineUpdated || lineUpdated === 0) {
+  if (!lineUpdated || lineUpdated.length === 0) {
     // Rollback the inserted transaction
     await supabase.from('financial_transactions').delete().eq('id', tx.id)
     return { success: false, error: 'Conciliação concorrente detectada' }
@@ -745,7 +745,7 @@ export async function reconcileLoteConvenio(input: {
     }
 
     // CAS UPDATE tiss_guide status → 'paga' (only if still in a resolvable status)
-    const { count: guideUpdated } = await supabase
+    const { data: guideUpdated } = await supabase
       .from('tiss_guides')
       .update({
         status: 'paga',
@@ -755,9 +755,9 @@ export async function reconcileLoteConvenio(input: {
       .eq('id', item.receivableId)
       .in('status', ['em_analise', 'autorizada']) // CAS: only settle open/authorized guides
       .eq('clinic_id', actor.tenant_id)           // tenant isolation double-check
-      .select('id', { count: 'exact', head: true })
+      .select('id')
 
-    if (guideUpdated && guideUpdated > 0) {
+    if (guideUpdated && guideUpdated.length > 0) {
       baixados++
       loweredGuideIds.push(item.receivableId)
     }

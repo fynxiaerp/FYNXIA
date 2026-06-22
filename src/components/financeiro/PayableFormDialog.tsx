@@ -398,24 +398,26 @@ export function PayableFormDialog({
                   <FormItem>
                     <FormLabel>Data de Vencimento *</FormLabel>
                     <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant="outline"
-                            className={cn(
-                              'w-full justify-start text-left font-normal bg-background border-border',
-                              !field.value && 'text-muted-foreground'
-                            )}
-                          >
-                            <CalendarIcon className="mr-2 size-4" />
-                            {field.value
-                              ? format(new Date(field.value + 'T12:00:00'), 'dd/MM/yyyy', {
-                                  locale: ptBR,
-                                })
-                              : 'Selecione a data'}
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
+                      <FormControl>
+                        <PopoverTrigger
+                          render={
+                            <button
+                              type="button"
+                              className={cn(
+                                'flex h-9 w-full items-center rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+                                !field.value && 'text-muted-foreground'
+                              )}
+                            >
+                              <CalendarIcon className="mr-2 size-4" />
+                              {field.value
+                                ? format(new Date(field.value + 'T12:00:00'), 'dd/MM/yyyy', {
+                                    locale: ptBR,
+                                  })
+                                : 'Selecione a data'}
+                            </button>
+                          }
+                        />
+                      </FormControl>
                       <PopoverContent className="w-auto p-0" align="start">
                         <Calendar
                           mode="single"
@@ -427,7 +429,6 @@ export function PayableFormDialog({
                             }
                           }}
                           locale={ptBR}
-                          initialFocus
                         />
                       </PopoverContent>
                     </Popover>

@@ -253,6 +253,7 @@ export async function gerarRpa(rawInput: unknown): Promise<{
   // 9. PDF: renderToBuffer → upload no bucket 'documents' → gravar pdf_storage_path
   //    NUNCA retornar o path (Pitfall 7/T-16-41)
   try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const pdfBuffer = await renderToBuffer(
       React.createElement(RpaPDF, {
         numero,
@@ -266,7 +267,7 @@ export async function gerarRpa(rawInput: unknown): Promise<{
         valorLiquido: w.liquido,
         dataPagamento: data.dataPagamento,
         clinicaNome: clinic.name,
-      })
+      }) as any
     )
 
     const storagePath = `rpa/${actor.tenant_id}/${rpaId}.pdf`
