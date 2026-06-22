@@ -625,7 +625,7 @@ export async function listPayables(filters?: {
     supplier_id: string | null
     supplier_name: string | null
     unit_id: string | null
-    installments: { numero: number; valor: number; due_date: string; status: string; valor_pago: number | null }[]
+    installments: { id: string; numero: number; valor: number; due_date: string; status: string; valor_pago: number | null }[]
   }[]
   error?: string
 }> {
@@ -641,7 +641,7 @@ export async function listPayables(filters?: {
     .select(
       `id, descricao, valor_total, status, origem, competencia, created_at, supplier_id, unit_id,
        suppliers(name),
-       payable_installments(numero, valor, due_date, status, valor_pago)`
+       payable_installments(id, numero, valor, due_date, status, valor_pago)`
     )
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
@@ -679,7 +679,7 @@ export async function listPayables(filters?: {
     supplier_id: string | null
     unit_id: string | null
     suppliers: { name: string } | { name: string }[] | null
-    payable_installments: { numero: number; valor: number; due_date: string; status: string; valor_pago: number | null }[] | null
+    payable_installments: { id: string; numero: number; valor: number; due_date: string; status: string; valor_pago: number | null }[] | null
   }) => {
     const supplier = row.suppliers
       ? (Array.isArray(row.suppliers) ? row.suppliers[0] : row.suppliers)
