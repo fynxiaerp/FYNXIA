@@ -1,17 +1,25 @@
 /**
- * Phase 16 — Bank statements action behavior RED specs (FOP-02 idempotency, D-11)
+ * Phase 16 — Bank statements action behavior specs (FOP-02 idempotency, D-11)
  * Test type: absolute-path dynamic-import-with-existsSync-guard (D-144 pattern)
  *
- * All tests are RED until Wave 3 Plan 07 creates src/actions/bank-statements.ts.
- * Uses mocked Supabase admin client — no real DB.
+ * Security note (T-16-31): importOFX derives clinic_id from the AUTHENTICATED
+ * actor (getActor → createClient → users.tenant_id), never from caller input.
+ * These tests mock the server Supabase client module (not param injection) so
+ * clinic scoping stays server-controlled. The production signature is
+ * importOFX({ bankAccountId, filename, buffer }). Asserting clinic_id ===
+ * actor.tenant_id ('c-1') in the persisted rows proves T-16-31 is honored.
+ *
+ * OFX parsing is covered separately by ofx-parser.test.ts, so parseOfxBuffer is
+ * mocked here to return controlled StatementLine[] — these specs target the
+ * persistence + idempotency + fitid_fallback logic of importOFX only.
  *
  * Requirements encoded:
  *   FOP-02 — importOFX: inserts statement_lines for each parsed OFX line
- *   D-11   — FITID idempotency: 23505 unique violation → skipped (not duplicated)
+ *   D-11   — FITID idempotency: duplicate lines are skipped (not re-inserted)
  *   D-11   — fitid_fallback: line without FITID gets sha256 hash as fitid_fallback
  */
 
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 
@@ -19,14 +27,109 @@ import { join } from 'node:path'
 
 const BANK_STMTS_MOD = join(process.cwd(), 'src/actions/bank-statements.ts')
 
-// ─── Mock setup ──────────────────────────────────────────────────────────────
+// ─── Hoisted mock state ───────────────────────────────────────────────────────
 
+const hoisted = vi.hoisted(() => ({
+  client: undefined as unknown,
+  parsed: { lines: [] as Array<Record<string, unknown>>, warnings: [] as string[] },
+}))
+
+// T-16-31: mock the server client module so clinic_id resolution stays
+// server-side (actor.tenant_id), never trusting caller-supplied ids.
 vi.mock('server-only', () => ({}))
+vi.mock('@/lib/supabase/server', () => ({
+  createClient: vi.fn(async () => hoisted.client),
+}))
+vi.mock('@/lib/audit', () => ({ logBusinessEvent: vi.fn(async () => undefined) }))
+vi.mock('next/cache', () => ({ revalidatePath: vi.fn() }))
+// OFX parsing covered by ofx-parser.test.ts — mock here for controlled lines.
+vi.mock('@/lib/financeiro/ofx-parser', () => ({
+  parseOfxBuffer: vi.fn(async () => hoisted.parsed),
+}))
+
+// ─── Mock client builder ──────────────────────────────────────────────────────
+// Supports the exact call chains importOFX uses:
+//   auth.getUser()
+//   from('users').select(..).eq(..).single()            → actor {id,tenant_id,role}
+//   from('bank_accounts').select('id').eq(..).single()  → ownership re-check
+//   from('bank_statements').insert(..).select('id').single()
+//   from('statement_lines').upsert(rows,opts).select('id') → captured + result
+
+type UpsertMode = 'inserted' | 'allSkipped'
+
+function makeMockClient(opts: {
+  capturedLines: Record<string, unknown>[]
+  upsertMode: UpsertMode
+  actor?: { id: string; tenant_id: string; role: string }
+}) {
+  const actor = opts.actor ?? { id: 'u-1', tenant_id: 'c-1', role: 'admin' }
+  return {
+    auth: {
+      getUser: vi.fn().mockResolvedValue({ data: { user: { id: actor.id } }, error: null }),
+    },
+    from: (table: string) => ({
+      select: (_cols?: string) => ({
+        eq: (_col?: string, _val?: unknown) => ({
+          single: vi.fn().mockResolvedValue(
+            table === 'users'
+              ? { data: actor, error: null }
+              : table === 'bank_accounts'
+                ? { data: { id: 'ba-1' }, error: null }
+                : { data: null, error: null },
+          ),
+        }),
+      }),
+      insert: (_row: unknown) => ({
+        select: (_c?: string) => ({
+          single: vi.fn().mockResolvedValue(
+            table === 'bank_statements'
+              ? { data: { id: 'bs-1' }, error: null }
+              : { data: { id: 'x-1' }, error: null },
+          ),
+        }),
+      }),
+      upsert: (rows: unknown, _opts?: unknown) => {
+        const arr = Array.isArray(rows) ? rows : [rows]
+        if (table === 'statement_lines') {
+          arr.forEach((r) => opts.capturedLines.push(r as Record<string, unknown>))
+        }
+        return {
+          // upsert(...).select('id') is awaited directly
+          select: (_c?: string) =>
+            Promise.resolve({
+              data: opts.upsertMode === 'allSkipped' ? [] : arr.map((_, i) => ({ id: `sl-${i}` })),
+              error: null,
+            }),
+        }
+      },
+      update: () => ({ eq: () => ({ eq: vi.fn().mockResolvedValue({ data: {}, error: null }) }) }),
+    }),
+  }
+}
+
+type StatementLine = { fitid: string; date: Date; amount: number; memo: string; check_number?: string }
+
+function line(fitid: string, amount: number, memo: string, day = 5): StatementLine {
+  return { fitid, date: new Date(`2026-06-${String(day).padStart(2, '0')}`), amount, memo }
+}
+
+type ImportOFX = (params: {
+  bankAccountId: string
+  filename: string
+  buffer: Buffer
+}) => Promise<{ success: boolean; statementId?: string; imported?: number; skipped?: number; warnings?: string[]; error?: string }>
+
+const DUMMY_BUFFER = Buffer.from('OFX', 'utf-8')
+
+beforeEach(() => {
+  hoisted.client = undefined
+  hoisted.parsed = { lines: [], warnings: [] }
+})
 
 // ─── bank-statements action file presence ────────────────────────────────────
 
 describe('bank-statements.ts — file presence', () => {
-  it('src/actions/bank-statements.ts exists (RED until Plan 07 creates it)', () => {
+  it('src/actions/bank-statements.ts exists', () => {
     expect(existsSync(BANK_STMTS_MOD)).toBe(true)
   })
 })
@@ -34,224 +137,88 @@ describe('bank-statements.ts — file presence', () => {
 // ─── importOFX — inserts statement_lines for each parsed line ─────────────────
 
 describe('bank-statements.ts — importOFX inserts statement_lines', () => {
-  it('importOFX with 3-line OFX buffer calls insert for each statement_line', async () => {
-    const { importOFX } = await import(BANK_STMTS_MOD) as {
-      importOFX: (params: {
-        bankAccountId: string
-        clinicId: string
-        buffer: Buffer
-        adminClient?: unknown
-      }) => Promise<{ imported: number; skipped: number; error?: string }>
+  it('importOFX with 3 parsed lines upserts each statement_line (imported = 3)', async () => {
+    const captured: Record<string, unknown>[] = []
+    hoisted.client = makeMockClient({ capturedLines: captured, upsertMode: 'inserted' })
+    hoisted.parsed = {
+      lines: [
+        line('FIT001', 1500.0, 'DEPOSITO', 5),
+        line('FIT002', -200.0, 'PAGAMENTO', 10),
+        line('FIT003', 3200.5, 'TED', 15),
+      ] as unknown as Array<Record<string, unknown>>,
+      warnings: [],
     }
 
-    const insertedRows: unknown[] = []
-    const mockClient = {
-      from: (table: string) => ({
-        insert: (rows: unknown) => {
-          if (table === 'statement_lines') {
-            const arr = Array.isArray(rows) ? rows : [rows]
-            arr.forEach(r => insertedRows.push(r))
-          }
-          return { select: () => ({ single: vi.fn().mockResolvedValue({ data: { id: 'sl-1' }, error: null }) }), error: null, data: { id: 'bs-1' } }
-        },
-        select: () => ({ eq: () => ({ single: vi.fn().mockResolvedValue({ data: { id: 'ba-1', clinic_id: 'c-1' }, error: null }) }) }),
-        update: () => ({ eq: () => vi.fn().mockResolvedValue({ data: {}, error: null }) }),
-      }),
-    }
-
-    // Minimal OFX buffer with 3 STMTTRN (same as fixture)
-    const ofxContent = `OFXHEADER:100
-DATA:OFXSGML
-VERSION:102
-SECURITY:NONE
-ENCODING:USASCII
-CHARSET:1252
-COMPRESSION:NONE
-OLDFILEUID:NONE
-NEWFILEUID:NONE
-
-<OFX>
-<BANKMSGSRSV1>
-<STMTTRNRS>
-<TRNUID>1001
-<STATUS><CODE>0<SEVERITY>INFO</STATUS>
-<STMTRS>
-<CURDEF>BRL
-<BANKACCTFROM><BANKID>341<ACCTID>12345-6<ACCTTYPE>CHECKING</BANKACCTFROM>
-<BANKTRANLIST>
-<DTSTART>20260601<DTEND>20260630
-<STMTTRN><TRNTYPE>CREDIT<DTPOSTED>20260605<TRNAMT>1500.00<FITID>FIT001<MEMO>DEPOSITO</STMTTRN>
-<STMTTRN><TRNTYPE>DEBIT<DTPOSTED>20260610<TRNAMT>-200.00<FITID>FIT002<MEMO>PAGAMENTO</STMTTRN>
-<STMTTRN><TRNTYPE>CREDIT<DTPOSTED>20260615<TRNAMT>3200.50<FITID>FIT003<MEMO>TED</STMTTRN>
-</BANKTRANLIST>
-<LEDGERBAL><BALAMT>4500.50<DTASOF>20260630</LEDGERBAL>
-</STMTRS>
-</STMTTRNRS>
-</BANKMSGSRSV1>
-</OFX>`
+    const { importOFX } = (await import(BANK_STMTS_MOD)) as { importOFX: ImportOFX }
 
     const result = await importOFX({
       bankAccountId: 'ba-1',
-      clinicId: 'c-1',
-      buffer: Buffer.from(ofxContent, 'utf-8'),
-      adminClient: mockClient,
+      filename: 'extrato.ofx',
+      buffer: DUMMY_BUFFER,
     })
 
-    expect(result.imported).toBeGreaterThan(0)
+    expect(result.success).toBe(true)
     expect(result.imported).toBe(3)
+    expect(captured.length).toBe(3)
+    // T-16-31: clinic_id comes from the authenticated actor, not caller input
+    expect(captured.every((r) => r.clinic_id === 'c-1')).toBe(true)
   })
 })
 
-// ─── FITID idempotency: 23505 → skipped (D-11) ────────────────────────────────
+// ─── FITID idempotency: duplicates skipped (D-11) ─────────────────────────────
 
-describe('bank-statements.ts — importOFX FITID idempotency via 23505 skip (D-11)', () => {
-  it('lines whose insert returns Postgres error code 23505 are counted as skipped, not duplicated', async () => {
-    const { importOFX } = await import(BANK_STMTS_MOD) as {
-      importOFX: (params: {
-        bankAccountId: string
-        clinicId: string
-        buffer: Buffer
-        adminClient?: unknown
-      }) => Promise<{ imported: number; skipped: number; error?: string }>
+describe('bank-statements.ts — importOFX FITID idempotency skips duplicates (D-11)', () => {
+  it('lines already present (upsert ignoreDuplicates returns no rows) are counted as skipped, not duplicated', async () => {
+    const captured: Record<string, unknown>[] = []
+    hoisted.client = makeMockClient({ capturedLines: captured, upsertMode: 'allSkipped' })
+    hoisted.parsed = {
+      lines: [line('FIT001', 1500.0, 'DEPOSITO', 5), line('FIT002', -200.0, 'PAGAMENTO', 10)] as unknown as Array<
+        Record<string, unknown>
+      >,
+      warnings: [],
     }
 
-    // Mock: first insert succeeds (bank_statements), subsequent inserts return 23505
-    let insertCallCount = 0
-    const mockClient = {
-      from: (table: string) => ({
-        insert: (rows: unknown) => {
-          insertCallCount++
-          if (table === 'statement_lines') {
-            // Simulate unique violation on all statement_lines
-            return {
-              select: () => ({
-                single: vi.fn().mockResolvedValue({
-                  data: null,
-                  error: { code: '23505', message: 'duplicate key value violates unique constraint' },
-                }),
-              }),
-              error: { code: '23505' },
-              data: null,
-            }
-          }
-          // bank_statements insert succeeds
-          return { select: () => ({ single: vi.fn().mockResolvedValue({ data: { id: 'bs-1' }, error: null }) }), error: null, data: { id: 'bs-1' } }
-        },
-        select: () => ({ eq: () => ({ single: vi.fn().mockResolvedValue({ data: { id: 'ba-1', clinic_id: 'c-1' }, error: null }) }) }),
-        update: () => ({ eq: () => vi.fn() }),
-      }),
-    }
-
-    const ofxContent = `OFXHEADER:100
-DATA:OFXSGML
-VERSION:102
-SECURITY:NONE
-ENCODING:USASCII
-CHARSET:1252
-COMPRESSION:NONE
-OLDFILEUID:NONE
-NEWFILEUID:NONE
-
-<OFX>
-<BANKMSGSRSV1>
-<STMTTRNRS>
-<TRNUID>1001
-<STATUS><CODE>0<SEVERITY>INFO</STATUS>
-<STMTRS>
-<CURDEF>BRL
-<BANKACCTFROM><BANKID>341<ACCTID>12345-6<ACCTTYPE>CHECKING</BANKACCTFROM>
-<BANKTRANLIST>
-<DTSTART>20260601<DTEND>20260630
-<STMTTRN><TRNTYPE>CREDIT<DTPOSTED>20260605<TRNAMT>1500.00<FITID>FIT001<MEMO>DEPOSITO</STMTTRN>
-<STMTTRN><TRNTYPE>DEBIT<DTPOSTED>20260610<TRNAMT>-200.00<FITID>FIT002<MEMO>PAGAMENTO</STMTTRN>
-</BANKTRANLIST>
-<LEDGERBAL><BALAMT>1300.00<DTASOF>20260630</LEDGERBAL>
-</STMTRS>
-</STMTTRNRS>
-</BANKMSGSRSV1>
-</OFX>`
+    const { importOFX } = (await import(BANK_STMTS_MOD)) as { importOFX: ImportOFX }
 
     const result = await importOFX({
       bankAccountId: 'ba-1',
-      clinicId: 'c-1',
-      buffer: Buffer.from(ofxContent, 'utf-8'),
-      adminClient: mockClient,
+      filename: 'extrato-dup.ofx',
+      buffer: DUMMY_BUFFER,
     })
 
-    // On 23505 → lines are skipped, not re-inserted
+    // Duplicates → lines are skipped, not re-inserted
+    expect(result.success).toBe(true)
     expect(result.skipped).toBeGreaterThan(0)
-    expect(result.imported).toBe(0) // all were duplicates
+    expect(result.imported).toBe(0)
   })
 })
 
 // ─── fitid_fallback: line without FITID gets sha256 hash (D-11) ──────────────
 
 describe('bank-statements.ts — importOFX fitid_fallback for lines without FITID (D-11)', () => {
-  it('insert payload has fitid_fallback non-null when fitid is null/absent', async () => {
-    const { importOFX } = await import(BANK_STMTS_MOD) as {
-      importOFX: (params: {
-        bankAccountId: string
-        clinicId: string
-        buffer: Buffer
-        adminClient?: unknown
-      }) => Promise<{ imported: number; skipped: number; error?: string }>
+  it('upsert payload has fitid_fallback non-null when fitid is null/absent', async () => {
+    const captured: Record<string, unknown>[] = []
+    hoisted.client = makeMockClient({ capturedLines: captured, upsertMode: 'inserted' })
+    // Line WITHOUT FITID (some banks omit it) → importOFX computes sha256 fallback
+    hoisted.parsed = {
+      lines: [line('', 500.0, 'SEM FITID', 5)] as unknown as Array<Record<string, unknown>>,
+      warnings: [],
     }
 
-    const insertedPayloads: Record<string, unknown>[] = []
-    const mockClient = {
-      from: (table: string) => ({
-        insert: (rows: unknown) => {
-          if (table === 'statement_lines') {
-            const arr = Array.isArray(rows) ? rows : [rows]
-            arr.forEach((r: Record<string, unknown>) => insertedPayloads.push(r))
-          }
-          return { select: () => ({ single: vi.fn().mockResolvedValue({ data: { id: 'sl-1' }, error: null }) }), error: null, data: { id: 'bs-1' } }
-        },
-        select: () => ({ eq: () => ({ single: vi.fn().mockResolvedValue({ data: { id: 'ba-1', clinic_id: 'c-1' }, error: null }) }) }),
-        update: () => ({ eq: () => vi.fn() }),
-      }),
-    }
-
-    // OFX line WITHOUT FITID (some banks omit it)
-    const ofxNoFitid = `OFXHEADER:100
-DATA:OFXSGML
-VERSION:102
-SECURITY:NONE
-ENCODING:USASCII
-CHARSET:1252
-COMPRESSION:NONE
-OLDFILEUID:NONE
-NEWFILEUID:NONE
-
-<OFX>
-<BANKMSGSRSV1>
-<STMTTRNRS>
-<TRNUID>1001
-<STATUS><CODE>0<SEVERITY>INFO</STATUS>
-<STMTRS>
-<CURDEF>BRL
-<BANKACCTFROM><BANKID>341<ACCTID>12345-6<ACCTTYPE>CHECKING</BANKACCTFROM>
-<BANKTRANLIST>
-<DTSTART>20260601<DTEND>20260630
-<STMTTRN><TRNTYPE>CREDIT<DTPOSTED>20260605<TRNAMT>500.00<MEMO>SEM FITID</STMTTRN>
-</BANKTRANLIST>
-<LEDGERBAL><BALAMT>500.00<DTASOF>20260630</LEDGERBAL>
-</STMTRS>
-</STMTTRNRS>
-</BANKMSGSRSV1>
-</OFX>`
+    const { importOFX } = (await import(BANK_STMTS_MOD)) as { importOFX: ImportOFX }
 
     await importOFX({
       bankAccountId: 'ba-1',
-      clinicId: 'c-1',
-      buffer: Buffer.from(ofxNoFitid, 'utf-8'),
-      adminClient: mockClient,
+      filename: 'extrato-sem-fitid.ofx',
+      buffer: DUMMY_BUFFER,
     })
 
-    // At least one inserted row should have fitid_fallback set (non-null, non-empty sha256)
-    const withFallback = insertedPayloads.filter(
-      r => r.fitid_fallback != null && typeof r.fitid_fallback === 'string' && r.fitid_fallback.length > 0
+    // At least one captured row should have fitid_fallback set (non-null, non-empty sha256)
+    const withFallback = captured.filter(
+      (r) => r.fitid_fallback != null && typeof r.fitid_fallback === 'string' && (r.fitid_fallback as string).length > 0,
     )
     expect(withFallback.length).toBeGreaterThan(0)
+    // T-16-31: clinic_id from actor, not input
+    expect(captured.every((r) => r.clinic_id === 'c-1')).toBe(true)
   })
 })
