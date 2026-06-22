@@ -378,7 +378,7 @@ Plans:
 | 13. Esterilização/CME & Laboratório de Prótese | v2.0 | 7/7 | Complete    | 2026-06-19 |
 | 14. Financeiro — Cadastros Base | v2.0 | 7/7 | Complete    | 2026-06-20 |
 | 15. Faturamento/NFS-e & Convênios/TISS | v2.0 | 9/9 | Complete   | 2026-06-20 |
-| 16. Contas a Pagar, Conciliação & Tributos | v2.0 | 2/10 | In Progress|  |
+| 16. Contas a Pagar, Conciliação & Tributos | v2.0 | 3/10 | In Progress|  |
 | 17. Estoque & Materiais | v2.0 | 0/? | Not started | - |
 | 18. CRC & Marketing | v2.0 | 0/? | Not started | - |
 | 19. Relatórios, Orçamento & BI | v2.0 | 0/? | Not started | - |
