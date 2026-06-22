@@ -2,9 +2,9 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
-status: executing
+status: planning
 stopped_at: "Completed 16-10-PLAN.md (Wave 4 final: Repasse + RPA screens + hub nav cards)"
-last_updated: "2026-06-22T19:08:01.027Z"
+last_updated: "2026-06-22T20:58:20.071Z"
 last_activity: 2026-06-22
 progress:
   total_phases: 15
@@ -38,9 +38,9 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 Phase: 16 (contas-a-pagar-concilia-o-tributos) — EXECUTING
 Plan: 10 of 10
 **Milestone:** v2.0 — Produto Completo (27 módulos, blocos A–E)
-**Phase:** 16
-**Plan:** 09 — Contas a Pagar + Conciliação Bancária Frontend (COMPLETE)
-**Status:** Executing Phase 16
+**Phase:** 17
+**Plan:** Not started
+**Status:** Ready to plan
 **Last activity:** 2026-06-22
 
 ---
