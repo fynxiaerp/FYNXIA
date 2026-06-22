@@ -73,6 +73,11 @@ Um dentista deve conseguir ver a agenda do dia, registrar atendimento e fechar o
 - [x] Dual-theme (claro clínico + dark/neon da marca) em tokens FYNXIA, WCAG-AA
 - [x] App shell com sidebar persistente colapsável + PageHeader + estados loading/empty/error
 
+#### Financeiro — Contas a Pagar & Tributos (Validated in Phase 16)
+- [x] Contas a pagar integradas a fornecedores (5 origens: manual/recorrente/laboratório/repasse/tributo) com baixa que move caixa e saldo bancário (FOP-01)
+- [x] Conciliação bancária por OFX, idempotente por FITID, em 3 estágios (exato/fuzzy/N:1) + fluxo de caixa previsto-vs-realizado (FOP-02, FOP-03)
+- [x] Repasse de profissionais (regime caixa) + RPA com retenções INSS/IRRF/ISS por vigência e PDF gated; EFD-Reinf R-2010/R-4020 via provider STUB (TRIB-01, TRIB-02, TRIB-03)
+
 ### Active (v2.0 — em REQUIREMENTS.md por REQ-ID)
 
 - Fundações: Configuração do Sistema, multiunidade/rede, papéis novos, Assinatura ICP/Documentos, Integrações, IA L0–L4, Auditoria/Estornos, OCR
@@ -146,4 +151,4 @@ Este documento evolui a cada transição de fase e marco de milestone.
 4. Atualizar Context com estado atual
 
 ---
-*Last updated: 2026-06-12 — milestone v2.0 (Produto Completo) iniciado*
+*Last updated: 2026-06-22 — Phase 16 (Contas a Pagar, Conciliação & Tributos) completa: FOP-01/02/03 + TRIB-01/02/03 validados*
