@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Phase 16 context gathered
-last_updated: "2026-06-21T23:36:51.895Z"
-last_activity: 2026-06-20
+stopped_at: Completed 16-01-PLAN.md (Wave 0 RED scaffolds)
+last_updated: "2026-06-22T12:27:50.030Z"
+last_activity: 2026-06-22
 progress:
   total_phases: 15
   completed_phases: 9
-  total_plans: 62
-  completed_plans: 62
-  percent: 100
+  total_plans: 72
+  completed_plans: 63
+  percent: 88
 ---
 
 # FYNXIA ERP — Project State
@@ -29,19 +29,19 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 
 **Stack:** Next.js 15 + TypeScript (strict) + Supabase (sa-east-1) + Vercel (gru1) + shadcn/ui + Tailwind v4
 
-**Current focus:** Phase 15 — faturamento-nfs-e-conv-nios-tiss
+**Current focus:** Phase 16 — Contas a Pagar, Conciliação & Tributos
 
 ---
 
 ## Current Position
 
-Phase: 15 (faturamento-nfs-e-conv-nios-tiss) — EXECUTING
-Plan: 3 of 9
+Phase: 16 (Contas a Pagar, Conciliação & Tributos) — EXECUTING
+Plan: 1 of 10
 **Milestone:** v2.0 — Produto Completo (27 módulos, blocos A–E)
 **Phase:** 15
 **Plan:** 03 — OS Domain + TISS Tables + Unified RLS (COMPLETE)
-**Status:** Executing Phase 15
-**Last activity:** 2026-06-20
+**Status:** Executing Phase 16
+**Last activity:** 2026-06-22
 
 ---
 
@@ -121,6 +121,7 @@ Plan: 3 of 9
 | Phase 15 P03 | 324 | 3 tasks | 4 files |
 | Phase 15 P06 | 21 | 3 tasks | 7 files |
 | Phase 15 P07 | 7 | 2 tasks | 6 files |
+| Phase 16 P01 | 11 | 4 tasks | 13 files |
 
 ## Accumulated Context
 
@@ -255,7 +256,7 @@ Plan: 3 of 9
 
 ## Session Continuity
 
-**Stopped at:** Phase 16 context gathered
+**Stopped at:** Completed 16-01-PLAN.md (Wave 0 RED scaffolds)
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 

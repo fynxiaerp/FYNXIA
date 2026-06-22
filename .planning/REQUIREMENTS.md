@@ -83,9 +83,9 @@
 - [x] **OS-03**: A forma de pagamento gera as parcelas a receber (base do contas a receber e do repasse)
 
 #### FOP — Financeiro: Operação
-- [ ] **FOP-01**: Financeiro opera contas a pagar (vencimentos, baixa) integradas a fornecedores/laboratório
-- [ ] **FOP-02**: Conciliação bancária por OFX/Open Finance bate extrato × lançamentos
-- [ ] **FOP-03**: Fluxo de caixa é atualizado automaticamente a partir das baixas conciliadas
+- [x] **FOP-01**: Financeiro opera contas a pagar (vencimentos, baixa) integradas a fornecedores/laboratório
+- [x] **FOP-02**: Conciliação bancária por OFX/Open Finance bate extrato × lançamentos
+- [x] **FOP-03**: Fluxo de caixa é atualizado automaticamente a partir das baixas conciliadas
 
 #### CONV — Convênios / TISS
 - [x] **CONV-01**: Usuário cadastra operadoras com tabelas e regras próprias
@@ -93,9 +93,9 @@
 - [x] **CONV-03**: Glosas são classificadas por motivo e tratadas (recurso)
 
 #### TRIB — Tributos, Repasses & RPA
-- [ ] **TRIB-01**: Sistema calcula o repasse do profissional sobre o valor recebido (regra por profissional/serviço)
-- [ ] **TRIB-02**: Sistema gera RPA de autônomos com retenções (INSS/IRRF/ISS) calculadas
-- [ ] **TRIB-03**: Apuração de tributos por regime e envio de retenções (EFD-Reinf)
+- [x] **TRIB-01**: Sistema calcula o repasse do profissional sobre o valor recebido (regra por profissional/serviço)
+- [x] **TRIB-02**: Sistema gera RPA de autônomos com retenções (INSS/IRRF/ISS) calculadas
+- [x] **TRIB-03**: Apuração de tributos por regime e envio de retenções (EFD-Reinf)
 
 ### Bloco D — Operação & Crescimento
 
@@ -206,12 +206,12 @@
 | CONV-01 | Phase 15 | Complete |
 | CONV-02 | Phase 15 | Complete |
 | CONV-03 | Phase 15 | Complete |
-| FOP-01 | Phase 16 | Pending |
-| FOP-02 | Phase 16 | Pending |
-| FOP-03 | Phase 16 | Pending |
-| TRIB-01 | Phase 16 | Pending |
-| TRIB-02 | Phase 16 | Pending |
-| TRIB-03 | Phase 16 | Pending |
+| FOP-01 | Phase 16 | Complete |
+| FOP-02 | Phase 16 | Complete |
+| FOP-03 | Phase 16 | Complete |
+| TRIB-01 | Phase 16 | Complete |
+| TRIB-02 | Phase 16 | Complete |
+| TRIB-03 | Phase 16 | Complete |
 | EST-01 | Phase 17 | Pending |
 | EST-02 | Phase 17 | Pending |
 | EST-03 | Phase 17 | Pending |

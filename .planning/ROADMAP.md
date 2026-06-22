@@ -50,7 +50,7 @@ Full detail archived in [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
 
 - [x] **Phase 14: Financeiro — Cadastros Base** — Plano de contas em árvore, centros de custo, contas correntes e categorias de lançamento
  (completed 2026-06-20)
-- [ ] **Phase 15: Faturamento/NFS-e & Convênios/TISS** — OS automática pós-atendimento, emissão de NFS-e e faturamento de convênios com guia TISS e glosas
+- [x] **Phase 15: Faturamento/NFS-e & Convênios/TISS** — OS automática pós-atendimento, emissão de NFS-e e faturamento de convênios com guia TISS e glosas (completed 2026-06-20)
 - [ ] **Phase 16: Contas a Pagar, Conciliação & Tributos** — Contas a pagar, conciliação bancária OFX/Open Finance, fluxo de caixa atualizado, repasses e RPA com retenções
 - [ ] **UI hint**: yes
 
@@ -260,8 +260,8 @@ Plans:
 - [x] 15-05-PLAN.md — Wave 3: OS domain (os-math, createOs, faturarOs CAS+idempotency, cancelar via alçada, auto-OS on concluido) (OS-01/03)
 - [x] 15-06-PLAN.md — Wave 3: FiscalProvider abstraction + Stub/FocusNFe + ISS + emitirNfse (regime split) + NFS-e webhook (OS-02)
 - [x] 15-07-PLAN.md — Wave 3: TissProvider abstraction + Stub + glosa-math + criarGuia/fecharLote/registrarGlosa/registrarRecurso + insurers CRUD (CONV-01/02/03)
-- [ ] 15-08-PLAN.md — Wave 4: OS + NFS-e + Faturamento hub UI + financeiro nav cards (OS-01/02/03)
-- [ ] 15-09-PLAN.md — Wave 4: Convênios + Operadoras + price table + Glosas UI (CONV-01/02/03)
+- [x] 15-08-PLAN.md — Wave 4: OS + NFS-e + Faturamento hub UI + financeiro nav cards (OS-01/02/03)
+- [x] 15-09-PLAN.md — Wave 4: Convênios + Operadoras + price table + Glosas UI (CONV-01/02/03)
 **v1 reuse**: Expande receivables/charges (Phase 3); reusa protótipo navegável de Convênios (`/clinica/prototipos`); conector NFS-e via INT (Phase 9)
 **UI hint**: yes
 
@@ -377,8 +377,8 @@ Plans:
 | 12. Receituário & Teleodontologia | v2.0 | 7/7 | Complete    | 2026-06-19 |
 | 13. Esterilização/CME & Laboratório de Prótese | v2.0 | 7/7 | Complete    | 2026-06-19 |
 | 14. Financeiro — Cadastros Base | v2.0 | 7/7 | Complete    | 2026-06-20 |
-| 15. Faturamento/NFS-e & Convênios/TISS | v2.0 | 7/9 | In Progress|  |
-| 16. Contas a Pagar, Conciliação & Tributos | v2.0 | 0/? | Not started | - |
+| 15. Faturamento/NFS-e & Convênios/TISS | v2.0 | 9/9 | Complete   | 2026-06-20 |
+| 16. Contas a Pagar, Conciliação & Tributos | v2.0 | 1/10 | In Progress|  |
 | 17. Estoque & Materiais | v2.0 | 0/? | Not started | - |
 | 18. CRC & Marketing | v2.0 | 0/? | Not started | - |
 | 19. Relatórios, Orçamento & BI | v2.0 | 0/? | Not started | - |
