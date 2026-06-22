@@ -530,6 +530,9 @@ import { matchNToOne as libMatchNToOne } from '@/lib/financeiro/reconciliation'
 
 export async function matchNToOne(input: {
   statementLineId: string
+  /** IDs explicitamente selecionados pelo usuário na UI (WR-01). Quando presente,
+   *  concilia exatamente esse conjunto em vez de rodar a busca combinatória da lib. */
+  transactionIds?: string[]
   feeAccountId?: string
   feeCostCenterId?: string
   tolerance?: number
@@ -597,16 +600,36 @@ export async function matchNToOne(input: {
     bank_account_id: t.bank_account_id ?? undefined,
   }))
 
-  // Stage 3 matching
-  const result = libMatchNToOne(depositLine, candidates, input.tolerance ?? 5.00)
+  const tolerance = input.tolerance ?? 5.00
 
-  if (!result) {
-    return { success: false, error: 'Nenhuma combinação dentro da tolerância' }
+  // Stage 3 matching — honor explicit user selection (WR-01) when present,
+  // else fall back to the combinatorial search of the pure lib.
+  let result: { transaction_ids: string[]; fee: number } | null
+  if (input.transactionIds && input.transactionIds.length > 0) {
+    // Validate selected IDs belong to the pending receita pool of this bank account
+    const candidateById = new Map(candidates.map((c) => [c.id, c]))
+    const selected = input.transactionIds.map((id) => candidateById.get(id))
+    if (selected.some((c) => c === undefined)) {
+      return { success: false, error: 'Seleção contém lançamentos inválidos ou já conciliados' }
+    }
+    const sum = (selected as TransactionRow[]).reduce((acc, c) => acc + c.amount, 0)
+    const fee = Math.round((depositLine.amount - sum) * 100) / 100
+    if (Math.abs(fee) > tolerance) {
+      return { success: false, error: 'Seleção fora da tolerância' }
+    }
+    result = { transaction_ids: input.transactionIds, fee }
+  } else {
+    result = libMatchNToOne(depositLine, candidates, tolerance)
+    if (!result) {
+      return { success: false, error: 'Nenhuma combinação dentro da tolerância' }
+    }
   }
 
-  // CAS UPDATE matched financial_transactions (T-16-34)
+  // CAS UPDATE matched financial_transactions (T-16-34) — collect which updates won
+  // the race; on any failure, rollback the ones already marked (WR-03).
+  const claimedTxIds: string[] = []
   for (const txId of result.transaction_ids) {
-    await supabase
+    const { data: txUpdated } = await supabase
       .from('financial_transactions')
       .update({
         reconciliation_status: 'conciliado',
@@ -614,18 +637,45 @@ export async function matchNToOne(input: {
       })
       .eq('id', txId)
       .eq('reconciliation_status', 'pendente') // CAS guard
+      .select('id')
+
+    if (txUpdated && txUpdated.length > 0) {
+      claimedTxIds.push(txId)
+    } else {
+      // Concurrent reconciliation on one of the TXs — rollback already-claimed TXs
+      if (claimedTxIds.length > 0) {
+        await supabase
+          .from('financial_transactions')
+          .update({ reconciliation_status: 'pendente', statement_line_id: null })
+          .in('id', claimedTxIds)
+          .eq('statement_line_id', lineRow.id)
+      }
+      return { success: false, error: 'Conciliação concorrente detectada' }
+    }
   }
 
-  // UPDATE statement_line
-  const { error: lineUpdateErr } = await supabase
+  // CAS UPDATE statement_line — guard against concurrent reconciliation (WR-03)
+  const { data: lineUpdated, error: lineUpdateErr } = await supabase
     .from('statement_lines')
     .update({
       reconciliation_status: 'conciliado',
       matched_transaction_ids: result.transaction_ids,
     })
     .eq('id', lineRow.id)
+    .eq('reconciliation_status', 'pendente') // CAS guard
+    .select('id')
 
-  if (lineUpdateErr) return { success: false, error: lineUpdateErr.message }
+  if (lineUpdateErr || !lineUpdated || lineUpdated.length === 0) {
+    // Line was concurrently reconciled — rollback the TX claims
+    if (claimedTxIds.length > 0) {
+      await supabase
+        .from('financial_transactions')
+        .update({ reconciliation_status: 'pendente', statement_line_id: null })
+        .in('id', claimedTxIds)
+        .eq('statement_line_id', lineRow.id)
+    }
+    return { success: false, error: lineUpdateErr?.message ?? 'Conciliação concorrente detectada' }
+  }
 
   // Handle fee → despesa (T-16-35 / Pitfall 5: fee is ALWAYS despesa, never receita)
   let feeTransactionId: string | undefined

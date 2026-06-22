@@ -121,6 +121,7 @@ export function NToOneBuilder({
 
     const result = await matchNToOne({
       statementLineId: line.id,
+      transactionIds: Array.from(selected),
       tolerance: 5.0,
     })
 
