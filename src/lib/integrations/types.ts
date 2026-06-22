@@ -4,7 +4,7 @@
 
 // ─── Connector type enum ──────────────────────────────────────────────────────
 
-export type ConnectorType = 'asaas' | 'whatsapp' | 'email' | 'nfse' | 'banco' | 'tiss'
+export type ConnectorType = 'asaas' | 'whatsapp' | 'email' | 'nfse' | 'banco' | 'tiss' | 'reinf' | 'open_finance'
 
 // ─── Connector status ─────────────────────────────────────────────────────────
 

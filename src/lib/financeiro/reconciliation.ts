@@ -224,6 +224,7 @@ function findCombination(
 
     for (let i = start; i <= n - (remaining - 1) - 1; i++) {
       const next = candidates[i]
+      if (!next) continue
       const result = backtrack(
         i + 1,
         remaining - 1,

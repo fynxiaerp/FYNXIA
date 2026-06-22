@@ -57,7 +57,7 @@ export function applyDeductions(
   let total = valorRecebido
   for (const key of ruleDeducoes) {
     if (Object.prototype.hasOwnProperty.call(deducoes, key)) {
-      total -= deducoes[key]
+      total -= deducoes[key] ?? 0
     }
   }
   // Integer-cent round to avoid drift

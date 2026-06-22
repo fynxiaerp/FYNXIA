@@ -61,14 +61,14 @@ import type { ConnectorHealthView } from '@/actions/integration-events'
 // ─── Form schema (client-side Zod v3 — no .default()) ────────────────────────
 
 const connectorClientSchema = z.object({
-  type: z.enum(['asaas', 'whatsapp', 'email', 'nfse', 'banco', 'tiss']),
+  type: z.enum(['asaas', 'whatsapp', 'email', 'nfse', 'banco', 'tiss', 'reinf', 'open_finance']),
   credential: z.string().min(1, 'Credencial obrigatória').max(2000, 'Credencial muito longa'),
   status: z.enum(['enabled', 'disabled']),
 })
 
 const connectorUpdateClientSchema = z.object({
   id: z.string().uuid(),
-  type: z.enum(['asaas', 'whatsapp', 'email', 'nfse', 'banco', 'tiss']),
+  type: z.enum(['asaas', 'whatsapp', 'email', 'nfse', 'banco', 'tiss', 'reinf', 'open_finance']),
   credential: z.string().max(2000, 'Credencial muito longa').optional(),
   status: z.enum(['enabled', 'disabled']),
 })

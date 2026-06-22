@@ -18,6 +18,8 @@ export const connectorTypeSchema = z.enum([
   'nfse',
   'banco',
   'tiss',
+  'reinf',
+  'open_finance',
 ])
 
 export type ConnectorTypeInput = z.infer<typeof connectorTypeSchema>

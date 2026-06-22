@@ -66,8 +66,10 @@ export async function parseOfxBuffer(buffer: Buffer): Promise<{
     return line
   })
 
-  const warnings: string[] =
+  const rawWarnings =
     typeof ofx.getWarnings === 'function' ? ofx.getWarnings() : []
+  // OfxDiagnostic[] → string[] (toString each entry for type safety)
+  const warnings: string[] = rawWarnings.map((w) => String(w))
 
   return { lines, warnings }
 }
