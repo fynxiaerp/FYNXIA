@@ -15,6 +15,8 @@ import 'server-only'
  *   T-16-47: guard competencia_fechamentos em computePayouts (D-26)
  *   Cadeia de join: recebimento conciliado → profissional via service_order_items.professional_id
  *                  (NUNCA via financial_transactions.professional_id — essa coluna não existe)
+ *   Vínculo recebimento→cobrança: financial_transactions.receivable_id → receivables.charge_id → charges
+ *                  (financial_transactions.charge_id NÃO existe — D-29 / CR-01)
  *
  * Libs puras (Plan 04 — APENAS importar, NÃO reimplementar):
  *   src/lib/financeiro/payout-math — computePayout, aggregatePayout
@@ -58,7 +60,8 @@ const WRITER_ROLES = ['admin', 'superadmin'] as const
  *
  * Cadeia de join (recebimento conciliado → profissional):
  *   financial_transactions (reconciliation_status='conciliado') →
- *   charges (via financial_transactions.charge_id) →
+ *   receivables (via financial_transactions.receivable_id) →
+ *   charges (via receivables.charge_id) →
  *   service_orders (charges.service_order_id) →
  *   service_order_items (service_order_id, professional_id=input.professionalId)
  *
@@ -119,7 +122,7 @@ export async function computePayouts(input: {
   // RPA (Task 2) recusa CLT; repasse apenas alerta quando sem regra
 
   // 4. Coletar recebimentos CONCILIADOS na competência via cadeia de join
-  //    financial_transactions → charges → service_orders → service_order_items
+  //    financial_transactions → receivables → charges → service_orders → service_order_items
   //    O vínculo profissional→dinheiro vem por service_order_items.professional_id (D-29)
   const [compYear, compMonth] = input.competencia.split('-')
   const compStart = `${compYear}-${compMonth}-01`
@@ -135,7 +138,7 @@ export async function computePayouts(input: {
       amount,
       transaction_date,
       statement_line_id,
-      charge_id
+      receivable_id
     `)
     .eq('tenant_id', actor.tenant_id)
     .eq('reconciliation_status', 'conciliado')
@@ -152,9 +155,27 @@ export async function computePayouts(input: {
     return { success: false, error: 'Nenhum recebimento conciliado na competência' }
   }
 
-  // Coletar charge_ids das transações conciliadas
-  const chargeIds = txList
-    .map((t: { charge_id: string | null }) => t.charge_id)
+  // Coletar receivable_ids das transações conciliadas (CR-01: charge_id não existe em financial_transactions)
+  const receivableIds = txList
+    .map((t: { receivable_id: string | null }) => t.receivable_id)
+    .filter((id): id is string => id !== null)
+
+  if (receivableIds.length === 0) {
+    return { success: false, error: 'Recebimentos conciliados sem vínculo a recebíveis' }
+  }
+
+  // Resolver charge_ids via receivables (financial_transactions.receivable_id → receivables.charge_id)
+  const { data: receivables, error: receivablesError } = await supabase
+    .from('receivables')
+    .select('id, charge_id')
+    .in('id', receivableIds)
+
+  if (receivablesError) {
+    return { success: false, error: receivablesError.message }
+  }
+
+  const chargeIds = (receivables ?? [])
+    .map((r: { charge_id: string | null }) => r.charge_id)
     .filter((id): id is string => id !== null)
 
   if (chargeIds.length === 0) {
