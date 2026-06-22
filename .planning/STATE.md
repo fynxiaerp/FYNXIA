@@ -36,10 +36,10 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 ## Current Position
 
 Phase: 16 (contas-a-pagar-concilia-o-tributos) — EXECUTING
-Plan: 1 of 10
+Plan: 10 of 10
 **Milestone:** v2.0 — Produto Completo (27 módulos, blocos A–E)
-**Phase:** 15
-**Plan:** 03 — OS Domain + TISS Tables + Unified RLS (COMPLETE)
+**Phase:** 16
+**Plan:** 09 — Contas a Pagar + Conciliação Bancária Frontend (COMPLETE)
 **Status:** Executing Phase 16
 **Last activity:** 2026-06-22
 
@@ -127,6 +127,7 @@ Plan: 1 of 10
 | Phase 16 P06 | 20 | 3 tasks | 4 files |
 | Phase 16 P07 | 6 | 3 tasks | 3 files |
 | Phase 16 P08 | 25 | 3 tasks | 4 files |
+| Phase 16 P09 | 120 | 3 tasks | 15 files |
 
 ## Accumulated Context
 
@@ -200,6 +201,9 @@ Plan: 1 of 10
 | drainIntegrationEvents usa .eq('status','pending') (não .in) no fetch e no CAS guard | Matches health.test.ts assertion exata; 'failed'→'pending' requeue deferido para Plan 05 manual reprocess action | 2026-06-14 |
 | /config/integracoes inserido ANTES de /config em ROUTE_MODULE_MAP | Most-specific-first mirrors /clinica/documentos pattern; garante que routeToModule retorna 'integracoes' para /config/integracoes (T-09-13) | 2026-06-14 |
 | Dynamic import via absolute path (não @-alias) em RED scaffolds (D-144) | @-alias causa TS2307 quando módulo alvo ainda não existe; absolute path + existsSync guard mantém tsc exit 0 em todos os Wave 0 scaffolds | 2026-06-14 |
+| PopoverTrigger/AlertDialogTrigger/DropdownMenuTrigger usam render-prop (não asChild) | @base-ui/react Button não tem prop asChild; render-prop é o padrão correto (mirrors TransactionModal.tsx) | 2026-06-22 |
+| OFX import via fetch POST /api/financeiro/ofx — nunca server action direta | Buffer não pode cruzar boundary cliente→servidor action; API route é o único caminho correto | 2026-06-22 |
+| CAS guards usam .select('id') + data destructuring | .select() Supabase client aceita só 1 arg nesta versão; { count: X } era inválido — { data: X } + X.length correto | 2026-06-22 |
 | Regex /is (dotAll) não suportada em tsconfig target ES2017 | TS1501 no approvals.test.ts; substituído por assertions separadas — cobertura equivalente sem cross-line dot match | 2026-06-14 |
 | ai_decision_log sem FK em clinic_id | Log imutável deve sobreviver a delete do tenant — mirrors design de audit_logs | 2026-06-14 |
 | approval_requests UPDATE policy tenant-scoped apenas | required_role é por-linha (dinâmico); alçada enforced no Server Action, não em policy estática | 2026-06-14 |
