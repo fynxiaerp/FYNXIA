@@ -64,7 +64,7 @@ const WRITER_ROLES = ['admin', 'superadmin'] as const
 interface IssBracketRow {
   vigencia_inicio: string
   vigencia_fim: string | null
-  municipio_ibge: string
+  codigo_ibge: string
   aliquota: number
 }
 
@@ -104,7 +104,7 @@ export async function gerarRpa(rawInput: unknown): Promise<{
   // 2. Verificar vínculo do supplier (D-16): deve ser 'autonomo'
   const { data: supplier, error: supplierError } = await supabase
     .from('suppliers')
-    .select('id, name, document_number, vinculo')
+    .select('id, name, cnpj_cpf, vinculo')
     .eq('id', data.supplierId)
     .single()
 
@@ -132,10 +132,10 @@ export async function gerarRpa(rawInput: unknown): Promise<{
   if (data.unitId) {
     const { data: unitFiscal } = await supabase
       .from('unit_fiscal_config')
-      .select('municipio_ibge')
+      .select('municipio_codigo_ibge')
       .eq('unit_id', data.unitId)
       .maybeSingle()
-    municipioIbge = unitFiscal?.municipio_ibge ?? null
+    municipioIbge = unitFiscal?.municipio_codigo_ibge ?? null
   }
 
   // 3. Guard de competência fechada (T-16-47/D-26)
@@ -160,7 +160,7 @@ export async function gerarRpa(rawInput: unknown): Promise<{
     supabase.from('inss_tax_tables').select('*').order('faixa_min'),
     supabase.from('irrf_tax_tables').select('*').order('faixa_min'),
     municipioIbge
-      ? supabase.from('iss_tax_tables').select('*').eq('municipio_ibge', municipioIbge)
+      ? supabase.from('iss_tax_tables').select('*').eq('codigo_ibge', municipioIbge)
       : Promise.resolve({ data: [] as IssBracketRow[], error: null }),
   ])
 
@@ -259,7 +259,7 @@ export async function gerarRpa(rawInput: unknown): Promise<{
         numero,
         competencia: data.competencia,
         prestadorNome: supplier.name,
-        prestadorDoc: supplier.document_number ?? '',
+        prestadorDoc: supplier.cnpj_cpf ?? '',
         valorBruto: data.valorBruto,
         valorInss: w.inss,
         valorIrrf: w.irrf,
