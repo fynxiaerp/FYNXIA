@@ -51,7 +51,7 @@ Full detail archived in [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
 - [x] **Phase 14: Financeiro — Cadastros Base** — Plano de contas em árvore, centros de custo, contas correntes e categorias de lançamento
  (completed 2026-06-20)
 - [x] **Phase 15: Faturamento/NFS-e & Convênios/TISS** — OS automática pós-atendimento, emissão de NFS-e e faturamento de convênios com guia TISS e glosas (completed 2026-06-20)
-- [ ] **Phase 16: Contas a Pagar, Conciliação & Tributos** — Contas a pagar, conciliação bancária OFX/Open Finance, fluxo de caixa atualizado, repasses e RPA com retenções
+- [x] **Phase 16: Contas a Pagar, Conciliação & Tributos** — Contas a pagar, conciliação bancária OFX/Open Finance, fluxo de caixa atualizado, repasses e RPA com retenções (completed 2026-06-22)
 - [ ] **UI hint**: yes
 
 **Bloco D — Operação & Crescimento**
@@ -378,7 +378,7 @@ Plans:
 | 13. Esterilização/CME & Laboratório de Prótese | v2.0 | 7/7 | Complete    | 2026-06-19 |
 | 14. Financeiro — Cadastros Base | v2.0 | 7/7 | Complete    | 2026-06-20 |
 | 15. Faturamento/NFS-e & Convênios/TISS | v2.0 | 9/9 | Complete   | 2026-06-20 |
-| 16. Contas a Pagar, Conciliação & Tributos | v2.0 | 9/10 | In Progress|  |
+| 16. Contas a Pagar, Conciliação & Tributos | v2.0 | 10/10 | Complete   | 2026-06-22 |
 | 17. Estoque & Materiais | v2.0 | 0/? | Not started | - |
 | 18. CRC & Marketing | v2.0 | 0/? | Not started | - |
 | 19. Relatórios, Orçamento & BI | v2.0 | 0/? | Not started | - |
