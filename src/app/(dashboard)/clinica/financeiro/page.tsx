@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { TrendingUp, Receipt, FilePlus, Settings2, GitBranch, Building2, Landmark, ClipboardList, FileText, ShieldPlus, CreditCard, RefreshCw, Banknote, Bot } from 'lucide-react'
+import { TrendingUp, Receipt, FilePlus, Settings2, GitBranch, Building2, Landmark, ClipboardList, FileText, ShieldPlus, CreditCard, ArrowLeftRight, Users } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { PageHeader } from '@/components/shell/PageHeader'
 import { Button } from '@/components/ui/button'
@@ -92,29 +92,29 @@ export default async function FinanceiroPage() {
     {
       href: '/clinica/financeiro/contas-a-pagar',
       title: 'Contas a Pagar',
-      description: 'Fornecedores, parcelas e baixa de despesas da clínica.',
+      description: 'Fornecedores, vencimentos e baixa de despesas.',
       icon: CreditCard,
       show: true,
     },
     {
       href: '/clinica/financeiro/conciliacao',
       title: 'Conciliação Bancária',
-      description: 'Importe OFX e concilie lançamentos com o extrato bancário.',
-      icon: RefreshCw,
+      description: 'Importe extratos OFX e bata com os lançamentos automaticamente.',
+      icon: ArrowLeftRight,
       show: true,
     },
     {
       href: '/clinica/financeiro/repasse',
-      title: 'Repasse de Dentistas',
-      description: 'Calcule e baixe repasses por produção ou percentual.',
-      icon: Banknote,
+      title: 'Repasse de Profissionais',
+      description: 'Calcule comissões e gere demonstrativos por competência.',
+      icon: Users,
       show: isAdmin,
     },
     {
       href: '/clinica/financeiro/rpa',
-      title: 'RPA / Autônomos',
-      description: 'Emita Recibo de Pagamento a Autônomo com retenções fiscais.',
-      icon: Bot,
+      title: 'RPA & Tributos',
+      description: 'Emita RPA de autônomos com INSS/IRRF/ISS calculados.',
+      icon: FileText,
       show: isAdmin,
     },
   ].filter((item) => item.show)
