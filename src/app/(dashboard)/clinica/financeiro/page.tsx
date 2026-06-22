@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { TrendingUp, Receipt, FilePlus, Settings2, GitBranch, Building2, Landmark, ClipboardList, FileText, ShieldPlus } from 'lucide-react'
+import { TrendingUp, Receipt, FilePlus, Settings2, GitBranch, Building2, Landmark, ClipboardList, FileText, ShieldPlus, CreditCard, RefreshCw, Banknote, Bot } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { PageHeader } from '@/components/shell/PageHeader'
 import { Button } from '@/components/ui/button'
@@ -88,6 +88,34 @@ export default async function FinanceiroPage() {
       description: 'Guias TISS, lotes e tratamento de glosas por operadora.',
       icon: ShieldPlus,
       show: true,
+    },
+    {
+      href: '/clinica/financeiro/contas-a-pagar',
+      title: 'Contas a Pagar',
+      description: 'Fornecedores, parcelas e baixa de despesas da clínica.',
+      icon: CreditCard,
+      show: true,
+    },
+    {
+      href: '/clinica/financeiro/conciliacao',
+      title: 'Conciliação Bancária',
+      description: 'Importe OFX e concilie lançamentos com o extrato bancário.',
+      icon: RefreshCw,
+      show: true,
+    },
+    {
+      href: '/clinica/financeiro/repasse',
+      title: 'Repasse de Dentistas',
+      description: 'Calcule e baixe repasses por produção ou percentual.',
+      icon: Banknote,
+      show: isAdmin,
+    },
+    {
+      href: '/clinica/financeiro/rpa',
+      title: 'RPA / Autônomos',
+      description: 'Emita Recibo de Pagamento a Autônomo com retenções fiscais.',
+      icon: Bot,
+      show: isAdmin,
     },
   ].filter((item) => item.show)
 
