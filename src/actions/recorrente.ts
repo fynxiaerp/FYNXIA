@@ -3,6 +3,7 @@ import 'server-only'
 import { z } from 'zod'
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 // ─── Helper: get authenticated actor ────────────────────────────────────────
 // Verbatim copy from src/actions/receivables.ts (getActor pattern)
@@ -264,12 +265,18 @@ export async function generateRecorrentePayables(
     return { success: false, error: 'Competência inválida (YYYY-MM)' }
   }
 
-  // Determine clinic scope
+  // Determine clinic scope AND client.
+  // IN-02 fix: the cron path (clinicId provided, already authorized by CRON_SECRET)
+  // has NO user session, so an RLS-scoped anon client would have its inserts silently
+  // blocked by the write-by-role policies. Use the service-role admin client there.
+  // The user-initiated path keeps the RLS-scoped client (clinic_id from actor.tenant_id).
   let targetClinicId: string
+  let supabase: ReturnType<typeof createAdminClient>
 
   if (clinicId) {
     // Called by cron with service role — clinic provided externally
     targetClinicId = clinicId
+    supabase = createAdminClient()
   } else {
     // Called by authenticated user — scope to their tenant
     const actorResult = await getActor()
@@ -283,9 +290,8 @@ export async function generateRecorrentePayables(
     }
 
     targetClinicId = actor.tenant_id
+    supabase = (await createClient()) as unknown as ReturnType<typeof createAdminClient>
   }
-
-  const supabase = await createClient()
 
   // Fetch all ativo templates for this clinic
   const { data: templates, error: templatesError } = await supabase
