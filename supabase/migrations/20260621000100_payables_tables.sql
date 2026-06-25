@@ -87,6 +87,7 @@ CREATE TABLE public.payables (
   notes                  TEXT,
   document_id            UUID,       -- D-27 anexo (bucket Fase 8)
   created_by             UUID        REFERENCES public.users(id),
+  deleted_at             TIMESTAMPTZ,                            -- soft delete (LGPD) — filtrado por src/actions/payables.ts
   created_at             TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at             TIMESTAMPTZ NOT NULL DEFAULT now()
 );
