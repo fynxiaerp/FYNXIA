@@ -245,7 +245,11 @@ export function PayableFormDialog({
                     >
                       <FormControl>
                         <SelectTrigger className="bg-background border-border">
-                          <SelectValue placeholder="Selecione o fornecedor" />
+                          <SelectValue placeholder="Selecione o fornecedor">
+                            {field.value
+                              ? (suppliers.find(s => s.id === field.value)?.name ?? 'Selecione o fornecedor')
+                              : null}
+                          </SelectValue>
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
