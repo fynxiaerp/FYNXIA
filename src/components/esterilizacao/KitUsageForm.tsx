@@ -207,7 +207,9 @@ export function KitUsageForm({
                 id="sterilization_cycle_id"
                 className="w-full bg-background border-border text-foreground"
               >
-                <SelectValue placeholder="Selecione o ciclo" />
+                <SelectValue placeholder="Selecione o ciclo">
+                  {field.value ? (cycles.find(c => c.id === field.value)?.cycle_number?.toString() ?? 'Selecione o ciclo') : null}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent className="bg-background border-border">
                 {cycles.map((cycle) => {
@@ -279,7 +281,9 @@ export function KitUsageForm({
                 id="patient_id"
                 className="w-full bg-background border-border text-foreground"
               >
-                <SelectValue placeholder="Selecione o paciente" />
+                <SelectValue placeholder="Selecione o paciente">
+                  {field.value ? (patients.find(p => p.id === field.value)?.full_name ?? 'Selecione o paciente') : null}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent className="bg-background border-border">
                 {patients.map((p) => (

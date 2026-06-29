@@ -182,7 +182,9 @@ export function ChargeForm({ patients }: ChargeFormProps) {
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Selecione o paciente" />
+                        <SelectValue placeholder="Selecione o paciente">
+                        {field.value ? (() => { const p = filteredPatients.find(x => x.id === field.value); return p ? `${p.full_name} — ${p.cpf}` : 'Selecione o paciente' })() : null}
+                      </SelectValue>
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>

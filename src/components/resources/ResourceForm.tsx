@@ -178,7 +178,9 @@ export function ResourceForm({ mode, resourceId, units, defaultValues }: Resourc
                 <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Selecione a unidade" />
+                      <SelectValue placeholder="Selecione a unidade">
+                      {field.value ? (units.find(u => u.id === field.value)?.name ?? 'Selecione a unidade') : null}
+                    </SelectValue>
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>

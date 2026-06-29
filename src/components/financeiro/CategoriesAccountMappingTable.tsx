@@ -138,7 +138,9 @@ export function CategoriesAccountMappingTable({
                         disabled={isPending}
                       >
                         <SelectTrigger className="w-full max-w-xs">
-                          <SelectValue placeholder="Selecione a conta contábil" />
+                          <SelectValue placeholder="Selecione a conta contábil">
+                            {cat.account_id && cat.account_id !== 'none' ? (() => { const a = compatibleAccounts.find(x => x.id === cat.account_id); return a ? `${a.code} — ${a.name}` : 'Selecione a conta contábil' })() : null}
+                          </SelectValue>
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="none">Sem conta mapeada</SelectItem>

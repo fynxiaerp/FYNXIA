@@ -28,7 +28,9 @@ export function ContaCorrenteSelector({ bankAccounts }: ContaCorrenteSelectorPro
       onValueChange={(v) => setConta(v === 'none' ? '' : v)}
     >
       <SelectTrigger className="w-52">
-        <SelectValue placeholder="Selecione a conta" />
+        <SelectValue placeholder="Selecione a conta">
+          {conta && conta !== 'none' ? (bankAccounts.find(ba => ba.id === conta)?.name ?? 'Selecione a conta') : null}
+        </SelectValue>
       </SelectTrigger>
       <SelectContent>
         <SelectItem value="none">Selecione a conta…</SelectItem>

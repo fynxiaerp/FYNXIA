@@ -281,7 +281,9 @@ export function AgendaCalendar({ dentists, events: initialEvents, tenantId }: Ag
           onValueChange={(v) => setDentistId(v === '__all__' ? null : v)}
         >
           <SelectTrigger className="w-[240px]">
-            <SelectValue placeholder="Selecionar dentista..." />
+            <SelectValue placeholder="Selecionar dentista...">
+              {dentistId && dentistId !== '__all__' ? (dentists.find(d => d.id === dentistId)?.full_name ?? 'Selecionar dentista...') : null}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="__all__">Todos os dentistas</SelectItem>

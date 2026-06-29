@@ -217,7 +217,9 @@ export function BaixaDialog({
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger className="bg-background border-border">
-                          <SelectValue placeholder="Selecione a conta corrente" />
+                          <SelectValue placeholder="Selecione a conta corrente">
+                          {field.value ? (activeAccounts.find(ba => ba.id === field.value)?.name ?? 'Selecione a conta corrente') : null}
+                        </SelectValue>
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>

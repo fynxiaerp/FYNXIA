@@ -67,7 +67,11 @@ export function GlosaListClient({
             onValueChange={(v) => setOperadora(v === 'all' ? '' : v)}
           >
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Todas" />
+              <SelectValue placeholder="Todas">
+                {operadora && operadora !== '' && operadora !== 'all'
+                  ? (insurers.find(i => i.id === operadora)?.name ?? 'Todas')
+                  : 'Todas'}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todas</SelectItem>

@@ -192,7 +192,9 @@ export function CostCenterFormDialog({
                     >
                       <FormControl>
                         <SelectTrigger className="bg-background border-border">
-                          <SelectValue placeholder="Selecione a unidade" />
+                          <SelectValue placeholder="Selecione a unidade">
+                            {field.value ? (units.find(u => u.id === field.value)?.name ?? 'Selecione a unidade') : null}
+                          </SelectValue>
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>

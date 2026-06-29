@@ -159,7 +159,9 @@ export function CycleForm({ autoclaves, onSuccess }: CycleFormProps) {
               onValueChange={(value) => field.onChange(value ?? '')}
             >
               <SelectTrigger id="autoclave_id" className="w-full bg-background border-border text-foreground">
-                <SelectValue placeholder="Selecione a autoclave" />
+                <SelectValue placeholder="Selecione a autoclave">
+                  {field.value ? (autoclaves.find(ac => ac.id === field.value)?.nome ?? 'Selecione a autoclave') : null}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent className="bg-background border-border">
                 {autoclaves.map((ac) => (
