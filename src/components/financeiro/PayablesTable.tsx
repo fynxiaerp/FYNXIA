@@ -253,7 +253,7 @@ function PayableRowActions({
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           {firstPendingInst && (
-            <DropdownMenuItem onSelect={() => setBaixaOpen(true)}>
+            <DropdownMenuItem onClick={() => setBaixaOpen(true)}>
               Baixar
             </DropdownMenuItem>
           )}
