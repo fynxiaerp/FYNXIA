@@ -188,6 +188,94 @@ function CancelPayableDialog({ payableId, canWrite }: { payableId: string; canWr
   )
 }
 
+// ─── PayableRowActions ────────────────────────────────────────────────────────
+// Extracted to a proper React component so useState (baixaOpen) survives the
+// DropdownMenu unmount cycle. BaixaDialog must live OUTSIDE DropdownMenuContent
+// to avoid being unmounted when the Dialog modal overlay triggers a close event.
+
+function PayableRowActions({
+  payable,
+  bankAccounts,
+  suppliers,
+  leafAccounts,
+  costCenters,
+  units,
+  canWrite,
+}: {
+  payable: PayableRow
+  bankAccounts: BankAccountOption[]
+  suppliers: SupplierOption[]
+  leafAccounts: LeafAccount[]
+  costCenters: CostCenterOption[]
+  units: UnitOption[]
+  canWrite: boolean
+}) {
+  const [baixaOpen, setBaixaOpen] = useState(false)
+
+  const firstPendingInst = (payable.installments ?? []).find(
+    (i) => i.status === 'pendente' || i.status === 'parcial'
+  )
+  const saldoPendente = firstPendingInst
+    ? firstPendingInst.valor - (firstPendingInst.valor_pago ?? 0)
+    : 0
+
+  if (!canWrite) {
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          render={<button type="button" className="flex size-8 items-center justify-center rounded-md hover:bg-accent" aria-label="Ações" />}
+        >
+          <MoreHorizontal className="size-4" />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem>Ver Detalhes</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    )
+  }
+
+  return (
+    <>
+      {firstPendingInst && (
+        <BaixaDialog
+          installmentId={firstPendingInst.id}
+          saldoPendente={saldoPendente}
+          bankAccounts={bankAccounts}
+          open={baixaOpen}
+          onOpenChange={setBaixaOpen}
+        />
+      )}
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          render={<button type="button" className="flex size-8 items-center justify-center rounded-md hover:bg-accent" aria-label="Ações" />}
+        >
+          <MoreHorizontal className="size-4" />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          {firstPendingInst && (
+            <DropdownMenuItem onSelect={() => setBaixaOpen(true)}>
+              Baixar
+            </DropdownMenuItem>
+          )}
+          <PayableFormDialog
+            mode="edit"
+            payable={payable}
+            suppliers={suppliers}
+            leafAccounts={leafAccounts}
+            costCenters={costCenters}
+            units={units}
+          >
+            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+              Editar
+            </DropdownMenuItem>
+          </PayableFormDialog>
+          <CancelPayableDialog payableId={payable.id} canWrite={canWrite} />
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
+  )
+}
+
 // ─── PayablesTable ─────────────────────────────────────────────────────────────
 // FOP-01: TanStack Table v8 with status badges (D-04) and role-gated Ações column.
 
@@ -301,64 +389,17 @@ export function PayablesTable({
     {
       id: 'acoes',
       header: 'Ações',
-      cell: ({ row }) => {
-        const payable = row.original
-        const firstPendingInst = (payable.installments ?? []).find(
-          (i) => i.status === 'pendente' || i.status === 'parcial'
-        )
-
-        if (!canWrite) {
-          return (
-            <DropdownMenu>
-              <DropdownMenuTrigger
-          render={<button type="button" className="flex size-8 items-center justify-center rounded-md hover:bg-accent" aria-label="Ações" />}
-        >
-                  <MoreHorizontal className="size-4" />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem>Ver Detalhes</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )
-        }
-
-        return (
-          <DropdownMenu>
-            <DropdownMenuTrigger
-          render={<button type="button" className="flex size-8 items-center justify-center rounded-md hover:bg-accent" aria-label="Ações" />}
-        >
-                <MoreHorizontal className="size-4" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {firstPendingInst && (
-                <BaixaDialog
-                  installmentId={firstPendingInst.id}
-                  saldoPendente={firstPendingInst.valor - (firstPendingInst.valor_pago ?? 0)}
-                  bankAccounts={bankAccounts}
-                  trigger={
-                    <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                      Baixar
-                    </DropdownMenuItem>
-                  }
-                />
-              )}
-              <PayableFormDialog
-                mode="edit"
-                payable={payable}
-                suppliers={suppliers}
-                leafAccounts={leafAccounts}
-                costCenters={costCenters}
-                units={units}
-              >
-                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                  Editar
-                </DropdownMenuItem>
-              </PayableFormDialog>
-              <CancelPayableDialog payableId={payable.id} canWrite={canWrite} />
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )
-      },
+      cell: ({ row }) => (
+        <PayableRowActions
+          payable={row.original}
+          bankAccounts={bankAccounts}
+          suppliers={suppliers}
+          leafAccounts={leafAccounts}
+          costCenters={costCenters}
+          units={units}
+          canWrite={canWrite}
+        />
+      ),
     },
   ]
 

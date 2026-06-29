@@ -56,7 +56,9 @@ interface BaixaDialogProps {
   installmentId: string
   saldoPendente: number
   bankAccounts: BankAccountOption[]
-  trigger: React.ReactNode
+  trigger?: React.ReactNode
+  open?: boolean
+  onOpenChange?: (v: boolean) => void
 }
 
 // ─── Schema ───────────────────────────────────────────────────────────────────
@@ -90,9 +92,13 @@ export function BaixaDialog({
   saldoPendente,
   bankAccounts,
   trigger,
+  open: controlledOpen,
+  onOpenChange: controlledOnOpenChange,
 }: BaixaDialogProps) {
   const router = useRouter()
-  const [open, setOpen] = useState(false)
+  const [internalOpen, setInternalOpen] = useState(false)
+  const open = controlledOpen ?? internalOpen
+  const setOpen = controlledOnOpenChange ?? setInternalOpen
   const [serverError, setServerError] = useState<string | null>(null)
   const [calendarOpen, setCalendarOpen] = useState(false)
   const [isPartial, setIsPartial] = useState(false)
@@ -171,14 +177,16 @@ export function BaixaDialog({
 
   return (
     <>
-      <div
-        className="contents"
-        onClick={() => handleOpen(true)}
-        onKeyDown={(e) => e.key === 'Enter' && handleOpen(true)}
-        role="presentation"
-      >
-        {trigger}
-      </div>
+      {trigger !== undefined && (
+        <div
+          className="contents"
+          onClick={() => handleOpen(true)}
+          onKeyDown={(e) => e.key === 'Enter' && handleOpen(true)}
+          role="presentation"
+        >
+          {trigger}
+        </div>
+      )}
 
       <Dialog open={open} onOpenChange={handleOpen}>
         <DialogContent className="sm:max-w-md bg-background text-foreground">
