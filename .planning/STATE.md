@@ -283,3 +283,13 @@ Plan: 10 of 10
 **Parallelism opportunity:** Phase 14 (Financeiro Cadastros) pode iniciar em paralelo com Phase 13 (CME+Lab), pois ambas dependem de Phase 10 e não têm dependência entre si.
 
 **Next action:** `/gsd-execute-phase 10 02` — Phase 10 Plan 02 (Wave 0: migrations — ai_decision_log, approval_requests, ocr_extractions, audit_logs indexes)
+
+---
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260629-ivj | criar página de gerenciamento de fornecedores em /clinica/financeiro/fornecedores — CRUD completo | 2026-06-29 | 82ee555 | [260629-ivj-criar-pagina-de-gerenciamento-de-fornece](.planning/quick/260629-ivj-criar-pagina-de-gerenciamento-de-fornece/) |
+
+**Last activity:** 2026-06-29 - Completed quick task 260629-ivj: página de gerenciamento de fornecedores CRUD
