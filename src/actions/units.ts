@@ -237,3 +237,59 @@ export async function updateUnit(
 
   return { success: true }
 }
+
+// ─── deactivateUnit ───────────────────────────────────────────────────────────
+
+export async function deactivateUnit(unitId: string): Promise<{
+  success: boolean
+  error?: string
+}> {
+  // 1. Read-only gate
+  await assertNotReadOnly()
+
+  // 2. Auth + role gate
+  const actorResult = await getActor()
+  if ('error' in actorResult) {
+    return { success: false, error: actorResult.error }
+  }
+  const { actor } = actorResult
+
+  if (!['admin', 'superadmin'].includes(actor.role)) {
+    return { success: false, error: 'Permissão insuficiente' }
+  }
+
+  // 3. Default-unit guard: cannot delete the default unit
+  const supabase = await createClient()
+  const { data: unitRow } = await supabase
+    .from('units')
+    .select('is_default')
+    .eq('id', unitId)
+    .eq('clinic_id', actor.tenant_id)
+    .single()
+
+  if (unitRow?.is_default) {
+    return { success: false, error: 'A unidade padrão não pode ser excluída' }
+  }
+
+  // 4. Soft delete — sets deleted_at + ativo:false (listUnits filters deleted_at IS NULL)
+  const now = new Date().toISOString()
+  const { error: deleteError } = await supabase
+    .from('units')
+    .update({ deleted_at: now, ativo: false, updated_at: now })
+    .eq('id', unitId)
+    .eq('clinic_id', actor.tenant_id)
+
+  if (deleteError) {
+    return { success: false, error: deleteError.message }
+  }
+
+  // 5. Audit
+  await logBusinessEvent({
+    tenantId: actor.tenant_id,
+    actorId: actor.id,
+    action: 'unit.deleted',
+    details: { unit_id: unitId },
+  })
+
+  return { success: true }
+}
