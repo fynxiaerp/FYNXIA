@@ -1,50 +1,49 @@
 ---
-status: diagnosed
+status: partial
 phase: 16-contas-a-pagar-concilia-o-tributos
 source: [16-VERIFICATION.md, 16-HUMAN-UAT.md]
 started: 2026-06-22T00:00:00Z
-updated: 2026-06-25T00:00:00Z
+updated: 2026-06-29T00:00:00Z
 ---
 
 ## Current Test
 
-[testing complete — 1 blocker confirmado via Playwright contra https://fynxia.vercel.app; testes 2–4 bloqueados pela falha do schema (e por exigirem fixtures/backend que automação de UI não dirige)]
+[testing paused — todos os 4 testes bloqueados por ausência de seed na clínica de teste; schema fix verificado via Playwright em 2026-06-29]
 
 ## Tests
 
 ### 1. Baixa parcial de Conta a Pagar sob concorrência
 expected: Em /clinica/financeiro/contas-a-pagar, baixa parcial (valorPago < saldo) → parcela status='parcial', despesa criada, saldo_atual debitado; baixa repetida não duplica a despesa (CAS WR-02).
-result: issue
-reported: "Página /clinica/financeiro/contas-a-pagar exibia banner de erro 'column payables.deleted_at does not exist'. A lista nunca carregava — impossível listar ou dar baixa. Verificado via Playwright no deploy."
-severity: blocker
-fix: "Migration 20260625000100_payables_add_deleted_at.sql (ALTER TABLE public.payables ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ) aplicada em produção via supabase db push em 2026-06-25. Retestado via Playwright: o banner de erro sumiu e a página renderiza os cards (A Vencer/Vencido/Pago no Mês) + estado vazio. Schema corrigido — a assertiva funcional de baixa parcial + concorrência (WR-02) ainda requer execução com dados de teste."
+result: blocked
+blocked_by: prior-phase
+reason: "Schema fix verificado via Playwright em 2026-06-29: página carrega sem erro, cards A Vencer/Vencido/Pago no Mês renderizam, modal Nova Conta a Pagar abre com todos os campos. Dados parciais inseridos via Supabase CLI: fornecedor 'Fornecedor Teste UAT' (a98c107c), conta contábil 'Despesas Operacionais UAT' (c875e17c), conta corrente 'Conta Corrente UAT' R$1000 (dbd664ea). Bloqueio restante: clínica de teste não tem nenhuma unidade (units) cadastrada → cost_centers.unit_id é NOT NULL → impossível criar centro de custo → impossível criar conta a pagar via UI. Funcional de baixa parcial + WR-02 não pode ser exercido sem seed de unidade."
 
 ### 2. Reimportação de extrato OFX (idempotência FITID)
 expected: Em /clinica/financeiro/conciliacao, importar um arquivo OFX cria as linhas; reimportar o MESMO arquivo reporta as linhas como "skipped" (sem duplicar). Linhas sem FITID também não duplicam na reimportação.
 result: blocked
 blocked_by: server
-reason: "Página de conciliação carrega (estado vazio, sem conta corrente cadastrada). Idempotência só pode ser exercida com uma conta corrente + arquivo OFX reimportado; automação de UI não dispõe de fixture OFX. Reteste após corrigir o blocker do schema."
+reason: "Página de conciliação carrega (estado vazio). Idempotência só pode ser exercida com conta corrente + arquivo OFX real; automação de UI não dispõe de fixture OFX."
 
 ### 3. Expiração do signed URL do PDF do RPA
-expected: Em /clinica/financeiro/rpa, "Visualizar PDF" abre o PDF do RPA via link assinado de curta duração (TTL=60s); após ~60s o link expira (403). O caminho de armazenamento do PDF não aparece nas listagens.
+expected: Em /clinica/financeiro/rpa, 'Visualizar PDF' abre o PDF via link assinado TTL=60s; após ~60s o link expira (403). O pdf_storage_path não aparece nas listagens.
 result: blocked
 blocked_by: server
-reason: "Página de RPA carrega (estado vazio, 0 RPAs). Testar expiração do signed URL exige emitir um RPA para um autônomo e aguardar ~60s — depende de dados de teste e de tempo real. Não exercido nesta passada."
+reason: "Página de RPA carrega (estado vazio, 0 RPAs). Teste exige emitir um RPA para um autônomo e aguardar ~60s — depende de dados de teste e tempo real."
 
 ### 4. Ciclo de competência (repasse -> fechar -> conciliar) + Cron recorrente
-expected: O fluxo repasse->aprovar->gerar CP->fechar competência respeita a guarda de competência fechada (idempotente). O Cron de recorrentes (/api/cron/recorrente) gera as CPs por competência sem ser bloqueado por RLS (fix IN-02 — usa client admin).
+expected: O fluxo repasse->aprovar->gerar CP->fechar competência respeita a guarda de competência fechada (idempotente). O Cron de recorrentes (/api/cron/recorrente) gera as CPs por competência sem ser bloqueado por RLS (fix IN-02).
 result: blocked
 blocked_by: server
-reason: "Fluxo completo de competência + Cron recorrente é backend/cron, não dirigível por automação de UI. Além disso, a geração de CP grava em payables — bloqueada pelo mesmo erro de schema do Teste 1. Reteste após o fix."
+reason: "Fluxo completo de competência + Cron recorrente é backend/cron, não dirigível por automação de UI. Requer profissionais, repasses e unidade cadastrados na clínica de teste."
 
 ## Summary
 
 total: 4
 passed: 0
-issues: 1
+issues: 0
 pending: 0
 skipped: 0
-blocked: 3
+blocked: 4
 
 ## Gaps
 
