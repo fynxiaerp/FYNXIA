@@ -180,8 +180,7 @@ function CriarLancamentoDialog({ line, onSuccess }: CriarLancamentoDialogProps) 
   return (
     <>
       <DropdownMenuItem
-        onSelect={(e) => {
-          e.preventDefault()
+        onClick={() => {
           setOpen(true)
           loadData()
         }}
@@ -510,8 +509,7 @@ export function StatementLinesTable({ lines, canWrite, bankAccountId }: Statemen
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
-                onSelect={(e) => {
-                  e.preventDefault()
+                onClick={() => {
                   setNtoOneLineId(line.id)
                   setNtoOneOpen(true)
                 }}
@@ -519,7 +517,7 @@ export function StatementLinesTable({ lines, canWrite, bankAccountId }: Statemen
                 Lançar como N:1
               </DropdownMenuItem>
               <CriarLancamentoDialog line={line} onSuccess={handleRefresh} />
-              <DropdownMenuItem onSelect={handleRefresh}>Ignorar</DropdownMenuItem>
+              <DropdownMenuItem onClick={handleRefresh}>Ignorar</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         )

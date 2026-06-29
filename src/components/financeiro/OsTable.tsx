@@ -109,17 +109,17 @@ export function OsTable({ rows, onViewDetails, onFaturar, onCancelar }: OsTableP
               <MoreHorizontal className="size-4" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onSelect={() => onViewDetails(os)}>
+              <DropdownMenuItem onClick={() => onViewDetails(os)}>
                 Ver detalhes
               </DropdownMenuItem>
               {os.status === 'rascunho' && (
-                <DropdownMenuItem onSelect={() => onFaturar(os)}>
+                <DropdownMenuItem onClick={() => onFaturar(os)}>
                   Faturar
                 </DropdownMenuItem>
               )}
               {(os.status === 'rascunho' || os.status === 'faturada') && (
                 <DropdownMenuItem
-                  onSelect={() => onCancelar(os)}
+                  onClick={() => onCancelar(os)}
                   className="text-destructive focus:text-destructive"
                 >
                   Cancelar

@@ -168,12 +168,12 @@ export function NfseTable({ rows, onRefresh }: NfseTableProps) {
               <MoreHorizontal className="size-4" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onSelect={() => handleVerNota(nfse.id)}>
+              <DropdownMenuItem onClick={() => handleVerNota(nfse.id)}>
                 Ver nota
               </DropdownMenuItem>
               {canCancel && (
                 <DropdownMenuItem
-                  onSelect={() => setCancelingId(nfse.id)}
+                  onClick={() => setCancelingId(nfse.id)}
                   className="text-destructive focus:text-destructive"
                 >
                   Cancelar NFS-e
