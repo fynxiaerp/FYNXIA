@@ -181,6 +181,7 @@ export async function createSupplier(input: SupplierInput): Promise<{
   }
 
   revalidatePath('/clinica/financeiro/contas-a-pagar')
+  revalidatePath('/clinica/financeiro/fornecedores')
 
   return { success: true, supplierId: row.id }
 }
@@ -230,6 +231,7 @@ export async function updateSupplier(
   }
 
   revalidatePath('/clinica/financeiro/contas-a-pagar')
+  revalidatePath('/clinica/financeiro/fornecedores')
 
   return { success: true }
 }
@@ -262,6 +264,7 @@ export async function deactivateSupplier(
   }
 
   revalidatePath('/clinica/financeiro/contas-a-pagar')
+  revalidatePath('/clinica/financeiro/fornecedores')
 
   return { success: true }
 }

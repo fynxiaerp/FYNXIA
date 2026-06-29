@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { TrendingUp, Receipt, FilePlus, Settings2, GitBranch, Building2, Landmark, ClipboardList, FileText, ShieldPlus, CreditCard, ArrowLeftRight, Users } from 'lucide-react'
+import { TrendingUp, Receipt, FilePlus, Settings2, GitBranch, Building2, Landmark, ClipboardList, FileText, ShieldPlus, CreditCard, ArrowLeftRight, Users, Truck } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { PageHeader } from '@/components/shell/PageHeader'
 import { Button } from '@/components/ui/button'
@@ -94,6 +94,13 @@ export default async function FinanceiroPage() {
       title: 'Contas a Pagar',
       description: 'Fornecedores, vencimentos e baixa de despesas.',
       icon: CreditCard,
+      show: true,
+    },
+    {
+      href: '/clinica/financeiro/fornecedores',
+      title: 'Fornecedores',
+      description: 'Cadastre e gerencie fornecedores vinculados às contas a pagar.',
+      icon: Truck,
       show: true,
     },
     {
