@@ -193,6 +193,7 @@ export function PayableFormDialog({
       dueDate: values.dueDate,
       parcelas: values.parcelas,
       notes: values.notes ?? null,
+      origem: 'manual',
     })
 
     if (result.success) {
