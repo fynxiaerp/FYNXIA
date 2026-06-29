@@ -291,5 +291,6 @@ Plan: 10 of 10
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 260629-ivj | criar página de gerenciamento de fornecedores em /clinica/financeiro/fornecedores — CRUD completo | 2026-06-29 | 82ee555 | [260629-ivj-criar-pagina-de-gerenciamento-de-fornece](.planning/quick/260629-ivj-criar-pagina-de-gerenciamento-de-fornece/) |
+| 260629-qji | criar página de gestão de unidades em /config/unidades — CRUD completo | 2026-06-29 | 2ce4473 | [260629-qji-criar-p-gina-de-gest-o-de-unidades-em-co](.planning/quick/260629-qji-criar-p-gina-de-gest-o-de-unidades-em-co/) |
 
-**Last activity:** 2026-06-29 - Completed quick task 260629-ivj: página de gerenciamento de fornecedores CRUD
+**Last activity:** 2026-06-29 - Completed quick task 260629-qji: página de gestão de unidades CRUD
