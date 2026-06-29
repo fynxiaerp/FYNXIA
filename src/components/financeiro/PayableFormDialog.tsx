@@ -294,7 +294,11 @@ export function PayableFormDialog({
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger className="bg-background border-border">
-                          <SelectValue placeholder="Selecione a conta contábil" />
+                          <SelectValue placeholder="Selecione a conta contábil">
+                            {field.value
+                              ? (() => { const a = leafAccounts.find(x => x.id === field.value); return a ? `${a.code} — ${a.name}` : 'Selecione a conta contábil' })()
+                              : null}
+                          </SelectValue>
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -320,7 +324,11 @@ export function PayableFormDialog({
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger className="bg-background border-border">
-                          <SelectValue placeholder="Selecione o centro de custo" />
+                          <SelectValue placeholder="Selecione o centro de custo">
+                            {field.value
+                              ? (costCenters.find(cc => cc.id === field.value)?.name ?? 'Selecione o centro de custo')
+                              : null}
+                          </SelectValue>
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -350,7 +358,11 @@ export function PayableFormDialog({
                       >
                         <FormControl>
                           <SelectTrigger className="bg-background border-border">
-                            <SelectValue placeholder="Todas as unidades" />
+                            <SelectValue placeholder="Todas as unidades">
+                              {field.value && field.value !== 'none'
+                                ? (units.find(u => u.id === field.value)?.name ?? 'Todas as unidades')
+                                : 'Todas as unidades'}
+                            </SelectValue>
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
