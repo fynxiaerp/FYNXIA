@@ -292,5 +292,6 @@ Plan: 10 of 10
 |---|-------------|------|--------|-----------|
 | 260629-ivj | criar página de gerenciamento de fornecedores em /clinica/financeiro/fornecedores — CRUD completo | 2026-06-29 | 82ee555 | [260629-ivj-criar-pagina-de-gerenciamento-de-fornece](.planning/quick/260629-ivj-criar-pagina-de-gerenciamento-de-fornece/) |
 | 260629-qji | criar página de gestão de unidades em /config/unidades — CRUD completo | 2026-06-29 | 2ce4473 | [260629-qji-criar-p-gina-de-gest-o-de-unidades-em-co](.planning/quick/260629-qji-criar-p-gina-de-gest-o-de-unidades-em-co/) |
+| 260629-uaz | Adicionar pointer-events-none ao MoreHorizontal icon em PayablesTable.tsx | 2026-06-29 | 2189958 | [260629-uaz-adicionar-pointer-events-none-ao-morehor](.planning/quick/260629-uaz-adicionar-pointer-events-none-ao-morehor/) |
 
-**Last activity:** 2026-06-29 - Completed quick task 260629-qji: página de gestão de unidades CRUD
+**Last activity:** 2026-06-29 - Completed quick task 260629-uaz: pointer-events-none no MoreHorizontal icon (PayablesTable)
