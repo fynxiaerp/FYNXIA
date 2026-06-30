@@ -225,7 +225,7 @@ function PayableRowActions({
         <DropdownMenuTrigger
           render={<button type="button" className="flex size-8 items-center justify-center rounded-md hover:bg-accent" aria-label="Ações" />}
         >
-          <MoreHorizontal className="size-4" />
+          <MoreHorizontal className="size-4 pointer-events-none" />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem>Ver Detalhes</DropdownMenuItem>
@@ -249,7 +249,7 @@ function PayableRowActions({
         <DropdownMenuTrigger
           render={<button type="button" className="flex size-8 items-center justify-center rounded-md hover:bg-accent" aria-label="Ações" />}
         >
-          <MoreHorizontal className="size-4" />
+          <MoreHorizontal className="size-4 pointer-events-none" />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           {firstPendingInst && (
