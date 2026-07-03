@@ -290,7 +290,17 @@ Plans:
   1. Usuário cadastra produto com categoria (insumo/implante/medicamento), lote/série, estoque mínimo e custo médio calculado
   2. Ao registrar procedimento concluído, a baixa de materiais associados é feita automaticamente no estoque
   3. Sistema alerta quando estoque atinge o mínimo ou produto está próximo do vencimento; implantes têm rastreabilidade de lote por exigência ANVISA e o agente de compras é disparado
-**Plans**: TBD
+**Plans**: 9 plans
+Plans:
+- [ ] 17-01-PLAN.md — Zod schemas de produto/lote/entrada/baixa + tests RED (Wave 1)
+- [ ] 17-02-PLAN.md — Schema Supabase (6 tabelas) + ALTERs + RLS + seed + [BLOCKING] db push (Wave 1)
+- [ ] 17-03-PLAN.md — Custo médio lib + actions de produtos/lotes/entradas (Wave 2)
+- [ ] 17-04-PLAN.md — Agente de compras L2 + alertas + cron de validade (Wave 2)
+- [ ] 17-05-PLAN.md — Baixa FIFO/manual + templates de consumo + wiring no atendimento (Wave 3)
+- [ ] 17-06-PLAN.md — Navegação + dashboard + catálogo de produtos (Wave 4)
+- [ ] 17-07-PLAN.md — Entradas de estoque + baixa manual (UI) (Wave 4)
+- [ ] 17-08-PLAN.md — Relatório ANVISA + export PDF (Wave 4)
+- [ ] 17-09-PLAN.md — Catálogo de serviços + aba Materiais + seção no prontuário (Wave 4)
 **v1 reuse**: Novo módulo; conecta com procedimentos do prontuário (Phase 2) e agentes IA (Phase 10)
 
 ---
