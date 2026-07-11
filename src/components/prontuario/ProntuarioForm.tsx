@@ -15,6 +15,7 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { MaterialsUsedSection } from '@/components/estoque/MaterialsUsedSection'
 
 // Client-side Zod schema — mirrors server validator but for RHF integration
 const prontuarioFormSchema = z
@@ -36,9 +37,16 @@ type ProntuarioFormValues = z.infer<typeof prontuarioFormSchema>
 
 interface ProntuarioFormProps {
   patientId: string
+  /**
+   * Serviço/procedimento do atendimento — opcional (D-22). O fluxo atual de
+   * ProntuarioForm não tem seleção de procedimento; quando um parent futuro
+   * passar serviceId, a seção "Materiais Utilizados" aparece automaticamente
+   * (auto-oculta quando o serviço não tem templates configurados).
+   */
+  serviceId?: string
 }
 
-export function ProntuarioForm({ patientId }: ProntuarioFormProps) {
+export function ProntuarioForm({ patientId, serviceId }: ProntuarioFormProps) {
   const [serverError, setServerError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [isPending, startTransition] = useTransition()
@@ -137,6 +145,9 @@ export function ProntuarioForm({ patientId }: ProntuarioFormProps) {
             </FormItem>
           )}
         />
+
+        {/* Materiais Utilizados (D-22) — auto-oculta quando serviceId ausente ou sem templates */}
+        <MaterialsUsedSection serviceId={serviceId} />
 
         <Button type="submit" disabled={isPending}>
           {isPending ? 'Registrando...' : 'Registrar Atendimento'}
