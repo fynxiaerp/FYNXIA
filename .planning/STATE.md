@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 17-05-PLAN.md
-last_updated: "2026-07-11T15:21:00.342Z"
+stopped_at: Completed 17-06-PLAN.md
+last_updated: "2026-07-11T15:37:19.496Z"
 last_activity: 2026-07-11
 progress:
   total_phases: 15
   completed_phases: 10
   total_plans: 81
-  completed_plans: 77
-  percent: 95
+  completed_plans: 78
+  percent: 96
 ---
 
 # FYNXIA ERP — Project State
@@ -36,7 +36,7 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 ## Current Position
 
 Phase: 17 (estoque-materiais) — EXECUTING
-Plan: 6 of 9
+Plan: 7 of 9
 Status: Ready to execute
 Last activity: 2026-07-11
 
@@ -131,6 +131,7 @@ Last activity: 2026-07-11
 | Phase 17 P03 | 25 | 3 tasks | 5 files |
 | Phase 17 P04 | 20min | 3 tasks | 4 files |
 | Phase 17 P05 | 35min | 3 tasks | 3 files |
+| Phase 17 P06 | ~15min | 3 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -238,6 +239,9 @@ Last activity: 2026-07-11
 | insertStockAlert uses app-level daily dedup (SELECT before INSERT, bounds in America/Sao_Paulo) + catch 23505, instead of ON CONFLICT on uq_stock_alerts_daily's expression index | supabase-js onConflict only accepts simple column names, not expressions — the live index uses ((created_at AT TIME ZONE 'America/Sao_Paulo')::date) which is not expressible via PostgREST upsert | 2026-07-11 |
 | selectFifoBatch CAS guard uses .eq('saldo_disponivel', valorLido) exact-value compare-and-swap instead of literal 'saldo_disponivel - qtd WHERE saldo_disponivel >= qtd' relative UPDATE | supabase-js update() only sends literal values, no relative column expressions, and no dedicated RPC exists in the already-applied schema; 0 rows affected = lost race, retries next FIFO batch | 2026-07-11 |
 | drawMaterialsForProcedures wired into updateAppointment via dynamic import (@/actions/stock-draws), wrapped in dedicated try/catch after createOsDraftFromAppointment | Avoids static import cycle between appointments.ts and stock-draws.ts; D-09 — stock shortage never blocks appointment conclusion | 2026-07-11 |
+| Estoque dashboard/catálogo resolve unit via listUnits()[0] (is_default DESC), no unit selector in UI | D-23 covered at backend level (per-unit saldo); unit selector UI out of this plan's must_haves — deferred to future refinement | 2026-07-11 |
+| StockAlertBanner receives counts:{minimo,validade,negativo} from getAlertCounts, not raw listActiveAlerts rows | Copywriting Contract only needs per-type counts; getAlertCounts already aggregates negativo (saldo sum) which listActiveAlerts does not compute | 2026-07-11 |
+| ProductsTable dropdown items (Registrar Entrada/Baixa Manual/Histórico) link to /clinica/estoque/entradas?produto={id} — route not yet built | Next.js does not validate internal hrefs at build time; wiring now avoids a follow-up edit when the entradas page lands in a later plan | 2026-07-11 |
 
 ### Architecture Constraints Locked
 
@@ -274,7 +278,7 @@ Last activity: 2026-07-11
 
 ## Session Continuity
 
-**Stopped at:** Completed 17-05-PLAN.md
+**Stopped at:** Completed 17-06-PLAN.md
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 
