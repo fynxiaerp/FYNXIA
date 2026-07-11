@@ -4,7 +4,7 @@ milestone: v2.0
 milestone_name: — Produto Completo
 status: verifying
 stopped_at: Completed 17-10-PLAN.md (gap closure)
-last_updated: "2026-07-11T19:56:23.541Z"
+last_updated: "2026-07-11T19:59:10.848Z"
 last_activity: 2026-07-11
 progress:
   total_phases: 15
@@ -35,8 +35,8 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 
 ## Current Position
 
-Phase: 17 (estoque-materiais) — EXECUTING
-Plan: 10 of 10 (gap closure)
+Phase: 18
+Plan: Not started
 Status: Gap closure complete (17-10) — MaterialsUsedSection reachable via ProntuarioForm service selector; ready for re-verification
 Last activity: 2026-07-11
 

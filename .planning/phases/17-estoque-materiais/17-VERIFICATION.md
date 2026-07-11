@@ -1,12 +1,13 @@
 ---
 phase: 17-estoque-materiais
 verified: 2026-07-11T19:39:55Z
-status: gaps_found
-score: 8/9 must-have truths verified (across 9 plans); 1 gap
+reverified: 2026-07-11T20:05:00Z
+status: passed
+score: 9/9 must-have truths verified (gap closed by 17-10 — ProntuarioForm service selector wires MaterialsUsedSection to a real serviceId)
 overrides_applied: 0
 gaps:
   - truth: "A seção 'Materiais Utilizados' no prontuário lista os materiais do template com qtd editável e custo estimado (D-22)"
-    status: partial
+    status: resolved
     reason: >
       MaterialsUsedSection.tsx is fully implemented (listServiceMaterials + listProducts join,
       editable qty inputs, status badges, "Custo estimado de insumos" footer, auto-hide via
