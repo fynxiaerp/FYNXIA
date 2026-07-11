@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 17-06-PLAN.md
-last_updated: "2026-07-11T15:37:19.496Z"
+stopped_at: Completed 17-07-PLAN.md
+last_updated: "2026-07-11T15:56:05.966Z"
 last_activity: 2026-07-11
 progress:
   total_phases: 15
   completed_phases: 10
   total_plans: 81
-  completed_plans: 78
-  percent: 96
+  completed_plans: 79
+  percent: 98
 ---
 
 # FYNXIA ERP — Project State
@@ -36,7 +36,7 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 ## Current Position
 
 Phase: 17 (estoque-materiais) — EXECUTING
-Plan: 7 of 9
+Plan: 8 of 9
 Status: Ready to execute
 Last activity: 2026-07-11
 
@@ -132,6 +132,7 @@ Last activity: 2026-07-11
 | Phase 17 P04 | 20min | 3 tasks | 4 files |
 | Phase 17 P05 | 35min | 3 tasks | 3 files |
 | Phase 17 P06 | ~15min | 3 tasks | 7 files |
+| Phase 17 P07 | ~20min | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -242,6 +243,9 @@ Last activity: 2026-07-11
 | Estoque dashboard/catálogo resolve unit via listUnits()[0] (is_default DESC), no unit selector in UI | D-23 covered at backend level (per-unit saldo); unit selector UI out of this plan's must_haves — deferred to future refinement | 2026-07-11 |
 | StockAlertBanner receives counts:{minimo,validade,negativo} from getAlertCounts, not raw listActiveAlerts rows | Copywriting Contract only needs per-type counts; getAlertCounts already aggregates negativo (saldo sum) which listActiveAlerts does not compute | 2026-07-11 |
 | ProductsTable dropdown items (Registrar Entrada/Baixa Manual/Histórico) link to /clinica/estoque/entradas?produto={id} — route not yet built | Next.js does not validate internal hrefs at build time; wiring now avoids a follow-up edit when the entradas page lands in a later plan | 2026-07-11 |
+| listStockEntries extended with product_batches/users joins (numero_lote, data_validade, created_by_name) | Lote/Validade/Registrado-por are UI-SPEC must_have columns not selected by the original Plan 03 read query | 2026-07-11 |
+| Novo custo médio computed client-side via calcularCustoMedioMovel (page-load saldo/custo_medio snapshot) instead of extending createStockEntry's return type | Keeps stock-entries.ts write-path untouched; the pure formula fn is already safely importable client-side | 2026-07-11 |
+| StockEntryFormDialog/ManualDrawDialog Dialog `open` state initializes from an `autoOpen` prop | Lets the RSC entradas page auto-open the correct dialog pre-filled when reached via ?produto=&acao= from ProductsTable dropdown (Plan 06) | 2026-07-11 |
 
 ### Architecture Constraints Locked
 
@@ -278,7 +282,7 @@ Last activity: 2026-07-11
 
 ## Session Continuity
 
-**Stopped at:** Completed 17-06-PLAN.md
+**Stopped at:** Completed 17-07-PLAN.md
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 
