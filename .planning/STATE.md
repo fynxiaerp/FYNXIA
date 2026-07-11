@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
-status: executing
-stopped_at: Completed 17-08-PLAN.md
-last_updated: "2026-07-11T16:11:44.884Z"
+status: verifying
+stopped_at: Completed 17-09-PLAN.md
+last_updated: "2026-07-11T19:32:15.258Z"
 last_activity: 2026-07-11
 progress:
   total_phases: 15
-  completed_phases: 10
+  completed_phases: 11
   total_plans: 81
-  completed_plans: 80
-  percent: 99
+  completed_plans: 81
+  percent: 100
 ---
 
 # FYNXIA ERP — Project State
@@ -37,7 +37,7 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 
 Phase: 17 (estoque-materiais) — EXECUTING
 Plan: 9 of 9
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-07-11
 
 **Milestone:** v2.0 — Produto Completo (27 módulos, blocos A–E)
@@ -134,6 +134,7 @@ Last activity: 2026-07-11
 | Phase 17 P06 | ~15min | 3 tasks | 7 files |
 | Phase 17 P07 | ~20min | 3 tasks | 5 files |
 | Phase 17 P08 | ~20min | 2 tasks | 4 files |
+| Phase 17 P09 | ~20min | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -247,6 +248,8 @@ Last activity: 2026-07-11
 | listStockEntries extended with product_batches/users joins (numero_lote, data_validade, created_by_name) | Lote/Validade/Registrado-por are UI-SPEC must_have columns not selected by the original Plan 03 read query | 2026-07-11 |
 | Novo custo médio computed client-side via calcularCustoMedioMovel (page-load saldo/custo_medio snapshot) instead of extending createStockEntry's return type | Keeps stock-entries.ts write-path untouched; the pure formula fn is already safely importable client-side | 2026-07-11 |
 | StockEntryFormDialog/ManualDrawDialog Dialog `open` state initializes from an `autoOpen` prop | Lets the RSC entradas page auto-open the correct dialog pre-filled when reached via ?produto=&acao= from ProductsTable dropdown (Plan 06) | 2026-07-11 |
+| ServiceForm Materiais tab only renders MaterialsTemplateTab once service.id exists (create mode shows static notice) | service_material_templates.service_id is a NOT NULL FK — matches ProductFormDialog-style trigger-wrapper convention without inventing a two-step create flow | 2026-07-11 |
+| ProntuarioForm gains optional serviceId prop (default undefined); MaterialsUsedSection auto-hides via `return null` | Prontuário has no procedure-selection step yet — keeps D-22 UI additive and non-breaking until a future plan wires appointment_procedures selection into the form | 2026-07-11 |
 
 ### Architecture Constraints Locked
 
@@ -283,7 +286,7 @@ Last activity: 2026-07-11
 
 ## Session Continuity
 
-**Stopped at:** Completed 17-08-PLAN.md
+**Stopped at:** Completed 17-09-PLAN.md
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 

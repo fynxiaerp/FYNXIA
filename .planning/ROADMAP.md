@@ -56,7 +56,7 @@ Full detail archived in [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
 
 **Bloco D — Operação & Crescimento**
 
-- [ ] **Phase 17: Estoque & Materiais** — Cadastro de produtos com baixa automática por procedimento, alertas de estoque mínimo e rastreabilidade ANVISA
+- [x] **Phase 17: Estoque & Materiais** — Cadastro de produtos com baixa automática por procedimento, alertas de estoque mínimo e rastreabilidade ANVISA (completed 2026-07-11)
 - [ ] **Phase 18: CRC & Marketing** — Funil de leads, ROI de campanhas, campanhas segmentadas, NPS e programa de indicação
 
 **Bloco E — Analítico & Canais**
@@ -300,7 +300,7 @@ Plans:
 - [x] 17-06-PLAN.md — Navegação + dashboard + catálogo de produtos (Wave 4)
 - [x] 17-07-PLAN.md — Entradas de estoque + baixa manual (UI) (Wave 4)
 - [x] 17-08-PLAN.md — Relatório ANVISA + export PDF (Wave 4)
-- [ ] 17-09-PLAN.md — Catálogo de serviços + aba Materiais + seção no prontuário (Wave 4)
+- [x] 17-09-PLAN.md — Catálogo de serviços + aba Materiais + seção no prontuário (Wave 4)
 **v1 reuse**: Novo módulo; conecta com procedimentos do prontuário (Phase 2) e agentes IA (Phase 10)
 
 ---
@@ -389,7 +389,7 @@ Plans:
 | 14. Financeiro — Cadastros Base | v2.0 | 7/7 | Complete    | 2026-06-20 |
 | 15. Faturamento/NFS-e & Convênios/TISS | v2.0 | 9/9 | Complete   | 2026-06-20 |
 | 16. Contas a Pagar, Conciliação & Tributos | v2.0 | 10/10 | Complete    | 2026-06-22 |
-| 17. Estoque & Materiais | v2.0 | 8/9 | In Progress|  |
+| 17. Estoque & Materiais | v2.0 | 9/9 | Complete   | 2026-07-11 |
 | 18. CRC & Marketing | v2.0 | 0/? | Not started | - |
 | 19. Relatórios, Orçamento & BI | v2.0 | 0/? | Not started | - |
 | 20. Portal do Paciente & App do Profissional | v2.0 | 0/? | Not started | - |
