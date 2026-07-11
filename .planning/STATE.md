@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
-status: verifying
-stopped_at: Completed 17-09-PLAN.md
+status: executing
+stopped_at: Phase 17 executada (9/9 planos) — verificação gaps_found (1 gap: prontuário Materiais Utilizados serviceId não fornecido pelos callers)
 last_updated: "2026-07-11T19:32:15.258Z"
 last_activity: 2026-07-11
 progress:
   total_phases: 15
-  completed_phases: 11
+  completed_phases: 10
   total_plans: 81
   completed_plans: 81
   percent: 100
