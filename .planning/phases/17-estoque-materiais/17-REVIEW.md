@@ -122,7 +122,7 @@ batches until `qtd` is satisfied, inserting one `stock_draws` row per batch cons
 minimum debit the largest-available batch to `0` and record the remainder against `batch_id:null`
 so the aggregate balance reflects actual consumption.
 
-### WR-03: `listProducts` derives status 'critico' for every product when `unitId` is omitted → false "Estoque Baixo" badges
+### WR-03 [RESOLVED 2026-07-11]: `listProducts` derives status 'critico' for every product when `unitId` is omitted → false "Estoque Baixo" badges
 
 **File:** `src/actions/products.ts:204-267`, `src/components/estoque/MaterialsUsedSection.tsx:78-133`
 **Issue:** When `listProducts` is called without `opts.unitId`, `saldo` is hardcoded to `0`
@@ -136,7 +136,7 @@ returns `normal`. `MaterialsUsedSection` calls `listProducts()` with no `unitId`
 meaningful, or (b) when no `unitId` is supplied, return a neutral status (`'normal'`) instead of
 running `deriveProductStatus` against a fabricated `saldo=0`, and correct the comment to match.
 
-### WR-04: `createStockEntry` performs a non-atomic read-modify-write of moving-average cost
+### WR-04 [RESOLVED 2026-07-11]: `createStockEntry` performs a non-atomic read-modify-write of moving-average cost
 
 **File:** `src/actions/stock-entries.ts:96-179`
 **Issue:** The entry flow is five separate round-trips (sum batches → read `products.custo_medio`

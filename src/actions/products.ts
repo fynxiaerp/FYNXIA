@@ -203,7 +203,8 @@ export async function updateProduct(
 
 // ─── listProducts ─────────────────────────────────────────────────────────────
 // Saldo por unidade = SUM(product_batches.saldo_disponivel) filtrado por product_id + unit_id.
-// Sem opts.unitId, saldo não pode ser calculado por unidade (D-23) — retorna 0/status 'normal'.
+// Sem opts.unitId, saldo não pode ser calculado por unidade (D-23) — saldo 0 e status neutro 'normal'
+// (NÃO deriva 'critico' de saldo desconhecido — WR-03).
 
 export async function listProducts(opts?: {
   unitId?: string
@@ -261,8 +262,12 @@ export async function listProducts(opts?: {
   }
 
   let result: ProductWithSaldo[] = rows.map((p) => {
+    // Sem unitId, o saldo por unidade não é calculável (D-23). NÃO derivar status
+    // de um saldo fabricado = 0 — deriveProductStatus(0, min) retornaria 'critico'
+    // para todo produto (WR-03), exibindo badge falso de "Estoque Baixo". Status
+    // neutro 'normal' quando o saldo é desconhecido.
     const saldo = opts?.unitId ? (saldoByProduct.get(p.id) ?? 0) : 0
-    const status = deriveProductStatus(saldo, p.estoque_minimo)
+    const status = opts?.unitId ? deriveProductStatus(saldo, p.estoque_minimo) : 'normal'
     return { ...p, saldo, status }
   })
 

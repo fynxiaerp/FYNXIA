@@ -3,7 +3,6 @@ import 'server-only'
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { stockEntrySchema, type StockEntryInput } from '@/lib/validators/product'
-import { calcularCustoMedioMovel } from '@/lib/stock/custo-medio'
 
 // ─── Helper: get authenticated actor ────────────────────────────────────────
 // Verbatim copy from src/actions/suppliers.ts (getActor pattern)
@@ -95,93 +94,32 @@ export async function createStockEntry(
 
   const supabase = await createClient()
 
-  // 2. Saldo atual da unidade = SUM(product_batches.saldo_disponivel) WHERE product_id AND unit_id
-  const { data: batches, error: batchesError } = await supabase
-    .from('product_batches')
-    .select('saldo_disponivel')
-    .eq('product_id', data.product_id)
-    .eq('unit_id', unit_id)
-    .is('deleted_at', null)
+  // 2. Entrada atômica via RPC (WR-04): lote + entrada + custo médio móvel numa
+  //    única transação, com SELECT ... FOR UPDATE no produto para serializar
+  //    entradas concorrentes (evita lost update do custo médio e lote órfão).
+  //    O custo médio (D-02) é calculado dentro do RPC sobre o saldo já travado.
+  const { data: entryId, error: rpcError } = await supabase.rpc('create_stock_entry', {
+    p_clinic_id: actor.tenant_id,
+    p_unit_id: unit_id,
+    p_product_id: data.product_id,
+    p_numero_lote: data.numero_lote,
+    p_numero_anvisa: data.numero_anvisa_lote ?? null,
+    p_data_validade: data.data_validade ?? null,
+    p_qtd: data.qtd,
+    p_custo_unitario: data.custo_unitario,
+    p_supplier_id: data.supplier_id ?? null,
+    p_nota_fiscal: data.nota_fiscal ?? null,
+    p_created_by: actor.id,
+  })
 
-  if (batchesError) {
-    return { success: false, error: batchesError.message }
-  }
-
-  const saldoAtual = (batches ?? []).reduce((sum, b) => sum + b.saldo_disponivel, 0)
-
-  // Ler products.custo_medio atual
-  const { data: product, error: productError } = await supabase
-    .from('products')
-    .select('custo_medio')
-    .eq('id', data.product_id)
-    .single()
-
-  if (productError || !product) {
-    return { success: false, error: 'Produto não encontrado' }
-  }
-
-  const custoAnterior = product.custo_medio
-
-  // 3. custo_medio_movel D-02
-  const novoCustoMedio = calcularCustoMedioMovel(saldoAtual, custoAnterior, data.qtd, data.custo_unitario)
-
-  // 4. Insert em product_batches (novo lote)
-  const { data: batch, error: batchInsertError } = await supabase
-    .from('product_batches')
-    .insert({
-      clinic_id: actor.tenant_id,
-      unit_id,
-      product_id: data.product_id,
-      numero_lote: data.numero_lote,
-      numero_anvisa: data.numero_anvisa_lote ?? null,
-      data_validade: data.data_validade ?? null,
-      qtd_inicial: data.qtd,
-      saldo_disponivel: data.qtd,
-      custo_unitario: data.custo_unitario,
-    })
-    .select('id')
-    .single()
-
-  if (batchInsertError || !batch) {
-    return { success: false, error: batchInsertError?.message ?? 'Erro ao criar lote' }
-  }
-
-  // 5. Insert em stock_entries
-  const { data: entry, error: entryInsertError } = await supabase
-    .from('stock_entries')
-    .insert({
-      clinic_id: actor.tenant_id,
-      unit_id,
-      product_id: data.product_id,
-      batch_id: batch.id,
-      supplier_id: data.supplier_id ?? null,
-      qtd: data.qtd,
-      custo_unitario: data.custo_unitario,
-      custo_medio_apos: novoCustoMedio,
-      nota_fiscal: data.nota_fiscal ?? null,
-      created_by: actor.id,
-    })
-    .select('id')
-    .single()
-
-  if (entryInsertError || !entry) {
-    return { success: false, error: entryInsertError?.message ?? 'Erro ao registrar entrada' }
-  }
-
-  // 6. Update products.custo_medio (denormalizado network-level — D-02 comentário)
-  const { error: updateError } = await supabase
-    .from('products')
-    .update({ custo_medio: novoCustoMedio })
-    .eq('id', data.product_id)
-
-  if (updateError) {
-    return { success: false, error: updateError.message }
+  if (rpcError) {
+    return { success: false, error: rpcError.message }
   }
 
   revalidatePath('/clinica/estoque/entradas')
   revalidatePath('/clinica/estoque/produtos')
 
-  return { success: true, id: entry.id }
+  return { success: true, id: entryId as string }
 }
 
 // ─── listStockEntries ───────────────────────────────────────────────────────────

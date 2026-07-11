@@ -1,22 +1,23 @@
 /**
- * Phase 17 — estoque/stock-entries.test.ts (Wave 0 RED scaffold)
+ * Phase 17 — estoque/stock-entries.test.ts
  *
- * Source-inspection tests for src/actions/stock-entries.ts
- * RED by design until Plan 05 creates that file.
+ * Source-inspection tests for src/actions/stock-entries.ts + the atomic entry RPC.
+ *
+ * NOTE (WR-04): a entrada de estoque foi movida para um RPC atômico
+ * (public.create_stock_entry, migration 20260711000100) — lote + entrada +
+ * recálculo de custo médio móvel rodam numa única transação com FOR UPDATE no
+ * produto. Por isso a fórmula do custo médio e o insert de product_batches são
+ * inspecionados na migration, não mais no arquivo .ts. A Server Action apenas
+ * valida (Zod + role gate) e delega ao RPC.
  *
  * Checks:
- * - EST-01: calcularCustoMedioMovel present in the action (D-02)
- * - EST-01: product_batches updated on each entry
- * - EST-01: 'use server' directive present
- *
- * Also checks:
- * - src/lib/stock/custo-medio.ts exports calcularCustoMedioMovel (Plan 03 target)
+ * - EST-01: Server Action delega ao RPC atômico create_stock_entry (WR-04)
+ * - EST-01/D-02: RPC calcula custo médio móvel e cria product_batches
+ * - EST-01: custo-medio.ts exporta calcularCustoMedioMovel (lib pura — usada no preview client)
  *
  * Convention: SRC(relPath) returns '' if file missing — RED on content, not ENOENT.
- * This prevents ENOENT-based failures from masking real issues when the file exists
- * but is missing the expected pattern.
  *
- * Phase: 17-estoque-materiais / Plan 01
+ * Phase: 17-estoque-materiais / Plan 01 (updated for WR-04 code-review fix)
  * Requirements: EST-01
  */
 
@@ -38,7 +39,6 @@ function SRC(relPath: string): string {
 }
 
 // ─── stock-entries.ts source-inspection ──────────────────────────────────────
-// RED until Plan 05 creates src/actions/stock-entries.ts
 
 describe('src/actions/stock-entries.ts source-inspection (EST-01)', () => {
   const src = SRC('src/actions/stock-entries.ts')
@@ -47,30 +47,45 @@ describe('src/actions/stock-entries.ts source-inspection (EST-01)', () => {
     expect(src).toMatch(/'use server'/)
   })
 
-  it('references custo_medio_movel (D-02: moving average cost tracking)', () => {
-    expect(src).toMatch(/custo_medio_movel/)
+  it('delegates the entry to the atomic create_stock_entry RPC (WR-04)', () => {
+    expect(src).toMatch(/create_stock_entry/)
   })
 
-  it('calls calcularCustoMedioMovel (D-02: calculates weighted average on each entry)', () => {
-    expect(src).toMatch(/calcularCustoMedioMovel/)
-  })
-
-  it('references product_batches (D-11: each entry creates a batch record)', () => {
-    expect(src).toMatch(/product_batches/)
-  })
-
-  it('references stock_entries table insert (records the entry)', () => {
+  it('references stock_entries (records the entry / lists history)', () => {
     expect(src).toMatch(/stock_entries/)
   })
 })
 
+// ─── create_stock_entry RPC migration source-inspection (EST-01, D-02, WR-04) ─
+// A fórmula do custo médio móvel e a criação do lote vivem no RPC atômico.
+
+describe('create_stock_entry RPC migration source-inspection (EST-01, D-02)', () => {
+  const src = SRC('supabase/migrations/20260711000100_stock_entry_rpc.sql')
+
+  it('creates the create_stock_entry function', () => {
+    expect(src).toMatch(/FUNCTION public\.create_stock_entry/)
+  })
+
+  it('computes moving-average cost (D-02: weighted average on each entry)', () => {
+    expect(src).toMatch(/v_saldo_atual \* v_custo_anterior/)
+  })
+
+  it('creates a product_batches record per entry (D-11)', () => {
+    expect(src).toMatch(/INSERT INTO public\.product_batches/)
+  })
+
+  it('serializes concurrent entries with FOR UPDATE on the product row (WR-04)', () => {
+    expect(src).toMatch(/FOR UPDATE/)
+  })
+})
+
 // ─── custo-medio.ts lib source-inspection ────────────────────────────────────
-// RED until Plan 03 creates src/lib/stock/custo-medio.ts
+// Lib pura ainda usada no preview client-side (StockEntryFormDialog).
 
 describe('src/lib/stock/custo-medio.ts source-inspection (EST-01, D-02)', () => {
   const src = SRC('src/lib/stock/custo-medio.ts')
 
-  it('exports calcularCustoMedioMovel function (pure lib — Plan 03 target)', () => {
+  it('exports calcularCustoMedioMovel function (pure lib)', () => {
     expect(src).toMatch(/calcularCustoMedioMovel/)
   })
 })
