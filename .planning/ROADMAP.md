@@ -50,8 +50,10 @@ Full detail archived in [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
 
 - [x] **Phase 14: Financeiro — Cadastros Base** — Plano de contas em árvore, centros de custo, contas correntes e categorias de lançamento
  (completed 2026-06-20)
-- [x] **Phase 15: Faturamento/NFS-e & Convênios/TISS** — OS automática pós-atendimento, emissão de NFS-e e faturamento de convênios com guia TISS e glosas (completed 2026-06-20)
-- [x] **Phase 16: Contas a Pagar, Conciliação & Tributos** — Contas a pagar, conciliação bancária OFX/Open Finance, fluxo de caixa atualizado, repasses e RPA com retenções (completed 2026-06-22)
+- [x] **Phase 15: Faturamento/NFS-e & Convênios/TISS** — OS automática pós-atendimento, emissão de NFS-e e faturamento de convênios com guia TISS e glosas
+ (completed 2026-06-20)
+- [x] **Phase 16: Contas a Pagar, Conciliação & Tributos** — Contas a pagar, conciliação bancária OFX/Open Finance, fluxo de caixa atualizado, repasses e RPA com retenções
+ (completed 2026-06-22)
 - [ ] **UI hint**: yes
 
 **Bloco D — Operação & Crescimento**
@@ -290,7 +292,7 @@ Plans:
   1. Usuário cadastra produto com categoria (insumo/implante/medicamento), lote/série, estoque mínimo e custo médio calculado
   2. Ao registrar procedimento concluído, a baixa de materiais associados é feita automaticamente no estoque
   3. Sistema alerta quando estoque atinge o mínimo ou produto está próximo do vencimento; implantes têm rastreabilidade de lote por exigência ANVISA e o agente de compras é disparado
-**Plans**: 9 plans
+**Plans**: 10 plans
 Plans:
 - [x] 17-01-PLAN.md — Zod schemas de produto/lote/entrada/baixa + tests RED (Wave 1)
 - [x] 17-02-PLAN.md — Schema Supabase (6 tabelas) + ALTERs + RLS + seed + [BLOCKING] db push (Wave 1)
@@ -301,6 +303,7 @@ Plans:
 - [x] 17-07-PLAN.md — Entradas de estoque + baixa manual (UI) (Wave 4)
 - [x] 17-08-PLAN.md — Relatório ANVISA + export PDF (Wave 4)
 - [x] 17-09-PLAN.md — Catálogo de serviços + aba Materiais + seção no prontuário (Wave 4)
+- [ ] 17-10-PLAN.md — [GAP] Seletor "Serviço realizado" no ProntuarioForm ativa a seção Materiais Utilizados (D-22) (Wave 1)
 **v1 reuse**: Novo módulo; conecta com procedimentos do prontuário (Phase 2) e agentes IA (Phase 10)
 
 ---
