@@ -26,13 +26,14 @@ import { stockDrawSchema, type StockDrawInput } from '@/lib/validators/product'
  *
  * FIFO / CAS guard (Pitfall 2 do 17-RESEARCH.md): supabase-js não expressa
  * "SET saldo_disponivel = saldo_disponivel - qtd" como UPDATE relativo (sem
- * função RPC dedicada no schema já aplicado). selectFifoBatch implementa um
+ * função RPC dedicada no schema já aplicado). allocateFifo implementa um
  * compare-and-swap equivalente: lê saldo_disponivel do lote FIFO mais antigo,
  * e só debita se o UPDATE casar com o valor lido (.eq('saldo_disponivel', lido))
  * — se outro processo já alterou o lote nesse meio-tempo, 0 linhas são
- * afetadas e o próximo lote FIFO é tentado. Se nenhum lote comporta a
- * quantidade, batch_id fica NULL (D-09 — saldo negativo permitido, o
- * atendimento nunca é bloqueado por falta de estoque).
+ * afetadas e o próximo lote FIFO é tentado. A baixa é DIVIDIDA entre lotes
+ * consecutivos quando nenhum lote isolado comporta a qtd (WR-02); a parte não
+ * coberta (remainder) fica com batch_id NULL (D-09 — saldo negativo permitido,
+ * o atendimento nunca é bloqueado por falta de estoque).
  *
  * Requirements: EST-02, EST-03
  */
@@ -77,20 +78,29 @@ const WRITER_ROLES = ['admin', 'superadmin'] as const
 
 type AdminClient = ReturnType<typeof createAdminClient>
 
-// ─── selectFifoBatch (FIFO + CAS guard) ─────────────────────────────────────
-// D-11: seleciona o lote mais antigo com saldo_disponivel > 0 (FIFO) e debita
-// qtd atomicamente. Retorna null se nenhum lote comportar a qtd — D-09 (saldo
-// negativo permitido, batch_id NULL na baixa).
+// ─── allocateFifo (FIFO + CAS guard, com split entre lotes) ─────────────────
+// D-11: consome `qtd` a partir dos lotes mais antigos (FIFO), debitando cada
+// lote atomicamente via CAS. Diferente da versão anterior (WR-02), agora DIVIDE
+// a baixa entre lotes consecutivos quando nenhum lote isolado comporta a qtd —
+// caso contrário o saldo agregado ficaria superestimado (baixa registrada sem
+// decrementar nenhum lote). Retorna as alocações por lote + `remainder` (a
+// parte não coberta por nenhum lote → batch_id NULL na baixa, D-09 saldo
+// negativo permitido).
 
-async function selectFifoBatch(
+type FifoAllocation = { batchId: string; qtd: number; custoUnitario: number }
+
+async function allocateFifo(
   admin: AdminClient,
   productId: string,
   unitId: string,
   qtd: number
-): Promise<{ batchId: string; custoUnitario: number } | null> {
+): Promise<{ allocations: FifoAllocation[]; remainder: number }> {
+  const allocations: FifoAllocation[] = []
+  let restante = qtd
   const triedIds: string[] = []
 
-  for (let attempt = 0; attempt < 25; attempt++) {
+  // Até 50 tentativas: cobre consumo de múltiplos lotes + reintentos de CAS por corrida.
+  for (let attempt = 0; attempt < 50 && restante > 0; attempt++) {
     let query = admin
       .from('product_batches')
       .select('id, saldo_disponivel, custo_unitario')
@@ -106,33 +116,31 @@ async function selectFifoBatch(
     }
 
     const { data: candidate } = await query.maybeSingle()
-    if (!candidate) return null // nenhum lote disponível — D-09 saldo negativo permitido
+    if (!candidate) break // sem mais lotes — restante vira saldo negativo (D-09)
 
-    if (candidate.saldo_disponivel < qtd) {
-      // Lote não comporta a qtd inteira — tenta o próximo lote FIFO (sem split entre lotes)
-      triedIds.push(candidate.id)
-      continue
-    }
+    // Consome deste lote o mínimo entre o que ele tem e o que ainda falta (split).
+    const take = Math.min(candidate.saldo_disponivel, restante)
 
     // CAS guard: UPDATE só aplica se saldo_disponivel ainda for o valor lido —
     // se outro processo já debitou este lote na janela entre SELECT e UPDATE,
     // 0 linhas retornam e tentamos o próximo lote FIFO (Pitfall 2).
     const { data: updated, error: updateError } = await admin
       .from('product_batches')
-      .update({ saldo_disponivel: candidate.saldo_disponivel - qtd })
+      .update({ saldo_disponivel: candidate.saldo_disponivel - take })
       .eq('id', candidate.id)
       .eq('saldo_disponivel', candidate.saldo_disponivel)
       .select('id')
 
     if (!updateError && updated && updated.length > 0) {
-      return { batchId: candidate.id, custoUnitario: candidate.custo_unitario }
+      allocations.push({ batchId: candidate.id, qtd: take, custoUnitario: candidate.custo_unitario })
+      restante -= take
     }
 
-    // Corrida perdida — outro processo já alterou este lote; tenta o próximo
+    // Lote consumido (ou corrida perdida) — não tenta de novo o mesmo lote.
     triedIds.push(candidate.id)
   }
 
-  return null
+  return { allocations, remainder: restante }
 }
 
 // ─── Helper: saldo atual do produto na unidade + trigger de reposição ──────
@@ -215,6 +223,26 @@ export async function drawMaterialsForProcedures(
 
   if (!procedures || procedures.length === 0) return
 
+  // 2b. Guarda de idempotência (WR-01): updateAppointment chama esta função em
+  //     TODO save com status='concluido' (o check de status anterior não é
+  //     confiável — a linha já foi atualizada). Sem guarda, re-salvar um
+  //     atendimento concluído baixaria o estoque de novo e duplicaria a
+  //     rastreabilidade ANVISA. Se já existe QUALQUER baixa automática para os
+  //     procedimentos deste atendimento, a baixa já foi feita — não repete.
+  const procedureIds = procedures.map((p) => p.id)
+  const { data: existingDraws } = await admin
+    .from('stock_draws')
+    .select('id')
+    .eq('clinic_id', clinicId)
+    .in('appointment_procedure_id', procedureIds)
+    .eq('tipo', 'automatico')
+    .limit(1)
+
+  if (existingDraws && existingDraws.length > 0) {
+    // Baixa já efetuada para este atendimento — idempotente, nada a fazer.
+    return
+  }
+
   let drawsCreated = 0
 
   for (const proc of procedures) {
@@ -230,37 +258,47 @@ export async function drawMaterialsForProcedures(
 
       for (const tpl of templates) {
         try {
-          // 4. FIFO batch selection (D-11) — batchId null permitido (D-09)
-          const fifo = await selectFifoBatch(admin, tpl.product_id, unitId, tpl.qtd_padrao)
+          // 4. FIFO com split entre lotes (D-11) — remainder vira batch_id null (D-09)
+          const { allocations, remainder } = await allocateFifo(
+            admin,
+            tpl.product_id,
+            unitId,
+            tpl.qtd_padrao
+          )
 
-          let custoUnitario = fifo?.custoUnitario
-          if (custoUnitario === undefined) {
-            // Sem lote disponível — usa custo médio do produto como snapshot (D-09)
+          // Uma linha de baixa por lote consumido; +1 para o remainder sem lote.
+          const drawRows: Array<{ batchId: string | null; qtd: number; custo: number }> =
+            allocations.map((a) => ({ batchId: a.batchId, qtd: a.qtd, custo: a.custoUnitario }))
+
+          if (remainder > 0) {
+            // Sem lote (suficiente) — usa custo médio do produto como snapshot (D-09)
             const { data: product } = await admin
               .from('products')
               .select('custo_medio')
               .eq('id', tpl.product_id)
               .maybeSingle()
-            custoUnitario = product?.custo_medio ?? 0
+            drawRows.push({ batchId: null, qtd: remainder, custo: product?.custo_medio ?? 0 })
           }
 
-          const { error: drawError } = await admin.from('stock_draws').insert({
-            clinic_id: clinicId,
-            unit_id: unitId,
-            product_id: tpl.product_id,
-            batch_id: fifo?.batchId ?? null,
-            appointment_procedure_id: proc.id,
-            qtd: tpl.qtd_padrao,
-            custo_unitario_snapshot: custoUnitario,
-            tipo: 'automatico',
-            created_by: actorId,
-          })
+          for (const row of drawRows) {
+            const { error: drawError } = await admin.from('stock_draws').insert({
+              clinic_id: clinicId,
+              unit_id: unitId,
+              product_id: tpl.product_id,
+              batch_id: row.batchId,
+              appointment_procedure_id: proc.id,
+              qtd: row.qtd,
+              custo_unitario_snapshot: row.custo,
+              tipo: 'automatico',
+              created_by: actorId,
+            })
 
-          if (drawError) {
-            console.error('[stock-draws] drawMaterialsForProcedures: insert falhou:', drawError.message)
-            continue
+            if (drawError) {
+              console.error('[stock-draws] drawMaterialsForProcedures: insert falhou:', drawError.message)
+              continue
+            }
+            drawsCreated++
           }
-          drawsCreated++
 
           // 5. Recalcular saldo do produto na unidade + disparar agente se <= mínimo (D-14)
           await checkMinimoAndReplenish(admin, clinicId, unitId, tpl.product_id)
@@ -316,30 +354,37 @@ export async function createManualDraw(
   // stock_draws não tem RLS de escrita para authenticated — usar admin client (critical_context)
   const admin: AdminClient = createAdminClient()
 
-  const fifo = await selectFifoBatch(admin, data.product_id, unit_id, data.qtd)
+  // FIFO com split entre lotes (WR-02): uma linha de baixa por lote consumido,
+  // +1 para o remainder sem lote (batch_id null, D-09 saldo negativo permitido).
+  const { allocations, remainder } = await allocateFifo(admin, data.product_id, unit_id, data.qtd)
 
-  let custoUnitario = fifo?.custoUnitario
-  if (custoUnitario === undefined) {
+  const drawRows: Array<{ batchId: string | null; qtd: number; custo: number }> = allocations.map(
+    (a) => ({ batchId: a.batchId, qtd: a.qtd, custo: a.custoUnitario })
+  )
+
+  if (remainder > 0) {
     const { data: product } = await admin
       .from('products')
       .select('custo_medio')
       .eq('id', data.product_id)
       .maybeSingle()
-    custoUnitario = product?.custo_medio ?? 0
+    drawRows.push({ batchId: null, qtd: remainder, custo: product?.custo_medio ?? 0 })
   }
 
-  const { error: drawError } = await admin.from('stock_draws').insert({
+  const drawInserts = drawRows.map((row) => ({
     clinic_id: actor.tenant_id,
     unit_id,
     product_id: data.product_id,
-    batch_id: fifo?.batchId ?? null,
+    batch_id: row.batchId,
     appointment_procedure_id: null,
-    qtd: data.qtd,
-    custo_unitario_snapshot: custoUnitario,
+    qtd: row.qtd,
+    custo_unitario_snapshot: row.custo,
     tipo: 'manual',
     motivo: data.motivo,
     created_by: actor.id,
-  })
+  }))
+
+  const { error: drawError } = await admin.from('stock_draws').insert(drawInserts)
 
   if (drawError) {
     return { success: false, error: drawError.message }

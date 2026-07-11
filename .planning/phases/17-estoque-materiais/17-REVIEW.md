@@ -77,7 +77,7 @@ mismatch that produces false "low stock" badges. No Critical issues were found.
 
 ## Warnings
 
-### WR-01: Automatic material draw is not idempotent — repeated "concluído" saves double-consume stock
+### WR-01 [RESOLVED 2026-07-11]: Automatic material draw is not idempotent — repeated "concluído" saves double-consume stock
 
 **File:** `src/actions/appointments.ts:337-372`, `src/actions/stock-draws.ts:187-286`
 **Issue:** `updateAppointment` calls `drawMaterialsForProcedures` on every invocation where
@@ -105,7 +105,7 @@ if (existing && existing.length > 0) return // already drawn for this appointmen
 (Or add a UNIQUE partial index on `(appointment_procedure_id, product_id)` for `tipo='automatico'`
 and swallow 23505, mirroring the OS-01 pattern.)
 
-### WR-02: FIFO "no split between batches" can record a draw without decrementing any stock
+### WR-02 [RESOLVED 2026-07-11]: FIFO "no split between batches" can record a draw without decrementing any stock
 
 **File:** `src/actions/stock-draws.ts:85-136` (`selectFifoBatch`)
 **Issue:** `selectFifoBatch` only debits a batch that individually holds the full `qtd`
