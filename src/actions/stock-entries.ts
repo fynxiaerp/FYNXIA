@@ -51,10 +51,13 @@ export type StockEntryRow = {
   product_name: string
   supplier_id: string | null
   supplier_name: string | null
+  numero_lote: string | null
+  data_validade: string | null
   qtd: number
   custo_unitario: number
   custo_medio_apos: number
   nota_fiscal: string | null
+  created_by_name: string | null
   created_at: string
 }
 
@@ -200,7 +203,9 @@ export async function listStockEntries(opts?: {
     .select(
       `id, product_id, supplier_id, qtd, custo_unitario, custo_medio_apos, nota_fiscal, created_at,
        products(name),
-       suppliers(name)`
+       suppliers(name),
+       product_batches(numero_lote, data_validade),
+       users(full_name)`
     )
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
@@ -232,9 +237,17 @@ export async function listStockEntries(opts?: {
     created_at: string
     products: { name: string } | { name: string }[] | null
     suppliers: { name: string } | { name: string }[] | null
+    product_batches: { numero_lote: string; data_validade: string | null } | { numero_lote: string; data_validade: string | null }[] | null
+    users: { full_name: string } | { full_name: string }[] | null
   }) => {
     const product = row.products ? (Array.isArray(row.products) ? row.products[0] : row.products) : null
     const supplier = row.suppliers ? (Array.isArray(row.suppliers) ? row.suppliers[0] : row.suppliers) : null
+    const batch = row.product_batches
+      ? Array.isArray(row.product_batches)
+        ? row.product_batches[0]
+        : row.product_batches
+      : null
+    const createdBy = row.users ? (Array.isArray(row.users) ? row.users[0] : row.users) : null
 
     return {
       id: row.id,
@@ -242,10 +255,13 @@ export async function listStockEntries(opts?: {
       product_name: product?.name ?? '',
       supplier_id: row.supplier_id,
       supplier_name: supplier?.name ?? null,
+      numero_lote: batch?.numero_lote ?? null,
+      data_validade: batch?.data_validade ?? null,
       qtd: row.qtd,
       custo_unitario: row.custo_unitario,
       custo_medio_apos: row.custo_medio_apos,
       nota_fiscal: row.nota_fiscal,
+      created_by_name: createdBy?.full_name ?? null,
       created_at: row.created_at,
     }
   })
