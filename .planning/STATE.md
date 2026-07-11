@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
-status: planning
-stopped_at: Phase 17 context gathered
-last_updated: "2026-06-30T01:40:31.032Z"
-last_activity: 2026-06-22
+status: executing
+stopped_at: Completed 17-03-PLAN.md
+last_updated: "2026-07-11T14:46:25.717Z"
+last_activity: "2026-06-29 - Completed quick task 260629-uaz: pointer-events-none no MoreHorizontal icon (PayablesTable)"
 progress:
   total_phases: 15
   completed_phases: 10
-  total_plans: 72
-  completed_plans: 72
-  percent: 100
+  total_plans: 81
+  completed_plans: 75
+  percent: 93
 ---
 
 # FYNXIA ERP — Project State
@@ -29,19 +29,18 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 
 **Stack:** Next.js 15 + TypeScript (strict) + Supabase (sa-east-1) + Vercel (gru1) + shadcn/ui + Tailwind v4
 
-**Current focus:** Phase 16 — contas-a-pagar-concilia-o-tributos
+**Current focus:** Phase 17 — estoque-materiais
 
 ---
 
 ## Current Position
 
-Phase: 16 (contas-a-pagar-concilia-o-tributos) — EXECUTING
-Plan: 10 of 10
+Phase: 17 (estoque-materiais) — EXECUTING
+Plan: 4 of 9
+Status: Ready to execute
+Last activity: 2026-07-11
+
 **Milestone:** v2.0 — Produto Completo (27 módulos, blocos A–E)
-**Phase:** 17
-**Plan:** Not started
-**Status:** Ready to plan
-**Last activity:** 2026-06-22
 
 ---
 
@@ -129,6 +128,7 @@ Plan: 10 of 10
 | Phase 16 P08 | 25 | 3 tasks | 4 files |
 | Phase 16 P09 | 120 | 3 tasks | 15 files |
 | Phase 16 P10 | 45 | 2 tasks | 11 files |
+| Phase 17 P03 | 25 | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -230,6 +230,9 @@ Plan: 10 of 10
 | getTissProvider real XML adapter deferred; factory shape present | D-13: gated until operadora credentials confirmed; callers need no change when real adapter slots in | 2026-06-20 |
 | criarGuia exported with insertGuia dep injection + criarGuiaForOs as public faturarOs contract | Allows unit test to verify status=em_analise without Supabase; production path always uses real DB | 2026-06-20 |
 | guide status DERIVED via deriveGuideStatus after every glosa/recurso mutation | Pitfall 5: per-item glosa_status is source of truth; guide status never set directly (T-15-27) | 2026-06-20 |
+| updateProduct merges current DB row + partial input, re-validates FULL object via productSchema | ZodEffects (superRefine) has no .partial(); merge-then-full-validate preserves implante→ANVISA rule on update | 2026-07-11 |
+| createStockEntry always creates a new product_batches row per entry (never merges into existing batch) | D-11: lote = entrada de compra — one batch per receiving event, FIFO consumed in later plans | 2026-07-11 |
+| listProducts computes saldo only when opts.unitId provided; otherwise saldo=0/status=normal | D-23: estoque é por unidade — avoids silently aggregating saldo across units (RESEARCH Pitfall 4) | 2026-07-11 |
 
 ### Architecture Constraints Locked
 
@@ -266,7 +269,7 @@ Plan: 10 of 10
 
 ## Session Continuity
 
-**Stopped at:** Phase 17 context gathered
+**Stopped at:** Completed 17-03-PLAN.md
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 

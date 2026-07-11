@@ -292,9 +292,9 @@ Plans:
   3. Sistema alerta quando estoque atinge o mínimo ou produto está próximo do vencimento; implantes têm rastreabilidade de lote por exigência ANVISA e o agente de compras é disparado
 **Plans**: 9 plans
 Plans:
-- [ ] 17-01-PLAN.md — Zod schemas de produto/lote/entrada/baixa + tests RED (Wave 1)
-- [ ] 17-02-PLAN.md — Schema Supabase (6 tabelas) + ALTERs + RLS + seed + [BLOCKING] db push (Wave 1)
-- [ ] 17-03-PLAN.md — Custo médio lib + actions de produtos/lotes/entradas (Wave 2)
+- [x] 17-01-PLAN.md — Zod schemas de produto/lote/entrada/baixa + tests RED (Wave 1)
+- [x] 17-02-PLAN.md — Schema Supabase (6 tabelas) + ALTERs + RLS + seed + [BLOCKING] db push (Wave 1)
+- [x] 17-03-PLAN.md — Custo médio lib + actions de produtos/lotes/entradas (Wave 2)
 - [ ] 17-04-PLAN.md — Agente de compras L2 + alertas + cron de validade (Wave 2)
 - [ ] 17-05-PLAN.md — Baixa FIFO/manual + templates de consumo + wiring no atendimento (Wave 3)
 - [ ] 17-06-PLAN.md — Navegação + dashboard + catálogo de produtos (Wave 4)
@@ -389,7 +389,7 @@ Plans:
 | 14. Financeiro — Cadastros Base | v2.0 | 7/7 | Complete    | 2026-06-20 |
 | 15. Faturamento/NFS-e & Convênios/TISS | v2.0 | 9/9 | Complete   | 2026-06-20 |
 | 16. Contas a Pagar, Conciliação & Tributos | v2.0 | 10/10 | Complete    | 2026-06-22 |
-| 17. Estoque & Materiais | v2.0 | 0/? | Not started | - |
+| 17. Estoque & Materiais | v2.0 | 3/9 | In Progress|  |
 | 18. CRC & Marketing | v2.0 | 0/? | Not started | - |
 | 19. Relatórios, Orçamento & BI | v2.0 | 0/? | Not started | - |
 | 20. Portal do Paciente & App do Profissional | v2.0 | 0/? | Not started | - |
