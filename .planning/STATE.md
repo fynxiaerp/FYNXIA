@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
-status: executing
-stopped_at: Phase 17 executada (9/9 planos) — verificação gaps_found (1 gap: prontuário Materiais Utilizados serviceId não fornecido pelos callers)
-last_updated: "2026-07-11T19:32:15.258Z"
+status: verifying
+stopped_at: Completed 17-10-PLAN.md (gap closure)
+last_updated: "2026-07-11T19:56:23.541Z"
 last_activity: 2026-07-11
 progress:
   total_phases: 15
-  completed_phases: 10
-  total_plans: 81
-  completed_plans: 81
+  completed_phases: 11
+  total_plans: 82
+  completed_plans: 82
   percent: 100
 ---
 
@@ -36,8 +36,8 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 ## Current Position
 
 Phase: 17 (estoque-materiais) — EXECUTING
-Plan: 9 of 9
-Status: Phase complete — ready for verification
+Plan: 10 of 10 (gap closure)
+Status: Gap closure complete (17-10) — MaterialsUsedSection reachable via ProntuarioForm service selector; ready for re-verification
 Last activity: 2026-07-11
 
 **Milestone:** v2.0 — Produto Completo (27 módulos, blocos A–E)
@@ -135,6 +135,7 @@ Last activity: 2026-07-11
 | Phase 17 P07 | ~20min | 3 tasks | 5 files |
 | Phase 17 P08 | ~20min | 2 tasks | 4 files |
 | Phase 17 P09 | ~20min | 3 tasks | 5 files |
+| Phase 17 P10 | 12min | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -250,6 +251,7 @@ Last activity: 2026-07-11
 | StockEntryFormDialog/ManualDrawDialog Dialog `open` state initializes from an `autoOpen` prop | Lets the RSC entradas page auto-open the correct dialog pre-filled when reached via ?produto=&acao= from ProductsTable dropdown (Plan 06) | 2026-07-11 |
 | ServiceForm Materiais tab only renders MaterialsTemplateTab once service.id exists (create mode shows static notice) | service_material_templates.service_id is a NOT NULL FK — matches ProductFormDialog-style trigger-wrapper convention without inventing a two-step create flow | 2026-07-11 |
 | ProntuarioForm gains optional serviceId prop (default undefined); MaterialsUsedSection auto-hides via `return null` | Prontuário has no procedure-selection step yet — keeps D-22 UI additive and non-breaking until a future plan wires appointment_procedures selection into the form | 2026-07-11 |
+| ProntuarioForm gains "Serviço realizado" Select wired to selectedServiceId local state, feeding MaterialsUsedSection | Closes 17-VERIFICATION.md gap: serviceId was never supplied by real callers, leaving MaterialsUsedSection permanently dormant; selector makes D-22 reachable without touching callers/schema/DB | 2026-07-11 |
 
 ### Architecture Constraints Locked
 
@@ -286,7 +288,7 @@ Last activity: 2026-07-11
 
 ## Session Continuity
 
-**Stopped at:** Completed 17-09-PLAN.md
+**Stopped at:** Completed 17-10-PLAN.md (gap closure)
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 

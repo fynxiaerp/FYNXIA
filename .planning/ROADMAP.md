@@ -58,7 +58,7 @@ Full detail archived in [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
 
 **Bloco D — Operação & Crescimento**
 
-- [ ] **Phase 17: Estoque & Materiais** — Cadastro de produtos com baixa automática por procedimento, alertas de estoque mínimo e rastreabilidade ANVISA (9/9 plans executed; verification gaps_found 2026-07-11 — 1 gap: prontuário "Materiais Utilizados" serviceId não fornecido pelos callers)
+- [x] **Phase 17: Estoque & Materiais** — Cadastro de produtos com baixa automática por procedimento, alertas de estoque mínimo e rastreabilidade ANVISA (10/10 plans executed; gap closure 17-10 wires prontuário "Serviço realizado" selector into MaterialsUsedSection, resolving the 2026-07-11 verification gap) (completed 2026-07-11)
 - [ ] **Phase 18: CRC & Marketing** — Funil de leads, ROI de campanhas, campanhas segmentadas, NPS e programa de indicação
 
 **Bloco E — Analítico & Canais**
@@ -303,7 +303,7 @@ Plans:
 - [x] 17-07-PLAN.md — Entradas de estoque + baixa manual (UI) (Wave 4)
 - [x] 17-08-PLAN.md — Relatório ANVISA + export PDF (Wave 4)
 - [x] 17-09-PLAN.md — Catálogo de serviços + aba Materiais + seção no prontuário (Wave 4)
-- [ ] 17-10-PLAN.md — [GAP] Seletor "Serviço realizado" no ProntuarioForm ativa a seção Materiais Utilizados (D-22) (Wave 1)
+- [x] 17-10-PLAN.md — [GAP] Seletor "Serviço realizado" no ProntuarioForm ativa a seção Materiais Utilizados (D-22) (Wave 1)
 **v1 reuse**: Novo módulo; conecta com procedimentos do prontuário (Phase 2) e agentes IA (Phase 10)
 
 ---
@@ -392,7 +392,7 @@ Plans:
 | 14. Financeiro — Cadastros Base | v2.0 | 7/7 | Complete    | 2026-06-20 |
 | 15. Faturamento/NFS-e & Convênios/TISS | v2.0 | 9/9 | Complete   | 2026-06-20 |
 | 16. Contas a Pagar, Conciliação & Tributos | v2.0 | 10/10 | Complete    | 2026-06-22 |
-| 17. Estoque & Materiais | v2.0 | 9/9 | Gaps found | 2026-07-11 |
+| 17. Estoque & Materiais | v2.0 | 10/10 | Complete   | 2026-07-11 |
 | 18. CRC & Marketing | v2.0 | 0/? | Not started | - |
 | 19. Relatórios, Orçamento & BI | v2.0 | 0/? | Not started | - |
 | 20. Portal do Paciente & App do Profissional | v2.0 | 0/? | Not started | - |
