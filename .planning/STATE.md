@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 17-03-PLAN.md
-last_updated: "2026-07-11T14:46:25.717Z"
-last_activity: "2026-06-29 - Completed quick task 260629-uaz: pointer-events-none no MoreHorizontal icon (PayablesTable)"
+stopped_at: Completed 17-04-PLAN.md
+last_updated: "2026-07-11T15:06:21.199Z"
+last_activity: 2026-07-11
 progress:
   total_phases: 15
   completed_phases: 10
   total_plans: 81
-  completed_plans: 75
-  percent: 93
+  completed_plans: 76
+  percent: 94
 ---
 
 # FYNXIA ERP — Project State
@@ -36,7 +36,7 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 ## Current Position
 
 Phase: 17 (estoque-materiais) — EXECUTING
-Plan: 4 of 9
+Plan: 5 of 9
 Status: Ready to execute
 Last activity: 2026-07-11
 
@@ -129,6 +129,7 @@ Last activity: 2026-07-11
 | Phase 16 P09 | 120 | 3 tasks | 15 files |
 | Phase 16 P10 | 45 | 2 tasks | 11 files |
 | Phase 17 P03 | 25 | 3 tasks | 5 files |
+| Phase 17 P04 | 20min | 3 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -233,6 +234,7 @@ Last activity: 2026-07-11
 | updateProduct merges current DB row + partial input, re-validates FULL object via productSchema | ZodEffects (superRefine) has no .partial(); merge-then-full-validate preserves implante→ANVISA rule on update | 2026-07-11 |
 | createStockEntry always creates a new product_batches row per entry (never merges into existing batch) | D-11: lote = entrada de compra — one batch per receiving event, FIFO consumed in later plans | 2026-07-11 |
 | listProducts computes saldo only when opts.unitId provided; otherwise saldo=0/status=normal | D-23: estoque é por unidade — avoids silently aggregating saldo across units (RESEARCH Pitfall 4) | 2026-07-11 |
+| insertStockAlert uses app-level daily dedup (SELECT before INSERT, bounds in America/Sao_Paulo) + catch 23505, instead of ON CONFLICT on uq_stock_alerts_daily's expression index | supabase-js onConflict only accepts simple column names, not expressions — the live index uses ((created_at AT TIME ZONE 'America/Sao_Paulo')::date) which is not expressible via PostgREST upsert | 2026-07-11 |
 
 ### Architecture Constraints Locked
 
@@ -269,7 +271,7 @@ Last activity: 2026-07-11
 
 ## Session Continuity
 
-**Stopped at:** Completed 17-03-PLAN.md
+**Stopped at:** Completed 17-04-PLAN.md
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 
@@ -297,4 +299,4 @@ Last activity: 2026-07-11
 | 260629-qji | criar página de gestão de unidades em /config/unidades — CRUD completo | 2026-06-29 | 2ce4473 | [260629-qji-criar-p-gina-de-gest-o-de-unidades-em-co](.planning/quick/260629-qji-criar-p-gina-de-gest-o-de-unidades-em-co/) |
 | 260629-uaz | Adicionar pointer-events-none ao MoreHorizontal icon em PayablesTable.tsx | 2026-06-29 | 2189958 | [260629-uaz-adicionar-pointer-events-none-ao-morehor](.planning/quick/260629-uaz-adicionar-pointer-events-none-ao-morehor/) |
 
-**Last activity:** 2026-06-29 - Completed quick task 260629-uaz: pointer-events-none no MoreHorizontal icon (PayablesTable)
+**Last activity:** 2026-07-11

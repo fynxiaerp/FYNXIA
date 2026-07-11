@@ -102,7 +102,7 @@
 #### EST — Estoque & Materiais
 - [x] **EST-01**: Usuário cadastra produtos (categoria, lote/série, estoque mínimo, custo médio)
 - [ ] **EST-02**: Procedimento dá baixa automática de material no estoque
-- [ ] **EST-03**: Sistema alerta estoque mínimo (dispara agente de compras) e validade; rastreia lote de implante (ANVISA)
+- [x] **EST-03**: Sistema alerta estoque mínimo (dispara agente de compras) e validade; rastreia lote de implante (ANVISA)
 
 #### CRC — Relacionamento & Marketing
 - [ ] **CRC-01**: Recepção/Marketing gerencia funil de leads com origem e status (Novo→Convertido/Perdido)
@@ -214,7 +214,7 @@
 | TRIB-03 | Phase 16 | Complete |
 | EST-01 | Phase 17 | Complete |
 | EST-02 | Phase 17 | Pending |
-| EST-03 | Phase 17 | Pending |
+| EST-03 | Phase 17 | Complete |
 | CRC-01 | Phase 18 | Pending |
 | CRC-02 | Phase 18 | Pending |
 | CRC-03 | Phase 18 | Pending |
