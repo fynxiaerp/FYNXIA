@@ -22,6 +22,7 @@ export type NavIconKey =
   | 'teleodontologia'
   | 'esterilizacao'
   | 'protese'
+  | 'estoque'
 
 export interface NavItemConfig {
   href: string
@@ -41,6 +42,7 @@ export const ALL_NAV_ITEMS: NavItemConfig[] = [
   { href: '/clinica/teleodontologia',  label: 'Teleodontologia', icon: 'teleodontologia' },
   { href: '/clinica/esterilizacao',    label: 'Esterilização',   icon: 'esterilizacao' },
   { href: '/clinica/protese',          label: 'Prótese (Lab)',   icon: 'protese' },
+  { href: '/clinica/estoque',          label: 'Estoque',         icon: 'estoque' },
   { href: '/clinica/equipe',           label: 'Equipe',          icon: 'equipe',         adminOnly: true },
   { href: '/clinica/profissionais',  label: 'Profissionais',  icon: 'profissionais',  adminOnly: true },
   { href: '/clinica/recursos',       label: 'Recursos',       icon: 'recursos',       adminOnly: true },
