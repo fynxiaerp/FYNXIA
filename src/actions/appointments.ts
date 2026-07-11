@@ -360,6 +360,15 @@ export async function updateAppointment(
       // Do not fail the appointment update — OS can be created manually
       console.error('[updateAppointment] createOsDraftFromAppointment failed:', err)
     }
+
+    // EST-02: baixa automática de materiais dos procedimentos concluídos (D-06/D-09)
+    try {
+      const { drawMaterialsForProcedures } = await import('@/actions/stock-draws')
+      await drawMaterialsForProcedures(id, actor.tenant_id, actor.id)
+    } catch (err) {
+      // D-09: falta de estoque NUNCA bloqueia o atendimento
+      console.error('[updateAppointment] drawMaterialsForProcedures failed:', err)
+    }
   }
 
   return { success: true }
