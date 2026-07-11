@@ -1,9 +1,10 @@
 'use client'
-import { useState, useTransition } from 'react'
+import { useEffect, useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { createMedicalRecord } from '@/actions/medical-records'
+import { listServices } from '@/actions/services'
 import {
   Form,
   FormControl,
@@ -15,6 +16,13 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { MaterialsUsedSection } from '@/components/estoque/MaterialsUsedSection'
 
 // Client-side Zod schema — mirrors server validator but for RHF integration
@@ -35,6 +43,8 @@ const prontuarioFormSchema = z
 
 type ProntuarioFormValues = z.infer<typeof prontuarioFormSchema>
 
+type ServiceOption = { id: string; name: string }
+
 interface ProntuarioFormProps {
   patientId: string
   /**
@@ -50,6 +60,20 @@ export function ProntuarioForm({ patientId, serviceId }: ProntuarioFormProps) {
   const [serverError, setServerError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [isPending, startTransition] = useTransition()
+  const [services, setServices] = useState<ServiceOption[]>([])
+  const [selectedServiceId, setSelectedServiceId] = useState<string | undefined>(serviceId)
+
+  useEffect(() => {
+    listServices().then((result) => {
+      if (result.success) {
+        setServices(
+          (result.services ?? [])
+            .filter((s) => s.ativo)
+            .map((s) => ({ id: s.id, name: s.name }))
+        )
+      }
+    })
+  }, [])
 
   const form = useForm<ProntuarioFormValues>({
     resolver: zodResolver(prontuarioFormSchema),
@@ -146,8 +170,29 @@ export function ProntuarioForm({ patientId, serviceId }: ProntuarioFormProps) {
           )}
         />
 
+        <div className="space-y-1.5">
+          <label className="text-sm font-semibold">Serviço realizado (opcional)</label>
+          <Select
+            value={selectedServiceId ?? undefined}
+            onValueChange={(v) => setSelectedServiceId(v ?? undefined)}
+          >
+            <SelectTrigger className="w-full bg-background border-border">
+              <SelectValue placeholder="Selecione o serviço para exibir os materiais">
+                {services.find((s) => s.id === selectedServiceId)?.name}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              {services.map((s) => (
+                <SelectItem key={s.id} value={s.id}>
+                  {s.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
         {/* Materiais Utilizados (D-22) — auto-oculta quando serviceId ausente ou sem templates */}
-        <MaterialsUsedSection serviceId={serviceId} />
+        <MaterialsUsedSection serviceId={selectedServiceId} />
 
         <Button type="submit" disabled={isPending}>
           {isPending ? 'Registrando...' : 'Registrar Atendimento'}
