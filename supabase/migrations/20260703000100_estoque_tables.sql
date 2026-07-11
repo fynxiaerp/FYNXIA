@@ -193,7 +193,7 @@ COMMENT ON TABLE public.service_material_templates IS 'Templates de consumo de m
 --
 -- IMPORTANTE (Pitfall DDL): Postgres não aceita DATE() function em UNIQUE inline de tabela.
 -- Usado índice de expressão parcial em vez de UNIQUE inline:
---   CREATE UNIQUE INDEX uq_stock_alerts_daily ... ((created_at::date))
+--   CREATE UNIQUE INDEX uq_stock_alerts_daily ... (((created_at AT TIME ZONE 'America/Sao_Paulo')::date))
 -- Garante idempotência: no máximo 1 alerta por produto/unidade/tipo/dia.
 CREATE TABLE public.stock_alerts (
   id         UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -208,9 +208,12 @@ CREATE TABLE public.stock_alerts (
 );
 
 -- Índice de expressão para unicidade diária por produto/unidade/tipo
--- (created_at::date) = data do alerta sem hora — 1 alerta por produto/unidade/tipo/dia
+-- Dia local BR sem hora — 1 alerta por produto/unidade/tipo/dia.
+-- created_at é timestamptz: (created_at::date) NÃO é IMMUTABLE (depende do TimeZone da
+-- sessão) e o Postgres recusa em índice (42P17). timezone('America/Sao_Paulo', created_at)
+-- é IMMUTABLE e ::date sobre timestamp também — expressão canônica para índice de data.
 CREATE UNIQUE INDEX uq_stock_alerts_daily
-  ON public.stock_alerts (product_id, unit_id, clinic_id, tipo, (created_at::date));
+  ON public.stock_alerts (product_id, unit_id, clinic_id, tipo, ((created_at AT TIME ZONE 'America/Sao_Paulo')::date));
 
 CREATE INDEX idx_stock_alerts_clinic   ON public.stock_alerts(clinic_id);
 CREATE INDEX idx_stock_alerts_unit     ON public.stock_alerts(unit_id);
