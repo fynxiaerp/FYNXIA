@@ -63,13 +63,11 @@ Segue padrão existente do projeto (verificado em PageHeader, EmptyState, Payabl
 | Heading / Card title | 14px (`text-sm`) | 600 (`font-semibold`) | 1.4 | Space Grotesk (`font-display`) | Título de coluna kanban, label de KPI card, título de seção |
 | Body | 14px (`text-sm`) | 400 (`font-normal`) | 1.5 | Inter | Descrições, textos de apoio, cells de tabela, texto do lead card |
 | Small / meta | 12px (`text-xs`) | 400 (`font-normal`) | 1.4 | Inter | Origem do lead no card, tempo no estágio, telefone abreviado |
-| Numeric / KPI | 24px (`text-2xl`) | 600 (`font-semibold`) | 1.25 (`leading-tight`) | Inter + `tabular-nums` | CPL, CAC, NPS score, saldo de recompensas |
+| Numeric / KPI | 24px (`text-2xl`) | 600 (`font-semibold`) | 1.25 (`leading-tight`) | Inter + `tabular-nums` | CPL, CAC, **NPS score âncora** (`+42`), saldo de recompensas |
 
-**Regra:** Headings de seção e page title usam `font-display` (Space Grotesk). Todos os demais textos usam `font-sans` (Inter). Nunca misturar dentro do mesmo elemento. O NPS score grande (ex.: "+42") usa `font-display` + `text-4xl` — é o único elemento desta fase que excede a escala de 4 tamanhos, tratado como "Display" role reservado para esse número âncora único no painel de NPS.
+**Regra:** Headings de seção e page title usam `font-display` (Space Grotesk). Todos os demais textos usam `font-sans` (Inter). Nunca misturar dentro do mesmo elemento.
 
-| Role | Size | Weight | Line Height | Usage |
-|------|------|--------|-------------|-------|
-| Display — NPS score | 36px (`text-4xl`) | 700 (`font-bold`) | 1.1 | Número grande do NPS no topo do painel (`+42`, `-15` etc.) — único uso, `font-display` |
+**Escala fechada:** exatamente **4 tamanhos** (12/14/20/24px) e **2 pesos** (400/600). O NPS score âncora do painel (ex.: "+42") NÃO introduz um 5º tamanho — usa o papel **Numeric/KPI (24px `text-2xl` / `font-semibold`)**, o mesmo dos demais números-chave. A ênfase vem da cor (accent/destrutivo conforme a faixa) e do `tabular-nums`, não de um tamanho/peso extra.
 
 ---
 
@@ -347,7 +345,7 @@ Sem gráfico (nenhuma lib de chart instalada) — apenas tabela ordenável por T
 ```
 <Card className="p-6 flex flex-col items-center text-center gap-2">
   <p className="text-sm font-semibold text-muted-foreground">NPS Score</p>
-  <p className="text-4xl font-bold font-display {scoreColor}">{score >= 0 ? '+' : ''}{score}</p>
+  <p className="text-2xl font-semibold font-display tabular-nums {scoreColor}">{score >= 0 ? '+' : ''}{score}</p>
   <p className="text-xs text-muted-foreground">{promotores}% promotores · {neutros}% neutros · {detratores}% detratores</p>
 </Card>
 ```
@@ -394,7 +392,7 @@ Posicionado logo abaixo do card de Score, acima dos KPIs secundários.
 <main className="min-h-screen bg-background py-8 px-4">
   <div className="max-w-md w-full mx-auto flex flex-col gap-6">
     <header className="text-center">
-      <h1 className="text-xl font-bold font-display text-primary">FYNXIA</h1>
+      <h1 className="text-xl font-semibold font-display text-primary">FYNXIA</h1>
       <h2 className="mt-2 text-xl font-semibold font-display text-foreground">Sua opinião importa</h2>
       <p className="mt-1 text-sm text-muted-foreground">{perguntaNps}</p>
     </header>
