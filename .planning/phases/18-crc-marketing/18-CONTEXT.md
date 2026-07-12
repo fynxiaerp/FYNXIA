@@ -113,6 +113,10 @@ de pontos/gamificação, código/link de indicação compartilhável.
 
 </specifics>
 
+## Accepted Risk / Assumption
+
+- **A2 â Consentimento unico de marketing (v1):** O phase reutiliza o consent_type `marketing_whatsapp` como opt-in guarda-chuva de marketing para AMBOS os canais (WhatsApp **e** e-mail). Nao existe um consent_type `marketing_email` separado em v1. O gate de disparo do Plano 05 (`segment.ts` / `approveCampaignAndDispatch`) usa `marketing_whatsapp` (revoked_at IS NULL) para os dois canais. **Pendente de confirmacao do usuario** â se for exigido consentimento por canal, sera necessario adicionar `marketing_email` ao CHECK de patient_consents e desmembrar o gate.
+
 <deferred>
 ## Deferred Ideas
 

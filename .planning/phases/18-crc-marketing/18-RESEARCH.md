@@ -432,17 +432,19 @@ export async function GET(request: Request): Promise<Response> {
 | A4 | The nightly NPS cron should run at 23:00 UTC (20:00 BRT) — "à noite" per D-12 — and this schedule doesn't conflict with existing crons | Architecture Pattern 4 | LOW — schedule is cosmetic; the existing 7 crons in `vercel.json` run at 05:00–13:00 UTC, so 23:00 UTC has no overlap. Easy to adjust if the user has a stronger preference. |
 | A5 | `nps_responses.appointment_id` (not `patient_id`) is the right dedup/foreign-key anchor, meaning a patient with 2 concluded appointments gets 2 separate NPS invites | Pattern 4, Pitfall 5 | LOW — this matches "coleta NPS pós-consulta" (D-12 says per-atendimento, "varre atendimentos concluídos"), so per-appointment is the textually correct reading of the decision; flagging only because per-patient (max 1 invite/month, say) is a plausible alternate interpretation the user might actually want to avoid survey fatigue. |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Does the campaign approval card in `ApprovalInbox.tsx` need a bespoke UI, or can the generic `requestSummary()`/`RequestCard` render campaign payloads adequately?**
    - What we know: `ApprovalInbox.tsx` already special-cases `type === 'ai_action'` with a generic one-line summary (`agentKey` + `payload.action`). UI-SPEC says the campaign card should show "nome da campanha, N destinatários, canal, preview da mensagem" — richer than the current one-liner.
    - What's unclear: Whether to extend `requestSummary()`/`RequestCard` generically (branch on `agent_key === 'crc-campaign'`) or build a fully separate campaign-approval component that doesn't reuse `ApprovalInbox` at all.
    - Recommendation: Extend `requestSummary()` with an `agent_key === 'crc-campaign'` branch (minimal diff, keeps single approval inbox) — the planner should size this as a small task on the existing component, not a new component per UI-SPEC's own guidance ("NÃO criar um novo componente de aprovação").
+   - **RESOLVED:** Closed by Plan 09 â ApprovalInbox.tsx extends requestSummary() with an `agent_key === 'crc-campaign'` branch (richer campaign card, no new approval component).
 
 2. **Referral reward "crédito em serviços" (D-17) — is there an existing mechanism to apply a credit at charge/OS time, or is this purely a ledger with no redemption UI in v1?**
    - What we know: D-19 says balance is "visível em tela interna agora... modelado para o portal expor na Fase 20" — this implies v1 is read-only/informational, no redemption flow yet.
    - What's unclear: Whether `referral_rewards.type = 'uso'` rows are ever actually created in this phase, or whether that CHECK value is purely forward-looking schema (built now, used later).
    - Recommendation: Treat v1 as `type = 'credito'` only — no redemption UI, no `'uso'` rows created by any Phase 18 action. Keep the CHECK constraint open to `'uso'` for forward-compatibility but don't build the consuming flow.
+   - **RESOLVED:** Closed by Plan 04 â v1 referral ledger is credito-only; no `'uso'` rows are created by any Phase 18 action (CHECK kept open to 'uso' for forward-compat only).
 
 ## Environment Availability
 
