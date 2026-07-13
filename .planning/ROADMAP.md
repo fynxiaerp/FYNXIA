@@ -325,7 +325,7 @@ Plans:
 - [x] 18-03-PLAN.md — Wave 2: leads + lead-sources Server Actions (createLead/moveLeadStage/convertLead/listConversionByOrigin) (CRC-01)
 - [x] 18-04-PLAN.md — Wave 2: referrals Server Actions (linkReferral/creditReferralReward CAS/listRewardsBalance) (CRC-05)
 - [x] 18-05-PLAN.md — Wave 2: segment (consent gate) + campaign-agent L2 (ZDR) + campaigns actions w/ approval-gated dispatch (CRC-03)
-- [ ] 18-06-PLAN.md — Wave 2: NPS scan lib + nightly cron + public single-use submit + detractor treatment (CRC-04)
+- [x] 18-06-PLAN.md — Wave 2: NPS scan lib + nightly cron + public single-use submit + detractor treatment (CRC-04)
 - [ ] 18-07-PLAN.md — Wave 3: CRC hub + nav + Lead Kanban (dnd-kit, keyboard) + lead dialogs + source manager (CRC-01) [checkpoint]
 - [ ] 18-08-PLAN.md — Wave 3: ROI actions + panel (CPL/CAC) + payables campaign-link field (CRC-02)
 - [ ] 18-09-PLAN.md — Wave 3: campaigns table + 3-step CampaignFormDialog + ApprovalInbox campaign card (CRC-03) [checkpoint]
@@ -405,7 +405,7 @@ Plans:
 | 15. Faturamento/NFS-e & Convênios/TISS | v2.0 | 9/9 | Complete   | 2026-06-20 |
 | 16. Contas a Pagar, Conciliação & Tributos | v2.0 | 10/10 | Complete    | 2026-06-22 |
 | 17. Estoque & Materiais | v2.0 | 10/10 | Complete    | 2026-07-11 |
-| 18. CRC & Marketing | v2.0 | 5/11 | In Progress|  |
+| 18. CRC & Marketing | v2.0 | 6/11 | In Progress|  |
 | 19. Relatórios, Orçamento & BI | v2.0 | 0/? | Not started | - |
 | 20. Portal do Paciente & App do Profissional | v2.0 | 0/? | Not started | - |
 | 21. Migração & Ensino | v2.0 | 0/? | Not started | - |
