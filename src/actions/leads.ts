@@ -5,6 +5,7 @@ import { differenceInDays } from 'date-fns'
 import { createClient } from '@/lib/supabase/server'
 import { logBusinessEvent } from '@/lib/audit'
 import { assertNotReadOnly } from '@/lib/auth/guards'
+import { createPatient } from '@/actions/patients'
 import { leadSchema, LEAD_STAGES, isValidStageTransition, type LeadStage } from '@/lib/validators/crc'
 
 /**
@@ -345,4 +346,190 @@ export async function moveLeadStage(
   revalidatePath('/clinica/crc/funil')
 
   return { success: true }
+}
+
+// ─── convertLead ──────────────────────────────────────────────────────────────
+// D-04: creates or links a patient and sets stage='convertido'. CAS-guarded
+// (`.eq('stage', current)`) so a concurrent convert loses the race (T-18-08/09).
+// D-18: triggers referral crediting after a successful conversion.
+//
+// Patients require a CPF (patients.cpf NOT NULL — 20260605000100_clinical_tables.sql)
+// but leads never collect one (leadSchema has no cpf field). Auto-creating a
+// patient therefore requires the caller to supply either an existing patientId
+// (link) or a cpf (create) — this is an intentional addition to the plan's
+// `opts` shape (Rule 2: missing-critical-functionality fix), not a schema change.
+
+export async function convertLead(
+  leadId: string,
+  opts: { patientId?: string; cpf?: string } = {}
+): Promise<{ success: boolean; patientId?: string; error?: string }> {
+  await assertNotReadOnly()
+
+  const actorResult = await getActor()
+  if ('error' in actorResult) {
+    return { success: false, error: actorResult.error }
+  }
+  const { actor } = actorResult
+
+  if (!(WRITER_ROLES as readonly string[]).includes(actor.role)) {
+    return { success: false, error: 'Sem permissão para esta operação' }
+  }
+
+  const supabase = await createClient()
+
+  const { data: lead, error: fetchError } = await supabase
+    .from('leads')
+    .select('id, stage, full_name, phone, email')
+    .eq('id', leadId)
+    .eq('clinic_id', actor.tenant_id)
+    .is('deleted_at', null)
+    .single()
+
+  if (fetchError || !lead) {
+    return { success: false, error: fetchError?.message ?? 'Lead não encontrado' }
+  }
+
+  if (!isValidStageTransition(lead.stage, 'convertido')) {
+    return { success: false, error: 'Lead não pode ser convertido a partir do estágio atual' }
+  }
+
+  // Resolve or create the linked patient (D-04)
+  let patientId: string
+  if (opts.patientId) {
+    patientId = opts.patientId
+  } else {
+    if (!opts.cpf) {
+      return {
+        success: false,
+        error: 'Informe o paciente vinculado ou o CPF para cadastrar um novo paciente',
+      }
+    }
+    const patientResult = await createPatient({
+      full_name: lead.full_name,
+      cpf: opts.cpf,
+      phone: lead.phone || undefined,
+      email: lead.email || undefined,
+    })
+    if (!patientResult.success || !patientResult.id) {
+      return { success: false, error: patientResult.error ?? 'Erro ao criar paciente' }
+    }
+    patientId = patientResult.id
+  }
+
+  // CAS guard: `.eq('stage', lead.stage)` — a concurrent convert loses the race
+  // (0 rows affected) instead of double-converting/double-crediting (T-18-08/09).
+  const { data: updatedRows, error: updateError } = await supabase
+    .from('leads')
+    .update({
+      stage: 'convertido',
+      patient_id: patientId,
+      stage_changed_at: new Date().toISOString(),
+    })
+    .eq('id', leadId)
+    .eq('clinic_id', actor.tenant_id)
+    .eq('stage', lead.stage)
+    .select('id')
+
+  if (updateError) {
+    return { success: false, error: updateError.message }
+  }
+  if (!updatedRows || updatedRows.length === 0) {
+    return { success: false, error: 'Conversão concorrente detectada — recarregue e tente novamente' }
+  }
+
+  // D-18: credit the referral reward (safe no-op when no referral row exists,
+  // it's already credited, or Plan 04's referrals.ts isn't wired yet). Dynamic
+  // import via a non-literal specifier (D-144 convention) keeps `tsc` clean
+  // regardless of Plan 03/Plan 04 execution order within Wave 2.
+  try {
+    const referralsModulePath = '@/actions/referrals'
+    const referralsModule = await import(referralsModulePath)
+    if (typeof referralsModule.creditReferralReward === 'function') {
+      await referralsModule.creditReferralReward(leadId)
+    }
+  } catch (err) {
+    console.error('[convertLead] creditReferralReward unavailable or failed:', err)
+  }
+
+  await logBusinessEvent({
+    tenantId: actor.tenant_id,
+    actorId: actor.id,
+    action: 'crc.lead.converted',
+    details: { lead_id: leadId, patient_id: patientId },
+  })
+
+  revalidatePath('/clinica/crc/funil')
+
+  return { success: true, patientId }
+}
+
+// ─── listConversionByOrigin ─────────────────────────────────────────────────
+// D-06: per-source totals/converted/lost — feeds the funil "Conversão por
+// Origem" toggle and the ROI panel.
+
+export type ConversionByOriginRow = {
+  sourceId: string
+  sourceName: string
+  total: number
+  converted: number
+  lost: number
+  conversionRate: number
+}
+
+export async function listConversionByOrigin(): Promise<{
+  success: boolean
+  data?: ConversionByOriginRow[]
+  error?: string
+}> {
+  const actorResult = await getActor()
+  if ('error' in actorResult) {
+    return { success: false, error: actorResult.error }
+  }
+  const { actor } = actorResult
+
+  const supabase = await createClient()
+
+  const { data: sources, error: sourcesError } = await supabase
+    .from('lead_sources')
+    .select('id, name')
+    .eq('clinic_id', actor.tenant_id)
+    .order('is_default', { ascending: false })
+    .order('name')
+
+  if (sourcesError) {
+    return { success: false, error: sourcesError.message }
+  }
+
+  const { data: leadRows, error: leadsError } = await supabase
+    .from('leads')
+    .select('source_id, stage')
+    .eq('clinic_id', actor.tenant_id)
+    .is('deleted_at', null)
+
+  if (leadsError) {
+    return { success: false, error: leadsError.message }
+  }
+
+  const counts = new Map<string, { total: number; converted: number; lost: number }>()
+  for (const row of (leadRows ?? []) as Array<{ source_id: string; stage: string }>) {
+    const entry = counts.get(row.source_id) ?? { total: 0, converted: 0, lost: 0 }
+    entry.total += 1
+    if (row.stage === 'convertido') entry.converted += 1
+    if (row.stage === 'perdido') entry.lost += 1
+    counts.set(row.source_id, entry)
+  }
+
+  const data = (sources ?? []).map((source: { id: string; name: string }) => {
+    const entry = counts.get(source.id) ?? { total: 0, converted: 0, lost: 0 }
+    return {
+      sourceId: source.id,
+      sourceName: source.name,
+      total: entry.total,
+      converted: entry.converted,
+      lost: entry.lost,
+      conversionRate: entry.total > 0 ? entry.converted / entry.total : 0,
+    }
+  })
+
+  return { success: true, data }
 }
