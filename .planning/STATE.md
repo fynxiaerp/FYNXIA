@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 18-02-PLAN.md
-last_updated: "2026-07-13T00:16:37.489Z"
+stopped_at: Completed 18-03-PLAN.md
+last_updated: "2026-07-13T00:29:48.692Z"
 last_activity: 2026-07-13
 progress:
   total_phases: 15
   completed_phases: 11
   total_plans: 93
-  completed_plans: 84
-  percent: 90
+  completed_plans: 85
+  percent: 91
 ---
 
 # FYNXIA ERP — Project State
@@ -36,7 +36,7 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 ## Current Position
 
 Phase: 18 (crc-marketing) — EXECUTING
-Plan: 3 of 11
+Plan: 4 of 11
 Status: Ready to execute
 Last activity: 2026-07-13
 
@@ -138,6 +138,7 @@ Last activity: 2026-07-13
 | Phase 17 P10 | 12min | 1 tasks | 1 files |
 | Phase 18 P01 | 35min | 3 tasks | 11 files |
 | Phase 18 P02 | 20min | 3 tasks | 4 files |
+| Phase 18 P03 | 25min | 3 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -260,6 +261,8 @@ Last activity: 2026-07-13
 | WRITER_ROLES = admin, superadmin, receptionist for all 6 new CRC tables' write RLS | No 'marketing' role exists in the confirmed 11-value role enum (18-RESEARCH Pitfall 7) | 2026-07-13 |
 | payables.campaign_id nullable FK attributes campaign cost at lançamento (payables creation), not baixa/payment | Matches CPL/CAC as committed-spend metric (18-RESEARCH Assumption A3); one-line query filter change if wrong later | 2026-07-13 |
 | nps_responses/referral_rewards have zero authenticated INSERT policy | Scores/credits never client-writable — writes exclusively via service role (createAdminClient), mirrors stock_draws/stock_alerts (T-18-04) | 2026-07-13 |
+| convertLead opts extended with optional cpf field ({ patientId?, cpf? }) | patients.cpf is NOT NULL but leadSchema never collects one; safe validation error returned instead of an invalid insert when neither patientId nor cpf is given | 2026-07-13 |
+| Referral wiring (linkReferral/creditReferralReward) uses a non-literal dynamic import specifier | Plan 03 and Plan 04 are both Wave 2 with the same depends_on — forward-references referrals.ts without tripping tsc TS2307 before that module exists; extends the D-144 RED-scaffold convention to production code | 2026-07-13 |
 
 ### Architecture Constraints Locked
 
@@ -296,7 +299,7 @@ Last activity: 2026-07-13
 
 ## Session Continuity
 
-**Stopped at:** Completed 18-02-PLAN.md
+**Stopped at:** Completed 18-03-PLAN.md
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 
