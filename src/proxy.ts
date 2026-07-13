@@ -141,11 +141,13 @@ export async function proxy(request: NextRequest) {
   // Public routes that bypass all auth and role checks (Pitfall 5)
   // /anamnese: public token-based anamnesis flow (CLINIC-08 — no session required)
   // /painel: public TV waiting-room display (tenant-isolated by slug, initials-only — LGPD)
+  // /nps: public token-based NPS submission flow (CRC-04, D-13 — no session required)
   const isPublicRoute =
     pathname.startsWith('/invite') ||
     pathname.startsWith('/agendar') ||
     pathname.startsWith('/anamnese') ||
-    pathname.startsWith('/painel')
+    pathname.startsWith('/painel') ||
+    pathname.startsWith('/nps')
 
   // Auth confirm is a public token-exchange route — must NOT require a session (Pitfall 5)
   const isAuthCallbackRoute = pathname.startsWith('/auth/confirm')
