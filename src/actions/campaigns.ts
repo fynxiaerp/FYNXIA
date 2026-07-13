@@ -757,6 +757,7 @@ export async function listCampaigns(): Promise<{
     channel_whatsapp: boolean
     channel_email: boolean
     inactive_days: number
+    filters: CampaignSegmentInput | null
     recipient_count: number | null
     preview_message: string | null
     approval_request_id: string | null
@@ -775,7 +776,7 @@ export async function listCampaigns(): Promise<{
   const { data, error } = await supabase
     .from('campaigns')
     .select(
-      'id, name, status, channel_whatsapp, channel_email, inactive_days, recipient_count, preview_message, approval_request_id, created_at'
+      'id, name, status, channel_whatsapp, channel_email, inactive_days, filters, recipient_count, preview_message, approval_request_id, created_at'
     )
     .eq('clinic_id', actor.tenant_id)
     .is('deleted_at', null)
@@ -785,5 +786,11 @@ export async function listCampaigns(): Promise<{
     return { success: false, error: error.message }
   }
 
-  return { success: true, data: data ?? [] }
+  return {
+    success: true,
+    data: (data ?? []).map((row) => ({
+      ...row,
+      filters: (row.filters as unknown as CampaignSegmentInput | null) ?? null,
+    })),
+  }
 }
