@@ -59,7 +59,7 @@ Full detail archived in [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
 **Bloco D — Operação & Crescimento**
 
 - [x] **Phase 17: Estoque & Materiais** — Cadastro de produtos com baixa automática por procedimento, alertas de estoque mínimo e rastreabilidade ANVISA (10/10 plans executed; gap closure 17-10 wires prontuário "Serviço realizado" selector into MaterialsUsedSection, resolving the 2026-07-11 verification gap) (completed 2026-07-11)
-- [ ] **Phase 18: CRC & Marketing** — Funil de leads, ROI de campanhas, campanhas segmentadas, NPS e programa de indicação
+- [x] **Phase 18: CRC & Marketing** — Funil de leads, ROI de campanhas, campanhas segmentadas, NPS e programa de indicação (completed 2026-07-13)
 
 **Bloco E — Analítico & Canais**
 
@@ -330,7 +330,7 @@ Plans:
 - [x] 18-08-PLAN.md — Wave 3: ROI actions + panel (CPL/CAC) + payables campaign-link field (CRC-02)
 - [x] 18-09-PLAN.md — Wave 3: campaigns table + 3-step CampaignFormDialog + ApprovalInbox campaign card (CRC-03) [checkpoint]
 - [x] 18-10-PLAN.md — Wave 3: NPS panel + detractor alert + public NPS form route (CRC-04) [checkpoint]
-- [ ] 18-11-PLAN.md — Wave 3: indicações page + referrals table + per-patient rewards balance (CRC-05)
+- [x] 18-11-PLAN.md — Wave 3: indicações page + referrals table + per-patient rewards balance (CRC-05)
 **v1 reuse**: Expande mensageria WhatsApp/Resend (Phase 4) e agentes de IA (Phase 5); funil de leads é novo; NPS é novo; pacientes existentes (Phase 2) são base do CRC
 **UI hint**: yes
 
@@ -405,7 +405,7 @@ Plans:
 | 15. Faturamento/NFS-e & Convênios/TISS | v2.0 | 9/9 | Complete   | 2026-06-20 |
 | 16. Contas a Pagar, Conciliação & Tributos | v2.0 | 10/10 | Complete    | 2026-06-22 |
 | 17. Estoque & Materiais | v2.0 | 10/10 | Complete    | 2026-07-11 |
-| 18. CRC & Marketing | v2.0 | 10/11 | In Progress|  |
+| 18. CRC & Marketing | v2.0 | 11/11 | Complete   | 2026-07-13 |
 | 19. Relatórios, Orçamento & BI | v2.0 | 0/? | Not started | - |
 | 20. Portal do Paciente & App do Profissional | v2.0 | 0/? | Not started | - |
 | 21. Migração & Ensino | v2.0 | 0/? | Not started | - |

@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
-status: paused
-stopped_at: "18-10-PLAN.md: Tasks 1-2 built and committed (NPS panel + public single-use form, forced light theme). Paused at Task 3 (checkpoint:human-verify) — awaiting live link->form->submit->classification verification."
-last_updated: "2026-07-13T22:44:21.910Z"
+status: executing
+stopped_at: Completed 18-11-PLAN.md — CRC-05 referral program UI done. Phase 18 (crc-marketing) COMPLETE — all 11 plans delivered.
+last_updated: "2026-07-13T22:49:36.835Z"
 last_activity: 2026-07-13
 progress:
   total_phases: 15
-  completed_phases: 11
+  completed_phases: 12
   total_plans: 93
-  completed_plans: 92
-  percent: 99
+  completed_plans: 93
+  percent: 100
 ---
 
 # FYNXIA ERP — Project State
@@ -35,9 +35,9 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 
 ## Current Position
 
-Phase: 18 (crc-marketing) — EXECUTING
-Plan: 10 of 11
-Status: Paused at checkpoint:human-verify (18-10 Task 3) — NPS panel + public form built and committed, awaiting live link→form→submit→classification verification
+Phase: 18 (crc-marketing) — COMPLETE
+Plan: 11 of 11
+Status: All 11 plans delivered — CRC-01..05 complete
 Last activity: 2026-07-13
 
 **Milestone:** v2.0 — Produto Completo (27 módulos, blocos A–E)
@@ -59,7 +59,7 @@ Last activity: 2026-07-13
 | 15 | Faturamento/NFS-e & Convênios/TISS | C | OS-01..03, CONV-01..03 | Not started |
 | 16 | Contas a Pagar, Conciliação & Tributos | C | FOP-01..03, TRIB-01..03 | Not started |
 | 17 | Estoque & Materiais | D | EST-01..03 | Not started |
-| 18 | CRC & Marketing | D | CRC-01..05 | Not started |
+| 18 | CRC & Marketing | D | CRC-01..05 | Complete |
 | 19 | Relatórios, Orçamento & BI | E | REP-01..03, BI-01..02 | Not started |
 | 20 | Portal do Paciente & App do Profissional | E | POR-01..03, APP-01..03 | Not started |
 | 21 | Migração & Ensino | E | MIG-01..02, EDU-01..03 | Not started |
@@ -145,6 +145,7 @@ Last activity: 2026-07-13
 | Phase 18 P08 | 30min | 3 tasks | 8 files |
 | Phase 18 P09 | 35min | 3 tasks | 6 files |
 | Phase 18 P10 | 20min | 2 tasks | 9 files |
+| Phase 18 P11 | 15min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -276,6 +277,8 @@ Last activity: 2026-07-13
 | listCampaigns() extended to select the `filters` JSON column (Rule 1 fix) | Plan 05's read query omitted it; both CampaignsTable's segment filter badges and CampaignFormDialog's edit-mode prefill need it | 2026-07-13 |
 | CampaignFormDialog unifies create/edit/view via one campaignId state + persistCampaign() helper (createCampaign on first persist, updateCampaign thereafter) | Avoids branching the whole 3-step wizard component by mode; same code path works for both flows | 2026-07-13 |
 | ApprovalInbox campaign rows (type='ai_action', agent_key='crc-campaign') route approve/reject through approveCampaignAndDispatch/rejectCampaign instead of the generic approveRequest/rejectRequest | approveRequest/rejectRequest alone never touch campaigns.status — dispatch/rejection-state would be unreachable otherwise (Pitfall 2); non-campaign rows untouched | 2026-07-13 |
+| PatientRewardsBalanceTable's "Ver Extrato" Sheet derives credit history from already-fetched listReferrals() rows instead of a new server action | Plan 04's listRewardsBalance only returns aggregates, not row-level ledger entries; referral_rewards credit events map 1:1 to a credited referral row in v1 | 2026-07-13 |
+| ReferralsTable inlines its own stage-badge mapping (mirrors KanbanColumn/LeadDetailSheet) rather than extracting a shared helper | No shared stage-badge util existed yet; plan's files_modified list did not include a new lib file | 2026-07-13 |
 
 ### Architecture Constraints Locked
 
@@ -312,7 +315,7 @@ Last activity: 2026-07-13
 
 ## Session Continuity
 
-**Stopped at:** 18-10-PLAN.md: Tasks 1-2 built and committed (NPS panel + public single-use form, forced light theme). Paused at Task 3 (checkpoint:human-verify) — awaiting live link->form->submit->classification verification.
+**Stopped at:** Completed 18-11-PLAN.md — CRC-05 referral program UI done. Phase 18 (crc-marketing) COMPLETE — all 11 plans delivered.
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 
