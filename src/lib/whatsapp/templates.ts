@@ -165,3 +165,72 @@ export function buildCollectionComponents(params: {
     },
   ]
 }
+
+// ─── Phase 18 (CRC & Marketing) templates ─────────────────────────────────────
+//
+// IMPORTANT — CATEGORY MISMATCH FROM THE TEMPLATES ABOVE:
+//   Unlike TEMPLATE_APPOINTMENT_REMINDER/TEMPLATE_COLLECTION (both UTILITY),
+//   TEMPLATE_REACTIVATION below is registered as MARKETING category in Meta —
+//   promotional wording ("aproveite", "volte", "desconto") is allowed and
+//   expected here, but MARKETING-category sends REQUIRE the recipient to have
+//   explicitly opted in (D-08/D-11 — gated on patient_consents.marketing_whatsapp
+//   with revoked_at IS NULL). Sending to non-opted-in numbers risks Meta
+//   number/quality-rating penalties. See 18-RESEARCH.md Pitfall 8.
+//
+//   TEMPLATE_NPS_INVITE stays UTILITY (transactional, post-service) — same
+//   category logic as TEMPLATE_APPOINTMENT_REMINDER/TEMPLATE_COLLECTION above.
+
+/** Marketing template: reactivation campaign for inactive patients (D-08/D-11). Category: MARKETING. */
+export const TEMPLATE_REACTIVATION = 'fynxia_reativacao'
+
+/** Utility template: post-appointment NPS survey invite (D-12/D-13). Category: UTILITY. */
+export const TEMPLATE_NPS_INVITE = 'fynxia_pesquisa_nps'
+
+/**
+ * Builds the components array for the reactivation campaign template.
+ *
+ * Template body (registered in Meta, category=MARKETING):
+ *   "Olá, {{1}}! Sentimos sua falta na {{2}}. Que tal agendar uma revisão?"
+ *
+ * patientName carries the LLM-personalized leading text (first name only,
+ * per D-09 ZDR/LGPD constraints — mirrors buildCollectionComponents' patientName slot).
+ * No interactive buttons — informational only.
+ */
+export function buildReactivationComponents(params: {
+  patientName: string
+  clinicName: string
+}): WhatsAppComponent[] {
+  return [
+    {
+      type: 'body',
+      parameters: [
+        { type: 'text', text: params.patientName },
+        { type: 'text', text: params.clinicName },
+      ],
+    },
+  ]
+}
+
+/**
+ * Builds the components array for the NPS survey invite template.
+ *
+ * Template body (registered in Meta, category=UTILITY):
+ *   "Olá, {{1}}! Como foi seu atendimento? Avalie em: {{2}}"
+ *
+ * npsLink is the public /nps/[patient-id]/[token] single-use survey URL (D-13).
+ * No interactive buttons — informational only.
+ */
+export function buildNpsInviteComponents(params: {
+  patientName: string
+  npsLink: string
+}): WhatsAppComponent[] {
+  return [
+    {
+      type: 'body',
+      parameters: [
+        { type: 'text', text: params.patientName },
+        { type: 'text', text: params.npsLink },
+      ],
+    },
+  ]
+}
