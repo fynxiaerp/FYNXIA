@@ -320,7 +320,7 @@ Plans:
   5. Programa de indicação registra quem indicou quem e as recompensas acumuladas ficam visíveis para o paciente indicador
 **Plans**: 11 plans
 Plans:
-- [ ] 18-01-PLAN.md — Wave 1: @dnd-kit/react install + WhatsApp reactivation/NPS templates + CRC Zod validators + pure ROI/NPS math (TDD) + RED source-inspection scaffolds
+- [x] 18-01-PLAN.md — Wave 1: @dnd-kit/react install + WhatsApp reactivation/NPS templates + CRC Zod validators + pure ROI/NPS math (TDD) + RED source-inspection scaffolds
 - [ ] 18-02-PLAN.md — Wave 1: 6 CRC tables + payables.campaign_id ALTER + RLS + lead-sources seed + [BLOCKING] db push + gen types
 - [ ] 18-03-PLAN.md — Wave 2: leads + lead-sources Server Actions (createLead/moveLeadStage/convertLead/listConversionByOrigin) (CRC-01)
 - [ ] 18-04-PLAN.md — Wave 2: referrals Server Actions (linkReferral/creditReferralReward CAS/listRewardsBalance) (CRC-05)
@@ -405,7 +405,7 @@ Plans:
 | 15. Faturamento/NFS-e & Convênios/TISS | v2.0 | 9/9 | Complete   | 2026-06-20 |
 | 16. Contas a Pagar, Conciliação & Tributos | v2.0 | 10/10 | Complete    | 2026-06-22 |
 | 17. Estoque & Materiais | v2.0 | 10/10 | Complete    | 2026-07-11 |
-| 18. CRC & Marketing | v2.0 | 0/11 | Planned | - |
+| 18. CRC & Marketing | v2.0 | 1/11 | In Progress|  |
 | 19. Relatórios, Orçamento & BI | v2.0 | 0/? | Not started | - |
 | 20. Portal do Paciente & App do Profissional | v2.0 | 0/? | Not started | - |
 | 21. Migração & Ensino | v2.0 | 0/? | Not started | - |

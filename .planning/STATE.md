@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
-status: verifying
-stopped_at: Phase 18 UI-SPEC approved
-last_updated: "2026-07-12T00:59:44.159Z"
-last_activity: 2026-07-11
+status: executing
+stopped_at: Completed 18-01-PLAN.md
+last_updated: "2026-07-13T00:06:49.646Z"
+last_activity: 2026-07-13
 progress:
   total_phases: 15
   completed_phases: 11
-  total_plans: 82
-  completed_plans: 82
-  percent: 100
+  total_plans: 93
+  completed_plans: 83
+  percent: 89
 ---
 
 # FYNXIA ERP — Project State
@@ -29,16 +29,16 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 
 **Stack:** Next.js 15 + TypeScript (strict) + Supabase (sa-east-1) + Vercel (gru1) + shadcn/ui + Tailwind v4
 
-**Current focus:** Phase 17 — estoque-materiais
+**Current focus:** Phase 18 — crc-marketing
 
 ---
 
 ## Current Position
 
-Phase: 18
-Plan: Not started
-Status: Gap closure complete (17-10) — MaterialsUsedSection reachable via ProntuarioForm service selector; ready for re-verification
-Last activity: 2026-07-11
+Phase: 18 (crc-marketing) — EXECUTING
+Plan: 2 of 11
+Status: Ready to execute
+Last activity: 2026-07-13
 
 **Milestone:** v2.0 — Produto Completo (27 módulos, blocos A–E)
 
@@ -136,6 +136,7 @@ Last activity: 2026-07-11
 | Phase 17 P08 | ~20min | 2 tasks | 4 files |
 | Phase 17 P09 | ~20min | 3 tasks | 5 files |
 | Phase 17 P10 | 12min | 1 tasks | 1 files |
+| Phase 18 P01 | 35min | 3 tasks | 11 files |
 
 ## Accumulated Context
 
@@ -252,6 +253,9 @@ Last activity: 2026-07-11
 | ServiceForm Materiais tab only renders MaterialsTemplateTab once service.id exists (create mode shows static notice) | service_material_templates.service_id is a NOT NULL FK — matches ProductFormDialog-style trigger-wrapper convention without inventing a two-step create flow | 2026-07-11 |
 | ProntuarioForm gains optional serviceId prop (default undefined); MaterialsUsedSection auto-hides via `return null` | Prontuário has no procedure-selection step yet — keeps D-22 UI additive and non-breaking until a future plan wires appointment_procedures selection into the form | 2026-07-11 |
 | ProntuarioForm gains "Serviço realizado" Select wired to selectedServiceId local state, feeding MaterialsUsedSection | Closes 17-VERIFICATION.md gap: serviceId was never supplied by real callers, leaving MaterialsUsedSection permanently dormant; selector makes D-22 reachable without touching callers/schema/DB | 2026-07-11 |
+| @dnd-kit/react (not legacy @dnd-kit/core+sortable) chosen for kanban DnD | Official React 19-peer successor; auto-registers KeyboardSensor for accessibility (18-RESEARCH State of the Art) | 2026-07-12 |
+| isValidStageTransition lives in src/lib/validators/crc.ts (not roi-math.ts) | Co-located with LEAD_STAGES and other Zod schemas per 18-01-PLAN.md must_haves export list | 2026-07-12 |
+| TEMPLATE_REACTIVATION registered as Meta MARKETING category; TEMPLATE_NPS_INVITE stays UTILITY | Reactivation copy is inherently promotional (D-08/D-11); Meta auto-reclassifies UTILITY templates with promotional wording (18-RESEARCH Pitfall 8) | 2026-07-12 |
 
 ### Architecture Constraints Locked
 
@@ -288,7 +292,7 @@ Last activity: 2026-07-11
 
 ## Session Continuity
 
-**Stopped at:** Phase 18 UI-SPEC approved
+**Stopped at:** Completed 18-01-PLAN.md
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 
@@ -316,4 +320,4 @@ Last activity: 2026-07-11
 | 260629-qji | criar página de gestão de unidades em /config/unidades — CRUD completo | 2026-06-29 | 2ce4473 | [260629-qji-criar-p-gina-de-gest-o-de-unidades-em-co](.planning/quick/260629-qji-criar-p-gina-de-gest-o-de-unidades-em-co/) |
 | 260629-uaz | Adicionar pointer-events-none ao MoreHorizontal icon em PayablesTable.tsx | 2026-06-29 | 2189958 | [260629-uaz-adicionar-pointer-events-none-ao-morehor](.planning/quick/260629-uaz-adicionar-pointer-events-none-ao-morehor/) |
 
-**Last activity:** 2026-07-11
+**Last activity:** 2026-07-13

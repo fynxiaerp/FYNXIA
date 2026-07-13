@@ -105,11 +105,11 @@
 - [x] **EST-03**: Sistema alerta estoque mínimo (dispara agente de compras) e validade; rastreia lote de implante (ANVISA)
 
 #### CRC — Relacionamento & Marketing
-- [ ] **CRC-01**: Recepção/Marketing gerencia funil de leads com origem e status (Novo→Convertido/Perdido)
-- [ ] **CRC-02**: Sistema calcula ROI por campanha (CPL, CAC) a partir da origem dos leads
-- [ ] **CRC-03**: Campanhas disparam mensagens segmentadas (reativação automática de inativos) via WhatsApp/e-mail
-- [ ] **CRC-04**: Sistema coleta NPS (0–10) e apura promotores/neutros/detratores
-- [ ] **CRC-05**: Programa de indicação rastreia quem indicou quem e recompensas
+- [x] **CRC-01**: Recepção/Marketing gerencia funil de leads com origem e status (Novo→Convertido/Perdido)
+- [x] **CRC-02**: Sistema calcula ROI por campanha (CPL, CAC) a partir da origem dos leads
+- [x] **CRC-03**: Campanhas disparam mensagens segmentadas (reativação automática de inativos) via WhatsApp/e-mail
+- [x] **CRC-04**: Sistema coleta NPS (0–10) e apura promotores/neutros/detratores
+- [x] **CRC-05**: Programa de indicação rastreia quem indicou quem e recompensas
 
 ### Bloco E — Analítico & Canais
 
@@ -215,11 +215,11 @@
 | EST-01 | Phase 17 | Complete |
 | EST-02 | Phase 17 | Complete |
 | EST-03 | Phase 17 | Complete |
-| CRC-01 | Phase 18 | Pending |
-| CRC-02 | Phase 18 | Pending |
-| CRC-03 | Phase 18 | Pending |
-| CRC-04 | Phase 18 | Pending |
-| CRC-05 | Phase 18 | Pending |
+| CRC-01 | Phase 18 | Complete |
+| CRC-02 | Phase 18 | Complete |
+| CRC-03 | Phase 18 | Complete |
+| CRC-04 | Phase 18 | Complete |
+| CRC-05 | Phase 18 | Complete |
 | REP-01 | Phase 19 | Pending |
 | REP-02 | Phase 19 | Pending |
 | REP-03 | Phase 19 | Pending |
