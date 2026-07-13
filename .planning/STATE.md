@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 18-06-PLAN.md
-last_updated: "2026-07-13T00:52:47.362Z"
+stopped_at: Completed 18-08-PLAN.md
+last_updated: "2026-07-13T22:17:02.420Z"
 last_activity: 2026-07-13
 progress:
   total_phases: 15
   completed_phases: 11
   total_plans: 93
-  completed_plans: 88
-  percent: 95
+  completed_plans: 90
+  percent: 97
 ---
 
 # FYNXIA ERP — Project State
@@ -36,7 +36,7 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 ## Current Position
 
 Phase: 18 (crc-marketing) — EXECUTING
-Plan: 7 of 11
+Plan: 8 of 11
 Status: Ready to execute
 Last activity: 2026-07-13
 
@@ -142,6 +142,7 @@ Last activity: 2026-07-13
 | Phase 18 P04 | 12min | 2 tasks | 1 files |
 | Phase 18-crc-marketing P05 | 25min | 3 tasks | 3 files |
 | Phase 18 P06 | 45min | 2 tasks | 4 files |
+| Phase 18 P08 | 30min | 3 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -268,6 +269,8 @@ Last activity: 2026-07-13
 | Referral wiring (linkReferral/creditReferralReward) uses a non-literal dynamic import specifier | Plan 03 and Plan 04 are both Wave 2 with the same depends_on — forward-references referrals.ts without tripping tsc TS2307 before that module exists; extends the D-144 RED-scaffold convention to production code | 2026-07-13 |
 | runNpsInviteScan dedup is a direct INSERT + 23505 catch per appointment (no bulk pre-check SELECT) | Matches plan's exact contract; UNIQUE(appointment_id) constraint is the sole source of truth, eliminating a pre-check-then-insert race window (Pitfall 5) | 2026-07-13 |
 | NPS invite email uses the outbox worker's generic HTML fallback (kind unmatched → payload.html) instead of a new React Email component | No dedicated email template specified for NPS; generic path already exercised by other Phase 4/18 email sends | 2026-07-13 |
+| RoiByOriginTable cost attribution sums campaigns whose leads share a source_id, instead of a fixed source→campaign mapping | Source and campaign are independent attribution axes (18-RESEARCH §Pattern 2); sources with no campaign-linked leads render '—' for custoAtribuido/CPL/CAC gracefully | 2026-07-13 |
+| PayableFormDialog fetches listCampaigns() client-side on dialog open instead of threading a new campaigns prop through contas-a-pagar/page.tsx + PayablesTable.tsx | Keeps the change contained to the single file in Plan 08's files_modified; Select simply doesn't render when the clinic has no campaigns yet | 2026-07-13 |
 
 ### Architecture Constraints Locked
 
@@ -304,7 +307,7 @@ Last activity: 2026-07-13
 
 ## Session Continuity
 
-**Stopped at:** Completed 18-06-PLAN.md
+**Stopped at:** Completed 18-08-PLAN.md
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 
