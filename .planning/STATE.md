@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 18-08-PLAN.md
-last_updated: "2026-07-13T22:17:02.420Z"
+stopped_at: "18-09-PLAN.md: Tasks 1-3 built and committed (campanhas page/table, CampaignFormDialog, ApprovalInbox campaign card). Paused at Task 4 (checkpoint:human-verify) — awaiting live create-approve-send verification."
+last_updated: "2026-07-13T22:32:30.603Z"
 last_activity: 2026-07-13
 progress:
   total_phases: 15
   completed_phases: 11
   total_plans: 93
-  completed_plans: 90
-  percent: 97
+  completed_plans: 91
+  percent: 98
 ---
 
 # FYNXIA ERP — Project State
@@ -143,6 +143,7 @@ Last activity: 2026-07-13
 | Phase 18-crc-marketing P05 | 25min | 3 tasks | 3 files |
 | Phase 18 P06 | 45min | 2 tasks | 4 files |
 | Phase 18 P08 | 30min | 3 tasks | 8 files |
+| Phase 18 P09 | 35min | 3 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -271,6 +272,9 @@ Last activity: 2026-07-13
 | NPS invite email uses the outbox worker's generic HTML fallback (kind unmatched → payload.html) instead of a new React Email component | No dedicated email template specified for NPS; generic path already exercised by other Phase 4/18 email sends | 2026-07-13 |
 | RoiByOriginTable cost attribution sums campaigns whose leads share a source_id, instead of a fixed source→campaign mapping | Source and campaign are independent attribution axes (18-RESEARCH §Pattern 2); sources with no campaign-linked leads render '—' for custoAtribuido/CPL/CAC gracefully | 2026-07-13 |
 | PayableFormDialog fetches listCampaigns() client-side on dialog open instead of threading a new campaigns prop through contas-a-pagar/page.tsx + PayablesTable.tsx | Keeps the change contained to the single file in Plan 08's files_modified; Select simply doesn't render when the clinic has no campaigns yet | 2026-07-13 |
+| listCampaigns() extended to select the `filters` JSON column (Rule 1 fix) | Plan 05's read query omitted it; both CampaignsTable's segment filter badges and CampaignFormDialog's edit-mode prefill need it | 2026-07-13 |
+| CampaignFormDialog unifies create/edit/view via one campaignId state + persistCampaign() helper (createCampaign on first persist, updateCampaign thereafter) | Avoids branching the whole 3-step wizard component by mode; same code path works for both flows | 2026-07-13 |
+| ApprovalInbox campaign rows (type='ai_action', agent_key='crc-campaign') route approve/reject through approveCampaignAndDispatch/rejectCampaign instead of the generic approveRequest/rejectRequest | approveRequest/rejectRequest alone never touch campaigns.status — dispatch/rejection-state would be unreachable otherwise (Pitfall 2); non-campaign rows untouched | 2026-07-13 |
 
 ### Architecture Constraints Locked
 
@@ -307,7 +311,7 @@ Last activity: 2026-07-13
 
 ## Session Continuity
 
-**Stopped at:** Completed 18-08-PLAN.md
+**Stopped at:** 18-09-PLAN.md: Tasks 1-3 built and committed (campanhas page/table, CampaignFormDialog, ApprovalInbox campaign card). Paused at Task 4 (checkpoint:human-verify) — awaiting live create-approve-send verification.
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 
