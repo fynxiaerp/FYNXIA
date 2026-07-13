@@ -50,6 +50,17 @@ import {
   DialogClose,
 } from '@/components/ui/dialog'
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
+import {
   Form,
   FormControl,
   FormField,
@@ -59,6 +70,7 @@ import {
 } from '@/components/ui/form'
 
 import { approveRequest, rejectRequest } from '@/actions/approval-actions'
+import { approveCampaignAndDispatch, rejectCampaign } from '@/actions/campaigns'
 import { canApprove } from '@/lib/ai/policy-types'
 import type { ApprovalRequestRow } from '@/app/(dashboard)/conformidade/aprovacoes/page'
 
@@ -69,6 +81,49 @@ const rejectSchema = z.object({
 })
 
 type RejectFormData = z.infer<typeof rejectSchema>
+
+// ─── Campaign row discriminator (18-09, CRC-03/D-09) ──────────────────────────
+// Rows created by submitCampaignForApproval (src/actions/campaigns.ts) are
+// type='ai_action' + agent_key='crc-campaign', with payload
+// { campaignId, recipientCount, channel, previewMessage }. Approving/rejecting
+// these MUST go through approveCampaignAndDispatch/rejectCampaign — NOT the
+// generic approveRequest/rejectRequest — because those alone never touch
+// campaigns.status (Pitfall 2 / same execution-gap as the dispatch itself).
+
+function isCampaignRow(row: ApprovalRequestRow): boolean {
+  return row.type === 'ai_action' && row.agent_key === 'crc-campaign'
+}
+
+interface CampaignApprovalPayload {
+  campaignId: string
+  recipientCount: number
+  channel: string
+  previewMessage: string
+}
+
+function getCampaignPayload(row: ApprovalRequestRow): CampaignApprovalPayload | null {
+  const payload = row.payload
+  if (!payload || typeof payload.campaignId !== 'string') return null
+  return {
+    campaignId: payload.campaignId,
+    recipientCount: typeof payload.recipientCount === 'number' ? payload.recipientCount : 0,
+    channel: typeof payload.channel === 'string' ? payload.channel : '—',
+    previewMessage: typeof payload.previewMessage === 'string' ? payload.previewMessage : '',
+  }
+}
+
+function channelLabel(channel: string): string {
+  switch (channel) {
+    case 'whatsapp':
+      return 'WhatsApp'
+    case 'email':
+      return 'E-mail'
+    case 'ambos':
+      return 'WhatsApp + E-mail'
+    default:
+      return channel
+  }
+}
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
@@ -83,6 +138,17 @@ interface ApprovalInboxProps {
 
 function requestSummary(row: ApprovalRequestRow): string {
   const payload = row.payload ?? {}
+
+  if (isCampaignRow(row)) {
+    const campaign = getCampaignPayload(row)
+    if (campaign) {
+      const truncated =
+        campaign.previewMessage.length > 120
+          ? campaign.previewMessage.slice(0, 120) + '…'
+          : campaign.previewMessage
+      return `Campanha: ${campaign.recipientCount} destinatários via ${channelLabel(campaign.channel)} — preview: "${truncated}"`
+    }
+  }
 
   if (row.type === 'ai_action') {
     const agentKey = row.agent_key ?? 'desconhecido'
@@ -107,10 +173,15 @@ function requestSummary(row: ApprovalRequestRow): string {
 
 function RejectDialog({
   row,
+  campaign,
   disabled,
   onSuccess,
 }: {
   row: ApprovalRequestRow
+  /** Set for crc-campaign rows — routes reject through rejectCampaign instead
+   *  of the generic rejectRequest (rejectRequest alone never sets
+   *  campaigns.status='rejeitada'). */
+  campaign: CampaignApprovalPayload | null
   disabled: boolean
   onSuccess: (id: string) => void
 }) {
@@ -128,7 +199,9 @@ function RejectDialog({
     startTransition(async () => {
       // Server-side: assertNotReadOnly() + canApprove(actor.role, required_role)
       // are enforced before any state change (T-10-29).
-      const result = await rejectRequest(row.id, data.reason)
+      const result = campaign
+        ? await rejectCampaign(row.id, campaign.campaignId, data.reason)
+        : await rejectRequest(row.id, data.reason)
       if (result.success) {
         setOpen(false)
         form.reset()
@@ -143,7 +216,7 @@ function RejectDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={
-          <Button variant="destructive" size="sm" disabled={disabled}>
+          <Button variant={campaign ? 'outline' : 'destructive'} size="sm" disabled={disabled}>
             Rejeitar
           </Button>
         }
@@ -219,10 +292,17 @@ function RequestCard({
   // server-side in approval-actions.ts before any mutation.
   const canApproveCosmetic = canApprove(actorRole, row.required_role)
 
+  const campaign = isCampaignRow(row) ? getCampaignPayload(row) : null
+
   function handleApprove() {
     setServerError(null)
     startTransition(async () => {
-      const result = await approveRequest(row.id)
+      // approveRequest alone does NOT dispatch the campaign (Pitfall 2) — the
+      // gated send only happens inside approveCampaignAndDispatch, which calls
+      // approveRequest() internally as its first step.
+      const result = campaign
+        ? await approveCampaignAndDispatch(row.id, campaign.campaignId)
+        : await approveRequest(row.id)
       if (result.success) {
         onApproved(row.id)
       } else {
@@ -240,6 +320,8 @@ function RequestCard({
 
   const alçadaLabel = row.required_role === 'admin' ? 'Admin' : row.required_role
 
+  const campaignTypeLabel = campaign ? 'Campanha de Reativação' : typeLabel
+
   const createdAt = new Date(row.created_at).toLocaleString('pt-BR')
   const expiresAt = row.expires_at
     ? new Date(row.expires_at).toLocaleString('pt-BR')
@@ -250,7 +332,7 @@ function RequestCard({
       <CardHeader className="pb-2">
         <div className="flex flex-wrap items-center gap-2">
           <Badge variant="outline" className="text-xs">
-            {typeLabel}
+            {campaignTypeLabel}
           </Badge>
           <Badge variant="secondary" className="text-xs">
             Alçada: {alçadaLabel}
@@ -286,19 +368,48 @@ function RequestCard({
 
         <div className="flex gap-2">
           {/* Approve button — cosmetically disabled when canApprove is false.
-              SECURITY: assertNotReadOnly + canApprove enforced server-side (T-10-29) */}
-          <Button
-            size="sm"
-            onClick={handleApprove}
-            disabled={isPending || !canApproveCosmetic}
-          >
-            {isPending ? 'Aprovando...' : 'Aprovar'}
-          </Button>
+              SECURITY: assertNotReadOnly + canApprove enforced server-side (T-10-29).
+              Campaign rows require an extra "Confirmar disparo em massa" step
+              (18-UI-SPEC Copywriting Contract) before approveCampaignAndDispatch fires. */}
+          {campaign ? (
+            <AlertDialog>
+              <AlertDialogTrigger
+                render={<Button size="sm" disabled={isPending || !canApproveCosmetic} />}
+              >
+                {isPending ? 'Aprovando...' : 'Aprovar Disparo'}
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Confirmar disparo em massa</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Esta ação envia mensagens para {campaign.recipientCount} pacientes via{' '}
+                    {channelLabel(campaign.channel)}. Confirma o disparo?
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleApprove} disabled={isPending}>
+                    Confirmar Disparo
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          ) : (
+            <Button
+              size="sm"
+              onClick={handleApprove}
+              disabled={isPending || !canApproveCosmetic}
+            >
+              {isPending ? 'Aprovando...' : 'Aprovar'}
+            </Button>
+          )}
 
           {/* Reject button — passes reason via dialog, cosmetically disabled when insufficient alçada.
-              SECURITY: assertNotReadOnly + canApprove enforced server-side in rejectRequest (T-10-29) */}
+              SECURITY: assertNotReadOnly + canApprove enforced server-side in rejectRequest/rejectCampaign
+              (T-10-29). Campaign rows route through rejectCampaign (sets campaigns.status='rejeitada'). */}
           <RejectDialog
             row={row}
+            campaign={campaign}
             disabled={!canApproveCosmetic}
             onSuccess={onRejected}
           />
