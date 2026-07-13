@@ -112,6 +112,7 @@ export async function createPayable(rawInput: unknown): Promise<{
       account_id: data.accountId,
       cost_center_id: data.costCenterId,
       unit_id: data.unitId ?? null,
+      campaign_id: data.campaignId ?? null,
       descricao: data.descricao,
       valor_total: data.valorTotal,
       origem: data.origem ?? 'manual',

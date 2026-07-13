@@ -25,6 +25,10 @@ export const payableSchema = z.object({
 
   unitId: z.string().uuid('ID da unidade inválido').optional().nullable(),
 
+  // D-05 (Phase 18): optional link to a marketing campaign — attributes this
+  // despesa's cost to campaign ROI (CPL/CAC). NULL = despesa não vinculada.
+  campaignId: z.string().uuid('ID da campanha inválido').optional().nullable(),
+
   valorTotal: z
     .number()
     .positive('Valor deve ser maior que zero')

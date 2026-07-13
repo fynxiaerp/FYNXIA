@@ -6,7 +6,7 @@
 // Date picker: Popover + Calendar, dd/MM/yyyy ptBR — mirrors TransactionModal transactionDate.
 // No .default() in schema (D-133).
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -16,6 +16,7 @@ import { ptBR } from 'date-fns/locale'
 import { CalendarIcon } from 'lucide-react'
 
 import { createPayable } from '@/actions/payables'
+import { listCampaigns } from '@/actions/campaigns'
 import { cn } from '@/lib/utils'
 
 import {
@@ -92,6 +93,10 @@ const payableFormSchema = z.object({
 
   unitId: z.string().uuid().optional().nullable(),
 
+  // D-05 (Phase 18): optional "Vincular a campanha" — attributes this despesa's
+  // cost to a marketing campaign's ROI (CPL/CAC). NULL = não vinculada.
+  campaignId: z.string().uuid().optional().nullable(),
+
   valorStr: z.string().min(1, 'Informe o valor'),
 
   dueDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Selecione a data de vencimento'),
@@ -135,6 +140,7 @@ export function PayableFormDialog({
   const [open, setOpen] = useState(false)
   const [serverError, setServerError] = useState<string | null>(null)
   const [calendarOpen, setCalendarOpen] = useState(false)
+  const [campaigns, setCampaigns] = useState<{ id: string; name: string }[]>([])
 
   const defaultCC = costCenters.find((cc) => cc.is_default) ?? costCenters[0]
 
@@ -146,6 +152,7 @@ export function PayableFormDialog({
       accountId: '',
       costCenterId: defaultCC?.id ?? '',
       unitId: payable?.unit_id ?? null,
+      campaignId: null,
       valorStr: payable?.valor_total
         ? payable.valor_total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
         : '',
@@ -155,6 +162,21 @@ export function PayableFormDialog({
     },
   })
 
+  // D-05: lazily load campaigns for the "Vincular a campanha" Select — only
+  // when the dialog opens, avoids an extra fetch on every page render.
+  useEffect(() => {
+    if (!open) return
+    let cancelled = false
+    listCampaigns().then((result) => {
+      if (!cancelled && result.success) {
+        setCampaigns((result.data ?? []).map((c) => ({ id: c.id, name: c.name })))
+      }
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [open])
+
   function handleOpen(value: boolean) {
     if (value) {
       form.reset({
@@ -163,6 +185,7 @@ export function PayableFormDialog({
         accountId: '',
         costCenterId: defaultCC?.id ?? '',
         unitId: payable?.unit_id ?? null,
+        campaignId: null,
         valorStr: payable?.valor_total
           ? payable.valor_total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
           : '',
@@ -189,6 +212,7 @@ export function PayableFormDialog({
       accountId: values.accountId,
       costCenterId: values.costCenterId,
       unitId: values.unitId ?? null,
+      campaignId: values.campaignId ?? null,
       valorTotal,
       dueDate: values.dueDate,
       parcelas: values.parcelas,
@@ -371,6 +395,42 @@ export function PayableFormDialog({
                           {units.map((u) => (
                             <SelectItem key={u.id} value={u.id}>
                               {u.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+
+              {/* Vincular a campanha (optional, D-05 — CRC-02) */}
+              {campaigns.length > 0 && (
+                <FormField
+                  control={form.control}
+                  name="campaignId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Vincular a campanha</FormLabel>
+                      <Select
+                        onValueChange={(v) => field.onChange(v === 'none' ? null : v)}
+                        value={field.value ?? 'none'}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="bg-background border-border">
+                            <SelectValue placeholder="Nenhuma campanha">
+                              {field.value && field.value !== 'none'
+                                ? (campaigns.find((c) => c.id === field.value)?.name ?? 'Nenhuma campanha')
+                                : 'Nenhuma campanha'}
+                            </SelectValue>
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="none">Nenhuma campanha</SelectItem>
+                          {campaigns.map((c) => (
+                            <SelectItem key={c.id} value={c.id}>
+                              {c.name}
                             </SelectItem>
                           ))}
                         </SelectContent>
