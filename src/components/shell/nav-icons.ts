@@ -16,6 +16,7 @@ import {
   ShieldCheck,
   Boxes,
   Package,
+  Megaphone,
   type LucideIcon,
 } from 'lucide-react'
 import type { NavIconKey } from './nav-config'
@@ -35,4 +36,5 @@ export const NAV_ICONS: Record<NavIconKey, LucideIcon> = {
   esterilizacao: ShieldCheck,
   protese: Boxes,
   estoque: Package,
+  crc: Megaphone,
 }

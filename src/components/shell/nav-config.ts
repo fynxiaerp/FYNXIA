@@ -23,6 +23,7 @@ export type NavIconKey =
   | 'esterilizacao'
   | 'protese'
   | 'estoque'
+  | 'crc'
 
 export interface NavItemConfig {
   href: string
@@ -43,6 +44,7 @@ export const ALL_NAV_ITEMS: NavItemConfig[] = [
   { href: '/clinica/esterilizacao',    label: 'Esterilização',   icon: 'esterilizacao' },
   { href: '/clinica/protese',          label: 'Prótese (Lab)',   icon: 'protese' },
   { href: '/clinica/estoque',          label: 'Estoque',         icon: 'estoque' },
+  { href: '/clinica/crc',              label: 'CRC & Marketing', icon: 'crc' },
   { href: '/clinica/equipe',           label: 'Equipe',          icon: 'equipe',         adminOnly: true },
   { href: '/clinica/profissionais',  label: 'Profissionais',  icon: 'profissionais',  adminOnly: true },
   { href: '/clinica/recursos',       label: 'Recursos',       icon: 'recursos',       adminOnly: true },
