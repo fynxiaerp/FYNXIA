@@ -1,9 +1,16 @@
 'use server'
 import 'server-only'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { logBusinessEvent } from '@/lib/audit'
 import { assertNotReadOnly } from '@/lib/auth/guards'
 import { referralSchema } from '@/lib/validators/crc'
+
+// D-17: recompensa por indicação — crédito em serviços, valor por indicação
+// configurável. v1 mantém um único valor documentado (constante), sem tabela
+// de configuração nova (18-04-PLAN interfaces) — configurabilidade real fica
+// para uma fase futura (ex.: cadastro por clínica).
+export const REFERRAL_REWARD_DEFAULT = 50.0
 
 /**
  * Referral program Server Actions (CRC-05)
@@ -198,10 +205,11 @@ export async function listReferrals(): Promise<{
 }
 
 // ─── listRewardsBalance ───────────────────────────────────────────────────────
-// D-19: per-referrer patient rewards balance — saldoTotal (SUM type='credito'),
-// indicacoesConvertidas (COUNT), saldoUtilizado (SUM type='uso', always 0 in v1 —
-// no 'uso' rows are ever created by this phase), saldoDisponivel = total - utilizado.
-// Feeds PatientRewardsBalanceTable (Plan 11).
+// D-19: per-referrer patient rewards balance — saldoTotal (SUM of type=credito
+// rows), indicacoesConvertidas (COUNT), saldoUtilizado (SUM of any non-credito
+// ledger type, always 0 in v1 — no redemption rows are ever created by this
+// phase), saldoDisponivel = total - utilizado. Feeds PatientRewardsBalanceTable
+// (Plan 11).
 
 export type RewardsBalanceRow = {
   patientId: string
@@ -253,7 +261,9 @@ export async function listRewardsBalance(): Promise<{
     if (row.type === 'credito') {
       entry.credito += row.amount
       entry.count += 1
-    } else if (row.type === 'uso') {
+    } else {
+      // Forward-compat: any non-credito ledger type (redemption, Fase 20)
+      // reduces the available balance. v1 never creates such rows.
       entry.uso += row.amount
     }
     byPatient.set(row.patient_id, entry)
@@ -271,4 +281,107 @@ export async function listRewardsBalance(): Promise<{
   )
 
   return { success: true, data }
+}
+
+// ─── creditReferralReward ───────────────────────────────────────────────────
+// D-18 (T-18-11/12/13): called from convertLead (Plan 03) after a lead's
+// stage CAS transition to 'convertido' succeeds. Runs on service role —
+// referral_rewards has NO authenticated write policy (RLS Plan 02); the
+// clinic_id used for the ledger insert is resolved from the referral row
+// itself (never trusted from an ambient/session value, since this can be
+// invoked in contexts without a session).
+//
+// Once-only guarantee: `UPDATE referrals SET credited_at = now() WHERE id = X
+// AND credited_at IS NULL` — 0 affected rows means either already credited or
+// a concurrent conversion won the race first; either way this call is a safe
+// no-op and never double-inserts a referral_rewards row (T-18-11).
+//
+// Never crediting a non-converted lead: leads.stage is re-read here (not
+// trusted from the caller) and must be exactly 'convertido' (T-18-12).
+//
+// Reward amount is always the server-side REFERRAL_REWARD_DEFAULT constant —
+// never accepted as an argument (T-18-13). v1 creates ONLY credit-type ledger
+// rows; no redemption rows are ever created by this phase (Open Question 2 in
+// 18-RESEARCH.md).
+
+export async function creditReferralReward(
+  leadId: string
+): Promise<{ success: boolean; credited: boolean; error?: string }> {
+  const admin = createAdminClient()
+
+  // 1. Find the referral tied to this lead (may be none — lead wasn't referred).
+  const { data: referral, error: referralError } = await admin
+    .from('referrals')
+    .select('id, clinic_id, referrer_patient_id, credited_at')
+    .eq('lead_id', leadId)
+    .maybeSingle()
+
+  if (referralError) {
+    return { success: false, credited: false, error: referralError.message }
+  }
+  if (!referral) {
+    return { success: true, credited: false }
+  }
+  if (referral.credited_at) {
+    // Already credited — idempotent no-op, no re-check needed.
+    return { success: true, credited: false }
+  }
+
+  // 2. Re-verify the lead actually reached 'convertido' (T-18-12) — never
+  //    trust the caller's stage transition; re-read it here.
+  const { data: lead, error: leadError } = await admin
+    .from('leads')
+    .select('id, stage')
+    .eq('id', leadId)
+    .maybeSingle()
+
+  if (leadError) {
+    return { success: false, credited: false, error: leadError.message }
+  }
+  if (!lead || lead.stage !== 'convertido') {
+    return { success: true, credited: false }
+  }
+
+  // 3. CAS: only the caller that flips credited_at from NULL wins the race.
+  const { data: claimedRows, error: casError } = await admin
+    .from('referrals')
+    .update({ credited_at: new Date().toISOString(), reward_amount: REFERRAL_REWARD_DEFAULT })
+    .eq('id', referral.id)
+    .is('credited_at', null)
+    .select('id')
+
+  if (casError) {
+    return { success: false, credited: false, error: casError.message }
+  }
+  if (!claimedRows || claimedRows.length === 0) {
+    // Lost the race — another process already credited this referral.
+    return { success: true, credited: false }
+  }
+
+  // 4. Only the CAS winner inserts the ledger row (type='credito' only, v1).
+  const { error: ledgerError } = await admin.from('referral_rewards').insert({
+    clinic_id: referral.clinic_id,
+    patient_id: referral.referrer_patient_id,
+    referral_id: referral.id,
+    amount: REFERRAL_REWARD_DEFAULT,
+    type: 'credito',
+  })
+
+  if (ledgerError) {
+    return { success: false, credited: false, error: ledgerError.message }
+  }
+
+  await logBusinessEvent({
+    tenantId: referral.clinic_id,
+    actorId: null,
+    action: 'crc.referral.credited',
+    details: {
+      referralId: referral.id,
+      patientId: referral.referrer_patient_id,
+      amount: REFERRAL_REWARD_DEFAULT,
+      leadId,
+    },
+  })
+
+  return { success: true, credited: true }
 }
