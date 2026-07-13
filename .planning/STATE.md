@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 18-01-PLAN.md
-last_updated: "2026-07-13T00:06:49.646Z"
+stopped_at: Completed 18-02-PLAN.md
+last_updated: "2026-07-13T00:16:37.489Z"
 last_activity: 2026-07-13
 progress:
   total_phases: 15
   completed_phases: 11
   total_plans: 93
-  completed_plans: 83
-  percent: 89
+  completed_plans: 84
+  percent: 90
 ---
 
 # FYNXIA ERP — Project State
@@ -36,7 +36,7 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 ## Current Position
 
 Phase: 18 (crc-marketing) — EXECUTING
-Plan: 2 of 11
+Plan: 3 of 11
 Status: Ready to execute
 Last activity: 2026-07-13
 
@@ -137,6 +137,7 @@ Last activity: 2026-07-13
 | Phase 17 P09 | ~20min | 3 tasks | 5 files |
 | Phase 17 P10 | 12min | 1 tasks | 1 files |
 | Phase 18 P01 | 35min | 3 tasks | 11 files |
+| Phase 18 P02 | 20min | 3 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -256,6 +257,9 @@ Last activity: 2026-07-13
 | @dnd-kit/react (not legacy @dnd-kit/core+sortable) chosen for kanban DnD | Official React 19-peer successor; auto-registers KeyboardSensor for accessibility (18-RESEARCH State of the Art) | 2026-07-12 |
 | isValidStageTransition lives in src/lib/validators/crc.ts (not roi-math.ts) | Co-located with LEAD_STAGES and other Zod schemas per 18-01-PLAN.md must_haves export list | 2026-07-12 |
 | TEMPLATE_REACTIVATION registered as Meta MARKETING category; TEMPLATE_NPS_INVITE stays UTILITY | Reactivation copy is inherently promotional (D-08/D-11); Meta auto-reclassifies UTILITY templates with promotional wording (18-RESEARCH Pitfall 8) | 2026-07-12 |
+| WRITER_ROLES = admin, superadmin, receptionist for all 6 new CRC tables' write RLS | No 'marketing' role exists in the confirmed 11-value role enum (18-RESEARCH Pitfall 7) | 2026-07-13 |
+| payables.campaign_id nullable FK attributes campaign cost at lançamento (payables creation), not baixa/payment | Matches CPL/CAC as committed-spend metric (18-RESEARCH Assumption A3); one-line query filter change if wrong later | 2026-07-13 |
+| nps_responses/referral_rewards have zero authenticated INSERT policy | Scores/credits never client-writable — writes exclusively via service role (createAdminClient), mirrors stock_draws/stock_alerts (T-18-04) | 2026-07-13 |
 
 ### Architecture Constraints Locked
 
@@ -292,7 +296,7 @@ Last activity: 2026-07-13
 
 ## Session Continuity
 
-**Stopped at:** Completed 18-01-PLAN.md
+**Stopped at:** Completed 18-02-PLAN.md
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 
