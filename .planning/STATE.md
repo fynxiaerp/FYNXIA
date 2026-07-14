@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: completed
-stopped_at: Completed 18-11-PLAN.md — CRC-05 referral program UI done. Phase 18 (crc-marketing) COMPLETE — all 11 plans delivered.
-last_updated: "2026-07-13T22:57:06.465Z"
+stopped_at: Fase 18 completa; PAUSA — deploy Vercel pendente (ver .planning/DEPLOY-HANDOFF.md)
+last_updated: "2026-07-14T10:55:37.041Z"
 last_activity: 2026-07-13
 progress:
   total_phases: 15
@@ -315,7 +315,7 @@ Last activity: 2026-07-13
 
 ## Session Continuity
 
-**Stopped at:** Completed 18-11-PLAN.md — CRC-05 referral program UI done. Phase 18 (crc-marketing) COMPLETE — all 11 plans delivered.
+**Stopped at:** Fase 18 completa; PAUSA — deploy Vercel pendente (ver .planning/DEPLOY-HANDOFF.md)
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 
