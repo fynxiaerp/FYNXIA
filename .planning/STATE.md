@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 19-06-PLAN.md
-last_updated: "2026-07-19T21:18:12.483Z"
+stopped_at: Completed 19-07-PLAN.md
+last_updated: "2026-07-19T21:26:54.293Z"
 last_activity: 2026-07-19
 progress:
   total_phases: 15
   completed_phases: 12
   total_plans: 107
-  completed_plans: 100
-  percent: 93
+  completed_plans: 101
+  percent: 94
 ---
 
 # FYNXIA ERP — Project State
@@ -36,7 +36,7 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 ## Current Position
 
 Phase: 19 (relat-rios-or-amento-bi) — EXECUTING
-Plan: 8 of 14
+Plan: 9 of 14
 Status: Ready to execute
 Last activity: 2026-07-19
 
@@ -153,6 +153,7 @@ Last activity: 2026-07-19
 | Phase 19 P04 | ~20min | 1 tasks | 3 files |
 | Phase 19 P05 | 6min | 2 tasks | 3 files |
 | Phase 19 P06 | 6min | 2 tasks | 3 files |
+| Phase 19 P07 | ~20min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -301,6 +302,9 @@ Last activity: 2026-07-19
 | priorCloseDate/assertSharesValid exported as async functions in partner-shares.ts | Every top-level export of a 'use server' file must be async (D-141/D-142/D-143 precedent); mirrors isMonthLocked/computeBudgetCell in budget-targets.ts | 2026-07-19 |
 | priorCloseDate uses Date.UTC arithmetic (not lexicographic string compare) | Computing a new date (day-before) differs from resolving/comparing vigência dates — partner-share-math.ts's lexicographic compare stays correct for D-20 resolution, but arithmetic needs real date math | 2026-07-19 |
 | getPartnerDistribution adds zero extra server-side filtering beyond partner_shares RLS | A socio caller naturally receives only their own row because RLS already scoped it (T-19-02); avoids duplicating trust logic client/server-side | 2026-07-19 |
+| ocupacao KPI computed as booked appointments ÷ (active dentists × business days × 8 assumed slots/day) | No capacity/working-hours table exists in the schema to derive a stricter denominator; documented pragmatic proxy for future revision | 2026-07-19 |
+| BI profissionais dimension sourced from service_order_items (per-item professional_id), not appointments | Matches the schema's actual per-professional revenue-attribution grain more precisely than appointment counts | 2026-07-19 |
+| getBiKpis reuses Phase 18 actions (getNpsSummary/getRoiByCampaign/getRoiByOrigin) via static import for the crc dimension | Avoids recomputing nps_responses/campaigns/leads aggregation logic already proven in Phase 18; mirrors existing cross-action-file static-import convention (dre.ts→listUnits, payables.ts→createApprovalRequest) | 2026-07-19 |
 
 ### Architecture Constraints Locked
 
@@ -337,7 +341,7 @@ Last activity: 2026-07-19
 
 ## Session Continuity
 
-**Stopped at:** Completed 19-06-PLAN.md
+**Stopped at:** Completed 19-07-PLAN.md
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 
