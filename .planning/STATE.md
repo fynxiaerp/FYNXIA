@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 19-04-PLAN.md
-last_updated: "2026-07-19T21:02:25.624Z"
+stopped_at: Completed 19-05-PLAN.md
+last_updated: "2026-07-19T21:10:18.448Z"
 last_activity: 2026-07-19
 progress:
   total_phases: 15
   completed_phases: 12
   total_plans: 107
-  completed_plans: 98
-  percent: 92
+  completed_plans: 99
+  percent: 93
 ---
 
 # FYNXIA ERP — Project State
@@ -36,7 +36,7 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 ## Current Position
 
 Phase: 19 (relat-rios-or-amento-bi) — EXECUTING
-Plan: 6 of 14
+Plan: 7 of 14
 Status: Ready to execute
 Last activity: 2026-07-19
 
@@ -151,6 +151,7 @@ Last activity: 2026-07-19
 | Phase 19 P03 | 4min | 3 tasks | 4 files |
 | Phase 19 P09 | 5min | 2 tasks | 5 files |
 | Phase 19 P04 | ~20min | 1 tasks | 3 files |
+| Phase 19 P05 | 6min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -294,6 +295,8 @@ Last activity: 2026-07-19
 | deriveRoleRoutes() maps relatorios/orcamento/societario to /clinica (not a bogus top-level route) | Mirrors existing financeiro/documentos/receituario/teleodontologia/esterilizacao/protese handling for ROLE_ROUTES backward-compat | 2026-07-19 |
 | vitest.config.ts include glob extended with src/actions/**/__tests__ | Plan 19-04's own stated verify command (`npx vitest run src/actions/__tests__/dre.test.ts`) found 0 tests under the pre-existing config (only src/__tests__/** and src/lib/**/__tests__/** were included) — Rule 3 blocking fix | 2026-07-19 |
 | resolveDreCostCenterFilter/computeYoyAvailability exported as async functions inside dre.ts (no new lib file) | 'use server' requires every top-level export to be an async function (D-141/D-142/D-143 precedent); wrapping trivial pure logic in async satisfies this without adding a file outside 19-04's declared files_modified | 2026-07-19 |
+| saveBudgetTargets/copyBudgetFromPreviousYear use explicit UPDATE-then-INSERT upsert against budget_targets (mirrors saveAiAgentConfig) | budget_targets only has PARTIAL unique indexes (uq_budget_targets_unit/uq_budget_targets_network); PostgREST .upsert(onConflict:) cannot resolve a partial index as arbiter | 2026-07-19 |
+| computeBudgetCell exported as pure async fn combining budgetDeviationSemaphore + isMonthLocked in budget-targets.ts | Gives the Orçamento grid (Plan 11) one testable per-cell shape (meta/realizado/semaphore/locked) without Supabase mocking, mirrors dre.ts's resolveDreCostCenterFilter/computeYoyAvailability pattern | 2026-07-19 |
 
 ### Architecture Constraints Locked
 
@@ -330,7 +333,7 @@ Last activity: 2026-07-19
 
 ## Session Continuity
 
-**Stopped at:** Completed 19-04-PLAN.md
+**Stopped at:** Completed 19-05-PLAN.md
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 
