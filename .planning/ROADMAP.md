@@ -59,7 +59,8 @@ Full detail archived in [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
 **Bloco D — Operação & Crescimento**
 
 - [x] **Phase 17: Estoque & Materiais** — Cadastro de produtos com baixa automática por procedimento, alertas de estoque mínimo e rastreabilidade ANVISA (10/10 plans executed; gap closure 17-10 wires prontuário "Serviço realizado" selector into MaterialsUsedSection, resolving the 2026-07-11 verification gap) (completed 2026-07-11)
-- [x] **Phase 18: CRC & Marketing** — Funil de leads, ROI de campanhas, campanhas segmentadas, NPS e programa de indicação (completed 2026-07-13)
+- [x] **Phase 18: CRC & Marketing** — Funil de leads, ROI de campanhas, campanhas segmentadas, NPS e programa de indicação
+ (completed 2026-07-13)
 
 **Bloco E — Analítico & Canais**
 
@@ -345,7 +346,22 @@ Plans:
   2. Tela de orçamento mostra metas cadastradas versus realizado, com desvios destacados por período
   3. Sócio visualiza a distribuição de lucro proporcional à sua cota societária configurada
   4. Painel de BI exibe KPIs por dimensão (tempo/unidade/profissional) comparados à meta; a IA gera previsões e alertas baseados na tendência
-**Plans**: TBD
+**Plans**: 14 plans
+Plans:
+- [ ] 19-01-PLAN.md — Wave 1 (TDD): pure financial math (dre-math aggregation + budget semaphore; partner-share vigência/100%/distribution)
+- [ ] 19-02-PLAN.md — Wave 1 (TDD): BI forecast math (OLS trend + decline) + RED governance guard for the forecast agent
+- [ ] 19-03-PLAN.md — Wave 1: 4 tables (budget_targets/partner_shares/kpi_targets/bi_alerts) + RLS + bi_forecast seed + [BLOCKING] db push + gen types
+- [ ] 19-04-PLAN.md — Wave 2: DRE Server Actions (period/unit/consolidated, ranking, drill-down, YoY, role gate) (REP-01)
+- [ ] 19-05-PLAN.md — Wave 2: Orçamento Server Actions (12-month CRUD, copy-from-year, orçado×realizado, D-18 lock) (REP-02)
+- [ ] 19-06-PLAN.md — Wave 2: Societário Server Actions (vigência CRUD, 100% gate, consolidated distribution, D-27) (REP-03)
+- [ ] 19-07-PLAN.md — Wave 2: BI KPI data (kpi_targets CRUD + 4-dimension getBiKpis + listBiAlerts) (BI-01)
+- [ ] 19-08-PLAN.md — Wave 2: BI forecast agent + nightly cron + approveBudgetAdjustment + LLM narrative (BI-02)
+- [ ] 19-09-PLAN.md — Wave 1: RBAC modules + nav entries + production chart primitives (D-37) foundation
+- [ ] 19-10-PLAN.md — Wave 3: Relatórios (DRE) UI + PDF export (REP-01) [UI]
+- [ ] 19-11-PLAN.md — Wave 3: Orçamento UI (12-month grid + semaphore + lock) + PDF (REP-02) [UI]
+- [ ] 19-12-PLAN.md — Wave 3: Societário UI (distribution + Nova vigência 100% gate + own-row) + PDF (REP-03) [UI]
+- [ ] 19-13-PLAN.md — Wave 3: BI dashboard (tabs + fixed Alertas & Previsões) + PDF (BI-01/BI-02) [UI]
+- [ ] 19-14-PLAN.md — Wave 4: verify 4 screens [checkpoint] + remove superseded prototype pages (D-42)
 **v1 reuse**: Reusa protótipos navegáveis de Relatórios/BI e Dashboard de Franquias (`/clinica/prototipos`); alimentado por todos os dados financeiros de Phases 14–16
 **UI hint**: yes
 
@@ -406,6 +422,6 @@ Plans:
 | 16. Contas a Pagar, Conciliação & Tributos | v2.0 | 10/10 | Complete    | 2026-06-22 |
 | 17. Estoque & Materiais | v2.0 | 10/10 | Complete    | 2026-07-11 |
 | 18. CRC & Marketing | v2.0 | 11/11 | Complete    | 2026-07-13 |
-| 19. Relatórios, Orçamento & BI | v2.0 | 0/? | Not started | - |
+| 19. Relatórios, Orçamento & BI | v2.0 | 0/14 | Planned | - |
 | 20. Portal do Paciente & App do Profissional | v2.0 | 0/? | Not started | - |
 | 21. Migração & Ensino | v2.0 | 0/? | Not started | - |
