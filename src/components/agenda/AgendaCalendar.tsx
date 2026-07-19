@@ -151,7 +151,7 @@ function NewAppointmentDialog({
   const [dateStr, setDateStr] = useState(() => toDateInputValue(startTime))
   const [startHm, setStartHm] = useState(() => toTimeInputValue(startTime))
   const [endHm, setEndHm] = useState(() => toTimeInputValue(endTime))
-  const [patientName, setPatientName] = useState('')
+  const [selectedPatientId, setSelectedPatientId] = useState<string | null>(null)
   const [notes, setNotes] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -168,6 +168,7 @@ function NewAppointmentDialog({
       const end = new Date(`${dateStr}T${endHm}:00`).toISOString()
       const result = await createAppointment({
         dentist_id: selectedDentistId,
+        patient_id: selectedPatientId ?? undefined,
         start_time: start,
         end_time: end,
         status: 'agendado',
@@ -180,7 +181,10 @@ function NewAppointmentDialog({
           end,
           dentistId: selectedDentistId,
           status: 'agendado',
-          title: patientName || 'Novo Agendamento',
+          title:
+            (selectedPatientId
+              ? patients.find((p) => p.id === selectedPatientId)?.full_name
+              : null) || 'Novo Agendamento',
         })
         onClose()
       } else {
@@ -266,15 +270,27 @@ function NewAppointmentDialog({
           </div>
 
           <div className="space-y-1">
-            <Label htmlFor="patient-name" className="font-semibold">
-              Nome do Paciente (opcional)
-            </Label>
-            <Input
-              id="patient-name"
-              value={patientName}
-              onChange={(e) => setPatientName(e.target.value)}
-              placeholder="Buscar paciente..."
-            />
+            <Label className="font-semibold">Paciente</Label>
+            <Select
+              value={selectedPatientId ?? '__none__'}
+              onValueChange={(v) => setSelectedPatientId(v === '__none__' ? null : v)}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Selecionar paciente...">
+                  {selectedPatientId
+                    ? (patients.find((p) => p.id === selectedPatientId)?.full_name ?? 'Selecionar paciente...')
+                    : 'Sem paciente vinculado'}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__none__">Sem paciente vinculado</SelectItem>
+                {patients.map((p) => (
+                  <SelectItem key={p.id} value={p.id}>
+                    {p.full_name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-1">
