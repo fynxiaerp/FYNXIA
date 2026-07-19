@@ -50,3 +50,9 @@ next-env.d.ts
 # local scratch / temp
 .firecrawl/
 _docx_temp/
+
+# MCP local config (contains real tokens/secrets — never commit)
+.mcp.json
+
+# Playwright MCP local cache/logs (browser-test artifacts)
+.playwright-mcp/
