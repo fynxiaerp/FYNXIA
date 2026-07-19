@@ -4,6 +4,34 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { logBusinessEvent } from '@/lib/audit'
 import { isSlotWithinAvailability, type AvailabilityWindow, type AvailabilityException } from '@/lib/scheduling/availability'
 
+// ─── Helper: resolve unit_id for a new public appointment ───────────────────
+// CRITICAL FIX (260719-goi): appointments.unit_id is NOT NULL (Phase 7 SYS-05)
+// but createPublicAppointment never populated it, breaking public booking too.
+// Same logic as resolveAppointmentUnitId in appointments.ts / resolveDefaultUnitId
+// in leads.ts (D-246) — local copy per existing convention (no shared file).
+
+type AdminClient = ReturnType<typeof createAdminClient>
+
+async function resolveAppointmentUnitId(
+  admin: AdminClient,
+  clinicId: string,
+  professionalUnitId: string | null
+): Promise<string | null> {
+  if (professionalUnitId) return professionalUnitId
+
+  const { data } = await admin
+    .from('units')
+    .select('id')
+    .eq('clinic_id', clinicId)
+    .is('deleted_at', null)
+    .order('is_default', { ascending: false })
+    .order('name')
+    .limit(1)
+    .maybeSingle()
+
+  return data?.id ?? null
+}
+
 // ─── getBookedSlots ───────────────────────────────────────────────────────────
 // CLINIC-09: Returns the list of occupied start_time ISO strings for a given
 // dentist on a given date, so the public booking form can disable those slots.
@@ -161,7 +189,7 @@ export async function createPublicAppointment(
   // Keep returning vague error on any failure — never leak internal details to public callers.
   const { data: professional } = await admin
     .from('professionals')
-    .select('id')
+    .select('id, unit_id')
     .eq('user_id', data.dentist_id)
     .eq('clinic_id', clinic.id)
     .is('deleted_at', null)
@@ -201,6 +229,18 @@ export async function createPublicAppointment(
   notesLines.push('[Agendamento público — vincular paciente na recepção]')
   const notes = notesLines.join('\n')
 
+  // ── CRITICAL FIX (260719-goi): resolve unit_id BEFORE insert ────────────────
+  // appointments.unit_id is NOT NULL — professional's unit takes precedence over
+  // the clinic's default unit.
+  const resolvedUnitId = await resolveAppointmentUnitId(
+    admin,
+    clinic.id,
+    professional?.unit_id ?? null
+  )
+  if (!resolvedUnitId) {
+    return { success: false, error: 'Nenhuma unidade cadastrada para esta clínica.' }
+  }
+
   // Insert appointment — GIST constraint handles slot atomicity (T-2-01)
   const { data: appointment, error: insertError } = await admin
     .from('appointments')
@@ -213,6 +253,7 @@ export async function createPublicAppointment(
       status: 'agendado',
       source: 'publico',
       notes,
+      unit_id: resolvedUnitId,
     })
     .select('id')
     .single()
