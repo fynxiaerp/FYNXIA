@@ -38,8 +38,14 @@ interface Dentist {
   full_name: string
 }
 
+interface Patient {
+  id: string
+  full_name: string
+}
+
 interface AgendaCalendarProps {
   dentists: Dentist[]
+  patients: Patient[]
   events: CalendarEvent[]
   tenantId: string
 }
@@ -127,6 +133,7 @@ interface NewAppointmentDialogProps {
   endTime: string
   initialDentistId: string | null
   dentists: Dentist[]
+  patients: Patient[]
   onCreated: (event: CalendarEvent) => void
 }
 
@@ -137,6 +144,7 @@ function NewAppointmentDialog({
   endTime,
   initialDentistId,
   dentists,
+  patients,
   onCreated,
 }: NewAppointmentDialogProps) {
   const [selectedDentistId, setSelectedDentistId] = useState<string | null>(initialDentistId)
@@ -416,7 +424,7 @@ function AppointmentDetailDialog({
 
 // ─── AgendaCalendar ───────────────────────────────────────────────────────────
 
-export function AgendaCalendar({ dentists, events: initialEvents, tenantId }: AgendaCalendarProps) {
+export function AgendaCalendar({ dentists, patients, events: initialEvents, tenantId }: AgendaCalendarProps) {
   // D-01: dentista selecionado via nuqs URL state (compartilhável, browser history funcional)
   // T-2-03: queryKey incluiria tenantId se data fosse buscada client-side — aqui vem via props do Server Component
   const [dentistId, setDentistId] = useQueryState('dentist')
@@ -616,6 +624,7 @@ export function AgendaCalendar({ dentists, events: initialEvents, tenantId }: Ag
           endTime={newApptDialog.endTime}
           initialDentistId={dentistId}
           dentists={dentists}
+          patients={patients}
           onCreated={handleEventCreated}
         />
       )}

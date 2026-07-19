@@ -36,6 +36,21 @@ export default async function AgendaPage() {
     full_name: d.full_name ?? 'Dentista',
   }))
 
+  // Fetch patients for this tenant (D-260719-j2j: real patient_id on appointment creation)
+  const { data: patientRows } = tenantId
+    ? await supabase
+        .from('patients')
+        .select('id, full_name')
+        .eq('tenant_id', tenantId)
+        .is('deleted_at', null)
+        .order('full_name', { ascending: true })
+    : { data: [] }
+
+  const patients = (patientRows ?? []).map((p) => ({
+    id: p.id,
+    full_name: p.full_name ?? 'Paciente',
+  }))
+
   // Fetch appointments for the current week (Server Component initial load)
   // React Query or URL-based refresh handles client-side updates
   const now = new Date()
@@ -86,6 +101,7 @@ export default async function AgendaPage() {
         <div className="h-[calc(100vh-64px)] p-0 overflow-hidden">
           <AgendaCalendar
             dentists={dentists}
+            patients={patients}
             events={events}
             tenantId={tenantId}
           />
