@@ -355,7 +355,7 @@ Plans:
 - [x] 19-05-PLAN.md — Wave 2: Orçamento Server Actions (12-month CRUD, copy-from-year, orçado×realizado, D-18 lock) (REP-02)
 - [x] 19-06-PLAN.md — Wave 2: Societário Server Actions (vigência CRUD, 100% gate, consolidated distribution, D-27) (REP-03)
 - [x] 19-07-PLAN.md — Wave 2: BI KPI data (kpi_targets CRUD + 4-dimension getBiKpis + listBiAlerts) (BI-01)
-- [ ] 19-08-PLAN.md — Wave 2: BI forecast agent + nightly cron + approveBudgetAdjustment + LLM narrative (BI-02)
+- [x] 19-08-PLAN.md — Wave 2: BI forecast agent + nightly cron + approveBudgetAdjustment + LLM narrative (BI-02)
 - [x] 19-09-PLAN.md — Wave 1: RBAC modules + nav entries + production chart primitives (D-37) foundation
 - [ ] 19-10-PLAN.md — Wave 3: Relatórios (DRE) UI + PDF export (REP-01) [UI]
 - [ ] 19-11-PLAN.md — Wave 3: Orçamento UI (12-month grid + semaphore + lock) + PDF (REP-02) [UI]
@@ -422,6 +422,6 @@ Plans:
 | 16. Contas a Pagar, Conciliação & Tributos | v2.0 | 10/10 | Complete    | 2026-06-22 |
 | 17. Estoque & Materiais | v2.0 | 10/10 | Complete    | 2026-07-11 |
 | 18. CRC & Marketing | v2.0 | 11/11 | Complete    | 2026-07-13 |
-| 19. Relatórios, Orçamento & BI | v2.0 | 8/14 | In Progress|  |
+| 19. Relatórios, Orçamento & BI | v2.0 | 9/14 | In Progress|  |
 | 20. Portal do Paciente & App do Profissional | v2.0 | 0/? | Not started | - |
 | 21. Migração & Ensino | v2.0 | 0/? | Not started | - |
