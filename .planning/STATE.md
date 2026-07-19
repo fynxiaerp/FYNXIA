@@ -343,5 +343,6 @@ Last activity: 2026-07-13
 | 260629-qji | criar página de gestão de unidades em /config/unidades — CRUD completo | 2026-06-29 | 2ce4473 | [260629-qji-criar-p-gina-de-gest-o-de-unidades-em-co](.planning/quick/260629-qji-criar-p-gina-de-gest-o-de-unidades-em-co/) |
 | 260629-uaz | Adicionar pointer-events-none ao MoreHorizontal icon em PayablesTable.tsx | 2026-06-29 | 2189958 | [260629-uaz-adicionar-pointer-events-none-ao-morehor](.planning/quick/260629-uaz-adicionar-pointer-events-none-ao-morehor/) |
 | 260718-w0u | Ignorar .mcp.json e .playwright-mcp/ no .gitignore (protege VERCEL_TOKEN em texto plano); commitar .vercelignore e docs pendentes de Fase 16/17 | 2026-07-18 | 826724a, 3e95fd4 | [260718-w0u-adicionar-mcp-json-e-playwright-mcp-ao-g](.planning/quick/260718-w0u-adicionar-mcp-json-e-playwright-mcp-ao-g/) |
+| 260718-x6c | Corrigir erro de build de produção: mover REFERRAL_REWARD_DEFAULT de src/actions/referrals.ts ('use server') para src/lib/validators/crc.ts | 2026-07-19 | a0f68b2 | [260718-x6c-corrigir-erro-de-build-de-produ-o-mover-](.planning/quick/260718-x6c-corrigir-erro-de-build-de-produ-o-mover-/) |
 
-**Last activity:** 2026-07-18
+**Last activity:** 2026-07-19 - Completed quick task 260718-x6c: corrigir erro de build de produção (referrals.ts 'use server' export)
