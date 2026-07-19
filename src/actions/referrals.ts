@@ -4,13 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { logBusinessEvent } from '@/lib/audit'
 import { assertNotReadOnly } from '@/lib/auth/guards'
-import { referralSchema } from '@/lib/validators/crc'
-
-// D-17: recompensa por indicação — crédito em serviços, valor por indicação
-// configurável. v1 mantém um único valor documentado (constante), sem tabela
-// de configuração nova (18-04-PLAN interfaces) — configurabilidade real fica
-// para uma fase futura (ex.: cadastro por clínica).
-export const REFERRAL_REWARD_DEFAULT = 50.0
+import { referralSchema, REFERRAL_REWARD_DEFAULT } from '@/lib/validators/crc'
 
 /**
  * Referral program Server Actions (CRC-05)

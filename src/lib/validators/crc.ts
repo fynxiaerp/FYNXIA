@@ -93,3 +93,14 @@ export const referralSchema = z.object({
   lead_id: z.string().uuid('Lead indicado inválido'),
 })
 export type ReferralInput = z.infer<typeof referralSchema>
+
+/**
+ * D-17: recompensa por indicação — crédito em serviços, valor por indicação
+ * configurável. v1 mantém um único valor documentado (constante), sem tabela
+ * de configuração nova (18-04-PLAN interfaces) — configurabilidade real fica
+ * para uma fase futura (ex.: cadastro por clínica).
+ * Lives here (not in referrals.ts) because that file is a 'use server' module
+ * and Next.js only allows async function exports from 'use server' files —
+ * mirrors D-197 (ai-agent-config-types.ts extraction).
+ */
+export const REFERRAL_REWARD_DEFAULT = 50.0
