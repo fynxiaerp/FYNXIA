@@ -1,12 +1,10 @@
 import { headers } from 'next/headers'
 import { createClient } from '@/lib/supabase/server'
 import { AgendaCalendar } from '@/components/agenda/AgendaCalendar'
+import { NewAppointmentButton } from '@/components/agenda/NewAppointmentButton'
 import { mapAppointmentToEvent } from '@/lib/validators/appointment'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import { PageHeader } from '@/components/shell/PageHeader'
-import { EmptyState } from '@/components/shell/EmptyState'
-import { Button } from '@/components/ui/button'
-import { CalendarX, Plus } from 'lucide-react'
 
 export default async function AgendaPage() {
   const headersList = await headers()
@@ -80,32 +78,18 @@ export default async function AgendaPage() {
       <div className="flex h-full flex-col">
         <PageHeader
           title="Agenda"
-          actions={
-            <Button size="sm">
-              <Plus className="size-4" />
-              Nova Consulta
-            </Button>
-          }
+          actions={<NewAppointmentButton />}
         />
 
-        {/* Empty state fires on appointments.length === 0 (not dentists.length === 0) */}
-        {events.length === 0 ? (
-          <div className="flex flex-1 flex-col items-center justify-center p-8">
-            <EmptyState
-              icon={CalendarX}
-              title="Nenhuma consulta esta semana"
-              description="Clique em um horário no calendário para agendar a primeira consulta."
-            />
-          </div>
-        ) : (
-          <div className="h-[calc(100vh-64px)] p-0 overflow-hidden">
-            <AgendaCalendar
-              dentists={dentists}
-              events={events}
-              tenantId={tenantId}
-            />
-          </div>
-        )}
+        {/* Calendar is always rendered — even on a week with zero appointments —
+            so the header button and slot-click both have a visible target. */}
+        <div className="h-[calc(100vh-64px)] p-0 overflow-hidden">
+          <AgendaCalendar
+            dentists={dentists}
+            events={events}
+            tenantId={tenantId}
+          />
+        </div>
       </div>
     </NuqsAdapter>
   )
