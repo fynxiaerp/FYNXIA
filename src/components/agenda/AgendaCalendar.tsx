@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import FullCalendar from '@fullcalendar/react'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import dayGridPlugin from '@fullcalendar/daygrid'
@@ -9,6 +9,7 @@ import type { EventDropArg, DateSelectArg } from '@fullcalendar/core'
 import { useQueryState } from 'nuqs'
 import { filterEventsByDentist, type CalendarEvent } from '@/lib/validators/appointment'
 import { updateAppointment, cancelAppointment, createAppointment } from '@/actions/appointments'
+import { useNewAppointmentStore } from '@/lib/stores/new-appointment-store'
 import {
   Select,
   SelectContent,
@@ -54,14 +55,67 @@ const STATUS_CLASS_MAP: Record<string, string> = {
   cancelado: 'bg-red-50 text-red-500 line-through border-l-2 border-red-300 dark:bg-red-950/40 dark:text-red-400 dark:border-red-800',
 }
 
+// ─── Default Slot Computation ─────────────────────────────────────────────────
+// Used when the "Nova Consulta" header button opens the dialog with no
+// pre-selected calendar slot — rounds up to the next 15-min boundary, clamped
+// into business hours [07:00, 19:45]. Duration default 30 min.
+
+function computeNextSlot(): { start: string; end: string } {
+  const now = new Date()
+  const businessStartMin = 7 * 60 // 07:00
+  const businessEndMin = 19 * 60 + 45 // 19:45 (last bookable start)
+
+  const start = new Date(now)
+  // Round UP to next 15-min boundary
+  const minutes = start.getMinutes()
+  const remainder = minutes % 15
+  if (remainder !== 0 || start.getSeconds() > 0 || start.getMilliseconds() > 0) {
+    start.setMinutes(minutes - remainder + 15, 0, 0)
+  } else {
+    start.setSeconds(0, 0)
+  }
+
+  const nowMinutesOfDay = start.getHours() * 60 + start.getMinutes()
+
+  if (nowMinutesOfDay < businessStartMin) {
+    // Before 07:00 → today 08:00
+    start.setHours(8, 0, 0, 0)
+  } else if (nowMinutesOfDay >= businessEndMin) {
+    // At/after 19:45 → next day 08:00
+    start.setDate(start.getDate() + 1)
+    start.setHours(8, 0, 0, 0)
+  }
+
+  const end = new Date(start.getTime() + 30 * 60 * 1000)
+
+  return { start: start.toISOString(), end: end.toISOString() }
+}
+
 // ─── New Appointment Dialog ───────────────────────────────────────────────────
+// Local-time (wall-clock) helpers for <input type="date"/time"> — these inputs
+// need YYYY-MM-DD / HH:mm in the browser's local timezone, not UTC.
+
+function toDateInputValue(iso: string): string {
+  const d = new Date(iso)
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+
+function toTimeInputValue(iso: string): string {
+  const d = new Date(iso)
+  const h = String(d.getHours()).padStart(2, '0')
+  const min = String(d.getMinutes()).padStart(2, '0')
+  return `${h}:${min}`
+}
 
 interface NewAppointmentDialogProps {
   open: boolean
   onClose: () => void
   startTime: string
   endTime: string
-  dentistId: string
+  initialDentistId: string | null
   dentists: Dentist[]
   onCreated: (event: CalendarEvent) => void
 }
@@ -71,10 +125,14 @@ function NewAppointmentDialog({
   onClose,
   startTime,
   endTime,
-  dentistId,
+  initialDentistId,
   dentists,
   onCreated,
 }: NewAppointmentDialogProps) {
+  const [selectedDentistId, setSelectedDentistId] = useState<string | null>(initialDentistId)
+  const [dateStr, setDateStr] = useState(() => toDateInputValue(startTime))
+  const [startHm, setStartHm] = useState(() => toTimeInputValue(startTime))
+  const [endHm, setEndHm] = useState(() => toTimeInputValue(endTime))
   const [patientName, setPatientName] = useState('')
   const [notes, setNotes] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -82,21 +140,27 @@ function NewAppointmentDialog({
 
   async function handleCreate() {
     setError(null)
+    if (!selectedDentistId) {
+      setError('Selecione um dentista')
+      return
+    }
     setIsSubmitting(true)
     try {
+      const start = new Date(`${dateStr}T${startHm}:00`).toISOString()
+      const end = new Date(`${dateStr}T${endHm}:00`).toISOString()
       const result = await createAppointment({
-        dentist_id: dentistId,
-        start_time: startTime,
-        end_time: endTime,
+        dentist_id: selectedDentistId,
+        start_time: start,
+        end_time: end,
         status: 'agendado',
         notes: notes || undefined,
       })
       if (result.success && result.id) {
         onCreated({
           id: result.id,
-          start: startTime,
-          end: endTime,
-          dentistId,
+          start,
+          end,
+          dentistId: selectedDentistId,
           status: 'agendado',
           title: patientName || 'Novo Agendamento',
         })
@@ -125,29 +189,57 @@ function NewAppointmentDialog({
 
           <div className="space-y-1">
             <Label className="font-semibold">Dentista</Label>
-            <p className="text-sm text-muted-foreground">
-              {dentists.find((d) => d.id === dentistId)?.full_name ?? dentistId}
-            </p>
+            <Select
+              value={selectedDentistId ?? undefined}
+              onValueChange={(v) => setSelectedDentistId(v)}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Selecionar dentista..." />
+              </SelectTrigger>
+              <SelectContent>
+                {dentists.map((d) => (
+                  <SelectItem key={d.id} value={d.id}>
+                    {d.full_name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-1">
+            <Label htmlFor="appt-date" className="font-semibold">
+              Data
+            </Label>
+            <Input
+              id="appt-date"
+              type="date"
+              value={dateStr}
+              onChange={(e) => setDateStr(e.target.value)}
+            />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
-              <Label className="font-semibold">Início</Label>
-              <p className="text-sm font-mono text-muted-foreground">
-                {new Date(startTime).toLocaleTimeString('pt-BR', {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}
-              </p>
+              <Label htmlFor="appt-start" className="font-semibold">
+                Início
+              </Label>
+              <Input
+                id="appt-start"
+                type="time"
+                value={startHm}
+                onChange={(e) => setStartHm(e.target.value)}
+              />
             </div>
             <div className="space-y-1">
-              <Label className="font-semibold">Fim</Label>
-              <p className="text-sm font-mono text-muted-foreground">
-                {new Date(endTime).toLocaleTimeString('pt-BR', {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}
-              </p>
+              <Label htmlFor="appt-end" className="font-semibold">
+                Fim
+              </Label>
+              <Input
+                id="appt-end"
+                type="time"
+                value={endHm}
+                onChange={(e) => setEndHm(e.target.value)}
+              />
             </div>
           </div>
 
@@ -206,6 +298,18 @@ export function AgendaCalendar({ dentists, events: initialEvents, tenantId }: Ag
     endTime: string
   }>({ open: false, startTime: '', endTime: '' })
 
+  // Trigger store — connects the (Server Component) "Nova Consulta" header
+  // button to this client component's dialog state.
+  const headerOpen = useNewAppointmentStore((s) => s.open)
+  const resetHeaderTrigger = useNewAppointmentStore((s) => s.reset)
+
+  useEffect(() => {
+    if (!headerOpen) return
+    const { start, end } = computeNextSlot()
+    setNewApptDialog({ open: true, startTime: start, endTime: end })
+    resetHeaderTrigger()
+  }, [headerOpen, resetHeaderTrigger])
+
   // Filter events by selected dentist (Pitfall 3 — only show selected dentist's events)
   const filteredEvents = dentistId
     ? filterEventsByDentist(calendarEvents, dentistId)
@@ -253,20 +357,14 @@ export function AgendaCalendar({ dentists, events: initialEvents, tenantId }: Ag
   )
 
   // select: click on empty slot opens new appointment dialog
-  const handleSelect = useCallback(
-    (selectInfo: DateSelectArg) => {
-      if (!dentistId) {
-        setConflictError('Selecione um dentista antes de criar um agendamento.')
-        return
-      }
-      setNewApptDialog({
-        open: true,
-        startTime: selectInfo.startStr,
-        endTime: selectInfo.endStr,
-      })
-    },
-    [dentistId]
-  )
+  // (dentist is chosen inside the dialog — no pre-selected dentist required)
+  const handleSelect = useCallback((selectInfo: DateSelectArg) => {
+    setNewApptDialog({
+      open: true,
+      startTime: selectInfo.startStr,
+      endTime: selectInfo.endStr,
+    })
+  }, [])
 
   function handleEventCreated(event: CalendarEvent) {
     setCalendarEvents((prev) => [...prev, event])
@@ -304,6 +402,11 @@ export function AgendaCalendar({ dentists, events: initialEvents, tenantId }: Ag
 
       {/* FullCalendar — Configuration Contract (UI-SPEC) */}
       <div className="flex-1 overflow-hidden p-4">
+        {calendarEvents.length === 0 && (
+          <p className="mb-2 text-sm text-muted-foreground">
+            Nenhuma consulta esta semana — clique em um horário ou em &quot;Nova Consulta&quot; para agendar.
+          </p>
+        )}
         <FullCalendar
           plugins={[timeGridPlugin, dayGridPlugin, interactionPlugin]}
           initialView="timeGridWeek"
@@ -339,13 +442,13 @@ export function AgendaCalendar({ dentists, events: initialEvents, tenantId }: Ag
       </div>
 
       {/* New Appointment Dialog */}
-      {newApptDialog.open && dentistId && (
+      {newApptDialog.open && (
         <NewAppointmentDialog
           open={newApptDialog.open}
           onClose={() => setNewApptDialog({ open: false, startTime: '', endTime: '' })}
           startTime={newApptDialog.startTime}
           endTime={newApptDialog.endTime}
-          dentistId={dentistId}
+          initialDentistId={dentistId}
           dentists={dentists}
           onCreated={handleEventCreated}
         />
