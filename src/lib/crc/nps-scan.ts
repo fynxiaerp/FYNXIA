@@ -65,27 +65,60 @@ export async function runNpsInviteScan(
   // not filtered out here (avoids an app-level NOT EXISTS pre-check race).
   // WR-06 (LGPD): explicit soft-delete/anonymize predicates — admin client
   // bypasses RLS, so these must be applied here.
-  const { data: appointments, error: fetchError } = await admin
+  //
+  // Rewrite note (260719-lgc): this used to be a single query with a nested
+  // PostgREST embed filter (`patients!inner(...)` + dot-notation predicates
+  // `.is('patients.deleted_at', null)` / `.eq('patients.is_anonymized', false)`).
+  // That pattern returned zero rows in production even though the equivalent
+  // direct SQL join (appointments JOIN patients with the same predicates)
+  // returned eligible rows. Replaced with two simple sequential queries joined
+  // in application code — no PostgREST embed involved, so the LGPD predicates
+  // are applied as plain WHERE clauses on the patients table.
+  const { data: apptRows, error: apptError } = await admin
     .from('appointments')
-    .select(
-      `
-      id,
-      tenant_id,
-      unit_id,
-      patient_id,
-      patients!inner(id, full_name, phone, email, deleted_at, is_anonymized)
-    `,
-    )
+    .select('id, tenant_id, unit_id, patient_id')
     .eq('status', 'concluido')
-    .is('patients.deleted_at', null)
-    .eq('patients.is_anonymized', false)
 
-  if (fetchError) {
-    console.error('[nps-scan] Failed to fetch concluded appointments:', fetchError.message)
+  if (apptError) {
+    console.error('[nps-scan] Failed to fetch concluded appointments:', apptError.message)
+    return { invited: 0, skipped: 0 }
+  }
+  if (!apptRows || apptRows.length === 0) {
     return { invited: 0, skipped: 0 }
   }
 
-  if (!appointments || appointments.length === 0) {
+  // Distinct non-null patient_ids feeding the second query (avoids an invalid
+  // `.in('id', [])` call when no appointment has a linked patient).
+  const patientIds = Array.from(
+    new Set(apptRows.map((a) => a.patient_id).filter((id): id is string => Boolean(id))),
+  )
+  if (patientIds.length === 0) {
+    return { invited: 0, skipped: 0 }
+  }
+
+  // Eligible patients — direct (non-embed) filters, same LGPD predicates as before.
+  const { data: patientRows, error: patientError } = await admin
+    .from('patients')
+    .select('id, full_name, phone, email, deleted_at, is_anonymized')
+    .in('id', patientIds)
+    .is('deleted_at', null)
+    .eq('is_anonymized', false)
+
+  if (patientError) {
+    console.error('[nps-scan] Failed to fetch eligible patients:', patientError.message)
+    return { invited: 0, skipped: 0 }
+  }
+
+  const patientMap = new Map<string, PatientRel>()
+  for (const p of patientRows ?? []) {
+    patientMap.set(p.id, { id: p.id, full_name: p.full_name, phone: p.phone, email: p.email })
+  }
+
+  const appointments = apptRows
+    .filter((a) => a.patient_id && patientMap.has(a.patient_id))
+    .map((a) => ({ ...a, patients: patientMap.get(a.patient_id as string) as PatientRel }))
+
+  if (appointments.length === 0) {
     return { invited: 0, skipped: 0 }
   }
 
