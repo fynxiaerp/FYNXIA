@@ -348,7 +348,7 @@ Plans:
   4. Painel de BI exibe KPIs por dimensão (tempo/unidade/profissional) comparados à meta; a IA gera previsões e alertas baseados na tendência
 **Plans**: 14 plans
 Plans:
-- [ ] 19-01-PLAN.md — Wave 1 (TDD): pure financial math (dre-math aggregation + budget semaphore; partner-share vigência/100%/distribution)
+- [x] 19-01-PLAN.md — Wave 1 (TDD): pure financial math (dre-math aggregation + budget semaphore; partner-share vigência/100%/distribution)
 - [ ] 19-02-PLAN.md — Wave 1 (TDD): BI forecast math (OLS trend + decline) + RED governance guard for the forecast agent
 - [ ] 19-03-PLAN.md — Wave 1: 4 tables (budget_targets/partner_shares/kpi_targets/bi_alerts) + RLS + bi_forecast seed + [BLOCKING] db push + gen types
 - [ ] 19-04-PLAN.md — Wave 2: DRE Server Actions (period/unit/consolidated, ranking, drill-down, YoY, role gate) (REP-01)
@@ -422,6 +422,6 @@ Plans:
 | 16. Contas a Pagar, Conciliação & Tributos | v2.0 | 10/10 | Complete    | 2026-06-22 |
 | 17. Estoque & Materiais | v2.0 | 10/10 | Complete    | 2026-07-11 |
 | 18. CRC & Marketing | v2.0 | 11/11 | Complete    | 2026-07-13 |
-| 19. Relatórios, Orçamento & BI | v2.0 | 0/14 | Planned | - |
+| 19. Relatórios, Orçamento & BI | v2.0 | 1/14 | In Progress|  |
 | 20. Portal do Paciente & App do Profissional | v2.0 | 0/? | Not started | - |
 | 21. Migração & Ensino | v2.0 | 0/? | Not started | - |

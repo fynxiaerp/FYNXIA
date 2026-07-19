@@ -114,9 +114,9 @@
 ### Bloco E — Analítico & Canais
 
 #### REP — Relatórios, Orçamento & Societário
-- [ ] **REP-01**: Gestão visualiza DRE gerencial por unidade em um período
-- [ ] **REP-02**: Orçado × realizado com desvios por período
-- [ ] **REP-03**: Distribuição de lucro por cota societária
+- [x] **REP-01**: Gestão visualiza DRE gerencial por unidade em um período
+- [x] **REP-02**: Orçado × realizado com desvios por período
+- [x] **REP-03**: Distribuição de lucro por cota societária
 
 #### BI — BI & Dashboards
 - [ ] **BI-01**: Gestão/Sócios acompanham KPIs por dimensão (tempo/unidade/profissional) com meta × realizado
@@ -220,9 +220,9 @@
 | CRC-03 | Phase 18 | Complete |
 | CRC-04 | Phase 18 | Complete |
 | CRC-05 | Phase 18 | Complete |
-| REP-01 | Phase 19 | Pending |
-| REP-02 | Phase 19 | Pending |
-| REP-03 | Phase 19 | Pending |
+| REP-01 | Phase 19 | Complete |
+| REP-02 | Phase 19 | Complete |
+| REP-03 | Phase 19 | Complete |
 | BI-01 | Phase 19 | Pending |
 | BI-02 | Phase 19 | Pending |
 | POR-01 | Phase 20 | Pending |

@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Phase 19 UI-SPEC approved
-last_updated: "2026-07-19T20:27:03.160Z"
+stopped_at: Completed 19-01-PLAN.md
+last_updated: "2026-07-19T20:32:57.728Z"
 last_activity: 2026-07-19
 progress:
   total_phases: 15
   completed_phases: 12
   total_plans: 107
-  completed_plans: 93
-  percent: 87
+  completed_plans: 94
+  percent: 88
 ---
 
 # FYNXIA ERP — Project State
@@ -29,16 +29,16 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 
 **Stack:** Next.js 15 + TypeScript (strict) + Supabase (sa-east-1) + Vercel (gru1) + shadcn/ui + Tailwind v4
 
-**Current focus:** Phase 18 — crc-marketing
+**Current focus:** Phase 19 — relat-rios-or-amento-bi
 
 ---
 
 ## Current Position
 
-Phase: 19
-Plan: Not started
+Phase: 19 (relat-rios-or-amento-bi) — EXECUTING
+Plan: 2 of 14
 Status: Ready to execute
-Last activity: 2026-07-19 -- Phase 19 planning complete
+Last activity: 2026-07-19
 
 **Milestone:** v2.0 — Produto Completo (27 módulos, blocos A–E)
 
@@ -146,6 +146,7 @@ Last activity: 2026-07-19 -- Phase 19 planning complete
 | Phase 18 P09 | 35min | 3 tasks | 6 files |
 | Phase 18 P10 | 20min | 2 tasks | 9 files |
 | Phase 18 P11 | 15min | 2 tasks | 3 files |
+| Phase 19 P01 | 6min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -279,6 +280,8 @@ Last activity: 2026-07-19 -- Phase 19 planning complete
 | ApprovalInbox campaign rows (type='ai_action', agent_key='crc-campaign') route approve/reject through approveCampaignAndDispatch/rejectCampaign instead of the generic approveRequest/rejectRequest | approveRequest/rejectRequest alone never touch campaigns.status — dispatch/rejection-state would be unreachable otherwise (Pitfall 2); non-campaign rows untouched | 2026-07-13 |
 | PatientRewardsBalanceTable's "Ver Extrato" Sheet derives credit history from already-fetched listReferrals() rows instead of a new server action | Plan 04's listRewardsBalance only returns aggregates, not row-level ledger entries; referral_rewards credit events map 1:1 to a credited referral row in v1 | 2026-07-13 |
 | ReferralsTable inlines its own stage-badge mapping (mirrors KanbanColumn/LeadDetailSheet) rather than extracting a shared helper | No shared stage-badge util existed yet; plan's files_modified list did not include a new lib file | 2026-07-13 |
+| budgetDeviationSemaphore meta=0 edge case: realizado=0 → verde, else vermelho | Avoids divide-by-zero while still flagging any unbudgeted spend as a deviation (D-15) | 2026-07-19 |
+| Partner-share vigência comparison via lexicographic YYYY-MM-DD string compare (no Date parsing) | Matches existing tax_tables migration query pattern; avoids timezone drift (D-20) | 2026-07-19 |
 
 ### Architecture Constraints Locked
 
@@ -315,7 +318,7 @@ Last activity: 2026-07-19 -- Phase 19 planning complete
 
 ## Session Continuity
 
-**Stopped at:** Phase 19 UI-SPEC approved
+**Stopped at:** Completed 19-01-PLAN.md
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 
