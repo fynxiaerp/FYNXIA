@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: completed
-stopped_at: Fase 18 completa; PAUSA — deploy Vercel pendente (ver .planning/DEPLOY-HANDOFF.md)
-last_updated: "2026-07-14T10:55:37.041Z"
-last_activity: 2026-07-13
+stopped_at: Phase 19 context gathered
+last_updated: "2026-07-19T19:22:05.094Z"
+last_activity: "2026-07-19 - Completed quick task 260719-1wv: corrigir bug crítico na Agenda (botão "Nova Consulta" + calendário oculto quando vazio)"
 progress:
   total_phases: 15
   completed_phases: 12
@@ -315,7 +315,7 @@ Last activity: 2026-07-13
 
 ## Session Continuity
 
-**Stopped at:** Fase 18 completa; PAUSA — deploy Vercel pendente (ver .planning/DEPLOY-HANDOFF.md)
+**Stopped at:** Phase 19 context gathered
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 
@@ -351,6 +351,7 @@ Last activity: 2026-07-13
 **2026-07-19 (sessão continuação):** Push `master`→`origin/main` confirmado feito (0 commits de diferença); deploy Vercel `Ready` em produção com o fix de build aplicado. Env vars conferidas: Supabase/Resend/Encryption/CRON_SECRET presentes; **WhatsApp (4 vars) e AI_GATEWAY_API_KEY ausentes em produção** — deixado pendente por decisão do usuário (ver `.planning/DEPLOY-HANDOFF.md` Update 2026-07-19). UAT manual da Fase 18 rodado ao vivo via Playwright MCP (login test user reinaldo_s_lima@yahoo.com.br em fynxia.vercel.app): kanban CRC validado (drag-and-drop pointer-based + alternativa acessível + persistência); wizard de campanha validado até o guard de 0-destinatários (fallback de IA funcionando); NPS validado no caminho de token inválido. Durante o UAT, achado bug real em /clinica/agenda (botão decorativo + calendário some com 0 consultas) — corrigido nesta sessão via quick task 260719-1wv.
 
 **Verificação pós-deploy do quick task 260719-1wv (Playwright em produção):** checkpoint aprovado — calendário sempre visível em semana vazia; botão "Nova Consulta" abre o diálogo; diálogo permite escolher dentista + editar data/hora; clique em slot vazio abre o mesmo diálogo sem dentista pré-selecionado; `createAppointment` corretamente rejeitou horário fora da disponibilidade cadastrada do profissional (validação de negócio funcionando). Dois achados novos, fora do escopo desta correção, não corrigidos nesta sessão:
+
 - `NewAppointmentDialog` (AgendaCalendar.tsx): o Select de dentista exibe o UUID cru em vez do nome após selecionar (falta o resolver `dentists.find(d => d.id === ...)?.full_name` que a Select de filtro no topo do calendário já usa).
 - `/clinica/profissionais/[id]` aba "Horários": clicar "Adicionar horário" + "Salvar Alterações" não persiste — reload mostra "Sem horários definidos" de novo (possivelmente por causa do campo obrigatório "Nome completo *" vazio bloqueando o submit sem erro visível). Tabela de listagem de profissionais também não exibe nomes (células vazias) e "Unidade"/"Login vinculado" mostram UUID cru — mesmo padrão de bug.
 
@@ -366,6 +367,7 @@ Last activity: 2026-07-13
 **Last activity:** 2026-07-19 - Completed quick task 260719-kjy: adicionar listagem/edição de membros ativos da equipe
 
 **2026-07-19 (continuação — quick task 260719-dkz):** Root cause do Bug B confirmado: `professionalSchema` exige `full_name`; `form.handleSubmit(onSubmit)` bloqueia o submit silenciosamente quando esse campo (aba "Ficha") está vazio e o usuário está na aba "Horários" — o `FormMessage` de erro nunca fica visível. Corrigido com Tabs controladas + `handleSubmit(onSubmit, onInvalid)` que troca de aba e exibe um Alert no topo. Bug A corrigido replicando o padrão de resolução de nome (`dentists.find`) já usado no filtro de topo do mesmo arquivo. `tsc`/`build` limpos. Pushado (`f2e530d`), deploy Vercel `Ready`, ambos verificados ao vivo via Playwright:
+
 - Bug B: reproduzido o cenário exato (Nome completo vazio + adicionar horário em Horários + Salvar) → alerta "Corrija os campos obrigatórios: Nome completo, CRO." + troca automática para aba Ficha confirmados. Preenchendo os campos e salvando de novo: reload confirma horário de Segunda-feira 08:00-18:00 persistido — round-trip completo funcionando.
 - Bug A: combobox não mostra mais UUID cru; mostra vazio para os 2 dentistas de teste porque `users.full_name` (fonte do dropdown, tabela `users` — diferente de `professionals.full_name` que acabamos de preencher) está vazio nesses registros — dado de teste incompleto, não falha da correção.
 
