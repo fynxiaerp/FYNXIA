@@ -38,6 +38,34 @@ async function getActor(): Promise<{ actor: Actor } | { error: string }> {
   return { actor }
 }
 
+// ─── Helper: resolve unit_id for a new appointment ──────────────────────────
+// CRITICAL FIX (260719-goi): appointments.unit_id is NOT NULL (Phase 7 SYS-05)
+// but createAppointment never populated it, breaking 100% of appointment creation.
+// Prefer the professional's own unit_id (more precise); fall back to the clinic's
+// default unit (mirrors resolveDefaultUnitId in leads.ts / D-246).
+
+type SupabaseClient = Awaited<ReturnType<typeof createClient>>
+
+async function resolveAppointmentUnitId(
+  supabase: SupabaseClient,
+  clinicId: string,
+  professionalUnitId: string | null
+): Promise<string | null> {
+  if (professionalUnitId) return professionalUnitId
+
+  const { data } = await supabase
+    .from('units')
+    .select('id')
+    .eq('clinic_id', clinicId)
+    .is('deleted_at', null)
+    .order('is_default', { ascending: false })
+    .order('name')
+    .limit(1)
+    .maybeSingle()
+
+  return data?.id ?? null
+}
+
 // ─── createAppointment ────────────────────────────────────────────────────────
 // CLINIC-02: criar agendamento sem conflito.
 // T-2-01: EXCLUDE USING GIST no banco garante atomicidade contra race conditions.
@@ -71,7 +99,7 @@ export async function createAppointment(
   // Phase 11 intentional: professional↔appointment link is query-time via user_id, not a FK.
   const { data: professional } = await supabase
     .from('professionals')
-    .select('id')
+    .select('id, unit_id')
     .eq('user_id', dentist_id)
     .eq('clinic_id', actor.tenant_id)
     .is('deleted_at', null)
@@ -133,6 +161,18 @@ export async function createAppointment(
     }
   }
 
+  // ── CRITICAL FIX (260719-goi): resolve unit_id BEFORE insert ────────────────
+  // appointments.unit_id is NOT NULL — professional's unit takes precedence over
+  // the clinic's default unit.
+  const resolvedUnitId = await resolveAppointmentUnitId(
+    supabase,
+    actor.tenant_id,
+    professional?.unit_id ?? null
+  )
+  if (!resolvedUnitId) {
+    return { success: false, error: 'Nenhuma unidade cadastrada para esta clínica.' }
+  }
+
   const { data: appointment, error: insertError } = await supabase
     .from('appointments')
     .insert({
@@ -145,6 +185,7 @@ export async function createAppointment(
       notes: notes ?? null,
       source: 'interno',
       resource_id: resource_id ?? null,
+      unit_id: resolvedUnitId,
     })
     .select('id')
     .single()
