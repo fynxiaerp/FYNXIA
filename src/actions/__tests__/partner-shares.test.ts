@@ -70,7 +70,28 @@ function makeMockClient(opts: {
     from: (table: string) => {
       opts.fromCalls.push(table)
       if (table === 'users') {
-        return makeQueryBuilder(() => ({ data: opts.actor, error: null }))
+        // 'users' is queried both by getActor (.select('id, tenant_id, role').single())
+        // and by listSocios (.select('id, full_name, email').order(...), no .single()) —
+        // disambiguate by the select() columns to return the right shape for each.
+        let isActorLookup = true
+        const builder: Record<string, unknown> = {
+          select: (cols: string) => {
+            isActorLookup = cols.includes('tenant_id')
+            return builder
+          },
+          eq: () => builder,
+          order: () => builder,
+          single: () => Promise.resolve({ data: opts.actor, error: null }),
+          then: (
+            onFulfilled: (v: { data: unknown; error: unknown }) => unknown,
+            onRejected?: (e: unknown) => unknown
+          ) =>
+            Promise.resolve(isActorLookup ? { data: opts.actor, error: null } : { data: [], error: null }).then(
+              onFulfilled,
+              onRejected
+            ),
+        }
+        return builder
       }
       // partner_shares / financial_transactions: empty result by default — these
       // role-gate tests only assert whether the table was reached.
@@ -188,7 +209,7 @@ describe('partner-shares.ts — write role gate (T-19-10, A1)', () => {
     }
     const result = await createPartnerShareVigencia({
       vigenciaInicio: '2026-01-01',
-      shares: [{ userId: 'u-2', percentual: 1 }],
+      shares: [{ userId: '22222222-2222-2222-2222-222222222222', percentual: 1 }],
     })
 
     expect(result.success).toBe(false)
@@ -204,7 +225,7 @@ describe('partner-shares.ts — write role gate (T-19-10, A1)', () => {
     }
     const result = await createPartnerShareVigencia({
       vigenciaInicio: '2026-01-01',
-      shares: [{ userId: 'u-2', percentual: 1 }],
+      shares: [{ userId: '22222222-2222-2222-2222-222222222222', percentual: 1 }],
     })
 
     expect(result.success).toBe(true)
@@ -221,8 +242,8 @@ describe('partner-shares.ts — write role gate (T-19-10, A1)', () => {
     const result = await createPartnerShareVigencia({
       vigenciaInicio: '2026-01-01',
       shares: [
-        { userId: 'u-2', percentual: 0.6 },
-        { userId: 'u-3', percentual: 0.3 },
+        { userId: '22222222-2222-2222-2222-222222222222', percentual: 0.6 },
+        { userId: '33333333-3333-3333-3333-333333333333', percentual: 0.3 },
       ],
     })
 
