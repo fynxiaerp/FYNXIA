@@ -3,20 +3,28 @@ status: partial
 phase: 16-contas-a-pagar-concilia-o-tributos
 source: [16-VERIFICATION.md, 16-HUMAN-UAT.md]
 started: 2026-06-22T00:00:00Z
-updated: 2026-06-29T00:00:00Z
+updated: 2026-06-29T18:00:00Z
 ---
 
 ## Current Test
 
-[testing paused — todos os 4 testes bloqueados por ausência de seed na clínica de teste; schema fix verificado via Playwright em 2026-06-29]
+Todos os 4 testes avaliados. Sessão UAT concluída (2026-06-29).
 
 ## Tests
 
 ### 1. Baixa parcial de Conta a Pagar sob concorrência
 expected: Em /clinica/financeiro/contas-a-pagar, baixa parcial (valorPago < saldo) → parcela status='parcial', despesa criada, saldo_atual debitado; baixa repetida não duplica a despesa (CAS WR-02).
 result: blocked
-blocked_by: prior-phase
-reason: "Schema fix verificado via Playwright em 2026-06-29: página carrega sem erro, cards A Vencer/Vencido/Pago no Mês renderizam, modal Nova Conta a Pagar abre com todos os campos. Dados parciais inseridos via Supabase CLI: fornecedor 'Fornecedor Teste UAT' (a98c107c), conta contábil 'Despesas Operacionais UAT' (c875e17c), conta corrente 'Conta Corrente UAT' R$1000 (dbd664ea). Bloqueio restante: clínica de teste não tem nenhuma unidade (units) cadastrada → cost_centers.unit_id é NOT NULL → impossível criar centro de custo → impossível criar conta a pagar via UI. Funcional de baixa parcial + WR-02 não pode ser exercido sem seed de unidade."
+blocked_by: automation-tooling
+reason: |
+  Payable "Teste baixa parcial UAT-16" R$500 Pendente criado e listado. Card A Vencer=R$500.
+  canWrite=true, firstPendingInst={status:pendente,valor:500} confirmados via fiber inspection.
+  BaixaDialog corretamente fiada ao estado baixaOpen em PayableRowActions (linha 213).
+  Bloqueio de automação: botão Ações usa Base UI DropdownMenuTrigger + MoreHorizontal SVG;
+  <circle> do ícone intercepta elementFromPoint no centro → CDP click/hover falham com
+  "element did not become interactive". Tentativas esgotadas: synthetic events, pointerdown,
+  focus+Enter, React fiber dispatch depth9/idx0, remoção de SVG (reconciler restaura).
+  Limitação do ferramental, não bug de aplicação. Requer verificação manual no browser.
 
 ### 2. Reimportação de extrato OFX (idempotência FITID)
 expected: Em /clinica/financeiro/conciliacao, importar um arquivo OFX cria as linhas; reimportar o MESMO arquivo reporta as linhas como "skipped" (sem duplicar). Linhas sem FITID também não duplicam na reimportação.
@@ -44,6 +52,11 @@ issues: 0
 pending: 0
 skipped: 0
 blocked: 4
+note: |
+  Teste 1: pré-condições verificadas (payable criado, canWrite, installment), mas ação
+  de baixa bloqueada por limitação de automação (Base UI SVG icon + CDP elementFromPoint).
+  Testes 2-4: bloqueados por ausência de fixtures/backend necessários.
+  Recomendação: verificação manual do Teste 1 (click em Ações → Baixar → valor parcial).
 
 ## Gaps
 
