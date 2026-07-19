@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 19-02-PLAN.md
-last_updated: "2026-07-19T20:38:07.056Z"
+stopped_at: Completed 19-03-PLAN.md
+last_updated: "2026-07-19T20:46:22.187Z"
 last_activity: 2026-07-19
 progress:
   total_phases: 15
   completed_phases: 12
   total_plans: 107
-  completed_plans: 95
-  percent: 89
+  completed_plans: 96
+  percent: 90
 ---
 
 # FYNXIA ERP — Project State
@@ -36,7 +36,7 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 ## Current Position
 
 Phase: 19 (relat-rios-or-amento-bi) — EXECUTING
-Plan: 3 of 14
+Plan: 4 of 14
 Status: Ready to execute
 Last activity: 2026-07-19
 
@@ -148,6 +148,7 @@ Last activity: 2026-07-19
 | Phase 18 P11 | 15min | 2 tasks | 3 files |
 | Phase 19 P01 | 6min | 2 tasks | 4 files |
 | Phase 19 P02 | 2min | 2 tasks | 3 files |
+| Phase 19 P03 | 4min | 3 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -285,6 +286,8 @@ Last activity: 2026-07-19
 | Partner-share vigência comparison via lexicographic YYYY-MM-DD string compare (no Date parsing) | Matches existing tax_tables migration query pattern; avoids timezone drift (D-20) | 2026-07-19 |
 | Hand-rolled OLS linear trend in forecast-math.ts (no stats/regression package) | 19-RESEARCH deliberate exception — ≤12 monthly points, ~15 lines, trivially unit-testable, avoids new dependency for a nightly cron job (D-31) | 2026-07-19 |
 | Governance guard for bi-forecast-agent.ts committed RED before the agent exists (Plan 08 target) | Pre-commits the per-clinic withAgentPolicy + approval_requests-only-mutation contract (D-34) so Plan 08 has an executable spec to satisfy | 2026-07-19 |
+| supabase db push + gen types (19-03 Task 3) run by the orchestrator directly, not the executor sub-agent | checkpoint:human-action gate requires explicit user confirmation for a live-DB push; CLI-login-only per memory fynxia-cli-auth-only, never the MCP connector | 2026-07-19 |
+| 43 pre-existing tsc --noEmit errors (phase 14-16 test files) accepted as out-of-scope for 19-03 | Verified pre-existing by re-running tsc with database.types.ts removed — identical error count, zero reference budget_targets/partner_shares/kpi_targets/bi_alerts or phase-19 source | 2026-07-19 |
 
 ### Architecture Constraints Locked
 
@@ -321,7 +324,7 @@ Last activity: 2026-07-19
 
 ## Session Continuity
 
-**Stopped at:** Completed 19-02-PLAN.md
+**Stopped at:** Completed 19-03-PLAN.md
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 
