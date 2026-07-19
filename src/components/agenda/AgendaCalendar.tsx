@@ -5,9 +5,9 @@ import FullCalendar from '@fullcalendar/react'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
-import type { EventDropArg, DateSelectArg } from '@fullcalendar/core'
+import type { EventDropArg, DateSelectArg, EventClickArg } from '@fullcalendar/core'
 import { useQueryState } from 'nuqs'
-import { filterEventsByDentist, type CalendarEvent } from '@/lib/validators/appointment'
+import { filterEventsByDentist, type CalendarEvent, type AppointmentInput } from '@/lib/validators/appointment'
 import { updateAppointment, cancelAppointment, createAppointment } from '@/actions/appointments'
 import { useNewAppointmentStore } from '@/lib/stores/new-appointment-store'
 import {
@@ -53,6 +53,16 @@ const STATUS_CLASS_MAP: Record<string, string> = {
   em_atendimento: 'bg-amber-100 text-amber-800 border-l-2 border-amber-500 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-700',
   concluido: 'bg-muted text-muted-foreground border-l-2 border-border',
   cancelado: 'bg-red-50 text-red-500 line-through border-l-2 border-red-300 dark:bg-red-950/40 dark:text-red-400 dark:border-red-800',
+}
+
+// ─── Status Labels (pt-BR) — used by AppointmentDetailDialog's Select ─────────
+
+const STATUS_LABELS: Record<string, string> = {
+  agendado: 'Agendado',
+  confirmado: 'Confirmado',
+  em_atendimento: 'Em Atendimento',
+  concluido: 'Concluído',
+  cancelado: 'Cancelado',
 }
 
 // ─── Default Slot Computation ─────────────────────────────────────────────────
@@ -285,6 +295,125 @@ function NewAppointmentDialog({
   )
 }
 
+// ─── Appointment Detail Dialog ────────────────────────────────────────────────
+// Opens on eventClick (existing appointment). Status-only edit — reuses
+// updateAppointment exactly as-is (no new server action, no availability logic
+// duplicated here; that already lives inside updateAppointment).
+
+interface AppointmentDetailDialogProps {
+  open: boolean
+  onClose: () => void
+  appointmentId: string
+  patientTitle: string
+  dentistId: string
+  startTime: string
+  endTime: string
+  currentStatus: string
+  dentists: Dentist[]
+  onStatusUpdated: (id: string, newStatus: string) => void
+}
+
+function AppointmentDetailDialog({
+  open,
+  onClose,
+  appointmentId,
+  patientTitle,
+  dentistId,
+  startTime,
+  endTime,
+  currentStatus,
+  dentists,
+  onStatusUpdated,
+}: AppointmentDetailDialogProps) {
+  const [selectedStatus, setSelectedStatus] = useState(currentStatus)
+  const [error, setError] = useState<string | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const dentistName = dentists.find((d) => d.id === dentistId)?.full_name ?? 'Não informado'
+
+  const dateTimeLabel = startTime
+    ? `${new Date(startTime).toLocaleDateString('pt-BR')} ${new Date(startTime).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}${
+        endTime ? ` - ${new Date(endTime).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}` : ''
+      }`
+    : 'Não informado'
+
+  async function handleSave() {
+    setError(null)
+    setIsSubmitting(true)
+    try {
+      const result = await updateAppointment(appointmentId, { status: selectedStatus as AppointmentInput['status'] })
+      if (result.success) {
+        onStatusUpdated(appointmentId, selectedStatus)
+        onClose()
+      } else {
+        setError(result.error ?? 'Erro ao atualizar status')
+      }
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Detalhes da Consulta</DialogTitle>
+        </DialogHeader>
+
+        <div className="space-y-4 py-2">
+          {error && (
+            <Alert variant="destructive" role="alert">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+
+          <div className="space-y-1">
+            <Label className="font-semibold">Paciente</Label>
+            <p className="text-sm">{patientTitle}</p>
+          </div>
+
+          <div className="space-y-1">
+            <Label className="font-semibold">Dentista</Label>
+            <p className="text-sm">{dentistName}</p>
+          </div>
+
+          <div className="space-y-1">
+            <Label className="font-semibold">Data/Hora</Label>
+            <p className="text-sm">{dateTimeLabel}</p>
+          </div>
+
+          <div className="space-y-1">
+            <Label className="font-semibold">Status</Label>
+            <Select value={selectedStatus} onValueChange={(v) => v && setSelectedStatus(v)}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Selecionar status...">
+                  {STATUS_LABELS[selectedStatus] ?? selectedStatus}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {Object.entries(STATUS_LABELS).map(([value, label]) => (
+                  <SelectItem key={value} value={value}>
+                    {label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <div className="flex justify-end gap-2">
+          <Button variant="outline" onClick={onClose}>
+            Cancelar
+          </Button>
+          <Button onClick={handleSave} disabled={isSubmitting}>
+            {isSubmitting ? 'Salvando…' : 'Salvar'}
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
 // ─── AgendaCalendar ───────────────────────────────────────────────────────────
 
 export function AgendaCalendar({ dentists, events: initialEvents, tenantId }: AgendaCalendarProps) {
@@ -301,6 +430,17 @@ export function AgendaCalendar({ dentists, events: initialEvents, tenantId }: Ag
     startTime: string
     endTime: string
   }>({ open: false, startTime: '', endTime: '' })
+
+  // Appointment detail dialog state (eventClick — existing appointment)
+  const [detailDialog, setDetailDialog] = useState<{
+    open: boolean
+    appointmentId: string
+    patientTitle: string
+    dentistId: string
+    startTime: string
+    endTime: string
+    currentStatus: string
+  } | null>(null)
 
   // Trigger store — connects the (Server Component) "Nova Consulta" header
   // button to this client component's dialog state.
@@ -374,6 +514,27 @@ export function AgendaCalendar({ dentists, events: initialEvents, tenantId }: Ag
     setCalendarEvents((prev) => [...prev, event])
   }
 
+  // eventClick: open the detail dialog for an existing appointment (status-only edit)
+  const handleEventClick = useCallback((info: EventClickArg) => {
+    setDetailDialog({
+      open: true,
+      appointmentId: info.event.id,
+      patientTitle: info.event.title,
+      dentistId: String(info.event.extendedProps.dentistId ?? ''),
+      startTime: info.event.start?.toISOString() ?? '',
+      endTime: info.event.end?.toISOString() ?? '',
+      currentStatus: String(info.event.extendedProps.status ?? 'agendado'),
+    })
+  }, [])
+
+  // Reflects the new status locally so eventClassNames recolors the event
+  // without a page reload (mirrors handleEventDrop's local-state pattern).
+  function handleStatusUpdated(id: string, newStatus: string) {
+    setCalendarEvents((prev) =>
+      prev.map((e) => (e.id === id ? { ...e, status: newStatus } : e))
+    )
+  }
+
   return (
     <div className="flex h-full flex-col">
       {/* Header row: dentist dropdown + conflict alert */}
@@ -427,6 +588,7 @@ export function AgendaCalendar({ dentists, events: initialEvents, tenantId }: Ag
           events={fcEvents}
           eventDrop={handleEventDrop}
           select={handleSelect}
+          eventClick={handleEventClick}
           eventClassNames={(arg) => {
             const status = (arg.event.extendedProps.status as string) ?? 'agendado'
             const cls = STATUS_CLASS_MAP[status] ?? STATUS_CLASS_MAP['agendado'] ?? ''
@@ -455,6 +617,22 @@ export function AgendaCalendar({ dentists, events: initialEvents, tenantId }: Ag
           initialDentistId={dentistId}
           dentists={dentists}
           onCreated={handleEventCreated}
+        />
+      )}
+
+      {/* Appointment Detail Dialog */}
+      {detailDialog?.open && (
+        <AppointmentDetailDialog
+          open={detailDialog.open}
+          onClose={() => setDetailDialog(null)}
+          appointmentId={detailDialog.appointmentId}
+          patientTitle={detailDialog.patientTitle}
+          dentistId={detailDialog.dentistId}
+          startTime={detailDialog.startTime}
+          endTime={detailDialog.endTime}
+          currentStatus={detailDialog.currentStatus}
+          dentists={dentists}
+          onStatusUpdated={handleStatusUpdated}
         />
       )}
     </div>
