@@ -4,6 +4,7 @@
 import { headers } from 'next/headers'
 import { createClient } from '@/lib/supabase/server'
 import { InviteForm } from '@/components/invitations/InviteForm'
+import { EditMemberDialog } from '@/components/team/EditMemberDialog'
 import { PageHeader } from '@/components/shell/PageHeader'
 import { EmptyState } from '@/components/shell/EmptyState'
 import {
@@ -57,6 +58,26 @@ export default async function EquipePage() {
     .eq('status', 'pending')
     .order('created_at', { ascending: false })
 
+  // Resolve tenant_id do actor autenticado (o header só dá o role, não o tenant)
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  const { data: actor } = await supabase
+    .from('users')
+    .select('tenant_id')
+    .eq('id', user?.id ?? '')
+    .single()
+  const tenantId = actor?.tenant_id ?? null
+
+  // Membros ativos da equipe (usuários já aceitos, não convites pendentes)
+  const { data: members } = tenantId
+    ? await supabase
+        .from('users')
+        .select('id, full_name, email, role')
+        .eq('tenant_id', tenantId)
+        .order('full_name', { ascending: true })
+    : { data: [] }
+
   return (
     <>
       <PageHeader
@@ -91,6 +112,64 @@ export default async function EquipePage() {
               </Alert>
             )}
           </div>
+        </section>
+
+        {/* Active team members — Server Component with client Edit dialog */}
+        <section className="bg-card rounded-xl border border-border">
+          <div className="px-6 py-5 border-b border-border">
+            <h2 className="text-xl font-semibold font-display">
+              Membros da Equipe
+            </h2>
+            <p className="text-sm text-muted-foreground mt-0.5">
+              Usuários ativos desta clínica
+            </p>
+          </div>
+
+          {!members || members.length === 0 ? (
+            <div className="px-6 py-8">
+              <EmptyState
+                icon={Users}
+                title="Nenhum membro ativo"
+                description="Convide membros para começar."
+              />
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="px-6 text-sm font-semibold">Nome</TableHead>
+                  <TableHead className="px-6 text-sm font-semibold">E-mail</TableHead>
+                  <TableHead className="px-6 text-sm font-semibold">Perfil</TableHead>
+                  {isAdmin && (
+                    <TableHead className="px-6 text-sm font-semibold">Ações</TableHead>
+                  )}
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {members.map((member) => (
+                  <TableRow key={member.id}>
+                    <TableCell className="px-6 text-foreground">
+                      {member.full_name || '—'}
+                    </TableCell>
+                    <TableCell className="px-6 text-muted-foreground">
+                      {member.email}
+                    </TableCell>
+                    <TableCell className="px-6 text-muted-foreground">
+                      {ROLE_LABELS[member.role] ?? member.role}
+                    </TableCell>
+                    {isAdmin && (
+                      <TableCell className="px-6">
+                        <EditMemberDialog
+                          userId={member.id}
+                          currentName={member.full_name ?? ''}
+                        />
+                      </TableCell>
+                    )}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </section>
 
         {/* Pending invitations table */}
