@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 19-01-PLAN.md
-last_updated: "2026-07-19T20:32:57.728Z"
+stopped_at: Completed 19-02-PLAN.md
+last_updated: "2026-07-19T20:38:07.056Z"
 last_activity: 2026-07-19
 progress:
   total_phases: 15
   completed_phases: 12
   total_plans: 107
-  completed_plans: 94
-  percent: 88
+  completed_plans: 95
+  percent: 89
 ---
 
 # FYNXIA ERP — Project State
@@ -36,7 +36,7 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 ## Current Position
 
 Phase: 19 (relat-rios-or-amento-bi) — EXECUTING
-Plan: 2 of 14
+Plan: 3 of 14
 Status: Ready to execute
 Last activity: 2026-07-19
 
@@ -147,6 +147,7 @@ Last activity: 2026-07-19
 | Phase 18 P10 | 20min | 2 tasks | 9 files |
 | Phase 18 P11 | 15min | 2 tasks | 3 files |
 | Phase 19 P01 | 6min | 2 tasks | 4 files |
+| Phase 19 P02 | 2min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -282,6 +283,8 @@ Last activity: 2026-07-19
 | ReferralsTable inlines its own stage-badge mapping (mirrors KanbanColumn/LeadDetailSheet) rather than extracting a shared helper | No shared stage-badge util existed yet; plan's files_modified list did not include a new lib file | 2026-07-13 |
 | budgetDeviationSemaphore meta=0 edge case: realizado=0 → verde, else vermelho | Avoids divide-by-zero while still flagging any unbudgeted spend as a deviation (D-15) | 2026-07-19 |
 | Partner-share vigência comparison via lexicographic YYYY-MM-DD string compare (no Date parsing) | Matches existing tax_tables migration query pattern; avoids timezone drift (D-20) | 2026-07-19 |
+| Hand-rolled OLS linear trend in forecast-math.ts (no stats/regression package) | 19-RESEARCH deliberate exception — ≤12 monthly points, ~15 lines, trivially unit-testable, avoids new dependency for a nightly cron job (D-31) | 2026-07-19 |
+| Governance guard for bi-forecast-agent.ts committed RED before the agent exists (Plan 08 target) | Pre-commits the per-clinic withAgentPolicy + approval_requests-only-mutation contract (D-34) so Plan 08 has an executable spec to satisfy | 2026-07-19 |
 
 ### Architecture Constraints Locked
 
@@ -318,7 +321,7 @@ Last activity: 2026-07-19
 
 ## Session Continuity
 
-**Stopped at:** Completed 19-01-PLAN.md
+**Stopped at:** Completed 19-02-PLAN.md
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 

@@ -119,8 +119,8 @@
 - [x] **REP-03**: Distribuição de lucro por cota societária
 
 #### BI — BI & Dashboards
-- [ ] **BI-01**: Gestão/Sócios acompanham KPIs por dimensão (tempo/unidade/profissional) com meta × realizado
-- [ ] **BI-02**: Painéis trazem previsões/alertas gerados por IA
+- [x] **BI-01**: Gestão/Sócios acompanham KPIs por dimensão (tempo/unidade/profissional) com meta × realizado
+- [x] **BI-02**: Painéis trazem previsões/alertas gerados por IA
 
 #### POR — Portal do Paciente
 - [ ] **POR-01**: Paciente faz login seguro e vê próximos agendamentos
@@ -223,8 +223,8 @@
 | REP-01 | Phase 19 | Complete |
 | REP-02 | Phase 19 | Complete |
 | REP-03 | Phase 19 | Complete |
-| BI-01 | Phase 19 | Pending |
-| BI-02 | Phase 19 | Pending |
+| BI-01 | Phase 19 | Complete |
+| BI-02 | Phase 19 | Complete |
 | POR-01 | Phase 20 | Pending |
 | POR-02 | Phase 20 | Pending |
 | POR-03 | Phase 20 | Pending |
