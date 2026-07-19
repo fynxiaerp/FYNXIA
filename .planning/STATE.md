@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
-status: completed
-stopped_at: Phase 19 context gathered
-last_updated: "2026-07-19T19:22:05.094Z"
-last_activity: "2026-07-19 - Completed quick task 260719-1wv: corrigir bug crítico na Agenda (botão "Nova Consulta" + calendário oculto quando vazio)"
+status: executing
+stopped_at: Phase 19 UI-SPEC approved
+last_updated: "2026-07-19T20:27:03.160Z"
+last_activity: 2026-07-19
 progress:
   total_phases: 15
   completed_phases: 12
-  total_plans: 93
+  total_plans: 107
   completed_plans: 93
-  percent: 100
+  percent: 87
 ---
 
 # FYNXIA ERP — Project State
@@ -37,8 +37,8 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 
 Phase: 19
 Plan: Not started
-Status: All 11 plans delivered — CRC-01..05 complete
-Last activity: 2026-07-13
+Status: Ready to execute
+Last activity: 2026-07-19 -- Phase 19 planning complete
 
 **Milestone:** v2.0 — Produto Completo (27 módulos, blocos A–E)
 
@@ -315,7 +315,7 @@ Last activity: 2026-07-13
 
 ## Session Continuity
 
-**Stopped at:** Phase 19 context gathered
+**Stopped at:** Phase 19 UI-SPEC approved
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 
@@ -346,7 +346,7 @@ Last activity: 2026-07-13
 | 260718-x6c | Corrigir erro de build de produção: mover REFERRAL_REWARD_DEFAULT de src/actions/referrals.ts ('use server') para src/lib/validators/crc.ts | 2026-07-19 | a0f68b2 | [260718-x6c-corrigir-erro-de-build-de-produ-o-mover-](.planning/quick/260718-x6c-corrigir-erro-de-build-de-produ-o-mover-/) |
 | 260719-1wv | Corrigir bug crítico na Agenda: botão "Nova Consulta" sem onClick + calendário oculto quando semana vazia (bloqueava 1ª consulta de clínica nova) | 2026-07-19 | 65815e8, 4cbbde8 | [260719-1wv-corrigir-bug-critico-na-agenda-botao-nov](.planning/quick/260719-1wv-corrigir-bug-critico-na-agenda-botao-nov/) |
 
-**Last activity:** 2026-07-19 - Completed quick task 260719-1wv: corrigir bug crítico na Agenda (botão "Nova Consulta" + calendário oculto quando vazio)
+**Last activity:** 2026-07-19
 
 **2026-07-19 (sessão continuação):** Push `master`→`origin/main` confirmado feito (0 commits de diferença); deploy Vercel `Ready` em produção com o fix de build aplicado. Env vars conferidas: Supabase/Resend/Encryption/CRON_SECRET presentes; **WhatsApp (4 vars) e AI_GATEWAY_API_KEY ausentes em produção** — deixado pendente por decisão do usuário (ver `.planning/DEPLOY-HANDOFF.md` Update 2026-07-19). UAT manual da Fase 18 rodado ao vivo via Playwright MCP (login test user reinaldo_s_lima@yahoo.com.br em fynxia.vercel.app): kanban CRC validado (drag-and-drop pointer-based + alternativa acessível + persistência); wizard de campanha validado até o guard de 0-destinatários (fallback de IA funcionando); NPS validado no caminho de token inválido. Durante o UAT, achado bug real em /clinica/agenda (botão decorativo + calendário some com 0 consultas) — corrigido nesta sessão via quick task 260719-1wv.
 
