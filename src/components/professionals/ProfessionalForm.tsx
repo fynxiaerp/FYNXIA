@@ -448,7 +448,11 @@ export function ProfessionalForm({
                       >
                         <FormControl>
                           <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Selecione a unidade" />
+                            <SelectValue placeholder="Selecione a unidade">
+                              {field.value
+                                ? (units.find((u) => u.id === field.value)?.name ?? 'Selecione a unidade')
+                                : null}
+                            </SelectValue>
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -478,7 +482,11 @@ export function ProfessionalForm({
                     >
                       <FormControl>
                         <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Sem login" />
+                          <SelectValue placeholder="Sem login">
+                            {field.value && field.value !== '__none__'
+                              ? (dentistUsers.find((u) => u.id === field.value)?.full_name ?? 'Sem login')
+                              : 'Sem login'}
+                          </SelectValue>
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
