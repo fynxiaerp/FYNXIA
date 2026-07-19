@@ -342,5 +342,6 @@ Last activity: 2026-07-13
 | 260629-ivj | criar página de gerenciamento de fornecedores em /clinica/financeiro/fornecedores — CRUD completo | 2026-06-29 | 82ee555 | [260629-ivj-criar-pagina-de-gerenciamento-de-fornece](.planning/quick/260629-ivj-criar-pagina-de-gerenciamento-de-fornece/) |
 | 260629-qji | criar página de gestão de unidades em /config/unidades — CRUD completo | 2026-06-29 | 2ce4473 | [260629-qji-criar-p-gina-de-gest-o-de-unidades-em-co](.planning/quick/260629-qji-criar-p-gina-de-gest-o-de-unidades-em-co/) |
 | 260629-uaz | Adicionar pointer-events-none ao MoreHorizontal icon em PayablesTable.tsx | 2026-06-29 | 2189958 | [260629-uaz-adicionar-pointer-events-none-ao-morehor](.planning/quick/260629-uaz-adicionar-pointer-events-none-ao-morehor/) |
+| 260718-w0u | Ignorar .mcp.json e .playwright-mcp/ no .gitignore (protege VERCEL_TOKEN em texto plano); commitar .vercelignore e docs pendentes de Fase 16/17 | 2026-07-18 | 826724a, 3e95fd4 | [260718-w0u-adicionar-mcp-json-e-playwright-mcp-ao-g](.planning/quick/260718-w0u-adicionar-mcp-json-e-playwright-mcp-ao-g/) |
 
-**Last activity:** 2026-07-13
+**Last activity:** 2026-07-18
