@@ -194,7 +194,11 @@ function NewAppointmentDialog({
               onValueChange={(v) => setSelectedDentistId(v)}
             >
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Selecionar dentista..." />
+                <SelectValue placeholder="Selecionar dentista...">
+                  {selectedDentistId
+                    ? (dentists.find((d) => d.id === selectedDentistId)?.full_name ?? 'Selecionar dentista...')
+                    : null}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {dentists.map((d) => (
