@@ -49,13 +49,13 @@ Exceptions: none. Page content wrapper follows the existing prototype convention
 
 ## Typography
 
-Reused as-is from the established, already-shipped project scale (verified in `PageHeader.tsx`, `KpiCard`, `NpsScoreCard.tsx`, prototype pages) — **do not invent a new scale for this phase.**
+Reused as-is from the established, already-shipped project scale (verified in `PageHeader.tsx`, `KpiCard`, `NpsScoreCard.tsx`, prototype pages) — **do not invent a new scale for this phase.** Exactly 4 sizes are declared and used across all 4 screens — no 5th size, no exceptions.
 
 | Role | Size | Weight | Line Height |
 |------|------|--------|-------------|
 | Body | 14px (`text-sm`) | 400 (regular) | 1.5 — table cells, form labels, card descriptions, copy text |
 | Label | 12px (`text-xs`) | 400 (regular) | 1.5 — muted meta text, table sub-labels (e.g. "6 dentistas", period captions), badge text |
-| Heading | 20px (`text-xl`) | 600 (semibold) | 1.2 — `<h1>` page title (`PageHeader`), section/card titles (`ChartCard`/table header `<h3>`) — always `.font-display` |
+| Heading | 20px (`text-xl`) | 600 (semibold) | 1.2 — `<h1>` page title (`PageHeader`), **and** all section/card/table-wrapper titles (`ChartCard` header, table-section header `<h3>`) — always `.font-display`. In-card/table-section headers reuse this exact role; they are differentiated from the page `<h1>` by placement (nested inside a `px-4 py-3 border-b` card header block, never at the top of the page) and by spacing (tighter vertical rhythm, `py-3` vs the page header's larger padding), not by a different font size |
 | Display | 24px (`text-2xl`) | 600 (semibold) | 1.2 — KPI numeric values (`KpiCard` value, DRE Resultado/Margem, per-sócio R$ value), always `tabular-nums`, always `.font-display` |
 
 Exactly 2 weights declared: **400 (regular)** and **600 (semibold)**. Do not introduce `font-medium` (500) or `font-bold` (700) anywhere in this phase's new components — existing codebase (`KpiCard`, `PageHeader`, table headers) uses only 400/600, and this phase must match.
@@ -78,7 +78,7 @@ Fully token-based (dual light/clinical + dark/brand theme, already wired in `glo
 | Status | Class (light / dark) | Usage — reserved for |
 |--------|----------------------|----------------------|
 | Verde (dentro da meta) | `text-green-700` / `dark:text-green-400` | Budget deviation <5% (D-15), KPI at/above meta, positive NPS score — **reuses the exact pattern already established in `NpsScoreCard.tsx`** (not a new convention) |
-| Amarelo (atenção) | `text-amber-600` / `dark:text-amber-400` | Budget deviation 5–15% (D-15) — **first use of amber in this codebase**; confirm with checker this doesn't collide with any existing warning convention before implementation |
+| Amarelo (atenção) | `text-amber-600` / `dark:text-amber-400` | Budget deviation 5–15% (D-15) — **reuses the existing amber-as-warning convention already established in `src/components/estoque/StockAlertBanner.tsx` and `src/components/receituario/AllergyAlert.tsx`** (both use `amber-600`/`amber-500` for warning-severity states); this phase reinforces that convention rather than introducing a new one |
 | Vermelho (crítico) | `--destructive` token (not ad-hoc red) | Budget deviation >15%, prejuízo — reuses the existing destructive token, not a new red |
 
 Do not use amber/green/red as background fills for large surfaces — text/icon/badge-border only, matching the existing `NpsScoreCard` restraint (color carries meaning via text + tabular-nums, not full-card tinting).
@@ -129,12 +129,23 @@ No new shadcn components need to be added for this phase. If a future plan disco
 
 **New primitive needed beyond the prototype set:** a horizontal progress/occupancy bar (used for DRE unit-ranking "ocupação" column, D-04, mirroring `dashboard-franquias` prototype's inline `<div className="h-1.5 w-20 rounded-full bg-muted overflow-hidden"><div className="h-full rounded-full bg-primary" style={{width:...}}/></div>` pattern). Recommend extracting this into the new chart namespace as a small `OccupancyBar` component rather than inlining it again — same token usage (`bg-muted` track, `bg-primary` fill), not a new shadcn `Progress` install.
 
+### Visual anchor per screen (Dimension 2 — primary focal point)
+
+Each screen must have one unambiguous primary visual anchor — the element the eye lands on first, reinforced by the Display role (24px/600) and/or grid position:
+
+| Screen | Primary visual anchor |
+|--------|------------------------|
+| Relatórios (DRE) | KPI row (Faturamento / Despesa / Resultado / Margem), Display role 24px — the DRE Resultado value is the single most emphasized number on the page |
+| Orçamento | KPI row (metas vs. realizado summary), Display role 24px, sitting above the 12-month editable grid |
+| Societário | Per-sócio R$ calculado value (Display role, 24px/600, `tabular-nums`) inside each sócio row/card — this is the anchor, not a page-level KPI row, since the screen's core content *is* the per-sócio distribution |
+| BI | KPI row at the top of each tab (Operacional / Profissionais / CRC / Estoque-TISS), Display role 24px — the fixed "Alertas & Previsões" section above the tabs is a secondary anchor for narrative/action content, not competing with the numeric KPI row |
+
 ### Screen-level layout contract (applies to all 4 screens)
 
 - `PageHeader` (existing, reused as-is) with `title`, `breadcrumbs` (e.g. `[{label:'Relatórios'}]` — top-level module, no "Protótipos" crumb since these are production screens), and `actions` slot for the period/unit selector + "Exportar PDF" button.
 - Content wrapper: `<div className="p-6 max-w-6xl mx-auto w-full space-y-6">` — matches existing prototype convention exactly, do not widen beyond `max-w-6xl`.
 - KPI row: `grid grid-cols-2 lg:grid-cols-4 gap-4` (DRE/Orçamento) or `lg:grid-cols-5` (BI, matching `dashboard-franquias`'s 5-KPI row) — pick per screen's actual KPI count, never fewer than 2 columns on mobile.
-- Table sections: `rounded-xl bg-card ring-1 ring-foreground/10 overflow-hidden` wrapper with a `px-4 py-3 border-b border-border` header block (`<h3 className="font-display text-base font-semibold">` + `<p className="text-sm text-muted-foreground">`) — **note:** this header uses `text-base` (16px) not the Heading role's 20px; this is the established sub-section-header size distinct from the page-level `<h1>`. Treat 16px/600 as a permitted 5th typographic instance reserved exclusively for in-card section headers (`ChartCard`/table-wrapper titles) — do not use it elsewhere.
+- Table sections: `rounded-xl bg-card ring-1 ring-foreground/10 overflow-hidden` wrapper with a `px-4 py-3 border-b border-border` header block (`<h3 className="font-display text-xl font-semibold">` + `<p className="text-sm text-muted-foreground">`) — this reuses the Heading role (20px/600) declared in the Typography table above; it is visually distinguished from the page `<h1>` by nesting/placement (inside the card's own header block, tighter `py-3` padding) and never by introducing a different font size.
 
 ### DRE-specific (D-04, D-05, D-06, D-08)
 
