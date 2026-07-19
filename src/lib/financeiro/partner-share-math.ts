@@ -2,7 +2,7 @@
  * src/lib/financeiro/partner-share-math.ts — Pure partner-share vigência resolution,
  * sum-to-100% validation, and signed distribution (REP-03).
  *
- * Pure functions — no 'use server', no DB/I/O.
+ * Pure functions — no server directive, no DB/I/O.
  * Importable by Vitest tests and Server Actions alike.
  *
  * CORRECTNESS:

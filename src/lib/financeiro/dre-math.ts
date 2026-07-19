@@ -1,7 +1,7 @@
 /**
  * src/lib/financeiro/dre-math.ts — Pure DRE aggregation + budget semaphore (REP-01, REP-02)
  *
- * Pure functions — no 'use server', no DB/I/O.
+ * Pure functions — no server directive, no DB/I/O.
  * Importable by Vitest tests and Server Actions alike.
  *
  * CORRECTNESS:
