@@ -81,6 +81,32 @@ const VINCULO_LABELS: Record<string, string> = {
   autonomo: 'Autônomo',
 }
 
+// ─── Validação cross-aba (Bug B) ──────────────────────────────────────────────
+// Mapeia cada campo do schema para a aba onde ele é renderizado, para que o
+// onInvalid handler possa trocar automaticamente para a aba com erro.
+
+const FIELD_TAB: Record<string, string> = {
+  full_name: 'ficha',
+  cro: 'ficha',
+  cro_uf: 'ficha',
+  vinculo: 'ficha',
+  unit_id: 'ficha',
+  user_id: 'ficha',
+  especialidades: 'ficha',
+  commission_rules: 'comissao',
+}
+
+const FIELD_LABEL: Record<string, string> = {
+  full_name: 'Nome completo',
+  cro: 'CRO',
+  cro_uf: 'UF do CRO',
+  vinculo: 'Vínculo',
+  unit_id: 'Unidade',
+  user_id: 'Login vinculado',
+  especialidades: 'Especialidades',
+  commission_rules: 'Regras de comissão',
+}
+
 // ─── CommissionRulesEditor ────────────────────────────────────────────────────
 
 interface CommissionRulesEditorProps {
@@ -205,6 +231,8 @@ export function ProfessionalForm({
   const router = useRouter()
   const [serverError, setServerError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [activeTab, setActiveTab] = useState('ficha')
+  const [validationErrors, setValidationErrors] = useState<string[]>([])
 
   // Availability state — managed outside RHF to avoid schema complexity
   const [availability, setAvailability] = useState<AvailabilityGridValue>({
@@ -256,9 +284,21 @@ export function ProfessionalForm({
     name: 'commission_rules',
   })
 
+  // ── Validação inválida (Bug B) ─────────────────────────────────────────────
+  // Quando handleSubmit bloqueia por erro Zod, garante feedback visível mesmo
+  // se o campo inválido estiver numa aba oculta: troca de aba + Alert no topo.
+  function onInvalid(errors: Record<string, unknown>) {
+    const keys = Object.keys(errors)
+    if (keys.length === 0) return
+    setValidationErrors(keys.map((k) => FIELD_LABEL[k] ?? k))
+    const firstTab = FIELD_TAB[keys[0] as string] ?? 'ficha'
+    setActiveTab(firstTab)
+  }
+
   // ── Submit ─────────────────────────────────────────────────────────────────
   async function onSubmit(data: ProfessionalInput) {
     setServerError(null)
+    setValidationErrors([])
     setIsSubmitting(true)
     try {
       const payload = {
@@ -293,14 +333,22 @@ export function ProfessionalForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit, onInvalid)} className="space-y-6">
         {serverError && (
           <Alert variant="destructive" role="alert">
             <AlertDescription>{serverError}</AlertDescription>
           </Alert>
         )}
 
-        <Tabs defaultValue="ficha">
+        {validationErrors.length > 0 && (
+          <Alert variant="destructive" role="alert">
+            <AlertDescription>
+              Corrija os campos obrigatórios: {validationErrors.join(', ')}.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList>
             <TabsTrigger value="ficha">Ficha</TabsTrigger>
             <TabsTrigger value="horarios">Horários</TabsTrigger>
