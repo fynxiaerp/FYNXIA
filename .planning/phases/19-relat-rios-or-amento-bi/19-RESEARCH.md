@@ -472,22 +472,25 @@ No legacy version of DRE/Orçamento/BI exists to migrate from; the only "old" ar
 
 **If this table is empty:** N/A — see above; all other claims in this research are `[VERIFIED]` against actual migration/source files read during this session.
 
-## Open Questions
+## Open Questions (ALL RESOLVED during Phase 19 planning — see inline RESOLVED notes)
 
 1. **Should NULL-`cost_center_id` transactions be shown anywhere in a per-unit DRE view (e.g., an "Não classificado" row), or silently excluded from unit-level totals while still counted in consolidated?**
    - What we know: Consolidated must include them (A4) to match the real cash total; Phase 14 made classification optional specifically to avoid blocking webhook auto-posts.
    - What's unclear: CONTEXT.md doesn't address this edge case at all — D-04/D-06 describe drill-down and cost-center expansion assuming classified data.
    - Recommendation: Surface explicitly in the DRE plan/UI-spec; simplest correct behavior is likely a permanent "Não classificado" account-like bucket rendered only in the consolidated view.
+   - **RESOLVED (Plan 04, A4):** consolidated ("Todas") DRE INCLUDES NULL-`cost_center_id` transactions; a specific-unit view EXCLUDES them. Encoded in 19-04 must_haves + acceptance_criteria and enforced in the getDre action.
 
 2. **Does `partner_shares` need a write path for `socio` at all, or is D-20/D-22's "cadastro" always admin/superadmin-only?**
    - What we know: D-14 explicitly grants sócio write on **orçamento**; D-20/D-22/D-23 describe cotas administration without ever mentioning who is allowed to *create* a vigência (only D-24 addresses *viewing* scope).
    - What's unclear: whether sócio is expected to self-administer their own equity share (unlikely, given D-22's blocking 100%-sum validation implies a single administrator reconciling all socios at once) or whether this was simply not discussed.
    - Recommendation: Default to admin/superadmin-only write (A1); confirm during plan-check since it changes an RLS policy.
+   - **RESOLVED (Plan 06, A1):** `partner_shares` write is admin/superadmin-only; `socio` has NO write grant (SHARE_WRITE_ROLES). RLS in 19-03 grants socio SELECT of own row only (D-24). Socio write remains on orçamento (D-14) only.
 
 3. **Should the BI forecast agent's `budget_targets` UPDATE-on-approval reuse the generic `approveRequest` in `approval-actions.ts`, or need a dedicated `approveBudgetAdjustment` handler (mirroring how `campaigns` needed `approveCampaignAndDispatch`)?**
    - What we know: the generic `approveRequest`/`rejectRequest` flip `approval_requests.status` only — they do not apply arbitrary business-table mutations (verified: `campaigns` needed a dedicated handler for exactly this reason, Phase 18 decision).
    - What's unclear: whether the planner should add a small dedicated handler now or a more generic "apply payload to target table" mechanism reusable by future agents.
    - Recommendation: Follow the `campaigns` precedent — a small dedicated `approveBudgetAdjustment(requestId)` handler, not a generic engine (avoids premature abstraction).
+   - **RESOLVED (Plan 08):** a dedicated `approveBudgetAdjustment(requestId)` handler applies the meta change on approval, mirroring the `approveCampaignAndDispatch` precedent — NOT the generic `approveRequest`.
 
 ## Environment Availability
 
