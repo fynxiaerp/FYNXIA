@@ -17,6 +17,10 @@ import {
   Boxes,
   Package,
   Megaphone,
+  FileBarChart,
+  Target,
+  PieChart,
+  TrendingUp,
   type LucideIcon,
 } from 'lucide-react'
 import type { NavIconKey } from './nav-config'
@@ -37,4 +41,8 @@ export const NAV_ICONS: Record<NavIconKey, LucideIcon> = {
   protese: Boxes,
   estoque: Package,
   crc: Megaphone,
+  relatorios: FileBarChart,
+  orcamento: Target,
+  societario: PieChart,
+  bi: TrendingUp,
 }

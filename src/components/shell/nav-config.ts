@@ -24,6 +24,10 @@ export type NavIconKey =
   | 'protese'
   | 'estoque'
   | 'crc'
+  | 'relatorios'
+  | 'orcamento'
+  | 'societario'
+  | 'bi'
 
 export interface NavItemConfig {
   href: string
@@ -45,6 +49,10 @@ export const ALL_NAV_ITEMS: NavItemConfig[] = [
   { href: '/clinica/protese',          label: 'Prótese (Lab)',   icon: 'protese' },
   { href: '/clinica/estoque',          label: 'Estoque',         icon: 'estoque' },
   { href: '/clinica/crc',              label: 'CRC & Marketing', icon: 'crc' },
+  { href: '/clinica/relatorios',       label: 'Relatórios',      icon: 'relatorios',     adminOnly: true },
+  { href: '/clinica/orcamento',        label: 'Orçamento',       icon: 'orcamento',      adminOnly: true },
+  { href: '/clinica/societario',       label: 'Societário',      icon: 'societario',     adminOnly: true },
+  { href: '/bi',                       label: 'BI',              icon: 'bi',             adminOnly: true },
   { href: '/clinica/equipe',           label: 'Equipe',          icon: 'equipe',         adminOnly: true },
   { href: '/clinica/profissionais',  label: 'Profissionais',  icon: 'profissionais',  adminOnly: true },
   { href: '/clinica/recursos',       label: 'Recursos',       icon: 'recursos',       adminOnly: true },
