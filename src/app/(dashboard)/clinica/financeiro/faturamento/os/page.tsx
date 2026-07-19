@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { listOs } from '@/actions/service-orders-client'
 import { OsListClient } from './OsListClient'
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
 
 // Screen 1 — Ordens de Serviço (RSC)
 // Reads filters from searchParams. Calls listOs. Renders KPI row + filter bar + OsTable.
@@ -28,7 +29,7 @@ export default async function OsPage({
   const canceladaCount = orders.filter((o) => o.status === 'cancelada').length
 
   return (
-    <>
+    <NuqsAdapter>
       <PageHeader
         title="Ordens de Serviço"
         breadcrumbs={[
@@ -98,6 +99,6 @@ export default async function OsPage({
           />
         </Suspense>
       </main>
-    </>
+    </NuqsAdapter>
   )
 }

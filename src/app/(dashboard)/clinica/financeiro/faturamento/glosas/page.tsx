@@ -5,6 +5,7 @@ import { getGlosas } from '@/actions/tiss'
 import { listInsurers } from '@/actions/insurers'
 import { formatBRL } from '@/lib/format/money'
 import { GlosaListClient } from './GlosaListClient'
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
 
 interface PageProps {
   searchParams: Promise<{ operadora?: string; status?: string; month?: string }>
@@ -30,7 +31,7 @@ export default async function GlosasPage({ searchParams }: PageProps) {
   const emRecurso = glosas.filter((g) => g.glosa_status === 'em_recurso').length
 
   return (
-    <>
+    <NuqsAdapter>
       <PageHeader
         title="Tratamento de Glosas"
         breadcrumbs={[
@@ -99,6 +100,6 @@ export default async function GlosasPage({ searchParams }: PageProps) {
           initialMonth={month ?? ''}
         />
       </main>
-    </>
+    </NuqsAdapter>
   )
 }

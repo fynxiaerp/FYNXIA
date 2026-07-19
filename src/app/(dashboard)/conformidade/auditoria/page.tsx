@@ -22,6 +22,7 @@ import { AuditTrail } from '@/components/conformidade/AuditTrail'
 import { PageHeader } from '@/components/shell/PageHeader'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import type { AuditFilters } from '@/lib/audit-query-types'
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
 
 // Roles permitted to access the conformidade module (mirrors MODULE_PERMISSIONS in proxy.ts)
 const PERMITTED_ROLES = ['admin', 'superadmin', 'auditor', 'dpo'] as const
@@ -102,7 +103,7 @@ export default async function AuditoriaPage({
   const rows = result.rows ?? []
 
   return (
-    <>
+    <NuqsAdapter>
       <PageHeader
         title="Auditoria"
         breadcrumbs={[{ label: 'Conformidade' }, { label: 'Auditoria' }]}
@@ -124,6 +125,6 @@ export default async function AuditoriaPage({
         {/* RSC RULE: pass ONLY serializable arrays + plain booleans — no functions across boundary */}
         <AuditTrail initialRows={rows} isReadOnly={isReadOnly} />
       </main>
-    </>
+    </NuqsAdapter>
   )
 }
