@@ -334,3 +334,91 @@ export async function rejectRequest(
 
   return { success: true }
 }
+
+// ─── approveBudgetAdjustment ────────────────────────────────────────────────
+// BI-02 / D-34: applies an agent-suggested budget_targets adjustment. This is
+// the ONLY place in the codebase where the bi_forecast agent flow ever writes
+// to budget_targets — and only AFTER a human approves.
+//
+// SAFETY-CRITICAL ordering (mirrors approveCampaignAndDispatch, Phase 18):
+//   Step 1: approveRequest() FIRST — if it fails, mutate NOTHING.
+//   Step 2: only on success — apply the budget_targets UPDATE from the
+//   approval_requests.payload the agent wrote (src/lib/agents/bi-forecast-agent.ts).
+// If Step 2 fails after Step 1 succeeded, the human decision remains correctly
+// recorded in the audit trail even though the mutation itself did not apply.
+
+export async function approveBudgetAdjustment(
+  requestId: string,
+): Promise<{ success: boolean; error?: string }> {
+  await assertNotReadOnly()
+
+  const actorResult = await getActor()
+  if ('error' in actorResult) {
+    return { success: false, error: actorResult.error }
+  }
+  const { actor } = actorResult
+
+  const supabase = await createClient()
+
+  // Load the request BEFORE approving — need type/agent_key guard + payload.
+  const { data: request, error: loadError } = await supabase
+    .from('approval_requests')
+    .select('id, type, agent_key, payload')
+    .eq('id', requestId)
+    .single()
+
+  if (loadError || !request) {
+    return { success: false, error: 'Solicitação não encontrada' }
+  }
+
+  if (request.type !== 'ai_action' || request.agent_key !== 'bi_forecast') {
+    return { success: false, error: 'Solicitação não é um ajuste de orçamento sugerido pelo agente de BI' }
+  }
+
+  // Step 1: approveRequest FIRST — mutate NOTHING until this succeeds.
+  const appr = await approveRequest(requestId)
+  if (!appr.success) {
+    return { success: false, error: appr.error }
+  }
+
+  // Step 2: only after approveRequest succeeds — apply the suggested budget_targets
+  // UPDATE. This is the ONLY place the agent flow ever touches budget_targets.
+  const payload = request.payload as {
+    budget_target_id?: string
+    suggested_value?: number
+  }
+
+  if (!payload.budget_target_id || typeof payload.suggested_value !== 'number') {
+    return {
+      success: false,
+      error: 'Aprovação registrada, mas payload inválido — ajuste de orçamento não aplicado',
+    }
+  }
+
+  const admin = createAdminClient()
+  const { error: updateError } = await admin
+    .from('budget_targets')
+    .update({ valor: payload.suggested_value, updated_at: new Date().toISOString() })
+    .eq('id', payload.budget_target_id)
+    .eq('clinic_id', actor.tenant_id)
+
+  if (updateError) {
+    return {
+      success: false,
+      error: 'Aprovação registrada, mas falha ao aplicar o ajuste de orçamento — tente novamente',
+    }
+  }
+
+  await logBusinessEvent({
+    tenantId: actor.tenant_id,
+    actorId: actor.id,
+    action: 'bi.budget_adjustment.applied',
+    details: {
+      approval_request_id: requestId,
+      budget_target_id: payload.budget_target_id,
+      suggested_value: payload.suggested_value,
+    },
+  })
+
+  return { success: true }
+}

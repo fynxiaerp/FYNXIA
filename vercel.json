@@ -8,6 +8,7 @@
     { "path": "/api/cron/integration-retry", "schedule": "0 7 * * *" },
     { "path": "/api/cron/recorrente", "schedule": "0 6 1 * *" },
     { "path": "/api/cron/estoque-validade", "schedule": "0 5 * * 1" },
-    { "path": "/api/cron/nps-scan", "schedule": "0 23 * * *" }
+    { "path": "/api/cron/nps-scan", "schedule": "0 23 * * *" },
+    { "path": "/api/cron/bi-previsoes", "schedule": "0 4 * * *" }
   ]
 }
