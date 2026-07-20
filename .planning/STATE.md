@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 19-12-PLAN.md
-last_updated: "2026-07-20T01:01:33.416Z"
+stopped_at: Completed 19-13-PLAN.md
+last_updated: "2026-07-20T01:18:51.539Z"
 last_activity: 2026-07-20
 progress:
   total_phases: 15
   completed_phases: 12
   total_plans: 107
-  completed_plans: 105
-  percent: 98
+  completed_plans: 106
+  percent: 99
 ---
 
 # FYNXIA ERP — Project State
@@ -36,7 +36,7 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 ## Current Position
 
 Phase: 19 (relat-rios-or-amento-bi) — EXECUTING
-Plan: 13 of 14
+Plan: 14 of 14
 Status: Ready to execute
 Last activity: 2026-07-20
 
@@ -158,6 +158,7 @@ Last activity: 2026-07-20
 | Phase 19 P10 | ~20min | 2 tasks | 5 files |
 | Phase 19 P11 | ~25min | 2 tasks | 5 files |
 | Phase 19 P12 | ~15min | 2 tasks | 5 files |
+| Phase 19 P13 | ~20min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -317,6 +318,8 @@ Last activity: 2026-07-20
 | SocietarioPeriodFilter exported from PartnerDistribution.tsx (not a new file) | 19-12's files_modified didn't declare a dedicated filter file; module is already 'use client' so the nuqs selector lives inside it (mirrors D-310 split precedent in spirit, not in file count) | 2026-07-20 |
 | "Encerrar vigência de {nome_sócio}?" confirm fills {nome_sócio} with joined names of every sócio in the group | closePartnerShareVigencia(vigenciaInicio) closes the whole vigência set at once, not a single sócio row — literal UI-SPEC singular copy adapted to the real server contract | 2026-07-20 |
 | societario/pdf route allows admin/superadmin/socio (403 for others), no extra client-side row filtering | A sócio's PDF naturally contains only their own row because getPartnerDistribution's partner_shares read is already RLS-scoped (T-19-02) | 2026-07-20 |
+| BiDashboard's PageHeader actions carry only the período/unit selector; "Exportar PDF" is per-tab (dimension query param) | 19-UI-SPEC.md's Copywriting Contract + this plan's own must_haves truths state D-40 is per-tab, not a single global header button | 2026-07-20 |
+| insufficientHistory (D-32) computed in bi/page.tsx from the earliest financial_transactions.transaction_date, not from bi_alerts | bi-forecast-agent.ts deliberately writes zero bi_alerts rows for the < 3-month insufficient-data case — no direct DB signal exists to read instead | 2026-07-20 |
 
 ### Architecture Constraints Locked
 
@@ -353,7 +356,7 @@ Last activity: 2026-07-20
 
 ## Session Continuity
 
-**Stopped at:** Completed 19-12-PLAN.md
+**Stopped at:** Completed 19-13-PLAN.md
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 
