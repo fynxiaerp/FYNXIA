@@ -24,7 +24,7 @@ type Actor = {
   role: string
 }
 
-export const BI_ALERT_READ_ROLES = ['admin', 'socio', 'superadmin'] as const
+const BI_ALERT_READ_ROLES = ['admin', 'socio', 'superadmin'] as const
 
 // ─── Helper: get authenticated actor (replicated from transactions.ts) ──────
 

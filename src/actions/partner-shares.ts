@@ -50,7 +50,7 @@ type Actor = {
   role: string
 }
 
-export const SHARE_WRITE_ROLES = ['admin', 'superadmin'] as const
+const SHARE_WRITE_ROLES = ['admin', 'superadmin'] as const
 
 // ─── Helper: get authenticated actor (replicated from transactions.ts) ──────
 

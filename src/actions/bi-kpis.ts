@@ -42,7 +42,7 @@ type Actor = {
   role: string
 }
 
-export const BI_KPI_READ_ROLES = ['admin', 'socio', 'superadmin'] as const
+const BI_KPI_READ_ROLES = ['admin', 'socio', 'superadmin'] as const
 
 export interface KpiValue {
   key: string

@@ -44,7 +44,7 @@ type Actor = {
   role: string
 }
 
-export const BUDGET_WRITE_ROLES = ['admin', 'socio', 'superadmin'] as const
+const BUDGET_WRITE_ROLES = ['admin', 'socio', 'superadmin'] as const
 
 // ─── Helper: get authenticated actor (replicated from transactions.ts) ──────
 

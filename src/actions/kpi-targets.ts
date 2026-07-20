@@ -29,8 +29,8 @@ type Actor = {
   role: string
 }
 
-export const KPI_READ_ROLES = ['admin', 'socio', 'superadmin'] as const
-export const KPI_WRITE_ROLES = ['admin', 'superadmin'] as const
+const KPI_READ_ROLES = ['admin', 'socio', 'superadmin'] as const
+const KPI_WRITE_ROLES = ['admin', 'superadmin'] as const
 
 // ─── Helper: get authenticated actor (replicated from transactions.ts) ──────
 
