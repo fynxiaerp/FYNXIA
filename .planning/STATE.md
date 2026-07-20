@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 19-11-PLAN.md
-last_updated: "2026-07-20T00:49:36.846Z"
+stopped_at: Completed 19-12-PLAN.md
+last_updated: "2026-07-20T01:01:33.416Z"
 last_activity: 2026-07-20
 progress:
   total_phases: 15
   completed_phases: 12
   total_plans: 107
-  completed_plans: 104
-  percent: 97
+  completed_plans: 105
+  percent: 98
 ---
 
 # FYNXIA ERP — Project State
@@ -36,7 +36,7 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 ## Current Position
 
 Phase: 19 (relat-rios-or-amento-bi) — EXECUTING
-Plan: 12 of 14
+Plan: 13 of 14
 Status: Ready to execute
 Last activity: 2026-07-20
 
@@ -157,6 +157,7 @@ Last activity: 2026-07-20
 | Phase 19 P08 | ~20min | 2 tasks | 4 files |
 | Phase 19 P10 | ~20min | 2 tasks | 5 files |
 | Phase 19 P11 | ~25min | 2 tasks | 5 files |
+| Phase 19 P12 | ~15min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -313,6 +314,9 @@ Last activity: 2026-07-20
 | OrcamentoFilters.tsx split into its own 'use client' file (mirrors DreFilters.tsx precedent) | page.tsx is an async Server Component; a nuqs-driven ano/unit selector cannot live in the same file | 2026-07-19 |
 | BudgetGrid adds a client-side "Adicionar conta" selector (listAccountsTree leaf accounts not yet in the grid) | getBudgetVsRealizado only returns accounts with existing budget_targets rows — without it, the empty-state's own copy ("Crie metas mensais por conta contábil") had no actionable UI path | 2026-07-19 |
 | BudgetPdf renders landscape A4 with a compact 3-line stacked meta/realizado/desvio cell per conta/mês (not 1 row per conta-mês) | Fits all 12 months on one page width; mirrors AnvisaReportPdf's landscape/narrow-column precedent | 2026-07-19 |
+| SocietarioPeriodFilter exported from PartnerDistribution.tsx (not a new file) | 19-12's files_modified didn't declare a dedicated filter file; module is already 'use client' so the nuqs selector lives inside it (mirrors D-310 split precedent in spirit, not in file count) | 2026-07-20 |
+| "Encerrar vigência de {nome_sócio}?" confirm fills {nome_sócio} with joined names of every sócio in the group | closePartnerShareVigencia(vigenciaInicio) closes the whole vigência set at once, not a single sócio row — literal UI-SPEC singular copy adapted to the real server contract | 2026-07-20 |
+| societario/pdf route allows admin/superadmin/socio (403 for others), no extra client-side row filtering | A sócio's PDF naturally contains only their own row because getPartnerDistribution's partner_shares read is already RLS-scoped (T-19-02) | 2026-07-20 |
 
 ### Architecture Constraints Locked
 
@@ -349,7 +353,7 @@ Last activity: 2026-07-20
 
 ## Session Continuity
 
-**Stopped at:** Completed 19-11-PLAN.md
+**Stopped at:** Completed 19-12-PLAN.md
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 
