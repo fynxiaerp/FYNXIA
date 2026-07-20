@@ -18,8 +18,7 @@ export default async function ClinicaLayout({ children }: { children: React.Reac
   const { data: me } = user
     ? await supabase.from('users').select('role').eq('id', user.id).single()
     : { data: null }
-  const isAdmin = (me?.role ?? 'receptionist') === 'admin' || me?.role === 'superadmin'
-  const mobileNavItems = buildNavItems(isAdmin)
+  const mobileNavItems = buildNavItems(me?.role ?? 'receptionist')
 
   return (
     <div className="flex h-screen overflow-hidden">

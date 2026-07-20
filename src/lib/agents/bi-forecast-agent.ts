@@ -353,6 +353,84 @@ function accountNameFromJoin(join: BudgetTargetRow['chart_of_accounts'], fallbac
   return acct?.name ?? fallback
 }
 
+/**
+ * createBudgetSuggestion — the D-34 side effect for a persistent budget deviation:
+ * inserts an approval_requests row (NEVER writes budget_targets directly — the
+ * mutation happens only in approveBudgetAdjustment after a human approves), links
+ * it to a bi_alerts row (D-35), and writes the audit log entry.
+ *
+ * Called from evaluateBudgetDeviations either as withAgentPolicy's originalExecute
+ * (decision === 'execute') or directly by the caller (decision === 'suggest' |
+ * 'pending_approval') — see CR-01 fix: this suggestion must fire regardless of the
+ * configured autonomy level, matching the D-34/D-35 design intent.
+ */
+async function createBudgetSuggestion(
+  admin: AdminClient,
+  params: {
+    clinicId: string
+    unitId: string | null
+    accountId: string
+    accountName: string
+    targetRow: BudgetTargetRow
+    currentYear: number
+    monthsEvaluated: number
+    suggestedValue: number
+    severity: DeviationSemaphore
+    realizado: number
+    meta: number
+    narrative: string
+  },
+): Promise<boolean> {
+  const { clinicId, unitId, accountId, accountName, targetRow, currentYear, monthsEvaluated, suggestedValue, severity, realizado, meta, narrative } =
+    params
+
+  const { data: approval, error: approvalError } = await admin
+    .from('approval_requests')
+    .insert({
+      clinic_id: clinicId,
+      type: 'ai_action',
+      agent_key: 'bi_forecast',
+      payload: {
+        budget_target_id: targetRow.id,
+        month: `${currentYear}-${String(targetRow.mes).padStart(2, '0')}`,
+        current_value: targetRow.valor,
+        suggested_value: suggestedValue,
+        reason: `Desvio orçamentário persistente em ${accountName}: realizado médio dos últimos ${monthsEvaluated} meses diverge da meta atual.`,
+      },
+      required_role: 'admin',
+      requested_by: null, // ator de sistema (approval_requests.requested_by nullable — 20260703000200_estoque_alters.sql)
+      status: 'pending',
+    })
+    .select('id')
+    .single()
+
+  if (approvalError || !approval) {
+    console.error('[bi-forecast-agent] Failed to create approval_request:', approvalError?.message)
+    return false
+  }
+
+  const inserted = await insertBiAlert(admin, {
+    clinicId,
+    unitId,
+    kpiKey: accountName,
+    severity,
+    triggerType: 'budget_deviation',
+    narrative,
+    projectedValue: meta,
+    actualValue: realizado,
+    approvalRequestId: approval.id, // D-35: concrete action → panel links to ApprovalInbox
+  })
+
+  await logBusinessEvent({
+    tenantId: clinicId,
+    actorId: null,
+    action: 'agent.bi.budget_adjustment_suggested',
+    details: { account_id: accountId, budget_target_id: targetRow.id, suggested_value: suggestedValue },
+  })
+
+  return inserted
+}
+
 async function evaluateBudgetDeviations(
   admin: AdminClient,
   clinicId: string,
@@ -451,6 +529,22 @@ async function evaluateBudgetDeviations(
     const suggestedValue =
       Math.round((monthly.reduce((sum, m) => sum + m.realizado, 0) / monthly.length) * 100) / 100
 
+    const createSuggestion = () =>
+      createBudgetSuggestion(admin, {
+        clinicId,
+        unitId,
+        accountId,
+        accountName,
+        targetRow,
+        currentYear,
+        monthsEvaluated: monthly.length,
+        suggestedValue,
+        severity: last.semaphore,
+        realizado: last.realizado,
+        meta: last.meta,
+        narrative,
+      })
+
     const govResult = await withAgentPolicy(
       {
         clinicId,
@@ -459,59 +553,25 @@ async function evaluateBudgetDeviations(
         action: 'agent.bi.suggest_budget_adjustment',
         actionSensitivity: 'reversible', // sugestão é reversível — rejeitável na aprovação
       },
-      async () => {
-        // NEVER write directly to the budget_targets table here — only approval_requests.
-        const { data: approval, error: approvalError } = await admin
-          .from('approval_requests')
-          .insert({
-            clinic_id: clinicId,
-            type: 'ai_action',
-            agent_key: 'bi_forecast',
-            payload: {
-              budget_target_id: targetRow.id,
-              month: `${currentYear}-${String(targetRow.mes).padStart(2, '0')}`,
-              current_value: targetRow.valor,
-              suggested_value: suggestedValue,
-              reason: `Desvio orçamentário persistente em ${accountName}: realizado médio dos últimos ${monthly.length} meses diverge da meta atual.`,
-            },
-            required_role: 'admin',
-            requested_by: null, // ator de sistema (approval_requests.requested_by nullable — 20260703000200_estoque_alters.sql)
-            status: 'pending',
-          })
-          .select('id')
-          .single()
-
-        if (approvalError || !approval) {
-          console.error('[bi-forecast-agent] Failed to create approval_request:', approvalError?.message)
-          return { _created: false }
-        }
-
-        const inserted = await insertBiAlert(admin, {
-          clinicId,
-          unitId,
-          kpiKey: accountName,
-          severity: last.semaphore,
-          triggerType: 'budget_deviation',
-          narrative,
-          projectedValue: last.meta,
-          actualValue: last.realizado,
-          approvalRequestId: approval.id, // D-35: concrete action → panel links to ApprovalInbox
-        })
-
-        await logBusinessEvent({
-          tenantId: clinicId,
-          actorId: null,
-          action: 'agent.bi.budget_adjustment_suggested',
-          details: { account_id: accountId, budget_target_id: targetRow.id, suggested_value: suggestedValue },
-        })
-
-        return { _created: inserted }
-      },
+      // Only invoked when the policy decision resolves to 'execute' (e.g. L2+).
+      // NEVER writes directly to budget_targets here — only approval_requests.
+      createSuggestion,
     )
 
-    if (govResult && typeof govResult === 'object' && '_created' in govResult && govResult._created) {
-      created++
+    let suggestionCreated = false
+    if (typeof govResult === 'boolean') {
+      // decision === 'execute' — originalExecute() already ran createSuggestion() above.
+      suggestionCreated = govResult
+    } else if (govResult._policy === 'suggest' || govResult._policy === 'pending_approval') {
+      // D-34/D-35: a persistent deviation ALWAYS routes through approval_requests
+      // regardless of the configured autonomy level (as long as the agent isn't
+      // disabled/blocked) — withAgentPolicy above only gates the disabled/'block'
+      // case and writes the audit trail; the suggestion itself is created here.
+      suggestionCreated = await createSuggestion()
     }
+    // decision === 'block' (agent disabled or unknown level) → no suggestion created.
+
+    if (suggestionCreated) created++
   }
 
   return created

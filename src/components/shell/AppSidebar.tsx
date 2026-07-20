@@ -28,8 +28,7 @@ export async function AppSidebar() {
   const { data: clinic } = await supabase.from('clinics').select('name').single()
   const clinicName = clinic?.name ?? 'Minha Clínica'
 
-  const isAdmin = role === 'admin' || role === 'superadmin'
-  const navItems = buildNavItems(isAdmin)
+  const navItems = buildNavItems(role)
 
   return (
     <aside className="flex flex-col h-full bg-sidebar border-r border-sidebar-border">

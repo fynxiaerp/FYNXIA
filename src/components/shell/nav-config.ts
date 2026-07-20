@@ -35,6 +35,13 @@ export interface NavItemConfig {
   icon: NavIconKey
   /** If true, only visible to admin / superadmin roles */
   adminOnly?: boolean
+  /**
+   * Explicit role allowlist — overrides adminOnly when present. Use for modules
+   * where a non-admin role (e.g. socio) has real access per proxy.ts's
+   * MODULE_PERMISSIONS (e.g. D-14: socio has full access to orcamento) so the nav
+   * link isn't hidden from a role that can otherwise navigate there directly by URL.
+   */
+  visibleTo?: string[]
 }
 
 /** Full nav item list (unfiltered). */
@@ -49,10 +56,10 @@ export const ALL_NAV_ITEMS: NavItemConfig[] = [
   { href: '/clinica/protese',          label: 'Prótese (Lab)',   icon: 'protese' },
   { href: '/clinica/estoque',          label: 'Estoque',         icon: 'estoque' },
   { href: '/clinica/crc',              label: 'CRC & Marketing', icon: 'crc' },
-  { href: '/clinica/relatorios',       label: 'Relatórios',      icon: 'relatorios',     adminOnly: true },
-  { href: '/clinica/orcamento',        label: 'Orçamento',       icon: 'orcamento',      adminOnly: true },
-  { href: '/clinica/societario',       label: 'Societário',      icon: 'societario',     adminOnly: true },
-  { href: '/bi',                       label: 'BI',              icon: 'bi',             adminOnly: true },
+  { href: '/clinica/relatorios',       label: 'Relatórios',      icon: 'relatorios',     adminOnly: true, visibleTo: ['admin', 'superadmin', 'socio'] },
+  { href: '/clinica/orcamento',        label: 'Orçamento',       icon: 'orcamento',      adminOnly: true, visibleTo: ['admin', 'superadmin', 'socio'] },
+  { href: '/clinica/societario',       label: 'Societário',      icon: 'societario',     adminOnly: true, visibleTo: ['admin', 'superadmin', 'socio'] },
+  { href: '/bi',                       label: 'BI',              icon: 'bi',             adminOnly: true, visibleTo: ['admin', 'superadmin', 'socio'] },
   { href: '/clinica/equipe',           label: 'Equipe',          icon: 'equipe',         adminOnly: true },
   { href: '/clinica/profissionais',  label: 'Profissionais',  icon: 'profissionais',  adminOnly: true },
   { href: '/clinica/recursos',       label: 'Recursos',       icon: 'recursos',       adminOnly: true },
@@ -62,8 +69,16 @@ export const ALL_NAV_ITEMS: NavItemConfig[] = [
 
 /**
  * Returns role-filtered nav items.
- * @param isAdmin Whether the current user has admin or superadmin role.
+ * @param isAdminOrRole Either `isAdmin` (legacy boolean — treated as admin/no-access)
+ *   or the caller's actual role string, which also honors each item's `visibleTo`
+ *   allowlist for non-admin roles like socio.
  */
-export function buildNavItems(isAdmin: boolean): NavItemConfig[] {
-  return ALL_NAV_ITEMS.filter((item) => !item.adminOnly || isAdmin)
+export function buildNavItems(isAdminOrRole: boolean | string): NavItemConfig[] {
+  const role = typeof isAdminOrRole === 'string' ? isAdminOrRole : isAdminOrRole ? 'admin' : ''
+  const isAdmin = role === 'admin' || role === 'superadmin'
+  return ALL_NAV_ITEMS.filter((item) => {
+    if (!item.adminOnly) return true
+    if (isAdmin) return true
+    return item.visibleTo?.includes(role) ?? false
+  })
 }

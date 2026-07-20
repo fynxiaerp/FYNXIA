@@ -29,6 +29,8 @@ import { SocietarioPdf } from '@/components/relatorios/SocietarioPdf'
 // (already RLS-scoped). All other roles are denied (T-19-02).
 const ALLOWED_ROLES = ['admin', 'superadmin', 'socio']
 
+const DATE_RE = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/
+
 function formatDateBR(isoDate: string): string {
   // isoDate no formato yyyy-MM-dd (querystring) — evita deslocamento de fuso
   // ao construir o Date a partir de meio-dia local.
@@ -85,6 +87,13 @@ export async function GET(request: Request) {
     if (!from || !to) {
       return new Response(
         JSON.stringify({ error: 'Período (from/to) obrigatório.' }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      )
+    }
+
+    if (!DATE_RE.test(from) || !DATE_RE.test(to)) {
+      return new Response(
+        JSON.stringify({ error: 'Período inválido (YYYY-MM-DD)' }),
         { status: 400, headers: { 'Content-Type': 'application/json' } }
       )
     }
