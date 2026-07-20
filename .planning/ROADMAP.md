@@ -64,7 +64,7 @@ Full detail archived in [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
 
 **Bloco E — Analítico & Canais**
 
-- [ ] **Phase 19: Relatórios, Orçamento & BI** — DRE gerencial, orçado × realizado, distribuição societária e painéis de KPIs com previsões de IA
+- [x] **Phase 19: Relatórios, Orçamento & BI** — DRE gerencial, orçado × realizado, distribuição societária e painéis de KPIs com previsões de IA (completed 2026-07-20)
 - [ ] **Phase 20: Portal do Paciente & App do Profissional** — Portal self-service do paciente e PWA móvel do dentista com ditado SOAP por voz
 - [ ] **Phase 21: Migração & Ensino** — Importação assistida de dados de sistemas anteriores e módulo de clínica-escola com turmas e supervisão clínica
 
@@ -361,7 +361,7 @@ Plans:
 - [x] 19-11-PLAN.md — Wave 3: Orçamento UI (12-month grid + semaphore + lock) + PDF (REP-02) [UI]
 - [x] 19-12-PLAN.md — Wave 3: Societário UI (distribution + Nova vigência 100% gate + own-row) + PDF (REP-03) [UI]
 - [x] 19-13-PLAN.md — Wave 3: BI dashboard (tabs + fixed Alertas & Previsões) + PDF (BI-01/BI-02) [UI]
-- [ ] 19-14-PLAN.md — Wave 4: verify 4 screens [checkpoint] + remove superseded prototype pages (D-42)
+- [x] 19-14-PLAN.md — Wave 4: verify 4 screens [checkpoint] + remove superseded prototype pages (D-42)
 **v1 reuse**: Reusa protótipos navegáveis de Relatórios/BI e Dashboard de Franquias (`/clinica/prototipos`); alimentado por todos os dados financeiros de Phases 14–16
 **UI hint**: yes
 
@@ -422,6 +422,6 @@ Plans:
 | 16. Contas a Pagar, Conciliação & Tributos | v2.0 | 10/10 | Complete    | 2026-06-22 |
 | 17. Estoque & Materiais | v2.0 | 10/10 | Complete    | 2026-07-11 |
 | 18. CRC & Marketing | v2.0 | 11/11 | Complete    | 2026-07-13 |
-| 19. Relatórios, Orçamento & BI | v2.0 | 13/14 | In Progress|  |
+| 19. Relatórios, Orçamento & BI | v2.0 | 14/14 | Complete   | 2026-07-20 |
 | 20. Portal do Paciente & App do Profissional | v2.0 | 0/? | Not started | - |
 | 21. Migração & Ensino | v2.0 | 0/? | Not started | - |

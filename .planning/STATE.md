@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
-status: executing
-stopped_at: Completed 19-13-PLAN.md
-last_updated: "2026-07-20T01:18:51.539Z"
+status: verifying
+stopped_at: Completed 19-14-PLAN.md (phase 19 complete, 14/14 plans)
+last_updated: "2026-07-20T02:30:19.964Z"
 last_activity: 2026-07-20
 progress:
   total_phases: 15
-  completed_phases: 12
+  completed_phases: 13
   total_plans: 107
-  completed_plans: 106
-  percent: 99
+  completed_plans: 107
+  percent: 100
 ---
 
 # FYNXIA ERP — Project State
@@ -37,7 +37,7 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 
 Phase: 19 (relat-rios-or-amento-bi) — EXECUTING
 Plan: 14 of 14
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-07-20
 
 **Milestone:** v2.0 — Produto Completo (27 módulos, blocos A–E)
@@ -159,6 +159,7 @@ Last activity: 2026-07-20
 | Phase 19 P11 | ~25min | 2 tasks | 5 files |
 | Phase 19 P12 | ~15min | 2 tasks | 5 files |
 | Phase 19 P13 | ~20min | 2 tasks | 5 files |
+| Phase 19 P14 | ~15min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -320,6 +321,7 @@ Last activity: 2026-07-20
 | societario/pdf route allows admin/superadmin/socio (403 for others), no extra client-side row filtering | A sócio's PDF naturally contains only their own row because getPartnerDistribution's partner_shares read is already RLS-scoped (T-19-02) | 2026-07-20 |
 | BiDashboard's PageHeader actions carry only the período/unit selector; "Exportar PDF" is per-tab (dimension query param) | 19-UI-SPEC.md's Copywriting Contract + this plan's own must_haves truths state D-40 is per-tab, not a single global header button | 2026-07-20 |
 | insufficientHistory (D-32) computed in bi/page.tsx from the earliest financial_transactions.transaction_date, not from bi_alerts | bi-forecast-agent.ts deliberately writes zero bi_alerts rows for the < 3-month insufficient-data case — no direct DB signal exists to read instead | 2026-07-20 |
+| npx next typegen run before final tsc --noEmit baseline check in 19-14 | Deleting the two prototype page dirs left .next/types/validator.ts referencing removed page.js modules (TS2307); typegen is the lightweight route-manifest regeneration, avoiding a full next build | 2026-07-20 |
 
 ### Architecture Constraints Locked
 
@@ -356,7 +358,7 @@ Last activity: 2026-07-20
 
 ## Session Continuity
 
-**Stopped at:** Completed 19-13-PLAN.md
+**Stopped at:** Completed 19-14-PLAN.md (phase 19 complete, 14/14 plans)
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 
