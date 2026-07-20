@@ -4,7 +4,7 @@ milestone: v2.0
 milestone_name: — Produto Completo
 status: verifying
 stopped_at: Completed 19-14-PLAN.md (phase 19 complete, 14/14 plans)
-last_updated: "2026-07-20T02:30:19.964Z"
+last_updated: "2026-07-20T02:54:23.636Z"
 last_activity: 2026-07-20
 progress:
   total_phases: 15
@@ -35,8 +35,8 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 
 ## Current Position
 
-Phase: 19 (relat-rios-or-amento-bi) — EXECUTING
-Plan: 14 of 14
+Phase: 20
+Plan: Not started
 Status: Phase complete — ready for verification
 Last activity: 2026-07-20
 
