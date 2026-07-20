@@ -1,25 +1,11 @@
 // PROTÓTIPOS v2 — índice. Hub das telas de exploração para o próximo milestone.
 // Server Component. Sem acesso a banco.
 import Link from 'next/link'
-import { Network, BarChart3, FileText, ShieldPlus, ArrowRight } from 'lucide-react'
+import { FileText, ShieldPlus, ArrowRight } from 'lucide-react'
 import { PageHeader } from '@/components/shell/PageHeader'
 import { PrototypeBanner } from '@/components/prototipos/charts'
 
 const PROTOTYPES = [
-  {
-    href: '/clinica/prototipos/dashboard-franquias',
-    title: 'Dashboard de Franquias',
-    description: 'Visão consolidada de rede multi-clínica: faturamento, ocupação, ranking de unidades.',
-    icon: Network,
-    ready: true,
-  },
-  {
-    href: '/clinica/prototipos/relatorios',
-    title: 'Relatórios / BI',
-    description: 'Painéis gerenciais: receita × despesa, formas de pagamento, produtividade, procedimentos.',
-    icon: BarChart3,
-    ready: true,
-  },
   {
     href: '/clinica/prototipos/nfse',
     title: 'NFSe Fiscal',
