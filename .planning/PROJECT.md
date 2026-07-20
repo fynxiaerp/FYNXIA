@@ -78,13 +78,20 @@ Um dentista deve conseguir ver a agenda do dia, registrar atendimento e fechar o
 - [x] Conciliação bancária por OFX, idempotente por FITID, em 3 estágios (exato/fuzzy/N:1) + fluxo de caixa previsto-vs-realizado (FOP-02, FOP-03)
 - [x] Repasse de profissionais (regime caixa) + RPA com retenções INSS/IRRF/ISS por vigência e PDF gated; EFD-Reinf R-2010/R-4020 via provider STUB (TRIB-01, TRIB-02, TRIB-03)
 
+#### Relatórios, Orçamento & BI (Validated in Phase 19)
+- [x] DRE gerencial por período/unidade, consolidado × por unidade, drill-down a lançamentos, YoY (REP-01)
+- [x] Orçamento: metas mensais por conta × unidade, orçado × realizado com semáforo de desvio, trava D-18, cópia do ano anterior (REP-02)
+- [x] Societário: vigências de cota (soma 100% obrigatória), distribuição de resultado consolidado por sócio (REP-03)
+- [x] Painel de BI com KPIs por dimensão (Operacional/Profissionais/CRC/Estoque-TISS) vs meta (BI-01)
+- [x] Agente de previsão de BI (cron noturno): tendência OLS, alertas, sugestão de ajuste orçamentário sempre via approval_requests, nunca mutação direta (BI-02)
+
 ### Active (v2.0 — em REQUIREMENTS.md por REQ-ID)
 
 - Fundações: Configuração do Sistema, multiunidade/rede, papéis novos, Assinatura ICP/Documentos, Integrações, IA L0–L4, Auditoria/Estornos, OCR
 - Clínico: Profissionais, Recursos/Sala de espera, Receituário, Teleodontologia, Esterilização/CME, Prótese
 - Financeiro: Cadastros, OS/Faturamento/NFS-e, Contas a Pagar/Conciliação, Convênios/TISS, Tributos/Repasses/RPA
 - Operação/Crescimento: Estoque, CRC/Marketing
-- Analítico/Canais: Relatórios/Societário, BI, Portal do Paciente, App do Profissional, Migração, Ensino
+- Analítico/Canais: Portal do Paciente, App do Profissional, Migração, Ensino
 
 ### Out of Scope (v1)
 
@@ -151,4 +158,4 @@ Este documento evolui a cada transição de fase e marco de milestone.
 4. Atualizar Context com estado atual
 
 ---
-*Last updated: 2026-06-22 — Phase 16 (Contas a Pagar, Conciliação & Tributos) completa: FOP-01/02/03 + TRIB-01/02/03 validados*
+*Last updated: 2026-07-20 — Phase 19 (Relatórios, Orçamento & BI) completa: REP-01/02/03 + BI-01/02 validados*
