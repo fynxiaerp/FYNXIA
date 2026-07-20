@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — Produto Completo
 status: executing
-stopped_at: Completed 19-08-PLAN.md
-last_updated: "2026-07-19T21:37:20.750Z"
-last_activity: 2026-07-19
+stopped_at: Completed 19-10-PLAN.md
+last_updated: "2026-07-20T00:36:14.781Z"
+last_activity: 2026-07-20
 progress:
   total_phases: 15
   completed_phases: 12
   total_plans: 107
-  completed_plans: 102
-  percent: 95
+  completed_plans: 103
+  percent: 96
 ---
 
 # FYNXIA ERP — Project State
@@ -36,9 +36,9 @@ See: .planning/PROJECT.md (updated 2026-06-12 after v1.0)
 ## Current Position
 
 Phase: 19 (relat-rios-or-amento-bi) — EXECUTING
-Plan: 10 of 14
+Plan: 11 of 14
 Status: Ready to execute
-Last activity: 2026-07-19
+Last activity: 2026-07-20
 
 **Milestone:** v2.0 — Produto Completo (27 módulos, blocos A–E)
 
@@ -155,6 +155,7 @@ Last activity: 2026-07-19
 | Phase 19 P06 | 6min | 2 tasks | 3 files |
 | Phase 19 P07 | ~20min | 2 tasks | 4 files |
 | Phase 19 P08 | ~20min | 2 tasks | 4 files |
+| Phase 19 P10 | ~20min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -306,6 +307,8 @@ Last activity: 2026-07-19
 | ocupacao KPI computed as booked appointments ÷ (active dentists × business days × 8 assumed slots/day) | No capacity/working-hours table exists in the schema to derive a stricter denominator; documented pragmatic proxy for future revision | 2026-07-19 |
 | BI profissionais dimension sourced from service_order_items (per-item professional_id), not appointments | Matches the schema's actual per-professional revenue-attribution grain more precisely than appointment counts | 2026-07-19 |
 | getBiKpis reuses Phase 18 actions (getNpsSummary/getRoiByCampaign/getRoiByOrigin) via static import for the crc dimension | Avoids recomputing nps_responses/campaigns/leads aggregation logic already proven in Phase 18; mirrors existing cross-action-file static-import convention (dre.ts→listUnits, payables.ts→createApprovalRequest) | 2026-07-19 |
+| DreFilters.tsx split into its own 'use client' file (not inlined in page.tsx) | PageHeader actions slot needs an interactive period/unit selector; a 'use client' component cannot share a file with the async Server Component page.tsx — mirrors existing CashFlowFilters.tsx pattern | 2026-07-19 |
+| D-06 cost-center names resolved via existing listCostCenters() at page.tsx level, passed to DreView as an id->name map | Keeps Plan 04's dre.ts untouched — getDreDrilldown's SELECT has no cost_centers join; reusing the proven Plan 14 action avoids adding a new server round-trip | 2026-07-19 |
 
 ### Architecture Constraints Locked
 
@@ -342,7 +345,7 @@ Last activity: 2026-07-19
 
 ## Session Continuity
 
-**Stopped at:** Completed 19-08-PLAN.md
+**Stopped at:** Completed 19-10-PLAN.md
 
 **Phase 07 STATUS: COMPLETE** — SYS-01..05 + ROLE-01..02 all delivered:
 
@@ -373,7 +376,7 @@ Last activity: 2026-07-19
 | 260718-x6c | Corrigir erro de build de produção: mover REFERRAL_REWARD_DEFAULT de src/actions/referrals.ts ('use server') para src/lib/validators/crc.ts | 2026-07-19 | a0f68b2 | [260718-x6c-corrigir-erro-de-build-de-produ-o-mover-](.planning/quick/260718-x6c-corrigir-erro-de-build-de-produ-o-mover-/) |
 | 260719-1wv | Corrigir bug crítico na Agenda: botão "Nova Consulta" sem onClick + calendário oculto quando semana vazia (bloqueava 1ª consulta de clínica nova) | 2026-07-19 | 65815e8, 4cbbde8 | [260719-1wv-corrigir-bug-critico-na-agenda-botao-nov](.planning/quick/260719-1wv-corrigir-bug-critico-na-agenda-botao-nov/) |
 
-**Last activity:** 2026-07-19
+**Last activity:** 2026-07-20
 
 **2026-07-19 (sessão continuação):** Push `master`→`origin/main` confirmado feito (0 commits de diferença); deploy Vercel `Ready` em produção com o fix de build aplicado. Env vars conferidas: Supabase/Resend/Encryption/CRON_SECRET presentes; **WhatsApp (4 vars) e AI_GATEWAY_API_KEY ausentes em produção** — deixado pendente por decisão do usuário (ver `.planning/DEPLOY-HANDOFF.md` Update 2026-07-19). UAT manual da Fase 18 rodado ao vivo via Playwright MCP (login test user reinaldo_s_lima@yahoo.com.br em fynxia.vercel.app): kanban CRC validado (drag-and-drop pointer-based + alternativa acessível + persistência); wizard de campanha validado até o guard de 0-destinatários (fallback de IA funcionando); NPS validado no caminho de token inválido. Durante o UAT, achado bug real em /clinica/agenda (botão decorativo + calendário some com 0 consultas) — corrigido nesta sessão via quick task 260719-1wv.
 
